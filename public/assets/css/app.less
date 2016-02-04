@@ -1,0 +1,58 @@
+// out: app.css, compress: false
+@import url(http://fonts.googleapis.com/css?family=Raleway:400,500,300,600);
+@import url(http://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700);
+@import url(http://fonts.googleapis.com/css?family=Lato:400,700);
+@colorbg:   #EEF2F4 ;
+@colorblue: #00BDF0;
+body {
+  background-color: @colorbg;
+}
+header{
+    font: 14px "Roboto", Helvetica, Arial, sans-serif;
+    background-color: #fff;
+    margin-bottom: 20px;
+    padding: 15px 20px 0 20px;
+    
+    ul{
+      margin: 0;
+      padding: 0;
+      li{
+        display: inline-block;
+        a{
+          font-size: 20px;
+          color:#333;
+          font-weight: 300;
+          padding: 10px 15px 20px 15px;
+        
+          display: block;
+          margin: 0;
+          
+          &:hover{
+            text-decoration: none;
+              border-bottom: 2px solid @colorblue;
+          }
+        }
+      }
+    }
+    .logo{
+      //padding-bottom: 10px;
+      h1{
+        margin: 0;
+        font: 24px "Roboto", Helvetica, Arial, sans-serif;
+      }
+    }
+    .user{
+      font-weight: 300;
+      text-align: right;
+      padding: 8px;
+      p{
+        margin: 3px;
+      }
+      
+    }
+    
+}
+
+a {
+  color: #00B7FF;
+}

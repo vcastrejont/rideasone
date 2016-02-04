@@ -1,19 +1,50 @@
 <!doctype html>
-<html class="no-js" lang="">
+<html class="no-js" lang="en" ng-app="carPoolingApp">
     <head>
         <meta charset="utf-8">
         <meta http-equiv="x-ua-compatible" content="ie=edge">
         <title>Carpooling - </title>
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" href="css/bootstrap.css">
-        <link rel="stylesheet" href="css/app.css">
-        <script src="js/vendor/modernizr-2.8.3.min.js"></script>
+        <link rel="shortcut icon" sizes="16x16 24x24 32x32 48x48 64x64" href="assets/icons/favicon.ico">
+        <link rel="stylesheet" href="components/bootstrap/dist/css/bootstrap.css">
+        <link rel="stylesheet" href="assets/css/app.css">
+        
+        <!-- Vendor -->
+        <script src="components/angular/angular.js"></script>
+        <script src="components/jquery/dist/jquery.min.js"></script>
+        <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBq4wvYrPm-S8TznZmBvUzHo9o61c9hV0o&callback=initMap"></script>
+        
+        <!-- App Javascript -->
+          <script src="app/app.js"></script>
     </head>
     <body>
-    <div class="container" role="main">
-    <h1>{{{body}}}</h1>
-  </div>
-    <script src="js/bootstrap.min.js"></script>
+      <div class="container-fluid" role="main">
+    
+        <header ng-controller="headerCtrl" class="row">
+          <div class="col-xs-3 logo">
+            <h1>Carpooling</h1>
+            <span cla><strong>nearsoft</strong> labs</span>
+          </div>
+          <div class="col-xs-7 menu">
+            <ul>
+              <li><a href="#">My routes</a></li>
+              <li><a href="#">Get a ride</a></li>
+              <li><a href="#">Events</a></li>
+            </ul>
+          </div>
+          <div class="col-xs-2 user">
+            <p><span ng-bind="firstName + ' ' +lastName"></span></p>
+            <p><a href="#">Logout</a></p>
+          </div>
+        </header>
+        
+        
+        <section>
+            {{{body}}}
+        </section>
+      
+      </div>
+    
   </body>
 </html>

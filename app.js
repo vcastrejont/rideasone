@@ -1,3 +1,5 @@
+// Dependencies
+// -----------------------------------------------------
 var express = require('express');
 var path = require('path');
 var favicon = require('serve-favicon');
@@ -6,13 +8,14 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
 
-// ------  Routes 
+//  Routes 
+// ------------------------------------------------------
 var routes = require('./routes/index');
-var cars = require('./routes/cars');
+var locations = require('./routes/locations');
 
 
-
-// ------  Database  
+//  Database  
+// ------------------------------------------------------
 var mongoose = require('mongoose');
 mongoose.connect('mongodb://localhost/carpooling');
 var db = mongoose.connection;
@@ -22,14 +25,12 @@ db.once('open', function() {
 });
 
 
-
 // view engine setup
+// ------------------------------------------------------
 var app = express();
-
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'hbs');
-
-app.use(favicon(path.join(__dirname, 'public/ico', 'favicon.ico')));
+app.use(favicon(path.join(__dirname, 'public/assets/icons', 'favicon.ico')));
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -37,18 +38,21 @@ app.use(cookieParser());
 app.use(require('less-middleware')(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/', routes);
-app.use('/cars', cars);
 
+// Routes
+// ------------------------------------------------------
+app.use('/', routes);
+app.use('/locations', locations);
+
+
+// error handlers
+// ------------------------------------------------------
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   var err = new Error('Not Found');
   err.status = 404;
   next(err);
 });
-
-// error handlers
-
 // development error handler
 // will print stacktrace
 if (app.get('env') === 'development') {
@@ -60,7 +64,6 @@ if (app.get('env') === 'development') {
     });
   });
 }
-
 // production error handler
 // no stacktraces leaked to user
 app.use(function(err, req, res, next) {
