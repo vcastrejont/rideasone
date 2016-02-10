@@ -1,7 +1,8 @@
 // out: app.css, compress: false
 @import url(http://fonts.googleapis.com/css?family=Raleway:400,500,300,600);
 @import url(http://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700);
-@import url(http://fonts.googleapis.com/css?family=Lato:400,700);
+@import url(https://fonts.googleapis.com/css?family=Open+Sans:400,300,600);
+@import url(homer.css);
 @colorbg:   #EEF2F4 ;
 @colorblue: #00BDF0;
 body {
@@ -9,9 +10,10 @@ body {
 }
 header{
     font: 14px "Roboto", Helvetica, Arial, sans-serif;
-    background-color: #fff;
+    background-color: #292E3D;
+    color: #fff;
     margin-bottom: 20px;
-    padding: 15px 20px 0 20px;
+    padding: 0;
     
     ul{
       margin: 0;
@@ -19,32 +21,60 @@ header{
       li{
         display: inline-block;
         a{
-          font-size: 20px;
-          color:#333;
-          font-weight: 300;
-          padding: 10px 15px 20px 15px;
-        
+           transition:.5s;
+          font-size: 18px;
+          color:#fff;
+          font-weight: 200;
+          padding: 20px 15px 12px 15px;
+          border-bottom: 4px solid #292E3D;
           display: block;
           margin: 0;
-          
+          text-decoration: none;
+          &.sel{
+            color:@colorblue;
+          }
           &:hover{
             text-decoration: none;
-              border-bottom: 2px solid @colorblue;
+            color:#fff;
+            border-bottom: 4px solid @colorblue;
           }
+          
+        
+           
         }
       }
     }
     .logo{
       //padding-bottom: 10px;
+      background-color: #4E525F;
+      padding: 7px 0 7px 30px;
+      line-height: 13px;
       h1{
         margin: 0;
         font: 24px "Roboto", Helvetica, Arial, sans-serif;
+        font-weight: 200;
+        margin: 0;
+        
+        a{
+          color:#fff;
+          text-decoration: none;
+        }
+        
+      }
+      span{
+        color:#fff;
+        font-size: 14px ;
+        font-family: 'Open Sans', sans-serif;
+        font-weight: 100;
+        strong{
+          font-weight: 400;
+        }
       }
     }
     .user{
       font-weight: 300;
       text-align: right;
-      padding: 8px;
+      padding: 8px 30px 0 8px;
       p{
         margin: 3px;
       }
@@ -55,4 +85,9 @@ header{
 
 a {
   color: #00B7FF;
+}
+h3{
+  border-bottom: 1px solid #aaa;
+  padding-bottom: 5px;
+  margin-bottom: 30px;
 }

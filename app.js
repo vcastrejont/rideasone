@@ -6,18 +6,21 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+var config = require('./config/config');
 
 
 //  Routes 
 // ------------------------------------------------------
-var routes = require('./routes/index');
+var mainroutes = require('./routes/mainroutes');
 var locations = require('./routes/locations');
-
-
+var settings = require('./routes/settings');
+var events = require('./routes/events');
+var rides = require('./routes/rides');
+var myroutes = require('./routes/myroutes');
 //  Database  
 // ------------------------------------------------------
 var mongoose = require('mongoose');
-mongoose.connect('mongodb://localhost/carpooling');
+mongoose.connect(config.database);
 var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function() {
@@ -28,6 +31,8 @@ db.once('open', function() {
 // view engine setup
 // ------------------------------------------------------
 var app = express();
+
+
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'hbs');
 app.use(favicon(path.join(__dirname, 'public/assets/icons', 'favicon.ico')));
@@ -38,12 +43,27 @@ app.use(cookieParser());
 app.use(require('less-middleware')(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.use(function(req, res, next){
+  console.log(req.path);
+  if(req.path === "/myroutes")
+    res.locals.menu1 =true;
+  if(req.path === "/rides")
+    res.locals.menu2 =true;
+  if(req.path === "/events")
+    res.locals.menu3 =true;
+  if(req.path === "/settings")
+    res.locals.menu4 =true;
+  next();
+})
 
 // Routes
 // ------------------------------------------------------
-app.use('/', routes);
+app.use('/', mainroutes);
 app.use('/locations', locations);
-
+app.use('/settings', settings);
+app.use('/rides', rides);
+app.use('/events', events);
+app.use('/myroutes', myroutes);
 
 // error handlers
 // ------------------------------------------------------

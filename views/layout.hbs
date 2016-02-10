@@ -10,27 +10,34 @@
         <link rel="stylesheet" href="components/bootstrap/dist/css/bootstrap.css">
         <link rel="stylesheet" href="assets/css/app.css">
         
-        <!-- Vendor -->
+        <!-- Vendor scripts -->
+        <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBq4wvYrPm-S8TznZmBvUzHo9o61c9hV0o"></script>
         <script src="components/angular/angular.js"></script>
         <script src="components/jquery/dist/jquery.min.js"></script>
-        <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBq4wvYrPm-S8TznZmBvUzHo9o61c9hV0o&callback=initMap"></script>
+        <script src="components/angularjs-geolocation/dist/angularjs-geolocation.min.js"></script>
         
-        <!-- App Javascript -->
+        
+        <!-- App scripts -->
           <script src="app/app.js"></script>
+          <script src="app/services/gservice.js"></script>
+          <script src="app/header/headerCtrl.js"></script>
+          <script src="app/myroutes/myRoutesCtrl.js"></script>
     </head>
     <body>
       <div class="container-fluid" role="main">
     
-        <header ng-controller="headerCtrl" class="row">
-          <div class="col-xs-3 logo">
-            <h1>Carpooling</h1>
-            <span cla><strong>nearsoft</strong> labs</span>
+        <header ng-controller="headerCtrl" class="row ">
+          <div class="col-xs-2 logo">
+            <img src="assets/img/logo.svg" style="float:left; margin-right:10px" />
+            <h1><a href="/">Carpooling</a></h1>
+            <span><strong>nearsoft</strong> labs</span>
           </div>
-          <div class="col-xs-7 menu">
+          <div class="col-xs-8 menu">
             <ul>
-              <li><a href="#">My routes</a></li>
-              <li><a href="#">Get a ride</a></li>
-              <li><a href="#">Events</a></li>
+              <li><a href="/myroutes" {{#if menu1}}class="sel"{{/if}}>My routes</a></li>
+              <li><a href="/rides" {{#if menu2}}class="sel"{{/if}}>Get a ride</a></li>
+              <li><a href="/events" {{#if menu3}}class="sel"{{/if}}>Events</a></li>
+              <li><a href="/settings" {{#if menu4}}class="sel"{{/if}}>Settings</a></li>
             </ul>
           </div>
           <div class="col-xs-2 user">
@@ -39,12 +46,12 @@
           </div>
         </header>
         
+        </div>
         
-        <section>
+        <section class="container">
             {{{body}}}
         </section>
-      
-      </div>
+  
     
   </body>
 </html>
