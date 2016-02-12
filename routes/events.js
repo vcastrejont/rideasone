@@ -1,20 +1,27 @@
 var express = require('express');
 var router = express.Router();
-var settingModel = require('../models/settingModel.js');
+var locationModel = require('../models/locationModel.js');
 
 /*
  * GET
  */
 router.get('/', function(req, res) {
-  settingModel.find(function(err, locations){
+  var query = locationModel.find({events:{$exists:true}});
+  query.exec(function(err, locations){
       if(err) {
           return res.json(500, {
               message: 'Error getting settings.'
           });
       }
-      res.render('events/index', { 'locations': locations });
-      
+      res.render('events/index', { 'locations': locations });  
   });      
+});
+
+/*
+ * NEW
+ */
+router.get('/new', function(req, res) {
+  res.render('events/new');  
 });
 
 /*
