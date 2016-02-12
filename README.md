@@ -1,4 +1,4 @@
-# Nearsoft Car Pooling app1
+# Nearsoft Car Pooling app
 
 ### Executive Summary
 Corporate web system to share your car ride to your workplace.
