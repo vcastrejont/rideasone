@@ -39,7 +39,7 @@ $ npm  install
  
 *Installing Front end components:*
 ```sh
-$ grunt install
+$ bower install
 ```
 
 #### Run carpooling app
