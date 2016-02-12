@@ -1,19 +1,19 @@
 # Nearsoft Car Pooling app
 
-Executive Summary
+### Executive Summary
 Corporate web system to share your travel by car to and from work
 
-The problem
-The carpooling app matches you with  drivers at the tap of a button. Just request and go.
+### The problem
+In many business employees travel with their own car to work, there are no more parking spaces and  the city traffic gets worst
 
-Solution
-Corporate web system to share your travel by car to and from work
+### Solution
+Create a web and mobile application to share rides with co-workers.
 
-Goal for the prototype
-Develop the events feature with: Routes and rides
+### Goal for the prototype
+Develop the events and rides features, people will able to get a lift to their workplace!
 
 
-User Description
+### User Description
 For internal use of Nearsoft employees
 
 
@@ -45,12 +45,12 @@ $ grunt install
 
 #### Run carpooling app
 
-*execute the next command to run the app *
+*execute the next command to run the app*
 ```sh
 $ npm start
 ```
 
-*Open your browser at*
+*Open your browser at:*
 ```sh
 http://localhost:3000/
 ```
