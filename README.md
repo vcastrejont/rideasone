@@ -1,7 +1,7 @@
 # Nearsoft Car Pooling app
 
 ### Executive Summary
-Corporate web system to share your car to and from work.
+Corporate web system to share your car ride to your workplace.
 
 ### The problem
 In many business employees travel with their own car to work, there are no more parking spaces and  the city traffic gets worst.
