@@ -11,7 +11,8 @@
         <link rel="stylesheet" href="/assets/css/app.css">
         
         <!-- Vendor scripts -->
-        <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBq4wvYrPm-S8TznZmBvUzHo9o61c9hV0o"></script>
+ 
+        <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBq4wvYrPm-S8TznZmBvUzHo9o61c9hV0o&libraries=places"></script>
         <script src="/components/angular/angular.js"></script>
         <script src="/components/jquery/dist/jquery.min.js"></script>
         <script src="/components/angularjs-geolocation/dist/angularjs-geolocation.min.js"></script>
@@ -20,8 +21,9 @@
         <!-- App scripts -->
           <script src="/app/app.js"></script>
           <script src="/app/services/gservice.js"></script>
+          <script src="/app/services/mapservice.js"></script>
           <script src="/app/header/headerCtrl.js"></script>
-          <script src="/app/myroutes/myRoutesCtrl.js"></script>
+          <script src="/app/events/eventsCtrl.js"></script>
     </head>
     <body>
       <div class="container-fluid" role="main">

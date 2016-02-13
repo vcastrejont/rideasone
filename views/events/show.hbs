@@ -1,0 +1,117 @@
+
+<h3>New event</h3>
+<div class="container" ng-controller="eventsCtrl">
+    <div class="alert alert-danger text-center" role="alert" ng-show="apiError">
+        <b>API Error : </b>
+        <span>{{ apiStatus }}</span>
+    </div>
+    <div class="alert alert-success text-center" role="alert" ng-show="apiSuccess">
+        <p>Event saved! </p>
+    </div>
+    <div class="row">
+      
+      <div class="col-md-4">
+        <h4>Event location</h4>
+  
+          
+        <form name="resForm" class="form-horizontal" novalidate 
+        ng-submit="send()">
+            <div class="form-group">
+                <label for="resName" class="col-xs-3 control-label">Name</label>
+                <p style="margin:5px 15px; float:left">
+                    {{name}}
+                </p>
+            </div>
+            <div class="form-group">
+                <label for="resLat" class="col-xs-3 control-label">Location</label>
+                <div class="col-xs-9">
+                    {{location}}
+                </div>
+            </div>
+            
+            
+            <h4>Event details</h4>
+            <div class="form-group">
+                <label for="resName" class="col-xs-3 control-label">Title</label>
+                <p style="margin:5px 15px; float:left">
+                  Friday party
+                </p>
+            </div>
+            <div class="form-group">
+                <label for="resName" class="col-xs-3 control-label">Date</label>
+                <p style="margin:5px 15px; float:left">
+                  Today
+                </p>
+            </div>
+            <div class="form-group">
+                <label for="resName" class="col-xs-3 control-label">Hour</label>
+                <p style="margin:5px 15px; float:left">
+                  8:00 pm
+                </p>
+            </div>
+            
+          
+              <h4>Attendance</h4>
+              
+        
+              <div class="form-group">
+                  <label for="resName" class="col-xs-6 control-label">Are you going?</label>
+                  <div class="col-xs-6">
+                    <div class="checkbox">
+                    <label>
+                      <input type="checkbox"> Yes
+                    </label>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="form-group">
+                  <label for="resName" class="col-xs-6 control-label">Can you share a ride?</label>
+                  <div class="col-xs-6">
+                    <div class="checkbox">
+                    <label>
+                      <input type="checkbox"> Of course
+                    </label>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="form-group">
+                  <label for="resName" class="col-xs-6 control-label">How many seats available you <br>have in your car?</label>
+                  <div class="col-xs-6">
+                    <div class="checkbox">
+                    <label>
+                      <input type="checkbox">1
+                    </label>
+                    <label>
+                      <input type="checkbox">2
+                    </label>
+                    <label>
+                      <input type="checkbox">3
+                    </label>
+                    <label>
+                      <input type="checkbox">4
+                    </label>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="form-group">
+                  <div class="col-xs-offset-3 col-xs-9">
+                      <button class="btn btn-success" 
+                      ng-disabled="resForm.$invalid">Save </button>
+                  </div>
+              </div>
+        </form>
+        
+    
+      </div>
+      <div class="col-md-8">
+        <div id="map"></div>
+      </div>
+    </div>
+    
+        
+    
+</div>
+    

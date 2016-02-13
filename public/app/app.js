@@ -1,1 +1,5 @@
-var app = angular.module('carPoolingApp', ['headerCtrl','myRoutesCtrl']);
+angular.module('carPoolingApp', [
+  'geolocation',
+  'gservice',
+  'mapService'
+]);

@@ -25,6 +25,26 @@ router.get('/new', function(req, res) {
 });
 
 /*
+ * GET
+ */
+router.get('/show/:id', function(req, res) {
+    var id = req.params.id;
+    locationModel.findOne({_id: id}, function(err, location){
+        if(err) {
+            return res.json(500, {
+                message: 'Error getting location.'
+            });
+        }
+        if(!location) {
+            return res.json(404, {
+                message: 'No such location'
+            });
+        }
+        res.render('events/show',location); 
+    });
+});
+
+/*
  * Update
  */
 router.post('/:id', function(req, res) {

@@ -12,13 +12,13 @@ angular.module('gservice', [])
         var locations = [];
 
         // Variables we'll use to help us pan to the right spot
-        var lastMarker;
-        var currentSelectedMarker;
+        var lastMarker, currentSelectedMarker;
 
         // User Selected Location (initialize to center of America)
-        var selectedLat = 39.50;
-        var selectedLong = -98.35;
+        var selectedLat = 29.08;
+        var selectedLong = -110.985;
 
+      
         // Functions
         // --------------------------------------------------------------
         // Refresh the Map with new data. Takes three parameters (lat, long, and filtering results)
@@ -111,7 +111,7 @@ angular.module('gservice', [])
 
                 // Create a new map and place in the index.html page
                 var map = new google.maps.Map(document.getElementById('map'), {
-                    zoom: 3,
+                    zoom: 13,
                     center: myLatLng
                 });
             }
@@ -171,7 +171,7 @@ angular.module('gservice', [])
 
                 // Create a new red bouncing marker and move to it
                 lastMarker = marker;
-                map.panTo(marker.position);
+                //map.panTo(marker.position);
 
                 // Update Broadcasted Variable (lets the panels know to change their lat, long values)
                 googleMapService.clickLat = marker.getPosition().lat();

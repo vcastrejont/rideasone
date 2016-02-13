@@ -34,12 +34,14 @@
           </div>
           <div class="row">
             <div class="col-sm-4">
-              <p class="title">{{#events}}{{name}}{{/events}}</p>
+              <p class="title">
+                <a href="/events/show/{{_id}}">{{#events}}{{name}}{{/events}}</a> 
+              </p>
               <p style="line-height:30px">9:00 pm</p>
               <p>Attendee: 50 Available seats: 15 </p>
             </div>
             <div class="col-sm-8 text-right">
-              <p class="logo"><img src="assets/img/venues/venue3.png" alt="Applebee's" /></p>
+              
               <p><a href="{{url}}"> {{name}}</a></p>
               <p>{{address}}</p>
             </div>
