@@ -24,6 +24,14 @@ router.post('/', function(req, res) {
 });
 
 /*
+ * POST
+ */
+router.post('/event', function(req, res) {
+    locationController.addEvent(req, res);
+});
+
+
+/*
  * PUT
  */
 router.put('/:id', function(req, res) {

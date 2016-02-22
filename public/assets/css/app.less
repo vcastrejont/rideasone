@@ -3,30 +3,35 @@
 @import url(http://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700);
 @import url(https://fonts.googleapis.com/css?family=Open+Sans:400,300,600);
 @import url(homer.css);
-@colorbg:   #EEF2F4 ;
+@colorbg:   #fff ;
 @colorblue: #00BDF0;
 body {
-  background-color: @colorbg;
+  background: #f3f3f3; /* Old browsers */
+
+}
+#content{
+
+    padding-top: 20px;
 }
 header{
     font: 14px "Roboto", Helvetica, Arial, sans-serif;
-    background-color: #292E3D;
-    color: #fff;
-    margin-bottom: 20px;
+    background-color: #fff;
+    color: #333;
+  
     padding: 0;
     
     ul{
-      margin: 0;
+      margin: 0 0 0 50px;
       padding: 0;
       li{
         display: inline-block;
         a{
-           transition:.5s;
+          transition:.5s;
           font-size: 18px;
-          color:#fff;
+          color:#333;
           font-weight: 200;
-          padding: 20px 15px 12px 15px;
-          border-bottom: 4px solid #292E3D;
+          padding: 20px 20px 12px 20px;
+          border-bottom: 4px solid #fff;
           display: block;
           margin: 0;
           text-decoration: none;
@@ -35,7 +40,7 @@ header{
           }
           &:hover{
             text-decoration: none;
-            color:#fff;
+            color:@colorblue;
             border-bottom: 4px solid @colorblue;
           }
           
@@ -46,7 +51,7 @@ header{
     }
     .logo{
       //padding-bottom: 10px;
-      background-color: #4E525F;
+      
       padding: 7px 0 7px 30px;
       line-height: 13px;
       h1{
@@ -56,13 +61,13 @@ header{
         margin: 0;
         
         a{
-          color:#fff;
+          color:#333;
           text-decoration: none;
         }
         
       }
       span{
-        color:#fff;
+        color:#333;
         font-size: 14px ;
         font-family: 'Open Sans', sans-serif;
         font-weight: 100;
@@ -153,10 +158,84 @@ h3{
 }
 h4{
   font-weight: normal;
+  margin: 0 0 10px 0;
 }
 
 
 #map { 
-    height: 400px;
-    margin: 10px 0;
+    height: 214px;
+}
+
+.controls {
+  margin-top: 10px;
+  border: 1px solid transparent;
+  border-radius: 2px 0 0 2px;
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  height: 32px;
+  outline: none;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+#pac-input {
+  background-color: #fff;
+  font-family: Roboto;
+  font-size: 15px;
+  font-weight: 300;
+  margin-left: 12px;
+  padding: 0 11px 0 13px;
+  text-overflow: ellipsis;
+  width: 300px;
+}
+
+#pac-input:focus {
+  border-color: #4d90fe;
+}
+
+.pac-container {
+  font-family: Roboto;
+}
+
+#type-selector {
+  color: #fff;
+  background-color: #4d90fe;
+  padding: 5px 11px 0px 11px;
+}
+
+#type-selector label {
+  font-family: Roboto;
+  font-size: 13px;
+  font-weight: 300;
+}
+
+.box{
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 0px 3px rgba(0,0,0,0.1);
+  padding: 10px 30px;
+}
+.alert{
+  padding: 10px;
+}
+.nomargin{
+  margin: 0
+}
+@-webkit-keyframes fade-out {
+  0% { opacity: 1; -webkit-transform: scale(1);}
+  85% {opacity: 1; -webkit-transform: scale(1.05);}
+  100% {-webkit-transform: scale(.1); opacity: 0; }
+}
+
+.fade-out {
+    -webkit-animation: fade-out .5s ease-in;
+    -webkit-animation-fill-mode: forwards;
+    -webkit-animation-iteration-count: 1;
+    opacity: 1;
+    -webkit-animation-delay: 1.0s;
+  
+}
+
+
+.uib-timepicker{
+  margin-top:-20px
 }

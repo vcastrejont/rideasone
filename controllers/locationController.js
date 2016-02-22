@@ -97,6 +97,35 @@ module.exports = {
             });
         });
     },
+    
+    
+        /**
+         * locationController.addEvent()
+         */
+        addEvent: function(req, res) {
+          console.log(req);
+            var id = req.body.id;
+            var event= {
+              name: req.body.name,
+							description: req.body.description,
+							datetime: req.body.datetime,
+              category: req.body.category
+            }
+            locationModel.update({ "_id": id },
+              {$push: { "events": event }},
+              function(err, numAffected) {
+                if(err) {
+                  return res.json(500, {
+                      message: 'Error saving location',
+                      error: err
+                  });
+                }else { 
+                  return res.json(numAffected);
+                }});
+      
+      
+        },
+        
 
     /**
      * locationController.remove()
