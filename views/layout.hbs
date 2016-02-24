@@ -17,6 +17,7 @@
         <script src="/components/jquery/dist/jquery.min.js"></script>
         <script src="/components/angularjs-geolocation/dist/angularjs-geolocation.min.js"></script>
         <script src="/components/angular-bootstrap/ui-bootstrap-tpls.min.js"></script>
+        <script src="/components/moment/min/moment-with-locales.min.js"></script>
         
         
         <!-- Front end app scripts -->
@@ -25,6 +26,7 @@
           <script src="/app/services/mapservice.js"></script>
           <script src="/app/controllers/headerCtrl.js"></script>
           <script src="/app/controllers/eventsCtrl.js"></script>
+          <script src="/app/controllers/eventsNewCtrl.js"></script>
           <script src="/app/controllers/settingsCtrl.js"></script>
     </head>
     <body>
@@ -32,12 +34,12 @@
         <header ng-controller="headerCtrl" >
           <div class="container">
             <div class="row">
-              <div class="col-xs-2 logo">
+              <div class="col-sm-3 logo">
                 <img src="/assets/img/logo.svg" style="float:left; margin-right:10px" />
                 <h1><a ui-sref="home">Carpooling</a></h1>
                 <span><strong>nearsoft</strong> labs</span>
               </div>
-              <div class="col-xs-8 menu">
+              <div class="col-sm-7 menu">
                 <ul>
                   <li><a ui-sref="myroutes" >My routes</a></li>
                   <li><a ui-sref="getaride">Get a ride</a></li>
@@ -45,7 +47,7 @@
                   <li><a ui-sref="settings" >Settings</a></li>
                 </ul>
               </div>
-              <div class="col-xs-2 user">
+              <div class="col-sm-2 user">
                 <p><span ng-bind="firstName + ' ' +lastName"></span></p>
                 <p><a href="#">Logout</a></p>
               </div>
@@ -68,6 +70,9 @@
           
           <div ui-view></div>
         </section>
+        <footer >
+          Nearsoft labs
+        </footer>
 
   </body>
 </html>

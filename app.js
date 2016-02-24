@@ -7,9 +7,7 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var config = require('./config/config');
-var locations = require('./routes/locations');
 var api = require('./routes/api');
-var events = require('./routes/events');
 
 
 //  Database  
@@ -39,13 +37,11 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // Routes
 // ------------------------------------------------------
-app.use('/locations', locations);
-app.use('/api', api);
-app.use('/events', events);
 
 app.get('/', function(req, res, next) {
   res.render('home', { title: 'Lorem ipsum' });
 });
+app.use('/api', api);
 
 // error handlers
 // ------------------------------------------------------

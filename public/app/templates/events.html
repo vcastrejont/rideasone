@@ -1,0 +1,62 @@
+<div class="container box bg" id="events" >
+  <header class="row">
+    <div class="col-md-3">
+      <h1>Events</h1>
+    </div>
+    <div class="col-md-9 text-right" >
+      <a ui-sref="events.new"  class="btn btn-primary"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Create event</a>
+    </div>
+  </header>
+  <main class="row">
+          <aside class="col-sm-2 filters" >
+            <h4>Filters</h4>
+            <ul>
+              <li>Hermosillo</li>
+              <li>Chiuahua</li>
+              <li>Mexico city</li>
+            </ul>
+          </aside>
+          
+          <div class="col-sm-10 list"  >
+          <table class="table table-condensed  ">
+            <thead>
+              <tr>
+                <th>
+                  Event name
+                </th>
+                <th>
+                  Date
+                </th>
+                <th>
+                  Venue
+                </th>
+                <th>
+                  Organizer
+                </th>
+                <th>
+                  Atendees
+                </th>
+                <th>
+                  Seats
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr ng-repeat="event in events">
+                <td>{{event.name}}</td>
+                <td>{{event.created_at | date:'shortDate'}}</td>
+                <td>Pistones</td>
+                <td>Victor Castrejon</td>
+                <td>20</td>
+                <td>7</td>
+              </tr>
+            </tbody>
+          </table>
+          
+            
+            
+          </div>
+    
+  </main>
+
+</div>
