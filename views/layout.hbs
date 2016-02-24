@@ -11,20 +11,21 @@
         <link rel="stylesheet" href="/assets/css/app.css">
         
         <!-- Vendor scripts -->
- 
         <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBq4wvYrPm-S8TznZmBvUzHo9o61c9hV0o&libraries=places"></script>
         <script src="/components/angular/angular.js"></script>
+        <script src="/components/angular-ui-router/release/angular-ui-router.min.js"></script>
         <script src="/components/jquery/dist/jquery.min.js"></script>
         <script src="/components/angularjs-geolocation/dist/angularjs-geolocation.min.js"></script>
         <script src="/components/angular-bootstrap/ui-bootstrap-tpls.min.js"></script>
         
         
-        <!-- App scripts -->
+        <!-- Front end app scripts -->
           <script src="/app/app.js"></script>
           <script src="/app/services/gservice.js"></script>
           <script src="/app/services/mapservice.js"></script>
-          <script src="/app/header/headerCtrl.js"></script>
-          <script src="/app/events/eventsCtrl.js"></script>
+          <script src="/app/controllers/headerCtrl.js"></script>
+          <script src="/app/controllers/eventsCtrl.js"></script>
+          <script src="/app/controllers/settingsCtrl.js"></script>
     </head>
     <body>
     
@@ -33,15 +34,15 @@
             <div class="row">
               <div class="col-xs-2 logo">
                 <img src="/assets/img/logo.svg" style="float:left; margin-right:10px" />
-                <h1><a href="/">Carpooling</a></h1>
+                <h1><a ui-sref="home">Carpooling</a></h1>
                 <span><strong>nearsoft</strong> labs</span>
               </div>
               <div class="col-xs-8 menu">
                 <ul>
-                  <li><a href="/myroutes" {{#if menu1}}class="sel"{{/if}}>My routes</a></li>
-                  <li><a href="/rides" {{#if menu2}}class="sel"{{/if}}>Get a ride</a></li>
-                  <li><a href="/events" {{#if menu3}}class="sel"{{/if}}>Events</a></li>
-                  <li><a href="/settings" {{#if menu4}}class="sel"{{/if}}>Settings</a></li>
+                  <li><a ui-sref="myroutes" >My routes</a></li>
+                  <li><a ui-sref="getaride">Get a ride</a></li>
+                  <li><a ui-sref="events" >Events</a></li>
+                  <li><a ui-sref="settings" >Settings</a></li>
                 </ul>
               </div>
               <div class="col-xs-2 user">
@@ -65,10 +66,8 @@
               
           </div>
           
-          {{{body}}}
+          <div ui-view></div>
         </section>
-        
-  
-    
+
   </body>
 </html>
