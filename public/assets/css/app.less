@@ -41,14 +41,16 @@ header{
           display: block;
           margin: 0;
           text-decoration: none;
-          &.sel{
+          &.active{
             color:@colorblue;
+            text-decoration: none;
           }
           &:hover{
             text-decoration: none;
             color:@colorblue;
             border-bottom: 4px solid @colorblue;
           }
+        
           
         
            
@@ -224,11 +226,11 @@ footer{
   padding: 0;
   margin-bottom: 10px;
   &.bg{
-    background-color: #f0f0f0;
+    background-color: #F3F3F3;
   }
   header{
     background-color: #fff;
-    padding: 20px 20px; 
+    padding: 15px 20px; 
     border-radius: 4px 4px 0 0 ;
     margin:0;
     h1{
@@ -236,7 +238,16 @@ footer{
     }
   }
   main{
-     padding: 20px 30px;
+     padding: 20px 50px 0 50px;
+  }
+  footer{
+    background-color: #F3F3F3;
+    padding: 20px 0;
+    .cancel{
+      margin-right:20px;
+      color:#333;
+      
+    }
   }
   
 }
@@ -260,11 +271,35 @@ h4{
   margin: 0 0 10px 0;
 }
 
-
+.btn{
+    border-radius: 3px;
+    text-transform: uppercase;
+    font-weight: 500;
+    font-size: 13px;
+    font-family: 'Raleway', sans-serif;
+    font-weight:200;
+  &.btn-primary{
+    background-color: #1fbad6;
+    border: 1px solid #1fbad6;
+    &:hover{
+      background-color: #4cc8de;
+    border-color: #4cc8de;
+    }
+  }  
+  &.btn-sucess{
+    background-color: #709B15;
+    border: 1px solid #709B15;
+    &:hover{
+      //background-color: #4cc8de;
+      //border-color: #4cc8de;
+    }
+  }  
+}
 // --------- Misc -----------
 
 .alert{
-  padding: 10px;
+  padding: 8px;
+  margin: 0;
 }
 .nomargin{
   margin: 0

@@ -8,33 +8,45 @@ var app = angular.module('carPoolingApp', [
 
 app.config(function($stateProvider, $urlRouterProvider) {
   $urlRouterProvider.otherwise('/');
+  var home = {
+    name: 'home',
+    url: '^/',
+    templateUrl: "app/templates/index.html"
+  },
+  myroutes = {
+    name: 'myroutes',
+    url: '/myroutes',
+    templateUrl: "app/templates/myroutes.html"  
+  },
+  getaride = {
+    name: 'getaride',
+    url: '^/getaride',
+    templateUrl: "app/templates/getaride.html"  
+  },
+  events = {
+    name: 'events',
+    url: '^/events',
+    templateUrl: "app/templates/events.html",
+    controller: eventsCtrl
+  },
+  eventsNew = {
+    name: 'events-new',
+    url: '^/events/new',
+    templateUrl: "app/templates/events.new.html",
+    controller: eventsNewCtrl
+  },
+  settings = {
+    name: 'settings',
+    url: "/settings",
+    templateUrl: 'app/templates/settings.html',
+    controller: settingsCtrl
+  };
+    
   $stateProvider
-  .state("home", {
-      url: "/",
-      templateUrl: "app/templates/index.html"
-    })
-    .state('myroutes', {
-      url: "/myroutes",
-      templateUrl: "app/templates/myroutes.html"
-    })
-    .state('getaride', {
-      url: "/getaride",
-      templateUrl: "app/templates/getaride.html"
-    })
-    .state('events', {
-      url: "/events",
-      templateUrl: "app/templates/events.html",
-      controller: eventsCtrl
-    })
-    .state('events.new', {
-      url: "/events/new",
-      templateUrl: "app/templates/events.new.html",
-      controller: eventsNewCtrl
-    })
-    .state('settings', {
-      url: "/settings",
-      templateUrl: "app/templates/settings.html",
-      controller: settingsCtrl
-    })
-
+  .state(home)
+  .state(myroutes)
+  .state(getaride)
+  .state(events)
+  .state(eventsNew)
+  .state(settings);
 });

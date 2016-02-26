@@ -1,13 +1,15 @@
 angular.module('carPoolingApp').controller('eventsNewCtrl', eventsNewCtrl);
 
-eventsNewCtrl.$inject = ['$scope', '$http', 'mapService' ];
+eventsNewCtrl.$inject = ['$scope', '$http', 'mapService',  '$state' ];
 
-function eventsNewCtrl ($scope, $http, mapService) {
+function eventsNewCtrl ($scope, $http, mapService, $state) {
       $scope.location = {};
-      $scope.event = {};
+      $scope.event = {
+        date: new Date()
+      };
       $scope.displayDate= false;
       
-    
+      
       var options = {
           center: new google.maps.LatLng(29.0729673, -110.95591),
           zoom: 13,
@@ -40,7 +42,6 @@ function eventsNewCtrl ($scope, $http, mapService) {
       function fillInAddress() {
       
         var place = autocomplete.getPlace();
-        console.log(place);
         $scope.location.address=place.formatted_address;
         $scope.location.place_id=place.place_id;
         $scope.location.lat=place.geometry.location.lat();
@@ -107,7 +108,7 @@ function eventsNewCtrl ($scope, $http, mapService) {
            place_id: $scope.location.place_id,
         };
       
-        $http.post("/locations", locationData).success(function(res, status) {
+        $http.post("/api/locations", locationData).success(function(res, status) {
           if(res.message === "saved"){
             console.log(res._id);
             var eventData = {
@@ -117,11 +118,11 @@ function eventsNewCtrl ($scope, $http, mapService) {
               datetime      : $scope.event.date,
               category      : $scope.event.category
             };
-            $http.post("/locations/event", eventData).success(function(res, status) {
+            $http.post("/api/locations/event", eventData).success(function(res, status) {
               if(res.ok){
                  $scope.apiSuccess = true;
                  setTimeout(function () {
-                   window.location.href = "/events";
+                    $state.go('events');
                  }, 2000); 
               }  
             });

@@ -13,11 +13,12 @@ router.post('/settings', settingsController.update);
 // ----Events --------
 router.get('/events', eventsController.list);
 // ----Locations --------
-router.get('/', locationController.list);
-router.get('/:id', locationController.show);
-router.post('/', locationController.create);
-router.put('/:id', locationController.update);
-router.delete('/:id', locationController.remove);
+router.get('/locations', locationController.list);
+router.get('/location/:id', locationController.show);
+router.post('/locations', locationController.create);
+router.put('/locations/:id', locationController.update);
+router.delete('/locations/:id', locationController.remove);
+router.post('/locations/event', locationController.addEvent);
 
 
 module.exports = router;
