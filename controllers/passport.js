@@ -36,8 +36,6 @@ module.exports = function(passport) {
 			callbackURL	 : '/auth/google/callback',
       profileFields: ['id', 'emails', 'birthday']
 		}, function(accessToken, refreshToken, profile, done) {
-      console.log(profile);
-			
 			User.findOne({provider_id: profile.id}, function(err, user) {
 				if(err) throw(err);
 				if(!err && user!= null) return done(null, user);
