@@ -1,5 +1,6 @@
-
-<h2 class="text-center">D'oh! {{error.status}} {{message}}</h2>
+<%- include('header') -%>
+<section id="error" class="container">
+<h4 class="text-center">D'oh! <%=error.status%> <%=message%></h4>
 <div id="homer" >
         <div class="head">
             
@@ -57,4 +58,6 @@
 			    </div>
 			</div>
                     </div>
-<pre>{{error.stack}}</pre>
+<pre><%=error.stack%></pre>
+</section>
+<% include footer %>
