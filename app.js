@@ -10,6 +10,7 @@ var config    = require('./config/config');
 var api       = require('./routes/api');
 var passport  = require('passport');
 var session   = require('express-session');
+var MongoStore = require('connect-mongo')(session);
 var routes = require('./routes/routes');
 
 require('./controllers/passport')(passport);
@@ -37,9 +38,14 @@ app.use(cookieParser());
 
 app.use(require('less-middleware')(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, 'public')));
-app.use(session({ secret: 'nscarpooling' })); // session secret
+
+app.use(session({
+    secret: "secret nscarpooling",
+    store: new MongoStore({
+       mongooseConnection:  mongoose.connection})
+  }));  
 app.use(passport.initialize());
-app.use(passport.session()); // persistent login sessions
+app.use(passport.session()); 
 
 
 // Routes

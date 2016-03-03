@@ -45,26 +45,34 @@ module.exports = {
      * locationController.create()
      */
     create: function(req, res) {
-        var location = new locationModel({			       name : req.body.name,
-             location : req.body.location,
-             place_id : req.body.place_id
-        });
-        console.log("---location----");
-        console.log(location);
-        location.save(function(err, location){
-            if(err) {
-                return res.json(500, {
-                    message: 'Error saving location',
-                    error: err
-                });
-            }
-            console.log("---location save id:----");
-            console.log(location._id);
-            return res.json({
-                message: 'saved',
-                _id: location._id
+      var newLocation = new locationModel({		       name : req.body.name,
+           location : req.body.location,
+           place_id : req.body.place_id,
+           address : req.body.address
+      });
+      console.log(newLocation);
+      
+      locationModel.findOne({place_id: req.body.place_id}, function(err, location){
+          if(err) {
+              return res.json(500, {
+                  message: 'Error getting location.'
+              });
+          }
+          if(!location) {
+            newLocation.save(function(err, location){
+                if(err) {
+                    return res.json(500, {
+                        message: 'Error saving location',
+                        error: err
+                    });
+                }
+              
+                return res.status(200).json(location);
             });
-        });
+          }
+      
+          return res.status(200).json(location);
+      });
     },
 
     /**
@@ -100,37 +108,6 @@ module.exports = {
                 return res.json(location);
             });
         });
-    },
-    
-    
-    /**
-     * locationController.addEvent()
-     */
-    addEvent: function(req, res) {
-      var id = req.body.id;
-      var event= {
-        name: req.body.name,
-				description: req.body.description,
-				datetime: req.body.datetime,
-        category: req.body.category,
-        organizer: req.user.name,
-				organizer_id: req.user.id
-      }
-      console.log("---event----");
-      console.log(event);
-      console.log(id);
-      locationModel.update({ "_id": id },
-        {$push: { "events": event }},
-        function(err, numAffected) {
-          if(err) {
-            return res.json(500, {
-                message: 'Error saving location',
-                error: err
-            });
-          }else { 
-            return res.json(numAffected);
-          }
-      });
     },
     /**
      * locationController.remove()
