@@ -1,6 +1,5 @@
 var settingModel = require('../models/settingModel.js');
 
-
 module.exports = {
 
     show: function(req, res) {

@@ -10,15 +10,18 @@ router.get('/', function(req, res) {
 // ----Settings ------
 router.get('/settings', settingsController.show);
 router.post('/settings', settingsController.update);
+
 // ----Events --------
 router.get('/events', eventsController.list);
+router.post('/events', eventsController.create);
+
 // ----Locations --------
 router.get('/locations', locationController.list);
 router.get('/location/:id', locationController.show);
 router.post('/locations', locationController.create);
 router.put('/locations/:id', locationController.update);
 router.delete('/locations/:id', locationController.remove);
-router.post('/locations/event', locationController.addEvent);
+
 
 
 module.exports = router;
