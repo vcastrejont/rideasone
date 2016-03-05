@@ -204,4 +204,52 @@ angular.module('carpooling.controllers', [])
 
 .controller('SettingsCtrl', function($scope) {
 
+})
+
+.controller('LoginCtrl', function($scope, $http, $location, $cordovaInAppBrowser, $rootScope) {
+    var callbackURI = "http://localhost:3000/auth/google/callback";
+
+    if (typeof String.prototype.startsWith != 'function') {
+        String.prototype.startsWith = function (str){
+            return this.indexOf(str) == 0;
+        };
+    }
+
+    $scope.login = function() {
+        var ref = $cordovaInAppBrowser.open(
+          'https://accounts.google.com/o/oauth2/auth?client_id=' + clientId +
+          '&redirect_uri=' + callbackURI +
+          '&scope=https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile' +
+          '&approval_prompt=force&response_type=code&access_type=offline',
+          '_blank');
+
+          $rootScope.$on('$cordovaInAppBrowser:loadstart', function(e, event) {
+            console.log("sdsf");
+            // if((event.url).startsWith(callbackURI)) {
+            //     requestToken = (event.url).split("code=")[1];
+            //     $http({
+            //       method: "post",
+            //       url: "https://accounts.google.com/o/oauth2/token",
+            //       data: "client_id=" + clientId +
+            //             "&client_secret=" + clientSecret +
+            //             "&redirect_uri=" + callbackURI +
+            //             "&grant_type=authorization_code" +
+            //             "&code=" + requestToken })
+            //         .success(function(data) {
+            //             accessToken = data.access_token;
+            //             $location.path("/secure");
+            //         })
+            //         .error(function(data, status) {
+            //             alert("ERROR: " + data);
+            //         });
+            //     ref.close();
+            // }
+          });
+    };
+})
+
+.controller('SecureCtrl', function($scope, $http) {
+
+    $scope.accessToken = accessToken;
+
 });
