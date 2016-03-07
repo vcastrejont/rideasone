@@ -1,5 +1,3 @@
-var requestToken = "";
-var accessToken = "";
 var clientId = "764821343773-cjpf8lnubnnmjrupiu8oen4vsacgcq9n.apps.googleusercontent.com";
 var clientSecret = "5sAsJshpCHf_s4Tzk17_7nTK";
 
@@ -21,7 +19,7 @@ angular.module('carpooling', ['ionic', 'ngCordova', 'carpooling.controllers', 'c
   });
 })
 
-.config(function($stateProvider, $urlRouterProvider, $cordovaInAppBrowserProvider) {
+.config(function($stateProvider, $urlRouterProvider) {
   $stateProvider
 
     .state('app', {
@@ -108,27 +106,8 @@ angular.module('carpooling', ['ionic', 'ngCordova', 'carpooling.controllers', 'c
             controller: 'LoginCtrl'
           }
         }
-    })
-
-    .state('app.secure', {
-        url: '/secure',
-        'menuContent': {
-          templateUrl: 'templates/secure.html',
-          controller: 'SecureCtrl'
-        }
     });
 
-    var defaultOptions = {
-      location: 'no',
-      clearcache: 'no',
-      toolbar: 'no'
-    };
-
-    document.addEventListener(function () {
-
-      $cordovaInAppBrowserProvider.setDefaultOptions(options)
-
-    }, false);
   // if none of the above states are matched, use this as the fallback
   $urlRouterProvider.otherwise('/app/map');
 });

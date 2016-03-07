@@ -207,13 +207,8 @@ angular.module('carpooling.controllers', [])
 })
 
 .controller('LoginCtrl', function($scope, $http, $location, $cordovaInAppBrowser, $rootScope) {
-    var callbackURI = "http://localhost:3000/auth/google/callback";
-
-    if (typeof String.prototype.startsWith != 'function') {
-        String.prototype.startsWith = function (str){
-            return this.indexOf(str) == 0;
-        };
-    }
+    var callbackURI = "http://localhost:3000/auth/google/callback",
+        backendRoute = "http://localhost:3000/#/";
 
     $scope.login = function() {
         var ref = $cordovaInAppBrowser.open(
@@ -223,33 +218,14 @@ angular.module('carpooling.controllers', [])
           '&approval_prompt=force&response_type=code&access_type=offline',
           '_blank');
 
-          $rootScope.$on('$cordovaInAppBrowser:loadstart', function(e, event) {
-            console.log("sdsf");
-            // if((event.url).startsWith(callbackURI)) {
-            //     requestToken = (event.url).split("code=")[1];
-            //     $http({
-            //       method: "post",
-            //       url: "https://accounts.google.com/o/oauth2/token",
-            //       data: "client_id=" + clientId +
-            //             "&client_secret=" + clientSecret +
-            //             "&redirect_uri=" + callbackURI +
-            //             "&grant_type=authorization_code" +
-            //             "&code=" + requestToken })
-            //         .success(function(data) {
-            //             accessToken = data.access_token;
-            //             $location.path("/secure");
-            //         })
-            //         .error(function(data, status) {
-            //             alert("ERROR: " + data);
-            //         });
-            //     ref.close();
-            // }
-          });
+        $rootScope.$on('$cordovaInAppBrowser:loadstart', function(e, event) {
+          if(event.url === backendRoute) {
+              $cordovaInAppBrowser.close();
+          }
+        });
+
+        $rootScope.$on('$cordovaInAppBrowser:exit', function(e, event) {
+          $route.reload();
+        });
     };
-})
-
-.controller('SecureCtrl', function($scope, $http) {
-
-    $scope.accessToken = accessToken;
-
 });
