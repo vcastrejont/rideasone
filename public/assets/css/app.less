@@ -3,6 +3,7 @@
 @import url(http://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700);
 @import url(https://fonts.googleapis.com/css?family=Open+Sans:400,300,600);
 @import url(homer.css);
+@import url(animate.css);
 @colorbg:   #fff ;
 @colorblue: #00BDF0;
 body {
@@ -240,8 +241,9 @@ footer{
     }
   }
   main{
-     padding: 20px 50px 0 50px;
-      min-height: 150px;
+     padding: 20px 30px 10px 30px;
+    min-height: 150px;
+    margin: 0;
   }
   footer{
     background-color: #F3F3F3;
@@ -334,6 +336,56 @@ h4{
     }
   }  
 }
+
+
+// --------- Show ----------
+.show{
+  p{
+    margin:0 0 20px 0;
+    font-size: 18px;
+    legend{
+      font-size: 12px;
+      margin: 0;
+      font-family: 'Raleway', sans-serif;
+      text-transform: uppercase;
+    
+    }
+    
+    &.tellmore{
+      margin: 0 0 10px 0;
+      
+    }
+  }
+  select{
+    height: 30px;
+    padding: 6px;
+    margin: 5px 0 15px 20px;
+    width: 90%
+  }
+  .cancel{
+    font-size: 14px;
+    color:#333;
+    margin-right: 10px;
+  }
+  .radio{
+    margin-bottom: 10px;
+  }
+  .subtitle{
+    font-size: 14px;
+    margin: 10px 0 0 0;
+    text-align: center;
+  }
+  .signmeup{
+    transition: all 2s ease-in-out;
+    label{
+      color:#333;
+      &:hover{
+        color:#333;
+      }
+    }
+  }
+  
+}
 // --------- Misc -----------
 
 #error{
@@ -343,6 +395,9 @@ h4{
 .alert{
   padding: 8px;
   margin: 0;
+}
+a[ng-click]{
+    cursor: pointer;
 }
 .nomargin{
   margin: 0

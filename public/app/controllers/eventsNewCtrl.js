@@ -98,34 +98,36 @@ function eventsNewCtrl ($scope, $http, mapService, $state) {
      infowindow.open(map, marker);
    });
 
-
-
   $scope.save = function() {
+
+    var eventData = {
+      location      : [$scope.location.lng, $scope.location.lat ],
+      address       : $scope.location.address,
+      place         : $scope.location.place,
+      place_id      : $scope.location.place_id,
+      name          : $scope.event.title,
+      description   : $scope.event.description,
+      category      : $scope.event.category,
+      datetime      : $scope.event.date
+    };
+    $http.post("/api/events", eventData).then(function(response) {
+       $scope.apiSuccess = true;
+       setTimeout(function () {
+          $state.go('events');
+       }, 2000); 
+    });
+    /*
     var locationData = {
        name: $scope.location.place,
        location: [$scope.location.lng, $scope.location.lat ],
        place_id: $scope.location.place_id,
        address : $scope.location.address
     };
-  
     $http.post("/api/locations", locationData).then(function (response) {
-      var eventData = {
-        location_id   : response.data._id,
-        place         : $scope.location.place,
-        place_id      : $scope.location.place_id,
-        name          : $scope.event.title,
-        description   : $scope.event.description,
-        datetime      : $scope.event.date,
-        category      : $scope.event.category
-      };
-      $http.post("/api/events", eventData).then(function(response) {
-         $scope.apiSuccess = true;
-         setTimeout(function () {
-            $state.go('events');
-         }, 2000); 
-      });
+      
     }, function (response) {
       console.error(response)
     });
+    */
   };
 }

@@ -3,7 +3,8 @@ var Schema   = mongoose.Schema;
 var ObjectId = Schema.ObjectId;
 
 var eventSchema = new Schema({
-  location_id    : ObjectId,
+  location			: {type: [Number], required: true}, // [Long, Lat]
+  address 			 : String,
   place          : String,
   place_id       : String,
 	organizer_id   : ObjectId,
@@ -13,8 +14,9 @@ var eventSchema = new Schema({
 	category       : String,
   datetime       : Date,
   tags           : [{tag: String }],
-  atendees	     : [{
+  attendees	     : [{
                   user_id  : ObjectId,
+                  user     : String,
                   lift     : Boolean, // They need a lift? (Optional)
 									n_seats  : Number,
 									passanger: [{user_id :ObjectId, name: String}],

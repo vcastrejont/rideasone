@@ -29,8 +29,14 @@ app.config(function($stateProvider, $urlRouterProvider) {
     templateUrl: "app/templates/events.html",
     controller: eventsCtrl
   },
+  eventShow = {
+    name: 'eventshow',
+    url: '^/event/show/:id',
+    templateUrl: "app/templates/events.show.html",
+    controller: eventsShowCtrl
+  },
   eventsNew = {
-    name: 'events-new',
+    name: 'eventsnew',
     url: '^/events/new',
     templateUrl: "app/templates/events.new.html",
     controller: eventsNewCtrl
@@ -47,6 +53,7 @@ app.config(function($stateProvider, $urlRouterProvider) {
   .state(myroutes)
   .state(getaride)
   .state(events)
+  .state(eventShow)
   .state(eventsNew)
   .state(settings);
 });

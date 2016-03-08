@@ -12,8 +12,18 @@ router.get('/settings', settingsController.show);
 router.post('/settings', settingsController.update);
 
 // ----Events --------
+//      List events
 router.get('/events', eventsController.list);
+//      Create a new event
 router.post('/events', eventsController.create);
+//      Show an event
+router.get('/event/:id', eventsController.show);
+//      Update an event
+router.put('/events/:id', eventsController.update);
+//      Delete an event
+router.delete('/events/:id', eventsController.remove);
+
+
 
 // ----Locations --------
 router.get('/locations', locationController.list);
