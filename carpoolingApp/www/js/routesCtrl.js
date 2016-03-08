@@ -1,4 +1,4 @@
-angular.module('carpooling.controllers.routes', [])
+angular.module('carpooling.controllers')
 
 .controller('RoutesCtrl', function($scope) {
 

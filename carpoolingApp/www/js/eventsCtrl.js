@@ -1,4 +1,4 @@
-angular.module('carpooling.controllers.events', [])
+angular.module('carpooling.controllers')
 
 .controller('EventsCtrl', function($scope, carpoolingData) {
   $scope.events = carpoolingData;
