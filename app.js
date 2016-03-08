@@ -14,7 +14,7 @@ var MongoStore = require('connect-mongo')(session);
 var routes = require('./routes/routes');
 
 require('./controllers/passport')(passport);
-//  Database  
+//  Database
 // ------------------------------------------------------
 var mongoose = require('mongoose');
 mongoose.connect(config.database);
@@ -43,9 +43,9 @@ app.use(session({
     secret: "secret nscarpooling",
     store: new MongoStore({
        mongooseConnection:  mongoose.connection})
-  }));  
+  }));
 app.use(passport.initialize());
-app.use(passport.session()); 
+app.use(passport.session());
 
 
 // Routes
@@ -54,8 +54,10 @@ app.use('/', routes);
 app.use('/api', api);
 app.get('/auth/google', passport.authenticate('google',{ scope: [ 'email','profile']}));
 app.get('/auth/google/callback', passport.authenticate('google',{ successRedirect: '/', failureRedirect: '/login' }));
-
-
+//
+// app.get('/auth/google/callback', passport.authenticate('google'), function(req, res) {
+//   res.redirect("http://10.11.12.1:8100/#/app/?userID=" + req.user._id);
+// });
 
 // error handlers
 // ------------------------------------------------------

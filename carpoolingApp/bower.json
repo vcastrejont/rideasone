@@ -6,6 +6,7 @@
     "ngCordova": "~0.1.24-alpha"
   },
   "dependencies": {
-    "ngCordova": "~0.1.24-alpha"
+    "ngCordova": "~0.1.24-alpha",
+    "ng-cordova-oauth": "^0.2.3"
   }
 }
