@@ -1,4 +1,96 @@
-angular.module('carpooling', ['ionic', 'ngCordova', 'carpooling.controllers', 'carpooling.data'])
+angular.module('carpooling', ['ionic', 'ngCordova', 'ngCordovaOauth', 'carpooling.controllers', 'carpooling.data'])
+
+.constant("clientId", "764821343773-cjpf8lnubnnmjrupiu8oen4vsacgcq9n.apps.googleusercontent.com")
+.constant("clientSecret", "5sAsJshpCHf_s4Tzk17_7nTK")
+
+.factory('AuthService', function (clientId, $cordovaOauth, ProfileAPIService) {
+  var authService = {};
+
+  authService.login = function() {
+    return $cordovaOauth.google(clientId, ["email", "profile"])
+    .then(function(response) {
+        if(response !== undefined && response.access_token !== undefined) {
+          return ProfileAPIService.getProfile(response.access_token);
+        }
+    }, function(error) {
+        alert("Error -> " + error);
+    });
+  };
+
+  authService.isAuthenticated = function() {
+    return !!Session.userId;
+  };
+
+  return authService;
+})
+
+.factory('ProfileAPIService', function ($http, Session) {
+  var profileAPIService = {};
+
+  profileAPIService.getProfile = function(accessToken) {
+    var url = 'https://www.googleapis.com/plus/v1/people/me?access_token=' + accessToken;
+
+    return $http.get(url)
+    .then(function(response) {
+      Session.create(response.data.id, response.data.displayName, response.data.emails[0].value);
+      return Session.get();
+    },
+    function(error) {
+      return null;
+    });
+  };
+
+  return profileAPIService;
+})
+
+.factory('UserService', function ($http, Session) {
+  var profileAPIService = {};
+
+  profileAPIService.getProfile = function(accessToken) {
+    var url = 'https://www.googleapis.com/plus/v1/people/me?access_token=' + accessToken;
+
+    return $http.get(url)
+    .then(function(response) {
+      Session.create(response.data.id,
+        response.data.displayName,
+        response.data.emails[0].value,
+        response.data.imageUrl
+      );
+
+      return Session.get();
+    },
+    function(error) {
+      return null;
+    });
+  };
+
+  return profileAPIService;
+})
+
+.service('Session', function () {
+  this.create = function (userId, userName, userEmail, userImage) {
+    this.userId = userId;
+    this.userName = userName;
+    this.userEmail = userEmail;
+    this.userImage = userImage;
+  };
+
+  this.get = function () {
+    return {
+      userId: this.userId,
+      userName: this.userName,
+      userEmail: this.userEmail,
+      userImage: this.userImage
+    }
+  };
+
+  this.destroy = function () {
+    this.userId = null;
+    this.userName = null;
+    this.userEmail = null;
+    this.userImage = null;
+  };
+})
 
 .run(function($ionicPlatform) {
   $ionicPlatform.ready(function() {
@@ -19,12 +111,12 @@ angular.module('carpooling', ['ionic', 'ngCordova', 'carpooling.controllers', 'c
 .config(function($stateProvider, $urlRouterProvider) {
   $stateProvider
 
-    .state('app', {
-      url: '/app',
-      abstract: true,
-      templateUrl: 'templates/menu.html',
-      controller: 'AppCtrl'
-    })
+  .state('app', {
+    url: '/app',
+    abstract: true,
+    templateUrl: 'templates/menu.html',
+    controller: 'AppCtrl'
+  })
 
     .state('app.profile', {
       url: '/profile',
@@ -94,7 +186,17 @@ angular.module('carpooling', ['ionic', 'ngCordova', 'carpooling.controllers', 'c
         }
       }
     })
+
+    .state('app.login', {
+        url: '/login',
+        views: {
+          'menuContent': {
+            templateUrl: 'templates/auth.html',
+            controller: 'LoginCtrl'
+          }
+        }
+    });
+
   // if none of the above states are matched, use this as the fallback
   $urlRouterProvider.otherwise('/app/map');
 });
-
