@@ -28,7 +28,7 @@ angular.module('carpooling.services', [])
         id: data.id,
         name: data.displayName,
         email: data.emails[0].value,
-        image: imageUrl + "?sz=30"
+        image: imageUrl + "?sz=40"
       };
 
       return user;

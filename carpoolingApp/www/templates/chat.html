@@ -1,18 +1,12 @@
 <ion-view view-title="Chat" class="light-grey">
- 	<!-- <ion-nav-bar class="bar-dark">
-      <ion-nav-buttons side="right">
-        <button class="button button-clear icon ion-android-more-vertical right8" ng-click="chatCtrl.openPopover($event)">
-        </button>
-      </ion-nav-buttons>
- 	</ion-nav-bar> -->
  	<ion-content has-bouncing="true" class="content">
 	  <div ng-show="connected">
   	 	<div class="log pad2">Welcome to Carpooling Chat</div>
-  	 	<div class="log">{{number_message}}</div>
+  	 	<div class="log">{{strParticipants}}</div>
 	  </div>
 	  <div>
         <ul>
-        	<li ng-class="{'message':message.style,'log':!message.style}"  ng-repeat="message in messages" >
+        	<li ng-class="{'message':message.style,'log':!message.style}" ng-repeat="message in messages" >
         		<span ng-show="message.style" ng-style="{color:message.color}" >{{message.username}} : </span >{{message.content}}
         	</li>
         </ul>
