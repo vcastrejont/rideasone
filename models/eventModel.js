@@ -17,11 +17,16 @@ var eventSchema = new Schema({
   attendees	     : [{
                   user_id  : ObjectId,
                   user     : String,
-                  lift     : Boolean, // They need a lift? (Optional)
-									n_seats  : Number,
-									passanger: [{user_id :ObjectId, name: String}],
+                  lift     : Boolean, // They need a lift?
 		              comments : String
-                  }],									
+                  }],
+  carpooling     : [{
+                  driver_id  : ObjectId,
+                  driver     : String,
+                  seats      : Number,
+                  passanger: [{user_id :ObjectId, name: String}],
+                  comments : String
+                  }],               									
 	created_at		: {type: Date, default: Date.now},
 	updated_at		: {type: Date, default: Date.now}
 });

@@ -1,16 +1,19 @@
 angular.module('carPoolingApp').controller('eventsShowCtrl', eventsShowCtrl);
 
-eventsShowCtrl.$inject = ['$scope', '$http', '$state' ];
+eventsShowCtrl.$inject = ['$scope', '$http', '$state' ,'$window'];
 
-function eventsShowCtrl ($scope, $http,  $state) {
+function eventsShowCtrl ($scope, $http,  $state, $window) {
   $scope.id = $state.params.id
-
   $scope.view= {
-    n_seats: "",
+    seats: "",
+    driver:"",
     signmeup: true,
-    signMeUp:function(){
-      this.signmeup = !this.signmeup;
+    option:1,
+    user:{
+      id: $window.user_id,
+      name: $window.user_name,
     },
+    apiSuccess : false,
     showMap:function(){
       var myLatLng = {lat: this.event.location[1],lng: this.event.location[0]};
       var options = {
@@ -25,7 +28,7 @@ function eventsShowCtrl ($scope, $http,  $state) {
       var marker = new google.maps.Marker({
         position: myLatLng,
         map: map,
-        title: 'Hello World!'
+        title: ''
       });
       
       var infowindow = new google.maps.InfoWindow({
@@ -37,31 +40,67 @@ function eventsShowCtrl ($scope, $http,  $state) {
       infowindow.open(map, marker);
     },
     clearOptions:function(){
-      this.n_seats = "";	
+      this.seats = "";	
       this.driver = "";
     },
-    saveData:function(){
-      var eventData = {
-        n_seats : this.n_seats
-      };
-      $http.put('/api/events/'+$scope.id, eventData).then(function(response) {
+    deleteEvent:function(){
+      $http.delete('/api/event/'+$scope.id).then(function(response) {
+        $state.go('events');
+      }, function(response) {
+        console.log('Error: ' + response);
+      });	
+    },
+    signMeUp:function(){
+      var eventData = {};
+      $http.put('/api/event/signup/'+$scope.id, eventData).then(function(response) {
+          self.apiSuccess = true;
+          setTimeout(function () {
+             $scope.$apply(function()
+              {
+                self.apiSuccess  = false;
+              });
+          }, 2000); 
             console.log(response);
         }, function(response) {
             console.log('Error: ' + response);
       });	
+    },
+    confirm:function(){
+      var self = this;
+      var eventData = {
+        option : this.option,
+        seats  : this.seats,
+        driver : this.driver
+      };
+      console.log(eventData);
+      if(this.option!==1){
+        $http.put('/api/events/'+$scope.id, eventData).then(function(response) {
+              console.log(response);
+              self.apiSuccess = true;
+              setTimeout(function () {
+                 $scope.$apply(function()
+                  {
+                    self.apiSuccess  = false;
+                  });
+              }, 2000); 
+          }, function(response) {
+              console.log('Error: ' + response);
+        });	
+      }
+  
     }
     
   };
 
   //Todo create a service for this
   $http.get('/api/event/'+$scope.id).then(function(response) {
-        console.table(response);
-        $scope.view.event= response.data;
+        //console.table(response);
+        $scope.view.event = response.data;
+        $scope.view.event.lift = _.where(response.data.attendees, {lift: true});
         $scope.view.showMap();
     }, function(response) {
         console.error('Error: ' + response.data);
   });
-    
     
   
   

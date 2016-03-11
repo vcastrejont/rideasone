@@ -5,7 +5,6 @@ var app = angular.module('carPoolingApp', [
   'ui.router'
 ]);
 
-
 app.config(function($stateProvider, $urlRouterProvider) {
   $urlRouterProvider.otherwise('/');
   var home = {

@@ -18,11 +18,14 @@ router.get('/events', eventsController.list);
 router.post('/events', eventsController.create);
 //      Show an event
 router.get('/event/:id', eventsController.show);
+//      Event sign up
+router.put('/event/signup/:id', eventsController.signup);
 //      Update an event
 router.put('/events/:id', eventsController.update);
 //      Delete an event
-router.delete('/events/:id', eventsController.remove);
-
+router.delete('/event/:id', eventsController.remove);
+//      Driver available for  an event
+router.get('/events/drivers/:id', eventsController.drivers);
 
 
 // ----Locations --------
