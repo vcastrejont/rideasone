@@ -27,6 +27,26 @@ angular.module('carpooling', [
       // org.apache.cordova.statusbar required
       StatusBar.styleDefault();
     }
+
+    // $rootScope.$on( '$stateChangeStart', function(e, to, toParams, from, fromParams) {
+    //   if(!$scope.isAuthenticated) {
+    //     console.log('$stateChangeStart: ', to);
+    //
+    //     // if (!authorized) {
+    //     //   console.log('$stateChangeStart: ', authorized);
+    //     //   // User is not permitted into this area
+    //     //   // Kick back to login
+    //     //   e.preventDefault();
+    //     //   $state.go('home.default', {}, { notify: true });
+    //     // }
+    //   }
+    //
+    //   $rootScope.$broadcast('AppController::startLoad', {to: to, from: from});
+    //
+    // });
+    //
+    // $rootScope.$on( '$stateChangeError', function(e, to, toParams, from, fromParams) {});
+    // $rootScope.$on( '$stateChangeSuccess', function(e, to, toParams, from, fromParams) {});
   });
 })
 

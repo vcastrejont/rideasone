@@ -61,9 +61,9 @@ io.on('connection', function (socket) {
     socket.user = newUser;
     users.push(socket.user);
     addedUser = true;
+    $scope.connected = true;
     socket.emit('login', users);
 
-    console.log(users);
     // echo globally (all clients) that a person has connected
     socket.broadcast.emit('user joined', {
       username: socket.user.name,

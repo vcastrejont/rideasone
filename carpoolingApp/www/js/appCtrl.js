@@ -10,15 +10,6 @@ function AppCtrl($scope, AuthService, $location, $rootScope, $state, ProfileAPIS
 
   $scope.isAuthenticated = false;
 
-  $rootScope.$watch(function() {
-    return $location.path();
-  },
-  function(url){
-    if(!$scope.isAuthenticated && url != "app/login") {
-      $location.path("app/login");
-    }
-  });
-
   $scope.login = function() {
     AuthService.login()
     .then(function (response) {
