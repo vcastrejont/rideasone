@@ -4,6 +4,7 @@
       <ion-nav-back-button>
       </ion-nav-back-button>
 
+
       <ion-nav-buttons side="left">
         <button class="button button-icon button-clear ion-navicon" menu-toggle="left">
         </button>
@@ -18,25 +19,38 @@
     </ion-header-bar>
     <ion-content>
       <ion-list>
-        <!--<ion-item menu-close ng-click="login()">-->
-          <!--Login-->
-        <!--</ion-item>-->
         <!--<ion-item menu-close href="#/app/profile">-->
           <!--Profile-->
         <!--</ion-item>-->
-        <ion-item menu-close href="#/app/events">
+        <ion-item ng-if="isAuthenticated" menu-close ui-sref="app.map">
+          Home
+        </ion-item>
+        <ion-item ng-if="isAuthenticated" menu-close ng-click="login()">
+          Login
+        </ion-item>
+        <ion-item ng-if="isAuthenticated" menu-close href="#/app/events">
           Events
         </ion-item>
-        <ion-item menu-close href="#/app/my-routes">
+        <ion-item ng-if="isAuthenticated" menu-close href="#/app/my-routes">
           My routes
         </ion-item>
-        <ion-item menu-close href="#/app/search">
+        <ion-item ng-if="isAuthenticated" menu-close href="#/app/search">
           Get a ride
         </ion-item>
-        <ion-item menu-close href="#/app/map">
-          Home
+        <ion-item ng-if="isAuthenticated" menu-close href="#/app/chat">
+          Chat
+        </ion-item>
+        <ion-item ng-if="isAuthenticated" menu-close ng-click="logout()">
+          Logout
         </ion-item>
       </ion-list>
     </ion-content>
   </ion-side-menu>
+
+  <ion-footer-bar align-title="center" class="bar bar-footer">
+      <a href="#" class="chat-avatar">
+        <img ng-src="{{isAuthenticated ? currentUser.image : '/img/bird.png'}}" alt="">
+      </a>
+    <span class="username">{{currentUser.name}}</span>
+  </ion-footer-bar>
 </ion-side-menus>

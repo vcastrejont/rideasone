@@ -29,30 +29,28 @@ module.exports = function(passport) {
     });
   });
 
+	passport.use(new GoogleStrategy({
+		clientID			: config.google.key,
+		clientSecret	: config.google.secret,
+		callbackURL	 : '/auth/google/callback',
+    profileFields: ['id', 'emails', 'birthday']
+	}, function(accessToken, refreshToken, profile, done) {
+		User.findOne({provider_id: profile.id}, function(err, user) {
+			if(err) throw(err);
+			if(!err && user!= null) return done(null, user);
 
-		passport.use(new GoogleStrategy({
-			clientID			: config.google.key,
-			clientSecret	: config.google.secret,
-			callbackURL	 : '/auth/google/callback',
-      profileFields: ['id', 'emails', 'birthday']
-		}, function(accessToken, refreshToken, profile, done) {
-			User.findOne({provider_id: profile.id}, function(err, user) {
-				if(err) throw(err);
-				if(!err && user!= null) return done(null, user);
-        
-				var user = new User({
-          
-					provider_id	: profile.id,
-					provider		: profile.provider,
-					name			  : profile.displayName,
-					photo				: profile.photos[0].value,
-          email       : profile.emails[0].value 
-				});
-				user.save(function(err) {
-					if(err) throw err;
-					done(null, user);
-				});
+			var user = new User({
+				provider_id	: profile.id,
+				provider		: profile.provider,
+				name			  : profile.displayName,
+				photo				: profile.photos[0].value,
+        email       : profile.emails[0].value
 			});
-		}));
+			user.save(function(err) {
+				if(err) throw err;
+				done(null, user);
+			});
+		});
+	}));
 
 };

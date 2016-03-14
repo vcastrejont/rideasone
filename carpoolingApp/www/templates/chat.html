@@ -1,0 +1,25 @@
+<ion-view view-title="Chat" class="light-grey">
+ 	<ion-content has-bouncing="true" class="content">
+	  <div ng-show="connected">
+  	 	<div class="log pad2">Welcome to Carpooling Chat</div>
+  	 	<div class="log">{{strParticipants}}</div>
+	  </div>
+	  <div>
+        <ul>
+        	<li ng-class="{'message':message.style,'log':!message.style}" ng-repeat="message in messages" >
+        		<span ng-show="message.style" ng-style="{color:message.color}" >{{message.username}} : </span >{{message.content}}
+        	</li>
+        </ul>
+	  </div>
+	</ion-content>
+	<div class="list light-grey bottommsg">
+		<div class="item item-input-inset light-grey">
+		  <label class="item-input-wrapper line-light-grey nopadtop">
+		    <input class="line-light-grey" ng-change="updateTyping()" type="text" placeholder="Type your message" ng-enter="sendMessage()" ng-model="message">
+		  </label>
+		  <div class="divsend">
+			    <button class="button button-positive ion-android-send iconsend" ng-click="sendMessage()"></button>
+		  </div>
+		</div>
+	</div>
+ </ion-view>

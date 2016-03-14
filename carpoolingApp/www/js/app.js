@@ -1,4 +1,18 @@
-angular.module('carpooling', ['ionic', 'ngCordova', 'carpooling.controllers', 'carpooling.data'])
+angular.module('carpooling', [
+  'ionic',
+  'ngCordova',
+  'ngCordovaOauth',
+  'carpooling.controllers',
+  'carpooling.services',
+  'carpooling.directives',
+  'carpooling.data',
+  'ngSanitize',
+  'btford.socket-io'
+])
+
+.constant("clientId", "764821343773-cjpf8lnubnnmjrupiu8oen4vsacgcq9n.apps.googleusercontent.com")
+.constant("clientSecret", "5sAsJshpCHf_s4Tzk17_7nTK")
+
 
 .run(function($ionicPlatform) {
   $ionicPlatform.ready(function() {
@@ -19,12 +33,12 @@ angular.module('carpooling', ['ionic', 'ngCordova', 'carpooling.controllers', 'c
 .config(function($stateProvider, $urlRouterProvider) {
   $stateProvider
 
-    .state('app', {
-      url: '/app',
-      abstract: true,
-      templateUrl: 'templates/menu.html',
-      controller: 'AppCtrl'
-    })
+  .state('app', {
+    url: '/app',
+    abstract: true,
+    templateUrl: 'templates/menu.html',
+    controller: 'AppCtrl'
+  })
 
     .state('app.profile', {
       url: '/profile',
@@ -94,7 +108,26 @@ angular.module('carpooling', ['ionic', 'ngCordova', 'carpooling.controllers', 'c
         }
       }
     })
-  // if none of the above states are matched, use this as the fallback
-  $urlRouterProvider.otherwise('/app/map');
-});
 
+    .state('app.login', {
+        url: '/login',
+        views: {
+          'menuContent': {
+            templateUrl: 'templates/auth.html'
+          }
+        }
+    })
+
+    .state('app.chat', {
+      url: '/chat',
+      views: {
+        'menuContent': {
+          templateUrl: "templates/chat.html",
+          controller: 'ChatCtrl'
+        }
+      }
+    });
+
+  // if none of the above states are matched, use this as the fallback
+  $urlRouterProvider.otherwise('/app/login');
+});
