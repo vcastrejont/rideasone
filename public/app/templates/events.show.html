@@ -1,113 +1,102 @@
 <div class="container box bg" id="events" >
   <header class="row">
-    <div class="col-md-3">
+    <div class="col-md-5">
       <h1>Events</h1>
     </div>
-    
-    <div class="col-md-9 text-right" ng-show="view.user.id == view.event.organizer_id" >
+    <div class="col-md-2 alerts">
+      <p ng-repeat="alert in view.alerts" >{{alert.msg}}</p>
+    </div>
+
+    <div class="col-md-5 text-right" ng-show="view.user.id == view.event.organizer_id" >
       <a href="#" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> Edit  </a>
       <a ng-click="view.deleteEvent()" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span> Delete</a>
     </div>
   </header>
   <main class="row show">
-          <aside class="col-sm-3">
-            <div id="map">
-              
-            </div>
-          </aside>
-          
-          <div class="col-sm-9">
-            <div class="row">
-              <div class="col-md-4">
-                <p><legend>Event name</legend>
-                  {{view.event.name}}
-                </p>
-                
-                <p><legend>Date</legend>
-                  {{view.event.datetime | date:'shortDate'}}
-                </p>
-                <p><legend>Time</legend>
-                  {{view.event.datetime | date:'shortTime'}}
-                </p>
-                <p><legend>Place</legend>
-                  {{view.event.place}}
-                </p>
-                
-              </div>
-              <div class="col-md-4">
-                <p><legend>Organizer</legend>
-                  {{view.event.organizer}}
-                </p>
-              
-                <p><legend>category</legend>
-                  {{view.event.category}}&nbsp;
-                </p>
-                <p><legend>Atendees</legend>
-                  {{view.event.attendees.length}}
-                </p>
-                <p><legend>Looking for a ride</legend>
-               {{view.event.lift.length}} 
-                </p>
-              </div>
-              <div class="col-md-4">
-                
-                <p class="text-center">
-                    <a ng-click="view.signMeUp()"  class="btn btn-primary"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span> Sign me up!</a>
-                  
-                </p>
-                <div class="signmeup" ng-show="view.signmeup">
-                  <p class="tellmore">
-                    Please tell us:
-                  </p>  
-                    <div class="radio">
-                      <label>
-                        <input type="radio" ng-model="view.option" ng-click="view.clearOptions()" value="1" >
-                        I will drive alone
-                      </label>
-                    </div>
-                    <div class="radio">
-                    <label>
-                      <input type="radio" ng-model="view.option"  ng-click="view.clearOptions()" value="2">
-                      I will drive and I can share
-                    </label>
-                    
-                    <select class="form-control"  ng-model="view.seats"  ng-show="view.option == 2" >
-                      <option value="1">1 seat </option>
-                      <option value="2">2 seats</option>
-                      <option value="3">3 seats</option>
-                      <option value="4">4 seats</option>
-                      <option value="5">5 seats</option>
-                    </select>
-                    </div> 
-                    <div class="radio">
-                    <label>
-                      <input type="radio" ng-model="view.option" ng-click="view.clearOptions()" value="3">
-                      I need a lift!
-                    </label>
-                    <p class="subtitle" ng-show="view.option == 3">Please pick a car:</p>
-                    <select class="form-control" ng-model="view.driver" ng-show="view.option == 3" >
-                      <option value="" selected="">Continue looking for a lift</option >
-                      <option ng-repeat="car in view.event.carpooling" value="{{car.driver_id}}">{{car.driver}} ({{car.seats}} seats avail)</option >
-                    </select>
-                    </div> 
-                    <p class="text-center">
-                      <a ng-click="view.cancel()"  class="cancel">Cancel</a>
-                      <a ng-click="view.confirm()" class="btn btn-primary"></span>Confirm</a>
-                    </p>
-                </div>
-              </div>
-            </div>
-          </div>
-    
-  </main>
-  <footer class="text-center">
-    <div ng-show="view.apiSuccess">
-      <div class="alert alert-success">
-        Event saved successfully
+    <div class="row col-md-8">
+      <div class="col-sm-6">
+        <p><legend>Event name</legend>
+          {{view.event.name}}
+        </p>
+        
+        <p><legend>Date</legend>
+          {{view.event.datetime | date:'shortDate'}}
+        </p>
+        <p><legend>Time</legend>
+          {{view.event.datetime | date:'shortTime'}}
+        </p>
+        <p><legend>Place</legend>
+          {{view.event.place}}
+        </p>
+        
       </div>
+      <div class="col-sm-6">
+        <p><legend>Organizer</legend>
+          {{view.event.organizer}}
+        </p>
+
+        <p><legend>category</legend>
+          {{view.event.category}}&nbsp;
+        </p>
+        <p><legend>Atendees </legend>
+          <span class="profiles">
+            <span ng-repeat="user in view.event.attendees" >
+                <img src="{{user.photo}}" title="{{user.user}}" class="profile-small" tooltip-placement="top" uib-tooltip="{{user.user}}"/>
+            </span>
+          </span>
+        </p>
+        <p><legend>Looking for a ride</legend>
+       {{view.event.lift.length}} 
+        </p>
+      </div>
+      <aside class="col-sm-12">
+        <p>
+          <legend>Location</legend>
+          <div id="map">  </div>
+        </p>
+        
+      </aside>
     </div>
-  
+    <div class="col-md-4">
+        <div class="signme" ng-show="view.signed==false">
+            <a ng-click="view.signMeUp()"  class="btn btn-primary"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span> Sign me up!</a>
+        </div>
+        <div class="options" ng-show="view.signed==true">
+          <div class="youare">
+            You are signed for this event now
+          </div>
+          <label class="first option">
+            <input type="radio" name="option" ng-model="view.option" value="1">
+            <p>Do you want to share your car?</p>
+            <p class="sub"> Available seats:</p>
+            <select class="form-control"  ng-model="view.seats" >
+              <option value="1">1 seat </option>
+              <option value="2">2 seats</option>
+              <option value="3">3 seats</option>
+              <option value="4">4 seats</option>
+              <option value="5">5 seats</option>
+            </select>
+          </label>
+          <label class="second option">
+            <input type="radio" name="option" ng-model="view.option" value="2">
+            <p>Do you need a lift to the event?</p>
+            <p class="sub"> Select a ride:</p>
+            <select class="form-control" ng-model="view.driver" >
+              <option value="" selected="None for now"</option >
+              <option ng-repeat="car in view.event.carpooling" value="{{car.driver_id}}">{{car.driver}} ({{car.seats}} seats avail)</option >
+            </select> 
+          </label>
+          <div class="buttons">
+            <a ng-click="view.confirm()" class="btn btn-primary"></span>Confirm</a>
+          </div>
+          
+        </div>
+      
     
-  </footer>
+    </div>
+    
+         
+  </main>
+  
 
 </div>

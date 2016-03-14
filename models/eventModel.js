@@ -15,16 +15,17 @@ var eventSchema = new Schema({
   datetime       : Date,
   tags           : [{tag: String }],
   attendees	     : [{
-                  user_id  : ObjectId,
-                  user     : String,
-                  lift     : Boolean, // They need a lift?
-		              comments : String
+                  user_id   : ObjectId,
+                  user      : String,
+                  photo     : String,
+                  lift      : Boolean, // They need a lift?
+		              comments  : String
                   }],
   carpooling     : [{
                   driver_id  : ObjectId,
                   driver     : String,
                   seats      : Number,
-                  passanger: [{user_id :ObjectId, name: String}],
+                  passanger: [{user_id :ObjectId, name: String, photo : String}],
                   comments : String
                   }],               									
 	created_at		: {type: Date, default: Date.now},

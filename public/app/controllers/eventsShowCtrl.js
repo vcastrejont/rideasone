@@ -5,6 +5,8 @@ eventsShowCtrl.$inject = ['$scope', '$http', '$state' ,'$window'];
 function eventsShowCtrl ($scope, $http,  $state, $window) {
   $scope.id = $state.params.id
   $scope.view= {
+    alerts:[],
+    signed:false,
     seats: "",
     driver:"",
     signmeup: true,
@@ -51,14 +53,12 @@ function eventsShowCtrl ($scope, $http,  $state, $window) {
       });	
     },
     signMeUp:function(){
-      var eventData = {};
-      $http.put('/api/event/signup/'+$scope.id, eventData).then(function(response) {
-          self.apiSuccess = true;
+      var self = this;
+      this.signed = true;
+      $http.put('/api/event/signup/'+$scope.id).then(function(response) {
+          self.alerts.push({msg: response.data.message});
           setTimeout(function () {
-             $scope.$apply(function()
-              {
-                self.apiSuccess  = false;
-              });
+             $scope.$apply(function()  {  self.closeAlert(); });
           }, 2000); 
             console.log(response);
         }, function(response) {
@@ -72,27 +72,24 @@ function eventsShowCtrl ($scope, $http,  $state, $window) {
         seats  : this.seats,
         driver : this.driver
       };
-      console.log(eventData);
-      if(this.option!==1){
-        $http.put('/api/events/'+$scope.id, eventData).then(function(response) {
-              console.log(response);
-              self.apiSuccess = true;
-              setTimeout(function () {
-                 $scope.$apply(function()
-                  {
-                    self.apiSuccess  = false;
-                  });
-              }, 2000); 
-          }, function(response) {
-              console.log('Error: ' + response);
-        });	
-      }
+      $http.put('/api/events/'+$scope.id, eventData).then(function(response) {
+            console.log(response);
+            self.alerts.push({msg: response.data.message});
+            setTimeout(function () {
+               $scope.$apply(function()  {  self.closeAlert(); });
+            }, 2000);
+        }, function(response) {
+            console.log('Error: ' + response);
+      });	
+    },
   
+    closeAlert : function(index) {
+      this.alerts.splice(index, 1);
     }
     
   };
 
-  //Todo create a service for this
+  //Load data, Todo create a service for this
   $http.get('/api/event/'+$scope.id).then(function(response) {
         //console.table(response);
         $scope.view.event = response.data;

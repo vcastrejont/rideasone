@@ -122,20 +122,27 @@ module.exports = {
               message: 'Error', error: err
           });
         }
-        if(event) {//Event  not found
-          if (req.body.option==2){//if user wants to share a ride
+        if(event) {//Event   found
+          if (req.body.option==1){//if user wants to share a ride
             var carpooling = {
               driver_id   : req.user.id,
               driver      : req.user.name,
+              driver_photo: req.user.photo,
               seats       : req.body.seats,
               comments    : req.body.comments
             }
             eventModel.update({"_id": id}, {$push: {"carpooling": carpooling}}, function(err, numAffected){
               if(err){
                   console.log(err);
+                  return res.status(500).json( {
+                      message: 'Error updating event', error: err
+                  });
               }else{
-                return res.json(numAffected);
-                console.log("Successfully added carpooling");
+                console.log(numAffected);
+                return res.status(200).json( {
+                    message: 'Successfully added!', 
+                    numAffected: numAffected
+                });
               }
             });
             
@@ -145,26 +152,29 @@ module.exports = {
               {'$set': {'attendees.$.lift': false}}, //he is not longer looking for a lift
               function(err, numAffected){
                 if(err){
-                        console.log(err);
-                        return res.json(500, {
-                            message: 'Error updating event', error: err
-                        });
+                  console.log(err);
+                  return res.status(500).json( {
+                      message: 'Error updating event', error: err
+                  });
                 }else{
                   var passanger = {
                     user_id   : req.user.id,
-                    name      : req.user.name
+                    name      : req.user.name,
+                    photo     : req.user.photo
                   }
                   eventModel.update({_id: id, 'carpooling.driver_id': req.body.driver }, 
                   {'$push': {"carpooling.$.passanger": passanger}}, //he is not longer looking for a lift
                   function(err, numAffected){
                     if(err){
-                            console.log(err);
-                            return res.json(500, {
-                                message: 'Error updating event', error: err
-                            });
+                      console.log(err);
+                      return res.status(500).json( {
+                          message: 'Error updating event', error: err
+                      });
                     }else{
-                            console.log("Successfully updated event");
-                            return res.json(event);
+                      return res.status(200).json( {
+                          message: 'Successfully added!', 
+                          numAffected: numAffected
+                      });
                     }
                   });
                 }
@@ -175,18 +185,19 @@ module.exports = {
               {'$set': {'attendees.$.lift': true}}, 
               function(err, numAffected){
                 if(err){
-                        console.log(err);
-                        return res.json(500, {
-                            message: 'Error updating event', error: err
-                        });
+                  return res.status(500).json( {
+                      message: 'Error updating event', error: err
+                  });
                 }else{
-                        console.log("Successfully updated event");
-                        return res.json(event);
+                  return res.status(200).json( {
+                      message: 'Successfully added!', 
+                      numAffected: numAffected
+                  });
                 }
               });
             }
           }  
-        }else{//Event found
+        }else{//Event not found
           return res.json(404, {message: 'No such event'});
         }
       });
@@ -200,22 +211,23 @@ module.exports = {
       var attendees = {
         user_id   : req.user.id,
         user      : req.user.name,
+        photo     : req.user.photo,
         lift      : false,
         comments  : req.body.comments
       }
       eventModel.findOne({_id: id}, function(err, event){
         if(err) {
           return res.json(500, {
-              message: 'Error quering event', error: err
+              message: 'Error accesing event', error: err
           });
         }
         if(!event) {
           return res.json(404, {message: 'No such event'});
         }
-        eventModel.findOne({"attendees.user_id": req.user.id}, function(err, attendee){ 
+        eventModel.findOne({"_id":id, "attendees.user_id": req.user.id}, function(err, attendee){ 
           if(attendee){
             console.log("Already exists");
-            return res.json(200, {message: 'Already exists'});
+            return res.json(200, {message: 'Already signed'});
           }else{
             eventModel.update({"_id": id}, {$push: {"attendees": attendees}}, function(err, numAffected){
               if(err){
