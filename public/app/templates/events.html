@@ -4,11 +4,11 @@
       <h1>Events</h1>
     </div>
     <div class="col-md-9 text-right" >
-      <a ui-sref="events-new"  class="btn btn-primary"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Create event</a>
+      <a ui-sref="eventsnew"  class="btn btn-primary"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Create event</a>
     </div>
   </header>
   <main class="row">
-          <aside class="col-sm-2 filters" >
+          <aside class="col-sm-1 filters" >
             <h4>Filters</h4>
             <ul>
               <li>Hermosillo</li>
@@ -17,38 +17,38 @@
             </ul>
           </aside>
           
-          <div class="col-sm-10 list"  >
+          <div class="col-sm-11 list"  >
           <table class="table table-condensed  ">
             <thead>
               <tr>
-                <th>
-                  Event name
-                </th>
-                <th>
-                  Date
-                </th>
-                <th>
-                  Venue
-                </th>
-                <th>
-                  Organizer
-                </th>
-                <th>
-                  Atendees
-                </th>
-                <th>
-                  Seats
-                </th>
+                <th>Event name</th>
+                <th>Date</th>
+                <th>Time</th>
+                <th>Place</th>
+                <th>Organizer</th>
+                <th>Atendees </th>
+                <th>Seats avail</th>
+                <th>Need lift</th>
               </tr>
             </thead>
             <tbody>
               <tr ng-repeat="event in events">
-                <td>{{event.name}}</td>
-                <td>{{event.created_at | date:'shortDate'}}</td>
-                <td>Pistones</td>
-                <td>Victor Castrejon</td>
-                <td>20</td>
-                <td>7</td>
+                <td><a ui-sref="eventshow({ id: event._id})">{{event.name}}</a></td>
+                <td>{{event.datetime | date:'shortDate'}}</td>
+                <td>{{event.datetime | date:'shortTime'}}</td>
+                <td>{{event.place}}</td>
+                <td>{{event.organizer}}</td>
+                <td>
+                  <span ng-repeat="user in event.attendees" >
+                      <img src="{{user.photo}}" title="{{user.user}}" class="profile-small" tooltip-placement="top" uib-tooltip="{{user.user}}"/>
+                  </span>
+                  
+                </td>
+                <!--
+                <td class="text-center">{{event.attendees.length}}</td>
+              -->
+                <td class="text-center">{{event.seats}}</td>
+                <td class="text-center">{{event.lift.length}}</td>
               </tr>
             </tbody>
           </table>

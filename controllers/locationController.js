@@ -50,8 +50,6 @@ module.exports = {
            place_id : req.body.place_id,
            address : req.body.address
       });
-      console.log(newLocation);
-      
       locationModel.findOne({place_id: req.body.place_id}, function(err, location){
           if(err) {
               return res.json(500, {
