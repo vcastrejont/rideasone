@@ -13,8 +13,6 @@ ChatCtrl.$inject = [
 function ChatCtrl($scope, socket, $sanitize, $ionicScrollDelegate, $timeout) {
 
   	var typing = false,
-        lastTypingTime,
-  	    TYPING_TIMER_LENGTH = 100,
         user = $scope.currentUser,
         COLORS = [
     	    '#e21400', '#91580f', '#f8a700', '#f78b00',
@@ -78,6 +76,7 @@ function ChatCtrl($scope, socket, $sanitize, $ionicScrollDelegate, $timeout) {
         socket.emit('new message', $scope.message);
 
     		addMessageToList(user.name, true, $scope.message);
+        typing = false;
     		socket.emit('stop typing');
 
         $scope.message = "";
@@ -87,26 +86,17 @@ function ChatCtrl($scope, socket, $sanitize, $ionicScrollDelegate, $timeout) {
   	//function called on Input Change
   	$scope.updateTyping = function() {
       if($scope.connected) {
-        if (!$scope.typing) {
-            $scope.typing = true;
+        if (!typing) {
+            typing = true;
 
             // Updates the typing event
             socket.emit('typing');
         }
-      }
-
-      lastTypingTime = (new Date()).getTime();
-
-      $timeout(function () {
-        var typingTimer = (new Date()).getTime();
-        var timeDiff = typingTimer - lastTypingTime;
-
-        if (timeDiff >= TYPING_TIMER_LENGTH && typing) {
-          socket.emit('stop typing');
+        else if($scope.message === "") {
           typing = false;
+          socket.emit('stop typing');
         }
-
-      }, TYPING_TIMER_LENGTH);
+      }
   	};
 
     // Removes the visual chat typing message

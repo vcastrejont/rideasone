@@ -9,6 +9,7 @@
         <link rel="shortcut icon" sizes="16x16 24x24 32x32 48x48 64x64" href="assets/icons/favicon.ico">
         <link rel="stylesheet" href="/components/bootstrap/dist/css/bootstrap.css">
         <link rel="stylesheet" href="/assets/css/app.css">
+        <link rel="stylesheet" href="/assets/css/chat.css">
 
         <!-- Vendor scripts -->
         <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCFTH_Sly3AHfEXLm_JsckSZaiQX8S49tk&libraries=places"></script>
@@ -37,6 +38,7 @@
           <script src="/app/controllers/settingsCtrl.js"></script>
           <script src="/app/controllers/chatCtrl.js"></script>
           <script>
+            var user=<%- JSON.stringify(user) %>;
             var user_name="<%= user.name%>";
             var user_id="<%= user.id%>";
           </script>
@@ -57,6 +59,7 @@
                   <li><a ui-sref="myroutes" ui-sref-active="active" >My routes</a></li>
                   <li><a ui-sref="getaride" ui-sref-active="active">Get a ride</a></li>
                   <li><a ui-sref="events"  ui-sref-active="active">Events</a></li>
+                  <li><a ui-sref="chat"  ui-sref-active="active">Chat</a></li>
                   <li><a ui-sref="settings"  ui-sref-active="active">Settings</a></li>
                 </ul>
               </div>

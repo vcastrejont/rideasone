@@ -57,8 +57,8 @@ function AppCtrl($scope, AuthService, $location, $rootScope, $state, ProfileAPIS
   function userFakeInit() {
     $scope.currentUser = {
       id: "214654643134567",
-      name: "Rafa",
-      email: "manrique@gmail.com",
+      name: "Foo",
+      email: "foo@bar.com",
       image: "/img/bird.png"
     };
     $scope.isAuthenticated = true;

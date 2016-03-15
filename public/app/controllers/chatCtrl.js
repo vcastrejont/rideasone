@@ -1,16 +1,18 @@
-angular.module('carPoolingApp').controller('chatCtrl', chatCtrl);
+angular.module('carPoolingApp')
+
+.controller('chatCtrl', chatCtrl);
 
 chatCtrl.$inject = [
   "$scope",
   "socketService",
-  "$timeout"
+  "$sanitize",
+  "$timeout",
+  "$window"
 ];
 
-function chatCtrl($scope, socketService, $timeout) {
+function chatCtrl($scope, socketService, $sanitize, $timeout, $window) {
   	var typing = false,
-        lastTypingTime,
-  	    TYPING_TIMER_LENGTH = 100,
-        // user = $scope.currentUser,
+        user = $window.user,
         COLORS = [
     	    '#e21400', '#91580f', '#f8a700', '#f78b00',
     	    '#58dc00', '#287b00', '#a8f07a', '#4ae8c4',
@@ -20,13 +22,61 @@ function chatCtrl($scope, socketService, $timeout) {
     $scope.messages = [];
     $scope.connected = false;
 
+  	socket.on('connect', function() {
+  	  $scope.connected = true;
+
+  	  socket.emit('add user', user);
+
+  	  // On login display welcome message
+  	  socket.on('login', function (users) {
+  	    //Set the value of connected flag
+  	    $scope.connected = true;
+        addMessageToList("", false, stringifyParticipants(users));
+  	  });
+
+      //On alreadyLoggedIn display alert message
+  	  socket.on('already logged in', function () {
+  	    alert("You have accessed in another device");
+  	  });
+
+  	  // Whenever the server emits 'new message', update the chat body
+  	  socket.on('new message', function (data) {
+  	  	if(data.message && data.username) {
+  	   		addMessageToList(data.username, true, data.message);
+  	  	}
+  	  });
+
+  	  // Whenever the server emits 'user joined', log it in the chat body
+  	  socket.on('user joined', function (data) {
+  	  	addMessageToList("", false, data.username + " joined");
+  	  	addMessageToList("", false, stringifyParticipants(data.users));
+  	  });
+
+  	  // Whenever the server emits 'user left', log it in the chat body
+  	  socket.on('user left', function (data) {
+  	    addMessageToList("", false, data.username + " left");
+  	    addMessageToList("", false, stringifyParticipants(data.users));
+  	  });
+
+  	  //Whenever the server emits 'typing', show the typing message
+  	  socket.on('typing', function (data) {
+  	    addChatTyping(data);
+  	  });
+
+  	  // Whenever the server emits 'stop typing', kill the typing message
+  	  socket.on('stop typing', function (data) {
+  	    removeChatTyping(data.username);
+  	  });
+  	});
+
   	//function called when user hits the send button
   	$scope.sendMessage = function(){
-      if($scope.message != undefined) {
-        socketService.emit('new message', $scope.message);
+      if($scope.message && $scope.message != "") {
+        socket.emit('new message', $scope.message);
 
     		addMessageToList(user.name, true, $scope.message);
-    		socketService.emit('stop typing');
+        typing = false;
+    		socket.emit('stop typing');
 
         $scope.message = "";
       }
@@ -35,26 +85,16 @@ function chatCtrl($scope, socketService, $timeout) {
   	//function called on Input Change
   	$scope.updateTyping = function() {
       if($scope.connected) {
-        if (!$scope.typing) {
-            $scope.typing = true;
-
+        if (!typing) {
+            typing = true;
             // Updates the typing event
-            socketService.emit('typing');
+            socket.emit('typing');
+        }
+        else if($scope.message === "") {
+          typing = false;
+          socket.emit('stop typing');
         }
       }
-
-      lastTypingTime = (new Date()).getTime();
-
-      $timeout(function () {
-        var typingTimer = (new Date()).getTime();
-        var timeDiff = typingTimer - lastTypingTime;
-
-        if (timeDiff >= TYPING_TIMER_LENGTH && typing) {
-          socketService.emit('stop typing');
-          typing = false;
-        }
-
-      }, TYPING_TIMER_LENGTH);
   	};
 
     // Removes the visual chat typing message
