@@ -98,7 +98,7 @@ function eventsNewCtrl ($scope, $http, mapService, $state) {
      infowindow.open(map, marker);
    });
 
-  $scope.save = function() {
+  $scope.submit = function() {
 
     var eventData = {
       location      : [$scope.location.lng, $scope.location.lat ],
@@ -111,23 +111,7 @@ function eventsNewCtrl ($scope, $http, mapService, $state) {
       datetime      : $scope.event.date
     };
     $http.post("/api/events", eventData).then(function(response) {
-       $scope.apiSuccess = true;
-       setTimeout(function () {
-          $state.go('events');
-       }, 2000); 
+      $state.go('events');
     });
-    /*
-    var locationData = {
-       name: $scope.location.place,
-       location: [$scope.location.lng, $scope.location.lat ],
-       place_id: $scope.location.place_id,
-       address : $scope.location.address
-    };
-    $http.post("/api/locations", locationData).then(function (response) {
-      
-    }, function (response) {
-      console.error(response)
-    });
-    */
   };
 }

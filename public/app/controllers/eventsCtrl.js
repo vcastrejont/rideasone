@@ -9,10 +9,15 @@ function eventsCtrl ($scope, $http) {
         _.each(data, function(element, index) {
           var event = element;
           event.seats = 0;
+          event.avail = 0;
+          event.used_seats = 0;
+          
           event.lift = _.where(element.attendees, {lift: true});
-          _.each(event.carpooling, function(element, index) {
-            event.seats += element.seats;
+          _.each(event.carpooling, function(car, index) {
+            event.seats += car.seats;
+            event.used_seats = car.passanger.length;
           });
+          event.avail = event.seats - event.used_seats;
           $scope.events.push(event);
         });
     })

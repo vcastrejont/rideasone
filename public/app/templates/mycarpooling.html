@@ -11,12 +11,12 @@
       <div class="card">
         <h2>My trips</h2>
       
-        <ul class="rides">
+        <ul class="trips">
           <li ng-repeat="ride in rides">
             <p class="title">{{ride.name}}</p>
             <p>{{ride.datetime | date:'medium'}}</p>
             <p>Place: {{ride.place}} </p>
-            <p>Passangers: <img src="{{passanger.photo}}" class="profile-small" ng-repeat="passanger in ride.carpooling[0].passanger" tooltip-placement="top" uib-tooltip="{{passanger.name}}"></p>
+            <p ng-if="ride.carpooling[0].passanger.length">Passengers: <img src="{{passanger.photo}}" class="profile-small" ng-repeat="passanger in ride.carpooling[0].passanger" tooltip-placement="top" uib-tooltip="{{passanger.name}}"></p>
             <p>Seats available: {{ride.carpooling[0].seats - ride.carpooling[0].passanger.length}} out of {{ride.carpooling[0].seats}}  </p>
           </li>
         </ul>

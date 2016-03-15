@@ -58,10 +58,10 @@
       </aside>
     </div>
     <div class="col-md-4">
-        <div class="signme" ng-show="view.signed==false">
+        <div class="signme" ng-hide="view.event.signed.length">
             <a ng-click="view.signMeUp()"  class="btn btn-primary"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span> Sign me up!</a>
         </div>
-        <div class="options" ng-show="view.signed==true">
+        <div class="options" ng-show="view.event.signed.length">
           <div class="youare">
             You are now signed up for this event!
           </div>
