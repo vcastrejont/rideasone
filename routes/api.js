@@ -3,6 +3,7 @@ var router = express.Router();
 var settingsController = require('../controllers/settingController.js');
 var eventsController = require('../controllers/eventController.js'); 
 var locationController = require('../controllers/locationController.js');
+var userController = require('../controllers/userController.js');
 router.get('/', function(req, res) {
  res.send('API list');
 });
@@ -26,6 +27,8 @@ router.put('/events/:id', eventsController.update);
 router.delete('/event/:id', eventsController.remove);
 //      Driver available for  an event
 router.get('/events/drivers/:id', eventsController.drivers);
+//      Events for a driver
+router.get('/events_driver/:id', eventsController.byDriver);
 
 
 // ----Locations --------
@@ -34,6 +37,10 @@ router.get('/location/:id', locationController.show);
 router.post('/locations', locationController.create);
 router.put('/locations/:id', locationController.update);
 router.delete('/locations/:id', locationController.remove);
+
+// ----Users --------
+router.get('/users', userController.list);
+
 
 
 

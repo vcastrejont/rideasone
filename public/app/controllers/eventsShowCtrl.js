@@ -1,6 +1,6 @@
 angular.module('carPoolingApp').controller('eventsShowCtrl', eventsShowCtrl);
 
-eventsShowCtrl.$inject = ['$scope', '$http', '$state' ,'$window'];
+eventsShowCtrl.$inject = ['$scope', '$http', '$state','$window'];
 
 function eventsShowCtrl ($scope, $http,  $state, $window) {
   $scope.id = $state.params.id

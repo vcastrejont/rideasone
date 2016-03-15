@@ -10,14 +10,14 @@ module.exports = {
      * eventController.list()
      */
     list: function(req, res) {
-        eventModel.find(function(err, events){
-            if(err) {
-                return res.json(500, {
-                    message: 'Error getting event.'
-                });
-            }
-            return res.json(events);
-        });
+      eventModel.find(function(err, events){
+          if(err) {
+              return res.json(500, {
+                  message: 'Error getting event.'
+              });
+          }
+          return res.json(events);
+      });
     },
     /**
      * eventController.show()
@@ -108,6 +108,20 @@ module.exports = {
             return;
         }
         return res.json(result);
+      });
+    },
+    /**
+     * eventController.drivers()
+     */
+    byDriver: function(req, res) {
+      var id = req.params.id;
+      eventModel.find({"carpooling.driver_id":mongoose.Types.ObjectId(id)}, function(err, events){
+          if(err) {
+              return res.json(500, {
+                  message: 'Error getting event.'
+              });
+          }
+          return res.json(events);
       });
     },
     /**

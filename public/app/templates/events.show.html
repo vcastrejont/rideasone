@@ -38,7 +38,7 @@
         <p><legend>category</legend>
           {{view.event.category}}&nbsp;
         </p>
-        <p><legend>Atendees </legend>
+        <p><legend>Attendees </legend>
           <span class="profiles">
             <span ng-repeat="user in view.event.attendees" >
                 <img src="{{user.photo}}" title="{{user.user}}" class="profile-small" tooltip-placement="top" uib-tooltip="{{user.user}}"/>
@@ -63,11 +63,11 @@
         </div>
         <div class="options" ng-show="view.signed==true">
           <div class="youare">
-            You are signed for this event now
+            You are now signed up for this event!
           </div>
           <label class="first option">
             <input type="radio" name="option" ng-model="view.option" value="1">
-            <p>Do you want to share your car?</p>
+            <p>I can offer a ride.</p>
             <p class="sub"> Available seats:</p>
             <select class="form-control"  ng-model="view.seats" >
               <option value="1">1 seat </option>
@@ -79,7 +79,7 @@
           </label>
           <label class="second option">
             <input type="radio" name="option" ng-model="view.option" value="2">
-            <p>Do you need a lift to the event?</p>
+            <p>I need a lift.</p>
             <p class="sub"> Select a ride:</p>
             <select class="form-control" ng-model="view.driver" >
               <option value="" selected="None for now"</option >

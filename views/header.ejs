@@ -29,6 +29,7 @@
           <script src="/app/controllers/eventsShowCtrl.js"></script>
           <script src="/app/controllers/eventsNewCtrl.js"></script>
           <script src="/app/controllers/settingsCtrl.js"></script>
+          <script src="/app/controllers/myCarpoolingCtrl.js"></script>
           <script>
             var user_name="<%= user.name%>";
             var user_id="<%= user.id%>";
@@ -48,7 +49,7 @@
             
               <div class="col-sm-7 menu">
                 <ul>
-                  <li><a ui-sref="myroutes" ui-sref-active="active" >My routes</a></li>
+                  <li><a ui-sref="mycarpooling" ui-sref-active="active" >My carpooling</a></li>
                   <li><a ui-sref="getaride" ui-sref-active="active">Get a ride</a></li>
                   <li><a ui-sref="events"  ui-sref-active="active">Events</a></li>
                   <li><a ui-sref="settings"  ui-sref-active="active">Settings</a></li>
