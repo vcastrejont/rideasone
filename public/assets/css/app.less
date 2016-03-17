@@ -7,17 +7,9 @@
 @colorbg:   #fff ;
 @colorblue: #00BDF0;
 body {
-
-background: #f2f2f2; /* Old browsers */
-background: -moz-linear-gradient(top,  #f2f2f2 0%, #ffffff 100%); /* FF3.6-15 */
-background: -webkit-linear-gradient(top,  #f2f2f2 0%,#ffffff 100%); /* Chrome10-25,Safari5.1-6 */
-background: linear-gradient(to bottom,  #f2f2f2 0%,#ffffff 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
-filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f2f2f2', endColorstr='#ffffff',GradientType=0 ); /* IE6-9 */
-min-height: 90vh;
-
+  background: #f3f3f3;
 }
 .content{
-
     padding-top: 20px;
 }
 header{
@@ -232,6 +224,7 @@ footer{
   box-shadow: 0 0 10px rgba(100,100,100,0.1);
   padding: 0;
   margin-bottom: 10px;
+  min-height: 400px;
   &.bg{
     background-color: #F3F3F3;
   }
@@ -259,6 +252,51 @@ footer{
     }
   }
   
+}
+
+// --------- Cards -----------
+#dashboard{
+  .card{
+    background-color: #fff;
+    border-radius: 5px;
+    padding: 10px 20px ;
+    box-shadow:1px 1px 1px 0px rgba(50, 50, 50, 0.15);
+    h2{
+      font-size: 24px;
+      font-weight: lighter;
+      margin: 0 0 20px 0;
+    }
+  }
+  .friends{
+    list-style: none;
+    padding: 0;
+    li{
+      border-bottom:1px solid #eee;
+      padding: 8px;
+    }
+  }
+  .trips{
+    list-style: none;
+    padding: 0;
+    p{
+      margin: 0 5px 0 0;
+      &.title{
+        font-weight: bold
+      }
+      img{margin-right: 3px;}
+    }
+    li{
+      border-bottom:1px solid #eee;
+      padding: 8px;
+    }
+  }
+  .events{
+    padding-left:10px;
+    li{
+      border-bottom:1px solid #eee;
+      padding: 8px;
+    }
+  }  
 }
 
 
@@ -432,6 +470,9 @@ h4{
   }
   
 }
+
+
+
 // --------- Misc -----------
 .alerts{
   text-align: left;

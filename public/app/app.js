@@ -12,6 +12,12 @@ app.config(function($stateProvider, $urlRouterProvider) {
     url: '^/',
     templateUrl: "app/templates/index.html"
   },
+  mycarpooling = {
+    name: 'mycarpooling',
+    url: '/mycarpooling',
+    templateUrl: "app/templates/mycarpooling.html"  ,
+    controller: myCarpoolingCtrl
+  },
   myroutes = {
     name: 'myroutes',
     url: '/myroutes',
@@ -49,6 +55,7 @@ app.config(function($stateProvider, $urlRouterProvider) {
     
   $stateProvider
   .state(home)
+  .state(mycarpooling)
   .state(myroutes)
   .state(getaride)
   .state(events)

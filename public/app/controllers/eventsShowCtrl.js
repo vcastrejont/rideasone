@@ -1,6 +1,6 @@
 angular.module('carPoolingApp').controller('eventsShowCtrl', eventsShowCtrl);
 
-eventsShowCtrl.$inject = ['$scope', '$http', '$state' ,'$window'];
+eventsShowCtrl.$inject = ['$scope', '$http', '$state','$window'];
 
 function eventsShowCtrl ($scope, $http,  $state, $window) {
   $scope.id = $state.params.id
@@ -94,6 +94,8 @@ function eventsShowCtrl ($scope, $http,  $state, $window) {
         //console.table(response);
         $scope.view.event = response.data;
         $scope.view.event.lift = _.where(response.data.attendees, {lift: true});
+        $scope.view.event.signed = _.where(response.data.attendees, {user_id: $scope.view.user.id});
+        console.log($scope.view.event.signed );
         $scope.view.showMap();
     }, function(response) {
         console.error('Error: ' + response.data);
