@@ -5,6 +5,23 @@ var app = angular.module('carPoolingApp', [
   'ui.router'
 ]);
 
+app.run(['$rootScope', '$location', '$window',
+  function($rootScope, $location, $window) {
+    
+    $rootScope.$on('$stateChangeSuccess',
+      function(event) {
+        if (!$window.ga) {
+          return;
+        }
+        console.log($location.path());
+        $window.ga('send', 'pageview', {
+          page: $location.path()
+        });
+      });
+  }
+]);
+
+
 app.config(function($stateProvider, $urlRouterProvider) {
   $urlRouterProvider.otherwise('/');
   var home = {
