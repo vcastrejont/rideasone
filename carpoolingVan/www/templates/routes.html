@@ -1,0 +1,21 @@
+<ion-view view-title="Routes">
+  <!-- <ion-nav-buttons side="right">
+      <button class="button button-icon ion-plus" ng-click="addRoute()"></button>
+  </ion-nav-buttons> -->
+
+  <ion-content>
+    <ion-list>
+      <ion-item ng-repeat="route in routes" ng-init="showPassengers = false" ng-click="showPassengers = !showPassengers">
+        {{route.time}}
+        <ion-option-button class="button-balanced" ng-click="showUsers(route)">
+          <i class="icon ion-plus-round"></i>
+        </ion-option-button>
+          <ion-list ng-show="showPassengers && route.passengers">
+            <ion-item ng-repeat="passenger in route.passengers">
+              {{passenger.name}}
+            </ion-item>
+          </ion-list>
+      </ion-item>
+    </ion-list>
+  </ion-content>
+</ion-view>
