@@ -6,12 +6,16 @@ angular.module('carpoolingVan')
 
   return {
     users: users,
-    patch: patch
+    update: update
   }
 
-  function patch(user, route) {
-    return $http.patch(firebaseRef + "users/" + user + ".json", {
-      "route": route
-    });
+  function update(user) {
+    var userId = user.$id,
+      user = {
+        address: user.address,
+        name: user.name
+      };
+
+    return $http.put(firebaseRef + "users/" + userId + ".json", user);
   }
 });

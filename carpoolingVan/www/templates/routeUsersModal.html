@@ -1,0 +1,24 @@
+
+  <ion-modal-view>
+    <ion-header-bar class="bar bar-dark">
+      <h1 class="title"><i class="icon ion-clock"></i>{{route.time}} passengers</h1>
+    </ion-header-bar>
+    <ion-content>
+      <ul class="list">
+        <li class="item item-toggle" ng-repeat="user in route.passengers">
+           {{user.name}}
+           <!-- <label class="toggle toggle-balanced">
+             <input type="checkbox" ng-checked="user.route == route.time"
+                ng-click="addUser(user, route)">
+             <div class="track">
+               <div class="handle"></div>
+             </div>
+           </label> -->
+        </li>
+      </ul>
+
+      <button class="button button-dark right" ng-click="closeModal()">
+        Close
+      </button>
+    </ion-content>
+  </ion-modal-view>

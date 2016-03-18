@@ -1,33 +1,48 @@
 angular.module('carpoolingVan')
 
-.controller("RidesCtrl", function($scope, RidesService) {
-  $scope.rides = RidesService.rides;
+.controller("ridesCtrl", function($scope, ridesService, routesService, $ionicModal) {
+  $scope.routes = routesService.routes;
+  $scope.showPassengers = showPassengers;
+  $scope.startRide = startRide;
 
-  $scope.addRoute = function() {
-    var time = prompt("Type the time of departure");
+  function showPassengers(route) {
+    $scope.route = route;
+    $scope.passengers = routesService.passengers(route);
 
-    if (time) {
-      $scope.routes.$add({
-        "time": time
-      });
-    }
-  };
+    $ionicModal.fromTemplateUrl('templates/routePassengersModal.html', {
+      scope: $scope,
+      animation: 'slide-in-up'
+    }).then(function(modal) {
+      $scope.modal = modal;
+      $scope.openModal();
+    });
 
-  $scope.addPassenger = function(route) {
-    var name = prompt("Type the name of the Nearsoftian");
+    $scope.openModal = function() {
+      $scope.modal.show();
+    };
+    $scope.closeModal = function() {
+      $scope.modal.hide();
+      $scope.passengers
+    };
+  }
 
-    if (name) {
-      var passengers = RoutesService.passengers(route);
+  function startRide(route) {
+    rideExists(route)
+    .then(function(exists) {
+      if(!exists) {
+        ridesService.start(route);
+        alert("OK! Let's drive");
+      }
+      else {
+        alert("Already exists");
+      }
+    });
+  }
 
-      passengers.$add({
-        "name": name
-      });
-    }
-
-    $ionicListDelegate.closeOptionButtons();
-  };
-
-  $scope.getPassengers = function(route) {
-    console.log(RoutesService.passengers(route));
-  };
+  function rideExists(route) {
+    return ridesService.checkIfExists(route)
+    .then(function(exists) {
+      return exists;
+    });
+  }
 });

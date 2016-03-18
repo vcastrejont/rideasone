@@ -9,6 +9,7 @@
         <button class="button button-icon button-clear ion-navicon" menu-toggle="left">
         </button>
       </ion-nav-buttons>
+
     </ion-nav-bar>
     <ion-nav-view name="menuContent"></ion-nav-view>
   </ion-side-menu-content>
@@ -28,16 +29,16 @@
         <ion-item ng-if="!isAuthenticated" menu-close ng-click="login()">
           Login
         </ion-item>
-        <ion-item ng-if="isAuthenticated" menu-close href="#/app/events">
+        <ion-item ng-if="isAuthenticated" menu-close ui-sref="app.events">
           Events
         </ion-item>
-        <ion-item ng-if="isAuthenticated" menu-close href="#/app/my-routes">
+        <ion-item ng-if="isAuthenticated" menu-close ui-sref="app.routes">
           My routes
         </ion-item>
-        <ion-item ng-if="isAuthenticated" menu-close href="#/app/search">
+        <ion-item ng-if="isAuthenticated" menu-close ui-sref="app.search">
           Get a ride
         </ion-item>
-        <ion-item ng-if="isAuthenticated" menu-close href="#/app/chat">
+        <ion-item ng-if="isAuthenticated" menu-close ui-sref="app.chat">
           Chat
         </ion-item>
         <ion-item ng-if="isAuthenticated" menu-close ng-click="logout()">

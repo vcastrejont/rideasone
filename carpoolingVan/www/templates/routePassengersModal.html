@@ -1,15 +1,15 @@
 
   <ion-modal-view>
-    <ion-header-bar>
-      <h1 class="title">Users</h1>
+    <ion-header-bar class="bar bar-dark">
+      <h1 class="title"><i class="icon ion-clock"></i>{{route.time}} passengers</h1>
     </ion-header-bar>
     <ion-content>
       <ul class="list">
-        <li class="item item-toggle" ng-repeat="user in users">
-           {{user.name}}
+        <li class="item item-toggle" ng-repeat="passenger in passengers">
+           {{passenger.name}}
            <label class="toggle toggle-balanced">
-             <input type="checkbox" ng-checked="user.route == route.time"
-                ng-click="addPassenger(user.$id, route.time)">
+             <input type="checkbox" ng-checked="passenger.onboard"
+                ng-click="checkPassenger(passenger, route)">
              <div class="track">
                <div class="handle"></div>
              </div>

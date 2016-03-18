@@ -7,7 +7,8 @@ angular.module('carpooling', [
   'carpooling.directives',
   'carpooling.data',
   'ngSanitize',
-  'btford.socket-io'
+  'btford.socket-io',
+  'ionic-datepicker'
 ])
 
 .constant("clientId", "764821343773-cjpf8lnubnnmjrupiu8oen4vsacgcq9n.apps.googleusercontent.com")
@@ -104,6 +105,16 @@ angular.module('carpooling', [
       views: {
         'menuContent': {
           templateUrl: 'templates/events.html',
+          controller: 'EventsCtrl'
+        }
+      }
+    })
+
+    .state('app.newevent', {
+      url: '/newevent',
+      views: {
+        'menuContent': {
+          templateUrl: "templates/newevent.html",
           controller: 'EventsCtrl'
         }
       }

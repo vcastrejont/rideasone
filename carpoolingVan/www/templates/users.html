@@ -1,7 +1,7 @@
 <ion-view view-title="Users">
   <ion-content>
     <ion-list>
-      <ion-item ng-repeat="user in users">
+      <ion-item ng-repeat="user in users" ng-click="viewInfo(user)">
         {{user.name}}
       </ion-item>
     </ion-list>

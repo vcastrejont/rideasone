@@ -1,4 +1,4 @@
-angular.module('carpoolingVan', ['ionic', 'firebase'])
+angular.module('carpoolingVan', ['ionic', 'firebase', 'ngCordova'])
 
 .run(function($ionicPlatform) {
   $ionicPlatform.ready(function() {
@@ -37,6 +37,10 @@ angular.module('carpoolingVan', ['ionic', 'firebase'])
         templateUrl: 'templates/users.html',
         controller: 'usersCtrl'
       }
+      // 'map': {
+      //   templateUrl: 'templates/map.html',
+      //   controller: 'mapCtrl'
+      // }
     }
   })
 
@@ -48,8 +52,18 @@ angular.module('carpoolingVan', ['ionic', 'firebase'])
         controller: 'routesCtrl'
       }
     }
+  })
+
+  .state('van.rides', {
+    url: '/rides',
+    views: {
+      'content': {
+        templateUrl: 'templates/rides.html',
+        controller: 'ridesCtrl'
+      }
+    }
   });
 
   // if none of the above states are matched, use this as the fallback
-  $urlRouterProvider.otherwise('/van/routes');
+  $urlRouterProvider.otherwise('van/routes');
 });

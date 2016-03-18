@@ -1,11 +1,17 @@
 <ion-view view-title="Events">
+  <ion-nav-buttons side="right">
+    <div class="buttons">
+      <a ui-sref="app.newevent" class="button icon ion-plus-round"></a>
+    </div>
+  </ion-nav-buttons>
+
   <ion-content>
     <ul class="list">
       <li class="item" ng-repeat="event in events">
         <h2>{{event.name}}</h2>
         <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Distinctio illum possimus quisquam repudiandae rerum!
         Consequatur distinctio dolorum eos, iure molestiae omnis perferendis quos repellat, repellendus soluta unde veritatis vero voluptatem.</p>
-        <a href="#/app/events/{{event._id}}">Detalles</a>         
+        <a href="#/app/events/{{event._id}}">Detalles</a>
       </li>
     </ul>
     <div ng-repeat="event in events">

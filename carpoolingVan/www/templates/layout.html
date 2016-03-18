@@ -7,13 +7,6 @@
       </ion-nav-buttons>
     </ion-nav-bar>
     <ion-nav-view name="content"></ion-nav-view>
-    <ion-footer-bar name="footerBar">
-      <ion-nav-bar class="bar-dark">
-        <ion-nav-buttons side="right">
-          <add-button></add-button>
-        </ion-nav-buttons>
-      </ion-nav-bar>
-    </ion-footer-bar>
   </ion-side-menu-content>
 
   <ion-side-menu side="right">
@@ -28,10 +21,11 @@
         <ion-item menu-close ui-sref="van.routes">
           Routes
         </ion-item>
-        <ion-item menu-close ui-sref="van.rides">
+        <!-- <ion-item menu-close ui-sref="van.rides">
           Rides
-        </ion-item>
+        </ion-item> -->
       </ion-list>
+      <ion-nav-view name="map"></ion-nav-view>
     </ion-content>
   </ion-side-menu>
 </ion-side-menus>
