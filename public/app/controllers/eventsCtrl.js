@@ -4,6 +4,11 @@ eventsCtrl.$inject = ['$scope', '$http' ];
 
 function eventsCtrl ($scope, $http) {
   $scope.events = [];
+  $scope.filters = {
+    search: '',
+    order: 'datetime'
+  };
+  $scope.categories = [ 'Hermosillo','Chihuahua','CDMX'];
   $http.get('/api/events')
     .success(function(data) {
         _.each(data, function(element, index) {
@@ -24,4 +29,12 @@ function eventsCtrl ($scope, $http) {
     .error(function(data) {
         console.error('Error: ' + data);
     });
+  $scope.checkDate = function(datetime){
+    var now = new Date();
+    var eventdate = new Date(datetime);
+    if (eventdate < now) {
+      return true;
+    }
+
+  }  
 }
