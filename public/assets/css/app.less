@@ -107,8 +107,16 @@ footer{
         padding: 0;
       }  
     }
-    
-    
+  
+  }
+  .table{
+    a{
+      color:#333;
+    }
+    .past{
+      color:#333;
+      text-decoration: line-through;
+    }
   }
   .list{
     padding:20px 50px;
@@ -118,7 +126,6 @@ footer{
   }
   
   .event{
-    
     overflow: hidden;
     padding: 10px;
     margin:10px 0px;
@@ -166,7 +173,7 @@ footer{
   }
 }
 
-// ----- Events -------
+// ----- Event -------
 
 
 #map { 
@@ -234,7 +241,7 @@ footer{
     border-radius: 4px 4px 0 0 ;
     margin:0;
     h1{
-      margin: 5px;
+      margin: 0px;
     }
   }
   main{
@@ -341,6 +348,12 @@ footer{
 a {
   color: #00B7FF;
 }
+.text-lg{
+  font-size: 15px;
+}
+.text-sm{
+  font-size: 13px;
+}
 h1{
   font-size: 22px;
 }
@@ -403,7 +416,55 @@ h4{
     .youare{
       font-size: 18px;
       text-align: center;
+      margin: 10px 0 20px 0;
     }
+    .wrapper{
+      background-color: #E5EAEF;
+      padding: 20px 0;
+    }
+    img{
+      max-height: 80px;
+      display: block;
+      margin: auto;
+    }
+    h3{
+      border-bottom: 0;
+      text-align: center;
+      margin: 0;
+    }
+    p{
+      color:#ccc;
+      margin: 0;
+      -webkit-transition: all .5s; /* Safari */
+      transition: all .5s;
+    }
+    select{
+      display: none;
+      -webkit-transition: all .5s; /* Safari */
+      transition: all .5s;
+    }
+    input[type="radio"]:checked~p{ 
+      color:#333 
+    } 
+    input[type="radio"]:checked~select{ 
+      display: block;
+      margin: 0 0 0 5px;
+    } 
+    input[type="radio"]{
+      display:inline-block;
+      width:29px;
+      height:29px;
+      vertical-align:middle;
+      cursor:pointer;
+      -moz-border-radius:  50%;
+      border-radius:  50%;
+      background-color:red;
+       border: 5px solid #0DFF92;
+    }
+    
+    input[type=radio]:checked ~ .check::before{
+        background: #0DFF92;
+      }
     
     .option{
       float: left;
@@ -419,6 +480,7 @@ h4{
       }
       .sub{
         font-weight: lighter;
+        
       }
     }
     .first{
@@ -529,7 +591,29 @@ a[ng-click]{
   
 }
 
+.in{
+  display: inline;
+}
+
+.search{
+  width:200px;
+  margin-right:10px;
+}
 
 .uib-timepicker{
   margin-top:-20px
+}
+
+ul.tags{
+  padding: 0;
+  a{
+    background-color: #555;
+    transition: .2s;
+    padding: 5px;
+    color: #fff;
+    &:hover{
+      background-color: #3498db;
+      text-decoration: none;
+    }
+  }
 }
