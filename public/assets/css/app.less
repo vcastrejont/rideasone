@@ -397,19 +397,21 @@ h4{
   p{
     margin:0 0 15px 0;
     font-size: 15px;
-    legend{
-      font-size: 12px;
-      margin: 0;
-      font-family: 'Raleway', sans-serif;
-      text-transform: uppercase;
-    }
+    min-height: 50px;
+    
     &.tellmore{
       margin: 0 0 10px 0;
       
     }
   }
+  legend{
+    font-size: 12px;
+    margin: 0;
+    font-family: 'Raleway', sans-serif;
+    text-transform: uppercase;
+  }
   .signme{
-    margin-top: 130px;
+    margin-top: 30px;
     text-align: center;
   }
   .options{
@@ -616,4 +618,55 @@ ul.tags{
       text-decoration: none;
     }
   }
+}
+
+
+
+// ---- Tabs ------
+
+
+.tabs {
+  position: relative;   
+  min-height: 200px; /* This part sucks */
+  clear: both;
+  margin: 35px 0 25px;
+  background: white;
+}
+.tab {
+  float: left;
+  label {
+    background: #eee; 
+    padding: 10px; 
+    border: 1px solid #ccc; 
+    margin-left: -1px; 
+    position: relative;
+    left: 1px; 
+    top: -29px;
+    transition: all .17s linear;
+  }
+  .content {
+    position: absolute;
+    top: -1px;
+    left: 0;
+    background: white;
+    right: 0;
+    bottom: 0;
+    padding: 20px;
+    border: 1px solid #ccc; 
+    -webkit-transition: opacity .6s linear;
+    opacity: 0;
+  } 
+}
+.tab [type=radio] {
+  display: none;   
+}
+
+[type=radio]:checked ~ label {
+  background: white;
+  border-bottom: 1px solid white;
+  z-index: 2;
+}
+[type=radio]:checked ~ label ~ .content {
+  z-index: 1;
+  opacity: 1;
 }

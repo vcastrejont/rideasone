@@ -13,7 +13,7 @@
     </div>
   </header>
   <main class="row show">
-    <div class="row col-md-8">
+    <div class="row col-md-6">
       <div class="col-sm-6">
         <p><legend>Event name</legend>
           {{view.event.name}}
@@ -31,10 +31,8 @@
         </p>
       </div>
       <div class="col-sm-6">
-      
-
         <p><legend>category</legend>
-          {{view.event.category}}&nbsp;
+          {{view.event.category}}
         </p>
         <p><legend>Attendees </legend>
           <span class="profiles">
@@ -44,23 +42,52 @@
           </span>
         </p>
         <p><legend>Looking for a ride</legend>
-       {{view.event.lift.length}} 
+          <span ng-show="view.event.lift.length"> {{view.event.lift.length}}</span> 
         </p>
         <p><legend>Avaiable seats for carpooling</legend>
-       {{view.event.lift.length}} 
+       {{view.event.avail}} 
         </p>
       </div>
-      <aside class="col-sm-12">
-        <p>
+      <div class="col-sm-12">
+      
           <legend>Location</legend>
-          <div id="map">  </div>
-        </p>
-        
-      </aside>
+          <div id="map"></div>
+      </div>
     </div>
-    <div class="col-md-4">
+    <div class="col-md-6">
+      
+      <div class="tabs">
+         <div class="tab">
+             <input type="radio" id="tab-car1" name="carpooling-tabs" checked>
+             <label for="tab-car1">Car #1</label>
+             <div class="content">
+                 <p>Stuff for Tab One</p>
+             </div> 
+         </div>
+          
+         <div class="tab">
+             <input type="radio" id="tab-5" name="carpooling-tabs">
+             <label for="tab-5">Tab Two</label>
+             <div class="content">
+                 <p>Stuff for Tab Two</p>
+                 <img src="http://placebear.com/200/100">
+             </div> 
+         </div>
+          
+          <div class="tab">
+             <input type="radio" id="tab-6" name="carpooling-tabs">
+             <label for="tab-6">Tab Three</label>
+             <div class="content">
+                You made it this far?!
+             </div> 
+         </div>
+      </div>
+
         <div class="signme" ng-hide="view.event.signed.length">
-            <a ng-click="view.signMeUp()"  class="btn btn-primary"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span> Sign me up  for this event!</a>
+          <p>
+            Do you want to attend to this event?
+          </p>
+            <a ng-click="view.signMe()"  class="btn btn-primary"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span> Sign me up!</a>
         </div>
         <div class="options" ng-show="view.event.signed.length">
           <div class="youare">
@@ -70,6 +97,22 @@
             <h3>
               Carpooling:
             </h3>
+            <p ng-show="view.event.driving.length">
+              You are driving and sharing {{view.event.driving[0].seats}} seats
+              your passangers are :
+              <ul>
+                <li ng-repeat="p in view.event.driving[0].passanger">
+                  {{p.name}}
+                </li>
+              </ul>
+              <button type="button" class="btn btn-default btn-xs">Change </button>
+            </p>
+            
+            <p ng-show="view.event.passanger.length">
+              You are traveling in xxx car
+            </p>
+            
+            
             <label class="first option">
               <input type="radio" name="option" ng-model="view.option" value="1">
               <img src="/assets/icons/car.png" alt="" />
@@ -95,7 +138,7 @@
               </select> 
             </label>
             <div class="buttons">
-              <a ng-click="view.confirm()" class="btn btn-primary"></span>Confirm</a>
+              <a ng-click="view.carPooling()" class="btn btn-primary"></span>Confirm</a>
             </div>
           </div>
         
