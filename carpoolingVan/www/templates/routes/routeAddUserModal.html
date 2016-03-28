@@ -1,0 +1,27 @@
+
+<ion-modal-view>
+  <ion-header-bar class="bar bar-dark">
+    <h1 class="title">
+      <i class="icon ion-clock"></i>
+      {{route.time}} passenger management
+    </h1>
+  </ion-header-bar>
+  <ion-content>
+    <ul class="list">
+      <li class="item item-toggle" ng-repeat="user in users">
+         {{user.name}}
+         <label class="toggle toggle-balanced" ng-if="!route.departureTime">
+           <input type="checkbox" ng-checked="!!route.passengers[user.$id]"
+              ng-click="addUserToRoute(user, route, route.passengers[user.$id])">
+           <div class="track">
+             <div class="handle"></div>
+           </div>
+         </label>
+      </li>
+    </ul>
+
+    <button class="button button-dark right" ng-click="closeModal()">
+      Close
+    </button>
+  </ion-content>
+</ion-modal-view>

@@ -1,24 +1,35 @@
 angular.module('carpoolingVan')
 
-.controller("usersCtrl", function($scope, usersService, $ionicModal) {
+.controller("usersCtrl", function($scope, usersService, $ionicModal, mapService) {
 
   $scope.users = usersService.users;
   $scope.addUser = addUser;
   $scope.saveUser = saveUser;
   $scope.updateUser = updateUser;
   $scope.viewInfo = viewInfo;
+  $scope.map = null;
 
-  // Global function from adding button template
-  // $scope.addFunction = $scope.addUser;
+  //Cleanup the modal when we're done with it!
+  $scope.$on('$destroy', function() {
+    $scope.modal.remove();
+    $scope.user;
+  });
 
   function addUser() {
     $scope.user = {};
 
-    $ionicModal.fromTemplateUrl('/templates/newUserModal.html', {
+    $ionicModal.fromTemplateUrl('templates/users/newUserModal.html', {
       scope: $scope,
       animation: 'slide-in-up'
     }).then(function(modal) {
       $scope.modal = modal;
+
+      mapService.initMap()
+      .then(function() {
+        mapService.addMarker(29.0617337,-110.9767597);
+        mapService.addMarker(29.0689827,-110.9759557);
+      });
+
       $scope.openModal();
     });
 
@@ -28,11 +39,6 @@ angular.module('carpoolingVan')
     $scope.closeModal = function() {
       $scope.modal.hide();
     };
-    //Cleanup the modal when we're done with it!
-    $scope.$on('$destroy', function() {
-      $scope.modal.remove();
-      $scope.user = {};
-    });
   }
 
   function saveUser() {
@@ -46,6 +52,7 @@ angular.module('carpoolingVan')
   }
 
   function updateUser() {
+
     usersService.update($scope.user)
     .then(function okUpdateUser() {
       $scope.closeModal();
@@ -59,11 +66,17 @@ angular.module('carpoolingVan')
 
     $scope.user = user;
 
-    $ionicModal.fromTemplateUrl('templates/userModal.html', {
+    $ionicModal.fromTemplateUrl('templates/users/userModal.html', {
       scope: $scope,
       animation: 'slide-in-up'
     }).then(function(modal) {
       $scope.modal = modal;
+
+      initMap(user.location)
+      .then(function(map) {
+        $scope.map = map;
+      });
+
       $scope.openModal();
     });
 
@@ -73,10 +86,41 @@ angular.module('carpoolingVan')
     $scope.closeModal = function() {
       $scope.modal.hide();
     };
-    //Cleanup the modal when we're done with it!
-    $scope.$on('$destroy', function() {
-      $scope.modal.remove();
-      $scope.user = {};
+  }
+
+  function initMap(location) {
+
+    return mapService.initMap(location)
+    .then(function(map) {
+      var marker = mapService.addMarker(location.lat, location.lng);
+
+      var searchInput = document.getElementById('autocomplete');
+      autocomplete = new google.maps.places.Autocomplete(searchInput);
+      autocomplete.bindTo('bounds', map);
+
+      autocomplete.addListener('place_changed', function getLatLng() {
+
+        var place = autocomplete.getPlace();
+
+        if (!place.geometry) {
+          window.alert("Autocomplete's returned place contains no geometry");
+          return;
+        }
+
+        if (place.geometry.viewport) {
+          map.fitBounds(place.geometry.viewport);
+        } else {
+          map.setCenter(place.geometry.location);
+          map.setZoom(17);
+        }
+
+        marker.setPosition(place.geometry.location);
+
+        $scope.user.location.lat = place.geometry.location.lat();
+        $scope.user.location.lng = place.geometry.location.lng();
+      });
+
+      return map;
     });
   }
 });

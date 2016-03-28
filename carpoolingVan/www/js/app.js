@@ -34,36 +34,42 @@ angular.module('carpoolingVan', ['ionic', 'firebase', 'ngCordova'])
     url: '/users',
     views: {
       'content': {
-        templateUrl: 'templates/users.html',
+        templateUrl: 'templates/users/users.html',
         controller: 'usersCtrl'
       }
-      // 'map': {
-      //   templateUrl: 'templates/map.html',
-      //   controller: 'mapCtrl'
-      // }
     }
   })
 
-  .state('van.routes', {
-    url: '/routes',
+  .state('van.userProfile', {
+    url: '/users/profile/:userId',
     views: {
       'content': {
-        templateUrl: 'templates/routes.html',
+        templateUrl: 'templates/users/profile.html',
+        controller: 'userCtrl'
+      }
+    }
+  })
+
+  .state('van.userRoutes', {
+    url: '/user/routes',
+    views: {
+      'content': {
+        templateUrl: 'templates/routes/userRoutes.html',
         controller: 'routesCtrl'
       }
     }
   })
 
-  .state('van.rides', {
-    url: '/rides',
+  .state('van.driverRoutes', {
+    url: '/driver/routes',
     views: {
       'content': {
-        templateUrl: 'templates/rides.html',
-        controller: 'ridesCtrl'
+        templateUrl: 'templates/routes/driverRoutes.html',
+        controller: 'routesCtrl'
       }
     }
   });
 
   // if none of the above states are matched, use this as the fallback
-  $urlRouterProvider.otherwise('van/routes');
+  $urlRouterProvider.otherwise('van/user/routes');
 });

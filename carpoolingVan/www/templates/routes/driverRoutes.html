@@ -1,0 +1,29 @@
+<ion-view view-title="Routes">
+  <ion-content>
+    <ion-list>
+      <ion-item ng-repeat="route in routes" ng-click="showPassengersModal(route, 'driver')" class="item item-icon-left">
+        <i ng-show="route.departureTime" class="icon ion-android-car balanced"></i>
+        <i ng-show="!route.departureTime" class="icon ion-android-home assertive"></i>
+        <strong>{{route.time}}</strong>
+        <div ng-class="{right: true, balanced: route.passengers, assertive: !route.passengers}">
+          <i class="ion-ios-body"></i>
+          <small>{{passengerCount(route)}}</small>
+        </div>
+        <br>
+        <small ng-show="route.departureTime" class="balanced">
+          Departed at {{route.departureTime}}
+        </small>
+        <small ng-show="route.arrivalTime" class="assertive">
+          Arrived at {{route.arrivalTime}}
+        </small>
+        <ion-option-button ng-show="!route.departureTime && route.passengers" class="button-balanced" ng-click="start(route)">
+          <i class="icon ion-android-car"></i>
+        </ion-option-button>
+        <ion-option-button ng-show="route.departureTime" class="button-assertive" ng-click="stop(route)">
+          <i class="icon ion-flag"></i>
+        </ion-option-button>
+      </ion-item>
+    </ion-list>
+    <button class="button button-balanced bottom-button right" ng-click="addRoute()">Add route</button>
+  </ion-content>
+</ion-view>

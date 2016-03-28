@@ -1,0 +1,10 @@
+<ion-view view-title="Users">
+  <ion-content>
+    <ion-list>
+      <ion-item ng-repeat="user in users" ui-sref="van.userProfile({userId: user.$id})">
+        {{user.name}}
+      </ion-item>
+    </ion-list>
+    <button class="button button-balanced bottom-button right" ng-click="addUser()">Add user</button>
+  </ion-content>
+</ion-view>

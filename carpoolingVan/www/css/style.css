@@ -3,10 +3,19 @@
   float: right;
 }
 
+.center {
+  display: block;
+  text-align: center;
+}
+
 button.right {
   float: right;
   margin-right: 20px;
   margin-bottom: 20px;
+}
+
+button.bottom-button {
+  margin-top: 20px;
 }
 
 .title .icon {
@@ -18,6 +27,32 @@ button.right {
 }
 
 #map {
-    width: 100%;
-    height: 100%;
+    height:100%;
+}
+
+.footer-label {
+  margin: auto 20px auto 10px;
+  font-size: 16px;
+}
+
+.strike {
+  text-decoration: line-through;
+  color: red;
+}
+
+.item-balanced-border {
+  border-right: 5px solid #28a54c;
+}
+
+.item-assertive-border {
+  border-right: 5px solid #e42112;
+}
+
+button.close {
+  margin-right: 20px;
+}
+
+.half {
+  width: 50%;
+  float: left;
 }

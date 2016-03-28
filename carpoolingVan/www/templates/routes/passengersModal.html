@@ -1,0 +1,43 @@
+
+<ion-modal-view>
+  <ion-header-bar class="bar bar-dark">
+    <h1 class="title">
+      <i class="icon ion-clock"></i>
+      <modal-title></modal-title>
+    </h1>
+    <button class="button button-clear button-stable close" ng-click="closeModal()">X</button>
+  </ion-header-bar>
+
+  <ion-content>
+    <ul class="list half">
+      <li class="item item-icon-left item-toggle"
+        ng-repeat="(userId, user) in route.passengers">
+         <i ng-if="user.onboard" class="icon ion-checkmark-circled balanced"></i>
+         <strong ng-class="{strike: user.bypass}">{{user.name}}</strong>
+         <br>
+         <small ng-class="{strike: user.bypass}">{{user.location.address}}</small>
+         <br>
+         <small ng-show="user.onboard" class="balanced">
+           Board at {{user.onboard}}
+         </small>
+         <modal-toggle-control></modal-toggle-control>
+      </li>
+    </ul>
+    <strong class="center assertive" ng-if="!route.passengers">
+      No folks in this route yet :(
+    </strong>
+
+    <div class="half" id="map" data-tap-disabled="true"></div>
+  </ion-content>
+
+  <ion-footer-bar class="bar bar-dark">
+    <label ng-show="route.departureTime" class="footer-label">
+      <i class="ion-android-car"></i>
+      Departed at {{route.departureTime}}
+    </label>
+    <label ng-show="route.arrivalTime" class="footer-label">
+      <i class="ion-android-home"></i>
+      Arrived at {{route.arrivalTime}}
+    </label>
+  </ion-footer-bar>
+</ion-modal-view>
