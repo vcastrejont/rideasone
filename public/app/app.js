@@ -27,7 +27,9 @@ app.config(function($stateProvider, $urlRouterProvider) {
   var home = {
     name: 'home',
     url: '^/',
-    templateUrl: "app/templates/index.html"
+    templateUrl: "app/templates/index.html",
+    templateUrl: "app/templates/mycarpooling.html",
+    controller: myCarpoolingCtrl
   },
   mycarpooling = {
     name: 'mycarpooling',
