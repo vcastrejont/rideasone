@@ -619,7 +619,15 @@ ul.tags{
     }
   }
 }
-
+ul.simplelist{
+  display: inline;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  li{
+    display: inline;
+  }
+}
 
 
 // ---- Tabs ------
@@ -627,46 +635,60 @@ ul.tags{
 
 .tabs {
   position: relative;   
-  min-height: 200px; /* This part sucks */
+  min-height: 140px; 
   clear: both;
   margin: 35px 0 25px;
   background: white;
-}
-.tab {
-  float: left;
-  label {
-    background: #eee; 
-    padding: 10px; 
-    border: 1px solid #ccc; 
-    margin-left: -1px; 
-    position: relative;
-    left: 1px; 
-    top: -29px;
-    transition: all .17s linear;
+  .tab {
+    float: left;
+    label {
+      line-height: 7px;
+      text-align: center;
+      width: 70px;
+      margin-right: 5px;
+      background: #eee; 
+      padding: 10px; 
+      border: 1px solid #ccc; 
+      margin-left: -1px; 
+      position: relative;
+      left: 1px; 
+      top: -29px;
+      transition: all .20s linear;
+      cursor: pointer;
+    }
+    .content {
+      position: absolute;
+      top: -1px;
+      left: 0;
+      background: white;
+      right: 0;
+      bottom: 0;
+      padding: 10px 15px;
+      border: 1px solid #ccc; 
+      transition: all .20s linear;
+      opacity: 0;
+      border-radius: 0 5px 5px 5px;
+      p{
+        margin: 0 0 5px 0;
+        padding: 0;
+        min-height: 0;
+      }
+      .sel{
+        color:#43A047;
+        font-weight:bold
+      }
+    }
+    input[type=radio] {
+      display: none;
+      &:checked ~ label {
+        background: white;
+        border-bottom: 1px solid white;
+        z-index: 2;
+      }
+      &:checked ~ label ~ .content {
+        z-index: 1;
+        opacity: 1;   
+      }
+    } 
   }
-  .content {
-    position: absolute;
-    top: -1px;
-    left: 0;
-    background: white;
-    right: 0;
-    bottom: 0;
-    padding: 20px;
-    border: 1px solid #ccc; 
-    -webkit-transition: opacity .6s linear;
-    opacity: 0;
-  } 
-}
-.tab [type=radio] {
-  display: none;   
-}
-
-[type=radio]:checked ~ label {
-  background: white;
-  border-bottom: 1px solid white;
-  z-index: 2;
-}
-[type=radio]:checked ~ label ~ .content {
-  z-index: 1;
-  opacity: 1;
 }

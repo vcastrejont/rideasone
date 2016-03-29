@@ -57,30 +57,24 @@
     <div class="col-md-6">
       
       <div class="tabs">
-         <div class="tab">
-             <input type="radio" id="tab-car1" name="carpooling-tabs" checked>
-             <label for="tab-car1">Car #1</label>
+         <div class="tab" ng-repeat="car in view.event.carpooling">
+             <input type="radio" id="tab-car{{$index+1}}" name="carpooling-tabs"  ng-checked="$index == 0">
+             <label for="tab-car{{$index+1}}">Car #{{$index+1}}</label>
              <div class="content">
-                 <p>Stuff for Tab One</p>
+               <p>
+                 <strong>Driver:</strong> {{car.driver}}
+               </p>
+               <p>
+                 <strong>Passagers:</strong> 
+                  <span ng-repeat="p in car.passanger" ng-class="{'sel': p.user_id == view.user.id }">{{p.name}}<span ng-if="!$last">, </span></span>
+               </p>
+               <p>
+                 <strong>Seats:</strong> {{car.passanger.length}}/{{car.seats}}
+               </p>
              </div> 
          </div>
           
-         <div class="tab">
-             <input type="radio" id="tab-5" name="carpooling-tabs">
-             <label for="tab-5">Tab Two</label>
-             <div class="content">
-                 <p>Stuff for Tab Two</p>
-                 <img src="http://placebear.com/200/100">
-             </div> 
-         </div>
-          
-          <div class="tab">
-             <input type="radio" id="tab-6" name="carpooling-tabs">
-             <label for="tab-6">Tab Three</label>
-             <div class="content">
-                You made it this far?!
-             </div> 
-         </div>
+        
       </div>
 
         <div class="signme" ng-hide="view.event.signed.length">
