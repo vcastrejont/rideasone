@@ -31,8 +31,8 @@
         </p>
       </div>
       <div class="col-sm-6">
-        <p><legend>category</legend>
-          {{view.event.category}}
+        <p><legend>Status</legend>
+          <span class="label label-success" ng-show="view.event.signed.length">  You are signed </span>
         </p>
         <p><legend>Attendees </legend>
           <span class="profiles">
@@ -41,15 +41,14 @@
             </span>
           </span>
         </p>
-        <p><legend>Looking for a ride</legend>
+        <p><legend>Poeple Looking for a ride</legend>
           <span ng-show="view.event.lift.length"> {{view.event.lift.length}}</span> 
         </p>
-        <p><legend>Avaiable seats for carpooling</legend>
+        <p><legend>Avaiable  seats </legend>
        {{view.event.avail}} 
         </p>
       </div>
       <div class="col-sm-12">
-      
           <legend>Location</legend>
           <div id="map"></div>
       </div>
@@ -59,19 +58,40 @@
       <div class="tabs">
          <div class="tab" ng-repeat="car in view.event.carpooling">
              <input type="radio" id="tab-car{{$index+1}}" name="carpooling-tabs"  ng-checked="$index == 0">
-             <label for="tab-car{{$index+1}}">Car #{{$index+1}}</label>
+             <label for="tab-car{{$index+1}}">Car #{{$index+1}} 
+               <span class="label label-primary" ng-if="car.driver_id==view.user.id">Driving</span>
+               <span class="label label-success" ng-if="view.isSigned(car)">Signed</span>
+             </label>
              <div class="content">
                <p>
-                 <strong>Driver:</strong> {{car.driver}}
+                 <strong>Driver:</strong> <span ng-class="{'driving': car.driver_id == view.user.id }"> {{car.driver}}</span> 
                </p>
                <p>
-                 <strong>Passagers:</strong> 
+                 <strong>Passenger:</strong> 
                   <span ng-repeat="p in car.passanger" ng-class="{'sel': p.user_id == view.user.id }">{{p.name}}<span ng-if="!$last">, </span></span>
                </p>
                <p>
                  <strong>Seats:</strong> {{car.passanger.length}}/{{car.seats}}
                </p>
              </div> 
+         </div>
+         <div class="tab">
+           <input type="radio" id="tab-new" name="carpooling-tabs" >
+           <label for="tab-new"><span class="glyphicon glyphicon-plus"></span> Add new car</label>
+           <div class="content">
+             <form class="addnewcar" >
+              <p> How many available seats your car has?</p>
+              <p><select class="form-control"  ng-model="view.seats" >
+                <option value="1">1 seat </option>
+                <option value="2">2 seats</option>
+                <option value="3">3 seats</option>
+                <option value="4">4 seats</option>
+                <option value="5">5 seats</option>
+              </select></p>
+              
+              <p><button type="button" class="btn btn-success"  ng-click="view.addCar()">Add car</button>  </p>
+            </form>
+           </div>
          </div>
           
         

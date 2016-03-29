@@ -532,6 +532,17 @@ h4{
       }
     }
   }
+  .addnewcar{
+    text-align: center;
+    padding-top: 5px;
+    p{
+      margin: 10px 0 !important; 
+    }
+    select{
+     width: 50%;
+     margin: auto;
+   }
+  }
   
 }
 
@@ -641,10 +652,10 @@ ul.simplelist{
   background: white;
   .tab {
     float: left;
-    label {
+    & > label {
+      border-radius: 5px 5px 0 0 ;
       line-height: 7px;
       text-align: center;
-      width: 70px;
       margin-right: 5px;
       background: #eee; 
       padding: 10px; 
@@ -655,6 +666,18 @@ ul.simplelist{
       top: -29px;
       transition: all .20s linear;
       cursor: pointer;
+      font-weight: normal;
+      &:hover{
+        background-color: #fff;
+        color: #64B5F6;
+      }
+    }
+    .label{
+      line-height: 0;
+    }
+    .glyphicon{
+      line-height: 0;
+      font-weight: normal;
     }
     .content {
       position: absolute;
@@ -677,6 +700,10 @@ ul.simplelist{
         color:#43A047;
         font-weight:bold
       }
+      .driving{
+        color:#337ab7;
+        font-weight:bold
+      }
     }
     input[type=radio] {
       display: none;
@@ -684,7 +711,9 @@ ul.simplelist{
         background: white;
         border-bottom: 1px solid white;
         z-index: 2;
-      }
+        border-top: 1px solid #42A5F5;
+        
+      } 
       &:checked ~ label ~ .content {
         z-index: 1;
         opacity: 1;   

@@ -16,15 +16,17 @@ function eventsShowCtrl ($scope, $http,  $state, $window) {
       name: $window.user_name,
     },
     init:function(){
-      //Load data, Todo create a service for this
+      //Load data, Todo create a service for this, move it to the back end
       $http.get('/api/event/'+$scope.id).then(function(response) {
-        //var avil = 0, used = 0;
-      
         $scope.view.event = response.data;
         $scope.view.event.avail = 0;
         $scope.view.event.lift = _.where(response.data.attendees, {lift: true});
         $scope.view.event.signed = _.where(response.data.attendees, {user_id: $scope.view.user.id});
         $scope.view.event.driving = _.where(response.data.carpooling, {driver_id: $scope.view.user.id});
+        $scope.view.isSigned = function (car) {
+          var temp = _.findWhere(car.passanger, {user_id: $scope.view.user.id});
+          return temp  ? true : false;
+        }
         $scope.view.event.passanger = _.where(response.data.carpooling, {user_id: $scope.view.user.id});
         _.each(response.data.carpooling, function(carpool, index) {
           var avail = carpool.seats -  carpool.passanger.length;
@@ -84,6 +86,22 @@ function eventsShowCtrl ($scope, $http,  $state, $window) {
           }, 2000); 
               $scope.view.init();
             //console.log(response);
+        }, function(response) {
+            console.log('Error: ' + response);
+      });	
+    },
+    addCar:function(){
+      var self = this;
+      var eventData = {
+        seats      : $scope.view.seats,
+        driver_id  : $scope.view.user.id
+      };
+      $http.put('/api/events/'+$scope.id, eventData).then(function(response) {
+            console.log(response);
+            self.alerts.push({msg: response.data.message});
+            setTimeout(function () {
+               $scope.$apply(function()  {  self.closeAlert(); });
+            }, 2000);
         }, function(response) {
             console.log('Error: ' + response);
       });	
