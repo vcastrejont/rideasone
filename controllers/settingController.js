@@ -22,9 +22,9 @@ module.exports = {
                 error: err
             });
         }
-        setting.business_name =  req.body.business_name ? req.body.business_name : setting.business_name;
-        setting.logo =  req.body.logo ? req.body.logo : setting.logo;
-        setting.url =  req.body.url ? req.body.url : setting.url;
+        setting.business_name =  "Nearsoft";
+        setting.logo =  "";
+        setting.url =  "http://www.nearsoft.com";
         setting.save(function(err, setting){
             if(err) {
                 return res.json(500, {
