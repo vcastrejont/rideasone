@@ -212,9 +212,6 @@ module.exports = {
     leaveCar: function(req, res) {
       var id = req.body.id;
       var carid = req.body.carid;
-      console.log(id);
-      console.log(carid);
-      console.log(req.user.id);
       eventModel.update({_id: id, 'carpooling._id': carid }, 
       {'$pull': {"carpooling.$.passanger": {'user_id':req.user.id }}}, 
       function(err, numAffected){

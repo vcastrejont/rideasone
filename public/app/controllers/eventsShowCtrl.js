@@ -96,6 +96,7 @@ function eventsShowCtrl ($scope, $http,  $state, $window) {
       var eventData = {
         id         : $scope.view.event._id,
         seats      : $scope.view.seats,
+        comments   : $scope.view.comments,
         driver_id  : $scope.view.user.id
       };
       $http.post('/api/events/addcar', eventData).then(function(response) {
