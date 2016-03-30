@@ -93,18 +93,39 @@ function eventsShowCtrl ($scope, $http,  $state, $window) {
     addCar:function(){
       var self = this;
       var eventData = {
+        id         : $scope.view.event._id,
         seats      : $scope.view.seats,
         driver_id  : $scope.view.user.id
       };
-      $http.put('/api/events/'+$scope.id, eventData).then(function(response) {
+      $http.post('/api/events/addcar', eventData).then(function(response) {
             console.log(response);
             self.alerts.push({msg: response.data.message});
             setTimeout(function () {
                $scope.$apply(function()  {  self.closeAlert(); });
-            }, 2000);
+               $scope.view.init();
+            }, 1000);
         }, function(response) {
             console.log('Error: ' + response);
       });	
+    },
+    deleteCar:function(carid){
+      if (confirm("Are you sure to delete")) {
+        var carData = {
+          id         : $scope.view.event._id,
+          carid      : carid
+        };
+        var self = this;
+        $http.post('/api/events/deletecar', carData).then(function(response) {
+              console.log(response);
+              self.alerts.push({msg: response.data.message});
+              setTimeout(function () {
+                 $scope.$apply(function()  {  self.closeAlert(); });
+                 $scope.view.init();
+              }, 1000);
+          }, function(response) {
+              console.log('Error: ' + response);
+        });	
+      }
     },
     carPooling:function(){
       var self = this;

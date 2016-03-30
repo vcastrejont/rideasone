@@ -125,6 +125,62 @@ module.exports = {
       });
     },
     /**
+     * eventController.Add car()  
+     */
+    addCar: function(req, res) {
+      eventModel.findOne({_id: req.body.id}, function(err, event){
+        if(err)
+          return res.json(500, {  message: 'Error', error: err  });
+        var carpooling = {
+          driver_id   : req.user.id,
+          driver      : req.user.name,
+          driver_photo: req.user.photo,
+          seats       : req.body.seats,
+          comments    : req.body.comments
+        };
+        eventModel.update({"_id":  req.body.id}, {$push: {"carpooling": carpooling}}, 
+        function(err, numAffected){
+          if(err){
+              console.log(err);
+              return res.status(500).json( {
+                  message: 'Error updating event', error: err
+              });
+          }else{
+            console.log(numAffected);
+            return res.status(200).json( {
+                message: 'Successfully added!', 
+                numAffected: numAffected
+            });
+          }
+        });
+      });
+    },
+    /**
+     * eventController delete car()  
+     */
+    deleteCar: function(req, res) {
+      var id = req.body.id;
+      var carid = req.body.carid;
+      console.log(id);
+      console.log(carid);
+      eventModel.update({_id: id}, 
+      {'$pull': {"carpooling": {"_id": carid}}}, function(err, numAffected){
+        if(err){
+            console.log(err);
+            return res.status(500).json( {
+                message: 'Error updating event', error: err
+            });
+        }else{
+          console.log(numAffected);
+          return res.status(200).json( {
+              message: 'Successfully deleted', 
+              numAffected: numAffected
+          });
+        }
+      });
+    },
+    
+    /**
      * eventController.update()  
      */
     update: function(req, res) {

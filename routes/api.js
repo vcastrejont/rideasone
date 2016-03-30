@@ -23,6 +23,10 @@ router.get('/event/:id', eventsController.show);
 router.put('/event/signup/:id', eventsController.signup);
 //      Update an event
 router.put('/events/:id', eventsController.update);
+//      Add a car
+router.post('/events/addcar', eventsController.addCar);
+//      Delete a car
+router.post('/events/deletecar', eventsController.deleteCar);
 //      Delete an event
 router.delete('/event/:id', eventsController.remove);
 //      Driver available for  an event
