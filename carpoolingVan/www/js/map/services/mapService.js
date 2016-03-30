@@ -2,9 +2,7 @@ angular.module('carpoolingVan')
 
 .factory('mapService', function($cordovaGeolocation) {
 
-  var map;
-  var bounds;
-  // var autocomplete;
+  var map, bounds;
 
   return {
     initMap: initMap,
@@ -12,14 +10,20 @@ angular.module('carpoolingVan')
   };
 
   function initMap(location) {
+    var latLng,
+      mapOptions,
+      options = {
+        timeout: 10000,
+        enableHighAccuracy: true
+      };
 
     if(location && location.lat && location.lng) {
-      var latLng = new google.maps.LatLng(location.lat, location.lng);
+      latLng = new google.maps.LatLng(location.lat, location.lng);
 
       bounds = new google.maps.LatLngBounds();
       bounds.extend(latLng);
 
-      var mapOptions = {
+      mapOptions = {
         center: latLng,
         mapTypeId: google.maps.MapTypeId.ROADMAP
       };
@@ -28,17 +32,16 @@ angular.module('carpoolingVan')
       return map;
     }
     else {
-      var options = {timeout: 10000, enableHighAccuracy: true};
 
       return $cordovaGeolocation.getCurrentPosition(options)
       .then(function(position) {
-        
-        var latLng = new google.maps.LatLng(position.coords.latitude,
+
+        latLng = new google.maps.LatLng(position.coords.latitude,
           position.coords.longitude);
 
         bounds = new google.maps.LatLngBounds();
 
-        var mapOptions = {
+        mapOptions = {
           center: latLng,
           zoom: 13,
           mapTypeId: google.maps.MapTypeId.ROADMAP
@@ -55,17 +58,14 @@ angular.module('carpoolingVan')
 
   function addMarker(lat, lng) {
 
-    var loc;
-    //Wait until the map is loaded
-
-    loc = new google.maps.LatLng(lat, lng);
-    bounds.extend(loc);
-
-    var marker = new google.maps.Marker({
-        map: map,
-        animation: google.maps.Animation.DROP,
-        position: loc
+    var loc = new google.maps.LatLng(lat, lng),
+    marker = new google.maps.Marker({
+      map: map,
+      animation: google.maps.Animation.DROP,
+      position: loc
     });
+
+    bounds.extend(loc);
 
     map.fitBounds(bounds);
     map.panToBounds(bounds);

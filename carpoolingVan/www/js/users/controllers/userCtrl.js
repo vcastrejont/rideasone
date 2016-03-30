@@ -36,9 +36,11 @@ angular.module('carpoolingVan')
 
   function initMap(location) {
 
+    var marker;
     var location = location || $scope.user.location;
     var map = mapService.initMap(location);
-    var marker;
+    var searchInput = document.getElementById('autocomplete');
+    var autocomplete = new google.maps.places.Autocomplete(searchInput);
 
     if(location) {
       marker = mapService.addMarker(location.lat, location.lng);
@@ -46,9 +48,6 @@ angular.module('carpoolingVan')
     else {
       marker = mapService.createEmptyMarker();
     }
-
-    var searchInput = document.getElementById('autocomplete');
-    var autocomplete = new google.maps.places.Autocomplete(searchInput);
 
     autocomplete.bindTo('bounds', map);
 
