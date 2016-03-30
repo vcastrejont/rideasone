@@ -1,0 +1,231 @@
+<ion-view view-title="New Event">
+  <!-- <ion-nav-buttons side="right">
+    <div class="buttons">
+      <a ng-click="cancelNewEvent()" class="button icon ion-close-round"></a>
+    </div>
+  </ion-nav-buttons> -->
+
+  <ion-content>
+    <div class="list">
+      <h3 class="title">
+        Event location
+      </h3>
+
+      <div id="map"></div>
+
+      <label class="item item-input item-stacked-label">
+        <span class="input-label">Search</span>
+        <input type="text" ng-model="searchPlace" autofocus id="input" />
+      </label>
+      <label class="item item-input item-stacked-label">
+        <span class="input-label">Address</span>
+        <input type="text" ng-model="location.address">
+      </label>
+      <label class="item item-input item-stacked-label">
+        <span class="input-label">City</span>
+        <input type="text" ng-model="location.city">
+      </label>
+      <label class="item item-input item-stacked-label">
+        <span class="input-label">State</span>
+        <input type="text" ng-model="location.state">
+      </label>
+      <label class="item item-input item-stacked-label">
+        <span class="input-label">Country</span>
+        <input type="text" ng-model="location.country">
+      </label>
+      <label class="item item-input item-stacked-label">
+        <span class="input-label">Zip</span>
+        <input type="text" ng-model="location.zip">
+      </label>
+
+      <h3 class="title">
+        Event details
+      </h3>
+
+      <label class="item item-input item-stacked-label">
+        <span class="input-label">Title</span>
+        <input type="text" ng-model="event.title">
+      </label>
+      <label class="item item-input item-stacked-label">
+        <span class="input-label">Description</span>
+        <textarea ng-model="event.description"></textarea>
+      </label>
+      <label class="item item-input item-stacked-label">
+        <span class="input-label">Date</span>
+        <ionic-datepicker date="currentDate" min="currentDate" callback="datePickerCallback">
+            <button class="button button-block button-positive"> {{ currentDate | date:'MMMM/dd/yyyy' }} </button>
+        </ionic-datepicker>
+      </label>
+      <label class="item item-input item-stacked-label">
+        <span class="input-label">Time</span>
+        <input type="number" min="0" max="23" ng-model="event.time">
+      </label>
+      <label class="item item-input item-stacked-label">
+        <span class="input-label">Category</span>
+        <select ng-model="event.category">
+          <option value="Hermosillo">Hermosillo</option>
+          <option value="Chihuahua">Chihuahua</option>
+          <option value="Mexico city">Mexico city</option>
+        </select>
+      </div>
+      </label>
+      <label class="item item-input item-stacked-label">
+        <span class="input-label">Tags</span>
+        <input type="text" ng-model="event.tags">
+      </label>
+
+      <button class="button button-positive">
+        Save event
+      </button>
+    </div>
+
+      <!-- <main class="row">
+        <form name="searchForm" novalidate  class="row form-horizontal" >
+        <div class="row nomargin">
+
+          <div class="col-md-5">
+            <h4>Event location</h4>
+            <div class="form-group">
+                <label for="resName" class="col-xs-3 control-label">Search</label>
+              <div class="col-xs-9">
+                <input name="place" type="text" class="form-control" ng-model="searchPlace"  autofocus id="input" />
+              </div>
+            </div>
+
+            <div class="form-group">
+                <label for="resName" class="col-xs-3 control-label">Address</label>
+                <div class="col-xs-9">
+                    <input name="resid" type="text" class="form-control"
+                    ng-model="location.address" required />
+                </div>
+            </div>
+            <div class="row">
+              <div class="col-sm-6">
+                <div class="form-group">
+                    <label for="resLat" class="col-xs-6 control-label">City</label>
+                    <div class="col-xs-6">
+                        <input name="resLat" type="text" class="form-control"
+                        ng-model="location.city"  />
+                    </div>
+                </div>
+              </div>
+              <div class="col-sm-6">
+                <div class="form-group">
+                    <label for="resLat" class="col-xs-6 control-label">Zip</label>
+                    <div class="col-xs-6">
+                        <input name="resLat" type="text" class="form-control"
+                        ng-model="location.zip"  />
+                    </div>
+                </div>
+              </div>
+
+            </div>
+            <div class="row">
+              <div class="col-sm-6">
+                <div class="form-group">
+                    <label for="resLng" class="col-xs-6 control-label">State</label>
+                    <div class="col-xs-6">
+                        <input name="resLng" type="text" class="form-control"
+                        ng-model="location.state"  />
+                    </div>
+                </div>
+              </div>
+              <div class="col-sm-6">
+                <div class="form-group">
+                    <label for="resLng" class="col-xs-6 control-label">Country</label>
+                    <div class="col-xs-6">
+                        <input name="resLng" type="text" class="form-control"
+                        ng-model="location.country"  />
+                    </div>
+                </div>
+              </div>
+            </div>
+
+
+          </div>
+          <div class="col-md-7">
+            <div id="map"></div>
+          </div>
+        </div>
+        <div class="row nomargin">
+          <div class="col-xs-12">
+            <h4>Event details</h4>
+          </div>
+        </div>
+
+        <div class="row nomargin">
+          <div class="col-md-4">
+            <div class="form-group">
+                <label for="event_title" class="col-xs-3 control-label">Title</label>
+                <div class="col-xs-9">
+                    <input name="event_title" type="text" id="event_title" class="form-control"
+                    ng-model="event.title"  />
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="event_description" class="col-xs-3 control-label">Description</label>
+                <div class="col-xs-9">
+                    <textarea name="event_description" id="event_description" type="text" class="form-control"
+                    ng-model="event.description"></textarea>
+                </div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="form-group">
+                <label for="event_date" class="col-xs-3 control-label">Date</label>
+                <div class="col-xs-9">
+                  <p class="input-group">
+                    <input type="text" class="form-control" id="event_date" uib-datepicker-popup="dd-MMMM-yyyy" ng-model="event.date" is-open="displayDate"  datepicker-options="dateOptions" ng-required="true"   />
+                    <span class="input-group-btn">
+                      <button type="button" class="btn btn-default" ng-click="displayDate=!displayDate"><i class="glyphicon glyphicon-calendar"></i></button>
+                    </span>
+                  </p>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="event_time" class="col-xs-3 control-label">Hour</label>
+                <div class="col-xs-9">
+                    <uib-timepicker ng-model="event.date" hour-step="1" minute-step="5" show-meridian="true"></uib-timepicker>
+                </div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="form-group">
+                <label for="event_title" class="col-xs-3 control-label">Category</label>
+                <div class="col-xs-9">
+                  <select class="form-control" ng-model="event.category">
+                    <option value="Hermosillo">Hermosillo</option>
+                    <option value="Chihuahua">Chihuahua</option>
+                    <option value="Mexico city">Mexico city</option>
+                  </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="event_description" class="col-xs-3 control-label">Tags</label>
+                <div class="col-xs-9">
+                    <input type="text" class="form-control" id="event_date" u ng-model="event.tags"   />
+                </div>
+            </div>
+          </div>
+        </div>
+
+
+
+
+      </form>
+      </main>
+      <footer class="text-center">
+        <div ng-show="apiSuccess">
+          <div class="alert alert-success">
+            Event saved successfully
+          </div>
+        </div>
+        <div ng-hide="apiSuccess">
+          <a ui-sref="events" class="cancel">Go back</a>
+          <button class="btn btn-primary" ng-disabled="resForm.$invalid" ng-click="save()">Save event</button>
+        </div>
+
+      </footer> -->
+  </ion-content>
+</ion-view>
