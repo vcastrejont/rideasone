@@ -161,8 +161,7 @@ module.exports = {
     deleteCar: function(req, res) {
       var id = req.body.id;
       var carid = req.body.carid;
-      console.log(id);
-      console.log(carid);
+    
       eventModel.update({_id: id}, 
       {'$pull': {"carpooling": {"_id": carid}}}, function(err, numAffected){
         if(err){
@@ -174,6 +173,59 @@ module.exports = {
           console.log(numAffected);
           return res.status(200).json( {
               message: 'Successfully deleted', 
+              numAffected: numAffected
+          });
+        }
+      });
+    },
+    /**
+     * eventController Join car()  
+     */
+    joinCar: function(req, res) {
+      var id = req.body.id;
+      var carid = req.body.carid;
+      var passanger = {
+        user_id   : req.user.id,
+        name      : req.user.name,
+        photo     : req.user.photo
+      }
+      eventModel.update({_id: id, 'carpooling._id': carid }, 
+      {'$push': {"carpooling.$.passanger": passanger}}, 
+      function(err, numAffected){
+        if(err){
+          console.log(err);
+          return res.status(500).json( {
+              message: 'Error updating event', error: err
+          });
+        }else{
+          return res.status(200).json( {
+              message: 'Successfully added!', 
+              numAffected: numAffected
+          });
+        }
+      });
+    },
+    
+    /**
+     * eventController Leave a car()  
+     */
+    leaveCar: function(req, res) {
+      var id = req.body.id;
+      var carid = req.body.carid;
+      console.log(id);
+      console.log(carid);
+      console.log(req.user.id);
+      eventModel.update({_id: id, 'carpooling._id': carid }, 
+      {'$pull': {"carpooling.$.passanger": {'user_id':req.user.id }}}, 
+      function(err, numAffected){
+        if(err){
+          console.log(err);
+          return res.status(500).json( {
+              message: 'Error updating event', error: err
+          });
+        }else{
+          return res.status(200).json( {
+              message: 'Successfully removed', 
               numAffected: numAffected
           });
         }

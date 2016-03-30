@@ -28,6 +28,10 @@ router.post('/events/addcar', eventsController.addCar);
 //      Delete a car
 router.post('/events/deletecar', eventsController.deleteCar);
 //      Delete an event
+router.post('/events/joincar', eventsController.joinCar);
+//     Leave a car
+router.post('/events/leaveCar', eventsController.leaveCar);
+//      Delete an event
 router.delete('/event/:id', eventsController.remove);
 //      Driver available for  an event
 router.get('/events/drivers/:id', eventsController.drivers);

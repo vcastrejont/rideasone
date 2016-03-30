@@ -82,8 +82,9 @@ function eventsShowCtrl ($scope, $http,  $state, $window) {
       $http.put('/api/event/signup/'+$scope.id).then(function(response) {
           self.alerts.push({msg: response.data.message});
           setTimeout(function () {
-             $scope.$apply(function()  {  self.closeAlert(); });
-          }, 2000); 
+            $scope.$apply(function()  {  self.closeAlert(); });
+            $scope.view.init();
+          }, 1000); 
               $scope.view.init();
             //console.log(response);
         }, function(response) {
@@ -109,19 +110,53 @@ function eventsShowCtrl ($scope, $http,  $state, $window) {
       });	
     },
     deleteCar:function(carid){
-      if (confirm("Are you sure to delete")) {
+      if (confirm("Are you sure?")) {
         var carData = {
           id         : $scope.view.event._id,
           carid      : carid
         };
         var self = this;
         $http.post('/api/events/deletecar', carData).then(function(response) {
-              console.log(response);
-              self.alerts.push({msg: response.data.message});
-              setTimeout(function () {
-                 $scope.$apply(function()  {  self.closeAlert(); });
-                 $scope.view.init();
-              }, 1000);
+            self.alerts.push({msg: response.data.message});
+            setTimeout(function () {
+               $scope.$apply(function()  {  self.closeAlert(); });
+               $scope.view.init();
+            }, 1000);
+          }, function(response) {
+              console.log('Error: ' + response);
+        });	
+      }
+    },
+    joinCar:function(carid){
+      var carData = {
+        id         : $scope.view.event._id,
+        carid      : carid
+      };
+      var self = this;
+      $http.post('/api/events/joincar', carData).then(function(response) {
+          self.alerts.push({msg: response.data.message});
+          setTimeout(function () {
+             $scope.$apply(function()  {  self.closeAlert(); });
+             $scope.view.init();
+          }, 1000);
+        }, function(response) {
+            console.log('Error: ' + response);
+      });	
+      
+    },
+    leaveCar:function(carid){
+      if (confirm("Are you sure ?")) {
+        var carData = {
+          id         : $scope.view.event._id,
+          carid      : carid
+        };
+        var self = this;
+        $http.post('/api/events/leaveCar', carData).then(function(response) {
+            self.alerts.push({msg: response.data.message});
+            setTimeout(function () {
+               $scope.$apply(function()  {  self.closeAlert(); });
+               $scope.view.init();
+            }, 1000);
           }, function(response) {
               console.log('Error: ' + response);
         });	

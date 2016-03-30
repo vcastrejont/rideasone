@@ -55,13 +55,18 @@
       <div id="map"></div>
     </div>
     <div class="col-sm-12">
+      <div  ng-show="!view.event.signed.length" class="text-center">
+        <button class="btn btn-primary btn-xs" ng-click="view.signMe()" >Join this event</button>
+      </div>
+      
+      <div  ng-show="view.event.signed.length">
       <legend>Carpooling</legend>
       <div class="tabs">
          <div class="tab" ng-repeat="car in view.event.carpooling">
              <input type="radio" id="tab-car{{$index+1}}" name="carpooling-tabs"  ng-checked="$index == 0">
              <label for="tab-car{{$index+1}}">Car #{{$index+1}} 
                <span class="label label-primary" ng-if="car.driver_id==view.user.id">Driving</span>
-               <span class="label label-success" ng-if="view.isSigned(car)">Signed</span>
+               <span class="label label-success" ng-if="view.isSigned(car)">Joined</span>
              </label>
              <div class="content">
                <p>
@@ -77,6 +82,12 @@
                <div ng-if=" car.driver_id == view.user.id" class="text-center"> 
                  <button class="btn btn-danger btn-xs" ng-click="view.deleteCar(car._id)" >Remove my car</button>
                </div>
+               <div ng-if="(car.driver_id !== view.user.id && car.passanger.length < car.seats && !view.isSigned(car) )" class="text-center"> 
+                 <button class="btn btn-primary btn-xs" ng-click="view.joinCar(car._id)" >Join this ride</button>
+               </div>
+               <div class="text-center" ng-if="view.isSigned(car)"> 
+                 <button class="btn btn-danger btn-xs" ng-click="view.leaveCar(car._id)" >Leave this ride</button>
+               </div>
              </div> 
          </div>
          <div class="tab">
@@ -91,15 +102,15 @@
                 <option value="3">3 seats</option>
                 <option value="4">4 seats</option>
                 <option value="5">5 seats</option>
+                <option value="6">6 seats</option>
               </select></p>
               
               <p><button type="button" class="btn btn-success"  ng-click="view.addCar()">Add car</button></p>
             </form>
            </div>
          </div>
-          
-        
-      </div>
+        </div>
+      </div><!-- -->
     </div>  
 
         
