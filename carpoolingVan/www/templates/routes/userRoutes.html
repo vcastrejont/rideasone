@@ -2,11 +2,11 @@
   <ion-content>
     <ion-list>
       <ion-item ng-repeat="route in routes" ng-click="showPassengersModal(route, 'passenger')"
-        ng-class="{item: true, 'item-icon-left': true, 'item-balanced-border': route.passengers, 'item-assertive-border': !route.passengers}">
+        class="item item-icon-left">
         <i ng-show="route.departureTime" class="icon ion-android-car balanced"></i>
         <i ng-show="!route.departureTime" class="icon ion-android-home assertive"></i>
         <strong>{{route.time}}</strong>
-        <div ng-class="{right: true, balanced: route.passengers, assertive: !route.passengers}">
+        <div ng-class="{right: true, balanced: passengerCount(route) > 0, assertive: passengerCount(route) == 0}">
           <i class="ion-ios-body"></i>
           <small>{{passengerCount(route)}}</small>
         </div>
@@ -17,9 +17,9 @@
         <small ng-show="route.arrivalTime" class="assertive">
           Arrived at {{route.arrivalTime}}
         </small>
-        <ion-option-button class="button-balanced" ng-click="showAllUsers(route)">
+        <!-- <ion-option-button class="button-balanced" ng-click="showAllUsers(route)">
           <i class="icon ion-person-stalker"></i>
-        </ion-option-button>
+        </ion-option-button> -->
       </ion-item>
       </ion-item>
     </ion-list>

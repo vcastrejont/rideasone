@@ -41,7 +41,7 @@ angular.module('carpoolingVan', ['ionic', 'firebase', 'ngCordova'])
   })
 
   .state('van.userProfile', {
-    url: '/users/profile/:userId',
+    url: '/users/:userId',
     views: {
       'content': {
         templateUrl: 'templates/users/profile.html',

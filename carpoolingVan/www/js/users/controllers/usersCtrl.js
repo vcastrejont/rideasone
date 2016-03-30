@@ -1,13 +1,15 @@
 angular.module('carpoolingVan')
 
-.controller("usersCtrl", function($scope, usersService, $ionicModal, mapService) {
+.controller("usersCtrl", function($scope, usersService, $ionicModal, mapService,
+  $ionicLoading, popupService) {
 
   $scope.users = usersService.users;
   $scope.addUser = addUser;
   $scope.saveUser = saveUser;
   $scope.updateUser = updateUser;
   $scope.viewInfo = viewInfo;
-  $scope.map = null;
+  $scope.showDeleteUserModal = showDeleteUserModal;
+  
 
   //Cleanup the modal when we're done with it!
   $scope.$on('$destroy', function() {
@@ -16,6 +18,10 @@ angular.module('carpoolingVan')
   });
 
   function addUser() {
+    $ionicLoading.show({
+      template: 'Loading map'
+    });
+
     $scope.user = {};
 
     $ionicModal.fromTemplateUrl('templates/users/newUserModal.html', {
@@ -24,10 +30,10 @@ angular.module('carpoolingVan')
     }).then(function(modal) {
       $scope.modal = modal;
 
-      mapService.initMap()
-      .then(function() {
-        mapService.addMarker(29.0617337,-110.9767597);
-        mapService.addMarker(29.0689827,-110.9759557);
+      initMap()
+      .then(function(map) {
+        $scope.map = map;
+        $ionicLoading.hide();
       });
 
       $scope.openModal();
@@ -62,8 +68,21 @@ angular.module('carpoolingVan')
     });
   }
 
-  function viewInfo(user) {
+  function showDeleteUserModal(userId) {
 
+    popupService.showConfirm("Delete user", "Are you sure?", function() {
+      deleteUser(userId)
+      .then(function() {
+        alert("User removed");
+      });
+    });
+  }
+
+  function deleteUser(userId) {
+    return usersService.remove(userId);
+  }
+
+  function viewInfo(user) {
     $scope.user = user;
 
     $ionicModal.fromTemplateUrl('templates/users/userModal.html', {
@@ -92,7 +111,15 @@ angular.module('carpoolingVan')
 
     return mapService.initMap(location)
     .then(function(map) {
-      var marker = mapService.addMarker(location.lat, location.lng);
+      var marker;
+
+      if(location) {
+        marker = mapService.addMarker(location.lat, location.lng);
+      }
+      else {
+        marker = mapService.createEmptyMarker();
+      }
+
 
       var searchInput = document.getElementById('autocomplete');
       autocomplete = new google.maps.places.Autocomplete(searchInput);

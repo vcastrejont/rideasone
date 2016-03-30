@@ -1,4 +1,4 @@
-<label ng-if="!user.onboard || !route.departureTime" class="toggle toggle-assertive">
+<label ng-if="!route.departureTime" class="toggle toggle-assertive">
   <input type="checkbox" ng-checked="!!user.bypass"
      ng-click="bypassUser(userId, route, user.bypass)">
   <div class="track">

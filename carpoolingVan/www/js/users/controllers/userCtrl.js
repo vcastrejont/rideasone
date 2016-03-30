@@ -35,9 +35,18 @@ angular.module('carpoolingVan')
   }
 
   function initMap(location) {
+
     var location = location || $scope.user.location;
     var map = mapService.initMap(location);
-    var marker = mapService.addMarker(location.lat, location.lng);
+    var marker;
+
+    if(location) {
+      marker = mapService.addMarker(location.lat, location.lng);
+    }
+    else {
+      marker = mapService.createEmptyMarker();
+    }
+
     var searchInput = document.getElementById('autocomplete');
     var autocomplete = new google.maps.places.Autocomplete(searchInput);
 

@@ -1,12 +1,17 @@
 <ion-view view-title="Routes">
+  <ion-nav-buttons side="secondary">
+    <button class="button" ng-click="addRoute()">
+      <i class="icon ion-plus-round"></i>
+    </button>
+  </ion-nav-buttons>
   <ion-content>
     <ion-list>
       <ion-item ng-repeat="route in routes" ng-click="showPassengersModal(route, 'driver')" class="item item-icon-left">
         <i ng-show="route.departureTime" class="icon ion-android-car balanced"></i>
         <i ng-show="!route.departureTime" class="icon ion-android-home assertive"></i>
         <strong>{{route.time}}</strong>
-        <div ng-class="{right: true, balanced: route.passengers, assertive: !route.passengers}">
-          <i class="ion-ios-body"></i>
+        <div ng-class="{right: true, balanced: passengerCount(route) > 0, assertive: passengerCount(route) == 0}">
+            <i class="ion-ios-body"></i>
           <small>{{passengerCount(route)}}</small>
         </div>
         <br>
@@ -16,7 +21,10 @@
         <small ng-show="route.arrivalTime" class="assertive">
           Arrived at {{route.arrivalTime}}
         </small>
-        <ion-option-button ng-show="!route.departureTime && route.passengers" class="button-balanced" ng-click="start(route)">
+        <ion-option-button ng-show="!route.departureTime" class="button-calm" ng-click="showAllUsers(route)">
+          <i class="icon ion-person-stalker"></i>
+        </ion-option-button>
+        <ion-option-button ng-show="!route.departureTime && passengerCount(route) > 0" class="button-balanced" ng-click="start(route)">
           <i class="icon ion-android-car"></i>
         </ion-option-button>
         <ion-option-button ng-show="route.departureTime" class="button-assertive" ng-click="stop(route)">
@@ -24,6 +32,5 @@
         </ion-option-button>
       </ion-item>
     </ion-list>
-    <button class="button button-balanced bottom-button right" ng-click="addRoute()">Add route</button>
   </ion-content>
 </ion-view>

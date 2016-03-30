@@ -5,6 +5,11 @@ angular.module('carpoolingVan')
 
   $scope.users = usersService.users;
   $scope.routes = routesService.routes;
+  // usersService.get(userId)
+  // .then(function(user) {
+  //   // console.log(user.name);
+  //   return user.name;
+  // });
 
   $scope.addRoute = addRoute;
   $scope.start = start;
@@ -15,6 +20,14 @@ angular.module('carpoolingVan')
   $scope.pickupUser = pickupUser;
   $scope.bypassUser = bypassUser;
   $scope.passengerCount = passengerCount;
+
+  $scope.getUserName = function(userId) {
+    return usersService.get(userId)
+    .then(function(user) {
+      // console.log(user.name);
+      return user.name;
+    });
+  };
 
   $scope.$on('$destroy', function() {
 
@@ -29,9 +42,11 @@ angular.module('carpoolingVan')
   });
 
   $scope.openModal = function() {
+
     $scope.modal.show();
   };
   $scope.closeModal = function() {
+
     $scope.modal.hide();
   };
 
@@ -138,24 +153,30 @@ angular.module('carpoolingVan')
     $scope.role = role;
     $scope.route = route;
 
-    $ionicModal.fromTemplateUrl(
-    'templates/routes/passengersModal.html', {
-      scope: $scope,
-      animation: 'slide-in-up'
-    }).then(function(modal) {
-      $scope.modal = modal;
+    if(route.passengers) {
+      $ionicModal.fromTemplateUrl(
+        'templates/routes/passengersModal.html', {
+        scope: $scope,
+        animation: 'slide-in-up'
+      })
+      .then(function(modal) {
+        $scope.modal = modal;
 
-      mapService.initMap()
-      .then(function(map) {
-        angular.forEach($scope.route.passengers, function(p) {
-          if(!p.bypass && !p.onboard) {
-            mapService.addMarker(p.location.lat, p.location.lng);
-          }
+        mapService.initMap()
+        .then(function(map) {
+          angular.forEach($scope.route.passengers, function(p) {
+            if(!p.bypass && !p.onboard) {
+              mapService.addMarker(p.location.lat, p.location.lng);
+            }
+          });
         });
-      });
 
-      $scope.openModal();
-    });
+        $scope.openModal();
+      });
+    }
+    else {
+      alert("No folks in this route yet :(");
+    }
   }
 
   function passengerCount(route) {
@@ -163,8 +184,10 @@ angular.module('carpoolingVan')
     var count = 0;
 
     if(route.passengers) {
-      Object.keys(route.passengers).map(function() {
-        count++;
+      angular.forEach(route.passengers, function(p) {
+        if(!p.bypass) {
+          count++;
+        }
       });
     }
 

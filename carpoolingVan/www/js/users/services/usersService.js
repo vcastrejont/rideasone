@@ -7,12 +7,14 @@ angular.module('carpoolingVan')
   return {
     users: users,
     get: get,
-    update: update
+    update: update,
+    remove: remove
   }
 
   function get(userId) {
+
     var userRef = new Firebase(firebaseRef + "users/" + userId);
-    var obj =  $firebaseObject(userRef);
+    var obj = $firebaseObject(userRef);
 
     return obj.$loaded();
   }
@@ -30,5 +32,10 @@ angular.module('carpoolingVan')
       };
 
     return $http.put(firebaseRef + "users/" + userId + ".json", user);
+  }
+
+  function remove(userId) {
+
+    return $http.delete(firebaseRef + "users/" + userId + ".json");
   }
 });

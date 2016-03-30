@@ -5,6 +5,7 @@
       <i class="icon ion-clock"></i>
       {{route.time}} passenger management
     </h1>
+    <button class="button button-clear button-stable close" ng-click="closeModal()">X</button>
   </ion-header-bar>
   <ion-content>
     <ul class="list">
@@ -19,9 +20,5 @@
          </label>
       </li>
     </ul>
-
-    <button class="button button-dark right" ng-click="closeModal()">
-      Close
-    </button>
   </ion-content>
 </ion-modal-view>

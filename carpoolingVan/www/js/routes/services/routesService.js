@@ -1,10 +1,23 @@
 angular.module('carpoolingVan')
 
 .factory("routesService", function($firebaseArray, firebaseRef, $http,
-  dateService) {
+  dateService, usersService) {
 
   var routesRef = new Firebase(firebaseRef + "routes"),
     routes = $firebaseArray(routesRef);
+
+  // routes.$loaded()
+  // .then(function() {
+  //   angular.forEach(routes, function(r) {
+  //     angular.forEach(r.passengers, function(p, i) {
+  //       usersService.get(i)
+  //       .then(function(user) {
+  //         p.location = user.location;
+  //         p.name = user.name;
+  //       });
+  //     });
+  //   });
+  // });
 
   return {
     routes: routes,

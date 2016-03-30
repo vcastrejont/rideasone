@@ -2,6 +2,12 @@
   <ion-modal-view>
     <ion-header-bar class="bar bar-dark">
       <h1 class="title"><i class="icon ion-person-add"></i>New User</h1>
+
+        <button class="button right" ng-click="saveUser()">
+          <i class="icon ion-checkmark-round"></i>
+        </button>
+
+      <button class="button button-clear button-stable close" ng-click="closeModal()">X</button>
     </ion-header-bar>
     <ion-content>
       <div class="list">
@@ -11,15 +17,11 @@
         </label>
         <label class="item item-input item-stacked-label">
           <span class="input-label">Address</span>
-          <input type="text" placeholder="Castillo de Liria 207" ng-model="user.address">
+          <input type="text" id="autocomplete" placeholder="Castillo de Liria 207" ng-model="user.location.address">
         </label>
       </div>
 
-      <button class="button button-balanced right" ng-click="saveUser()">
-        Submit
-      </button>
-      <button class="button button-dark right" ng-click="closeModal()">
-        Close
-      </button>
+      <div id="map" data-tap-disabled="true"></div>
+
     </ion-content>
   </ion-modal-view>

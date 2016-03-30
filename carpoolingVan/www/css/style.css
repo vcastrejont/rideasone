@@ -27,7 +27,7 @@ button.bottom-button {
 }
 
 #map {
-    height:100%;
+    height:50%;
 }
 
 .footer-label {
@@ -55,4 +55,8 @@ button.close {
 .half {
   width: 50%;
   float: left;
+}
+
+.popup .popup-body {
+  text-align: center;
 }
