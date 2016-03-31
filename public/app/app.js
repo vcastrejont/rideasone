@@ -7,12 +7,37 @@ var app = angular.module('carPoolingApp', [
   'btford.socket-io'
 ]);
 
+app.run(['$rootScope', '$location', '$window',
+  function($rootScope, $location, $window) {
+    
+    $rootScope.$on('$stateChangeSuccess',
+      function(event) {
+        if (!$window.ga) {
+          return;
+        }
+        console.log($location.path());
+        $window.ga('send', 'pageview', {
+          page: $location.path()
+        });
+      });
+  }
+]);
+
+
 app.config(function($stateProvider, $urlRouterProvider) {
   $urlRouterProvider.otherwise('/');
   var home = {
     name: 'home',
     url: '^/',
-    templateUrl: "app/templates/index.html"
+    templateUrl: "app/templates/index.html",
+    templateUrl: "app/templates/mycarpooling.html",
+    controller: myCarpoolingCtrl
+  },
+  mycarpooling = {
+    name: 'mycarpooling',
+    url: '/mycarpooling',
+    templateUrl: "app/templates/mycarpooling.html"  ,
+    controller: myCarpoolingCtrl
   },
   myroutes = {
     name: 'myroutes',
@@ -57,6 +82,7 @@ app.config(function($stateProvider, $urlRouterProvider) {
 
   $stateProvider
   .state(home)
+  .state(mycarpooling)
   .state(myroutes)
   .state(getaride)
   .state(events)

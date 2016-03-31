@@ -1,6 +1,6 @@
 angular.module('carPoolingApp').controller('eventsShowCtrl', eventsShowCtrl);
 
-eventsShowCtrl.$inject = ['$scope', '$http', '$state' ,'$window'];
+eventsShowCtrl.$inject = ['$scope', '$http', '$state','$window'];
 
 function eventsShowCtrl ($scope, $http,  $state, $window) {
   $scope.id = $state.params.id
@@ -15,7 +15,34 @@ function eventsShowCtrl ($scope, $http,  $state, $window) {
       id: $window.user_id,
       name: $window.user_name,
     },
-    apiSuccess : false,
+    init:function(){
+      //Load data, Todo create a service for this, move it to the back end
+      $http.get('/api/event/'+$scope.id).then(function(response) {
+        $scope.view.event = response.data;
+        $scope.view.event.avail = 0;
+        $scope.view.event.lift = _.where(response.data.attendees, {lift: true});
+        $scope.view.event.signed = _.where(response.data.attendees, {user_id: $scope.view.user.id});
+        $scope.view.event.driving = _.where(response.data.carpooling, {driver_id: $scope.view.user.id});
+        $scope.view.isSigned = function (car) {
+          var temp = _.findWhere(car.passanger, {user_id: $scope.view.user.id});
+          return temp  ? true : false;
+        }
+        $scope.view.event.passanger = _.where(response.data.carpooling, {user_id: $scope.view.user.id});
+        _.each(response.data.carpooling, function(carpool, index) {
+          var avail = carpool.seats -  carpool.passanger.length;
+          $scope.view.event.avail += avail;
+          $scope.view.passanger = _.where(carpool.passanger, {user_id:$scope.view.user.id});
+          if ($scope.view.passanger.length > 0){
+            $scope.view.car = index;
+          }
+        });
+      
+        $scope.view.showMap();
+      }, function(response) {
+        console.error('Error: ' + response.data);
+      });
+      
+    },
     showMap:function(){
       var myLatLng = {lat: this.event.location[1],lng: this.event.location[0]};
       var options = {
@@ -36,9 +63,6 @@ function eventsShowCtrl ($scope, $http,  $state, $window) {
       var infowindow = new google.maps.InfoWindow({
         content: this.event.place
       });
-      marker.addListener('click', function() {
-        infowindow.open(map, marker);
-      });
       infowindow.open(map, marker);
     },
     clearOptions:function(){
@@ -52,20 +76,94 @@ function eventsShowCtrl ($scope, $http,  $state, $window) {
         console.log('Error: ' + response);
       });	
     },
-    signMeUp:function(){
+    signMe:function(){
       var self = this;
       this.signed = true;
       $http.put('/api/event/signup/'+$scope.id).then(function(response) {
           self.alerts.push({msg: response.data.message});
           setTimeout(function () {
-             $scope.$apply(function()  {  self.closeAlert(); });
-          }, 2000); 
-            console.log(response);
+            $scope.$apply(function()  {  self.closeAlert(); });
+            $scope.view.init();
+          }, 1000); 
+              $scope.view.init();
+            //console.log(response);
         }, function(response) {
             console.log('Error: ' + response);
       });	
     },
-    confirm:function(){
+    addCar:function(){
+      var self = this;
+      var eventData = {
+        id         : $scope.view.event._id,
+        seats      : $scope.view.seats,
+        comments   : $scope.view.comments,
+        driver_id  : $scope.view.user.id
+      };
+      $http.post('/api/events/addcar', eventData).then(function(response) {
+            console.log(response);
+            self.alerts.push({msg: response.data.message});
+            setTimeout(function () {
+               $scope.$apply(function()  {  self.closeAlert(); });
+               $scope.view.init();
+            }, 1000);
+        }, function(response) {
+            console.log('Error: ' + response);
+      });	
+    },
+    deleteCar:function(carid){
+      if (confirm("Are you sure?")) {
+        var carData = {
+          id         : $scope.view.event._id,
+          carid      : carid
+        };
+        var self = this;
+        $http.post('/api/events/deletecar', carData).then(function(response) {
+            self.alerts.push({msg: response.data.message});
+            setTimeout(function () {
+               $scope.$apply(function()  {  self.closeAlert(); });
+               $scope.view.init();
+            }, 1000);
+          }, function(response) {
+              console.log('Error: ' + response);
+        });	
+      }
+    },
+    joinCar:function(carid){
+      var carData = {
+        id         : $scope.view.event._id,
+        carid      : carid
+      };
+      var self = this;
+      $http.post('/api/events/joincar', carData).then(function(response) {
+          self.alerts.push({msg: response.data.message});
+          setTimeout(function () {
+             $scope.$apply(function()  {  self.closeAlert(); });
+             $scope.view.init();
+          }, 1000);
+        }, function(response) {
+            console.log('Error: ' + response);
+      });	
+      
+    },
+    leaveCar:function(carid){
+      if (confirm("Are you sure ?")) {
+        var carData = {
+          id         : $scope.view.event._id,
+          carid      : carid
+        };
+        var self = this;
+        $http.post('/api/events/leaveCar', carData).then(function(response) {
+            self.alerts.push({msg: response.data.message});
+            setTimeout(function () {
+               $scope.$apply(function()  {  self.closeAlert(); });
+               $scope.view.init();
+            }, 1000);
+          }, function(response) {
+              console.log('Error: ' + response);
+        });	
+      }
+    },
+    carPooling:function(){
       var self = this;
       var eventData = {
         option : this.option,
@@ -89,16 +187,8 @@ function eventsShowCtrl ($scope, $http,  $state, $window) {
     
   };
 
-  //Load data, Todo create a service for this
-  $http.get('/api/event/'+$scope.id).then(function(response) {
-        //console.table(response);
-        $scope.view.event = response.data;
-        $scope.view.event.lift = _.where(response.data.attendees, {lift: true});
-        $scope.view.showMap();
-    }, function(response) {
-        console.error('Error: ' + response.data);
-  });
+
     
-  
+  $scope.view.init();
   
 };

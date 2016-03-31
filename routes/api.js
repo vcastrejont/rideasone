@@ -3,6 +3,7 @@ var router = express.Router();
 var settingsController = require('../controllers/settingController.js');
 var eventsController = require('../controllers/eventController.js');
 var locationController = require('../controllers/locationController.js');
+var userController = require('../controllers/userController.js');
 router.get('/', function(req, res) {
  res.send('API list');
 });
@@ -22,10 +23,20 @@ router.get('/event/:id', eventsController.show);
 router.put('/event/signup/:id', eventsController.signup);
 //      Update an event
 router.put('/events/:id', eventsController.update);
+//      Add a car
+router.post('/events/addcar', eventsController.addCar);
+//      Delete a car
+router.post('/events/deletecar', eventsController.deleteCar);
+//      Delete an event
+router.post('/events/joincar', eventsController.joinCar);
+//     Leave a car
+router.post('/events/leaveCar', eventsController.leaveCar);
 //      Delete an event
 router.delete('/event/:id', eventsController.remove);
 //      Driver available for  an event
 router.get('/events/drivers/:id', eventsController.drivers);
+//      Events for a driver
+router.get('/events_driver/:id', eventsController.byDriver);
 
 
 // ----Locations --------
@@ -36,8 +47,11 @@ router.put('/locations/:id', locationController.update);
 router.delete('/locations/:id', locationController.remove);
 
 // ----Chat --------
-router.get('/chat', function(req, res) {
-  console.log(req);
-});
+// router.get('/chat', function(req, res) {
+//   console.log(req);
+// });
+
+// ----Users --------
+router.get('/users', userController.list);
 
 module.exports = router;

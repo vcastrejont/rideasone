@@ -36,7 +36,8 @@
           <script src="/app/controllers/eventsShowCtrl.js"></script>
           <script src="/app/controllers/eventsNewCtrl.js"></script>
           <script src="/app/controllers/settingsCtrl.js"></script>
-          <script src="/app/controllers/chatCtrl.js"></script>
+          <!-- <script src="/app/controllers/chatCtrl.js"></script> -->
+          <script src="/app/controllers/myCarpoolingCtrl.js"></script>
           <script>
             var user=<%- JSON.stringify(user) %>;
             var user_name="<%= user.name%>";
@@ -56,11 +57,11 @@
 
               <div class="col-sm-7 menu">
                 <ul>
-                  <li><a ui-sref="myroutes" ui-sref-active="active" >My routes</a></li>
-                  <li><a ui-sref="getaride" ui-sref-active="active">Get a ride</a></li>
+
+
                   <li><a ui-sref="events"  ui-sref-active="active">Events</a></li>
-                  <li><a ui-sref="chat"  ui-sref-active="active">Chat</a></li>
-                  <li><a ui-sref="settings"  ui-sref-active="active">Settings</a></li>
+                  <li><a style="text-decoration:line-through;">Get a ride</a></li>
+                  <li><a style="text-decoration:line-through;">company transport</a></li>
                 </ul>
               </div>
               <div class="col-sm-2 user">
