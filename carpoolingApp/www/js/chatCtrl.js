@@ -7,10 +7,11 @@ ChatCtrl.$inject = [
   "socket",
   "$sanitize",
   "$ionicScrollDelegate",
-  "$timeout"
+  "$timeout",
+  "$stateParams"
 ];
 
-function ChatCtrl($scope, socket, $sanitize, $ionicScrollDelegate, $timeout) {
+function ChatCtrl($scope, socket, $sanitize, $ionicScrollDelegate, $timeout, $stateParams) {
 
   	var typing = false,
         user = $scope.currentUser,
@@ -20,6 +21,7 @@ function ChatCtrl($scope, socket, $sanitize, $ionicScrollDelegate, $timeout) {
     	    '#3b88eb', '#3824aa', '#a700ff', '#d300e7'
     	  ];
 
+    console.log($stateParams);
     $scope.messages = [];
     $scope.connected = false;
 

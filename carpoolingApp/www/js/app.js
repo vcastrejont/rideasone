@@ -139,7 +139,7 @@ angular.module('carpooling', [
     })
 
     .state('app.chat', {
-      url: '/chat',
+      url: '/chat/:eventId',
       views: {
         'menuContent': {
           templateUrl: "templates/chat.html",
