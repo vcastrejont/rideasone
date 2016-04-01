@@ -12,6 +12,7 @@ var passport  = require('passport');
 var session   = require('express-session');
 var MongoStore = require('connect-mongo')(session);
 var routes = require('./routes/routes');
+var _ = require('underscore');
 
 require('./controllers/passport')(passport);
 //  Database
