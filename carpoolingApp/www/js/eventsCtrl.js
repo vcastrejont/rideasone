@@ -1,5 +1,8 @@
 angular.module('carpooling.controllers')
 
-.controller('EventsCtrl', function($scope, carpoolingData) {
-  $scope.events = carpoolingData;
+.controller('eventsCtrl', function($scope, eventsFactory) {
+  eventsFactory.getAll()
+  .then(function(events) {
+    $scope.events = events;
+  });
 });

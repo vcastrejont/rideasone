@@ -50,6 +50,8 @@ angular.module('carpooling', [
   });
 })
 
+.constant("apiUrl", "http://localhost:3001/api/")
+
 .config(function($stateProvider, $urlRouterProvider) {
   $stateProvider
 
@@ -104,7 +106,7 @@ angular.module('carpooling', [
       views: {
         'menuContent': {
           templateUrl: 'templates/events.html',
-          controller: 'EventsCtrl'
+          controller: 'eventsCtrl'
         }
       }
     })

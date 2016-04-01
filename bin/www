@@ -11,7 +11,7 @@ var http = require('http');
  * Get port from environment and store in Express.
  */
 
-var port = normalizePort(process.env.PORT || '3000');
+var port = normalizePort(process.env.PORT || '3001');
 app.set('port', port);
 
 /**
@@ -33,6 +33,8 @@ var io = require('socket.io')(server);
 var users = [];
 
 io.on('connection', function (socket) {
+
+  // console.log("connect");
   var addedUser = false;
 
   // when the client emits 'new message', this listens and executes
@@ -45,12 +47,14 @@ io.on('connection', function (socket) {
   });
 
   // when the client emits 'add user', this listens and executes
-  socket.on('add user', function (newUser) {
+  socket.on('add user', function (data) {
+    console.log(socket.user);
+
     if (addedUser) return;
 
     if(users.length > 0) {
       for(var i = 0; i < users.length; i++) {
-        if(newUser.id === users[i].id) {
+        if(data.user.id === users[i].id) {
           socket.emit('already logged in');
           return;
         }
@@ -58,7 +62,7 @@ io.on('connection', function (socket) {
     }
 
     // we store the username in the socket session for this client
-    socket.user = newUser;
+    socket.user = data.user;
     users.push(socket.user);
     addedUser = true;
 
@@ -72,21 +76,25 @@ io.on('connection', function (socket) {
   });
 
   // when the client emits 'typing', we broadcast it to others
-  socket.on('typing', function () {
+  socket.on('typing', function (eventId) {
+    console.log(socket.user, eventId);
     socket.broadcast.emit('typing', {
       username: socket.user.name
     });
   });
 
   // when the client emits 'stop typing', we broadcast it to others
-  socket.on('stop typing', function () {
+  socket.on('stop typing', function (eventId) {
+    console.log(socket.user);
     socket.broadcast.emit('stop typing', {
       username: socket.user.name
     });
   });
 
   // when the user disconnects.. perform this
-  socket.on('disconnect', function () {
+  socket.on('disconnect', function (eventId) {
+    // console.log("disconnect");
+
     if (addedUser) {
       users.splice(users.indexOf(socket.user), 1);
 

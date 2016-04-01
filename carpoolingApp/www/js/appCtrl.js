@@ -3,10 +3,12 @@ angular.module('carpooling.controllers')
 .controller('AppCtrl', AppCtrl);
 
 AppCtrl.$inject = [
-  "$scope", "AuthService", "$location", "$rootScope", "$state", "ProfileAPIService"
+  "$scope", "AuthService", "$location", "$rootScope", "$state", "ProfileAPIService",
+  "$ionicHistory"
 ];
 
-function AppCtrl($scope, AuthService, $location, $rootScope, $state, ProfileAPIService) {
+function AppCtrl($scope, AuthService, $location, $rootScope, $state,
+  ProfileAPIService, $ionicHistory) {
 
   $scope.isAuthenticated = false;
 
@@ -16,7 +18,7 @@ function AppCtrl($scope, AuthService, $location, $rootScope, $state, ProfileAPIS
       if(response !== undefined && response.access_token !== undefined) {
         ProfileAPIService.getProfile(response.access_token)
         .then(function(user) {
-            var state = "app.map";
+            var state = "app.events";
             // if(UserService.existsOrSave(user)) {
             //   route = "app/events";
             // }
@@ -26,6 +28,7 @@ function AppCtrl($scope, AuthService, $location, $rootScope, $state, ProfileAPIS
 
             setCurrentUser(user);
             $state.go(state);
+            $ionicHistory.clearHistory();
         },
         function(error) {
           alert(error);
@@ -64,7 +67,7 @@ function AppCtrl($scope, AuthService, $location, $rootScope, $state, ProfileAPIS
     $scope.isAuthenticated = true;
   }
 
-  // userInit();
+  //userInit();
   userFakeInit();
 
 }

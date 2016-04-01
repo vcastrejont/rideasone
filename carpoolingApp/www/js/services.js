@@ -31,6 +31,8 @@ angular.module('carpooling.services', [])
         image: imageUrl + "?sz=40"
       };
 
+      console.log(user);
+
       return user;
     },
     function(error) {
@@ -39,4 +41,24 @@ angular.module('carpooling.services', [])
   };
 
   return profileAPIService;
+})
+
+.factory('eventsFactory', function (apiUrl, $http) {
+
+  return {
+    getInfo: getInfo,
+    getAll: getAll
+  };
+
+  function getInfo(eventId) {
+
+    return $http.get("https://gist.githubusercontent.com/vcastrejont/c69be8644fc4e1a8bd7f0613f9bd9f28/raw/aefe1aef8d28abcb021e651bbe7a7e3a3771844e/event.json");
+
+    // return $http.get(apiUrl + 'event/' + eventId);
+  }
+
+  function getAll() {
+
+    return $http.get(apiUrl + 'events/');
+  }
 });
