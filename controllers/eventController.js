@@ -10,6 +10,19 @@ module.exports = {
      * eventController.list()
      */
     list: function(req, res) {
+      eventModel.find({"datetime":{"$gte":new Date()}},function(err, events){
+          if(err) {
+              return res.json(500, {
+                  message: 'Error getting event.'
+              });
+          }
+          return res.json(events);
+      });
+    },
+    /**
+     * eventController.list()
+     */
+    past: function(req, res) {
       eventModel.find(function(err, events){
           if(err) {
               return res.json(500, {
@@ -44,6 +57,7 @@ module.exports = {
     create: function(req, res) {
       var event= new eventModel({
         location      : req.body.location,
+        address       : req.body.address,
         place         : req.body.place,
         place_id      : req.body.place_id,
         organizer_id  : req.user.id,
