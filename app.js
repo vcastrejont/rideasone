@@ -12,6 +12,7 @@ var passport  = require('passport');
 var session   = require('express-session');
 var MongoStore = require('connect-mongo')(session);
 var routes = require('./routes/routes');
+var _ = require('underscore');
 
 require('./controllers/passport')(passport);
 //  Database
@@ -39,7 +40,6 @@ app.use(cookieParser());
 app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-  res.header("Access-Control-Expose-Headers", "X-User");
   next();
 });
 
