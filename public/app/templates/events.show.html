@@ -80,7 +80,7 @@
                   <span ng-repeat="p in car.passanger" ng-class="{'sel': p.user_id == view.user.id }">{{p.name}}<span ng-if="!$last">, </span></span>
                </p>
                <p>
-                 <strong>Seats:</strong> {{car.passanger.length}}/{{car.seats}}
+                 <strong>Available seats:</strong> {{car.seats-car.passanger.length}} 
                </p>
                <div ng-if=" car.driver_id == view.user.id" class="text-center"> 
                  <button class="btn btn-danger btn-xs" ng-click="view.deleteCar(car._id)" >Remove my car</button>
