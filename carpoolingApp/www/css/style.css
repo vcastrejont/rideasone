@@ -114,3 +114,8 @@ a.chat-avatar img {
   max-width: 40px;
   margin-right: 20px;
 }
+
+.center {
+  display: block;
+  text-align: center;
+}

@@ -1,8 +1,9 @@
 angular.module('carpooling.services')
 
-.factory('socket',function(socketFactory, $sanitize){
+.factory('socketIo',function(socketFactory, $sanitize){
 	//Create socket and connect to http://chat.socket.io
   var $scope,
+  connected = false,
   myIoSocket = io.connect('http://localhost:3001/'),
   messages = [],
   COLORS = [
@@ -16,7 +17,7 @@ angular.module('carpooling.services')
     addMessageToList: addMessageToList
   };
 
-  function init(scope, user) {
+  function init(scope, user, rideId) {
     $scope = scope;
 
     var socket = socketFactory({
@@ -24,8 +25,19 @@ angular.module('carpooling.services')
   	});
 
     socket.on('connect', function() {
+      connected = true;
+      socket.emit('add user', {
+        user: user,
+        rideId: rideId
+      });
+    });
 
-      socket.emit('add user', user);
+    if(!connected) {
+      socket.emit('add user', {
+        user: user,
+        rideId: rideId
+      });
+    }
 
       // On login display welcome message
       socket.on('login', function (users) {
@@ -65,7 +77,7 @@ angular.module('carpooling.services')
       socket.on('stop typing', function (data) {
         removeChatTyping(data.username);
       });
-    });
+    // });
 
     return socket;
   }

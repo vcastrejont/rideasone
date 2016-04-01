@@ -4,15 +4,18 @@ angular.module('carpooling.controllers')
 
 ChatCtrl.$inject = [
   "$scope",
-  "socket",
+  "socketIo",
   "$timeout",
   "$stateParams",
   "eventsFactory",
-  "$ionicScrollDelegate"
+  "$ionicScrollDelegate",
+  "$interval",
+  "$ionicModal",
+  "mapFactory"
 ];
 
-function ChatCtrl($scope, socketIo, $timeout,
-  $stateParams, eventsFactory, $ionicScrollDelegate) {
+function ChatCtrl($scope, socketIo, $timeout, $stateParams, eventsFactory,
+  $ionicScrollDelegate, $interval, $ionicModal, mapFactory) {
 
     $scope.sendMessage = sendMessage;
     $scope.updateTyping = updateTyping;
@@ -20,21 +23,18 @@ function ChatCtrl($scope, socketIo, $timeout,
     $scope.connected = false;
     $scope.attendees = [];
 
-  	var socket,
+  	var socket = null,
     typing = false,
     user = $scope.currentUser,
     eventId = $stateParams.eventId || "";
 
-    eventsFactory.getInfo(eventId)
+    eventsFactory.getRideInfo(user, eventId)
     .then(function(res) {
 
-      var event = res.data;
-      $scope.attendees = event.attendees;
+      var ride = res.data;
+      $scope.attendees = ride.attendees;
 
-      socket = socketIo.init($scope, {
-        user: user,
-        eventId: eventId
-      });
+      socket = socketIo.init($scope, user, rideId);
 
       $scope.connected = true;
     });
@@ -54,7 +54,6 @@ function ChatCtrl($scope, socketIo, $timeout,
   	//function called when user hits the send button
     function sendMessage() {
       if($scope.message !== undefined && $scope.message !== "") {
-
         socket.emit('new message', $scope.message);
     		socketIo.addMessageToList(user.name, true, $scope.message);
 
@@ -65,7 +64,7 @@ function ChatCtrl($scope, socketIo, $timeout,
 
         $ionicScrollDelegate.scrollBottom();
       }
-  	};
+  	}
 
   	//function called on Input Change
     function updateTyping() {
@@ -81,5 +80,59 @@ function ChatCtrl($scope, socketIo, $timeout,
           socket.emit('stop typing');
         }
       }
-  	};
+  	}
+
+    $scope.distance;
+
+    var stop;
+    var eventLat = "29.1011295";
+    var eventLng = "-111.015617";
+
+    $scope.viewCarLocation = function() {
+
+      $ionicModal.fromTemplateUrl('templates/mapModal.html', {
+        scope: $scope,
+        animation: 'slide-in-up'
+      }).then(function(modal) {
+        $scope.modal = modal;
+        $scope.openModal();
+
+        calculateDistance();
+        stop = $interval(calculateDistance, 10000);
+
+        function calculateDistance() {
+          mapFactory.calculateDistance(eventLat,eventLng).then(function(distance) {
+            $scope.distance = distance;
+          });
+        }
+      });
+    };
+
+    $scope.stopSharingLocation = function() {
+
+      if (angular.isDefined(stop)) {
+        $interval.cancel(stop);
+        stop = undefined;
+      }
+    };
+
+    $scope.$on('$destroy', function() {
+      $scope.modal.remove();
+      $scope.stopSharingLocation();
+    });
+
+    $scope.$on('modal.hidden', function() {
+      $scope.stopSharingLocation();
+    });
+    // Execute action on remove modal
+    $scope.$on('modal.removed', function() {
+      $scope.stopSharingLocation();
+    });
+
+    $scope.openModal = function() {
+      $scope.modal.show();
+    };
+    $scope.closeModal = function() {
+      $scope.modal.hide();
+    };
 }
