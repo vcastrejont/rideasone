@@ -19,10 +19,12 @@ function eventsCtrl ($scope, $http) {
           
           event.lift = _.where(element.attendees, {lift: true});
           _.each(event.carpooling, function(car, index) {
-            event.seats += car.seats;
-            event.used_seats = car.passanger.length;
+          
+            var avail = car.seats -  car.passanger.length;
+            event.avail += avail;
+            
           });
-          event.avail = event.seats - event.used_seats;
+          
           $scope.events.push(event);
         });
     })

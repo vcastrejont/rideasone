@@ -15,40 +15,32 @@ function eventsShowCtrl ($scope, $http,  $state, $window) {
       id: $window.user_id,
       name: $window.user_name,
     },
+    isSigned: function (car) {
+      var temp = _.findWhere(car.passanger, {user_id: $scope.view.user.id});
+      return temp  ? true : false;
+    },
     init:function(){
-      //Load data, Todo create a service for this, move it to the back end
+      //Load data, Todo create a service for this
+      var self = this;
       $http.get('/api/event/'+$scope.id).then(function(response) {
-        $scope.view.event = response.data;
-        $scope.view.event.avail = 0;
-        $scope.view.event.lift = _.where(response.data.attendees, {lift: true});
-        $scope.view.event.signed = _.where(response.data.attendees, {user_id: $scope.view.user.id});
-        $scope.view.event.driving = _.where(response.data.carpooling, {driver_id: $scope.view.user.id});
-        $scope.view.isSigned = function (car) {
-          var temp = _.findWhere(car.passanger, {user_id: $scope.view.user.id});
-          return temp  ? true : false;
-        }
-        $scope.view.event.passanger = _.where(response.data.carpooling, {user_id: $scope.view.user.id});
+        self.event = response.data;
+        self.event.avail = 0;
+        self.event.signed = _.where(response.data.attendees, {user_id: self.user.id});
         _.each(response.data.carpooling, function(carpool, index) {
           var avail = carpool.seats -  carpool.passanger.length;
-          $scope.view.event.avail += avail;
-          $scope.view.passanger = _.where(carpool.passanger, {user_id:$scope.view.user.id});
-          if ($scope.view.passanger.length > 0){
-            $scope.view.car = index;
-          }
+          self.event.avail += avail;
         });
-      
-        $scope.view.showMap();
+        self.showMap();
       }, function(response) {
         console.error('Error: ' + response.data);
       });
-      
     },
     showMap:function(){
       var myLatLng = {lat: this.event.location[1],lng: this.event.location[0]};
       var options = {
           center: new google.maps.LatLng(this.event.location[1], this.event.location[0]),
           zoom: 17,
-          disableDefaultUI: true,
+          disableDefaultUI: false,
           draggable: true   
       };
       var mapCanvas = document.getElementById("map");
