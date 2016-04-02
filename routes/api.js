@@ -17,6 +17,8 @@ router.post('/settings', settingsController.update);
 router.get('/events', eventsController.list);
 //      Create a new event
 router.post('/events', eventsController.create);
+//    Car polling by user
+router.post('/events/carbyuser', eventsController.carbyuser);
 //      Show an event
 router.get('/event/:id', eventsController.show);
 //      Event sign up

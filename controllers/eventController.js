@@ -1,5 +1,7 @@
 var eventModel = require('../models/eventModel.js');
 var mongoose = require('mongoose');
+var _ = require('underscore');
+
 /**
  * eventController.js
  *
@@ -31,6 +33,34 @@ module.exports = {
           }
           return res.json(events);
       });
+    },
+    /**
+     * eventController.carbyuser()
+     */
+    carbyuser: function(req, res) {
+        var event_id = req.body.event_id;
+        var user_id = req.body.user_id;
+        var result_data = {};
+        eventModel.findOne({_id: event_id}, function(err, event){
+            if(err) {
+                return res.json(500, {
+                    message: 'Error getting event.'
+                });
+            }
+            if(!event) {
+                return res.json(404, {
+                    message: 'No such event'
+                });
+            }
+            _.each(event.carpooling, function(car, index) {
+              _.each(car.passanger, function(passanger, index) {
+                console.log(passanger);
+                if(passanger.user_id == user_id)
+                result_data = car;
+              });
+            });
+            res.status(200).json(result_data);
+        });
     },
     /**
      * eventController.show()
@@ -68,7 +98,6 @@ module.exports = {
 				datetime      : req.body.datetime,
         tags          : req.body.tags
       });
-      console.log(event);
       event.save(function(err, event){
         if(err) {
             return res.json(500, {
