@@ -1,22 +1,25 @@
-angular.module('carpooling.controllers')
+angular.module('carpooling')
 
-.controller('AppCtrl', AppCtrl);
+.controller('appCtrl', appCtrl);
 
-AppCtrl.$inject = [
-  "$scope", "AuthService", "$location", "$rootScope", "$state", "ProfileAPIService",
+appCtrl.$inject = [
+  "$scope", "authService", "$state", "profileAPIService",
   "$ionicHistory"
 ];
 
-function AppCtrl($scope, AuthService, $location, $rootScope, $state,
-  ProfileAPIService, $ionicHistory) {
+function appCtrl($scope, authService, $state, profileAPIService,
+  $ionicHistory) {
 
   $scope.isAuthenticated = false;
+  $scope.login = login;
+  $scope.logout = logout;
 
-  $scope.login = function() {
-    AuthService.login()
+  function login() {
+
+    authService.login()
     .then(function (response) {
       if(response !== undefined && response.access_token !== undefined) {
-        ProfileAPIService.getProfile(response.access_token)
+        profileAPIService.getProfile(response.access_token)
         .then(function(user) {
             var state = "app.events";
             // if(UserService.existsOrSave(user)) {
@@ -38,19 +41,22 @@ function AppCtrl($scope, AuthService, $location, $rootScope, $state,
     function(error) {
       alert(error);
     });
-  };
+  }
 
-  $scope.logout = function() {
-    userFakeInit();
+  function logout() {
+
+    userInit();
     $state.go("app.login");
   };
 
   function userInit() {
+
     $scope.currentUser = null;
     $scope.isAuthenticated = false;
   }
 
   function setCurrentUser(user) {
+
     if(user !== undefined) {
       $scope.currentUser = user;
       $scope.isAuthenticated = true;
@@ -58,6 +64,7 @@ function AppCtrl($scope, AuthService, $location, $rootScope, $state,
   }
 
   function userFakeInit() {
+
     $scope.currentUser = {
       id: "214654643134567",
       name: "Foo",

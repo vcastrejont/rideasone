@@ -1,16 +1,26 @@
-angular.module('carpooling.services')
+angular.module('carpooling')
 
-.factory('socketIo',function(socketFactory, $sanitize){
-	//Create socket and connect to http://chat.socket.io
+.factory('socketIo', function(socketFactory, $sanitize,
+  serverUrl) {
+
   var $scope,
   connected = false,
-  myIoSocket = io.connect('http://localhost:3001/'),
+  myIoSocket = io.connect(serverUrl),
   messages = [],
   COLORS = [
     '#e21400', '#91580f', '#f8a700', '#f78b00',
     '#58dc00', '#287b00', '#a8f07a', '#4ae8c4',
     '#3b88eb', '#3824aa', '#a700ff', '#d300e7'
   ];
+
+  var myIoSocket = io.connect(serverUrl);
+
+  try {
+    io.connect(serverUrl)
+  }
+  catch(err) {
+    alert(err);
+  }
 
   return {
     init: init,
@@ -39,45 +49,44 @@ angular.module('carpooling.services')
       });
     }
 
-      // On login display welcome message
-      socket.on('login', function (users) {
-        addMessageToList("", false, stringifyParticipants(users));
-      });
+    // On login display welcome message
+    socket.on('login', function (users) {
+      addMessageToList("", false, stringifyParticipants(users));
+    });
 
-      //On alreadyLoggedIn display alert message
-      socket.on('already logged in', function () {
-        alert("You have accessed in another device");
-      });
+    //On alreadyLoggedIn display alert message
+    socket.on('already logged in', function () {
+      alert("You have accessed in another device");
+    });
 
-      // Whenever the server emits 'new message', update the chat body
-      socket.on('new message', function (data) {
-        if(data.message && data.username) {
-          addMessageToList(data.username, true, data.message);
-        }
-      });
+    // Whenever the server emits 'new message', update the chat body
+    socket.on('new message', function (data) {
+      if(data.message && data.username) {
+        addMessageToList(data.username, true, data.message);
+      }
+    });
 
-      // Whenever the server emits 'user joined', log it in the chat body
-      socket.on('user joined', function (data) {
-        addMessageToList("", false, data.username + " joined");
-        addMessageToList("", false, stringifyParticipants(data.users));
-      });
+    // Whenever the server emits 'user joined', log it in the chat body
+    socket.on('user joined', function (data) {
+      addMessageToList("", false, data.username + " joined");
+      addMessageToList("", false, stringifyParticipants(data.users));
+    });
 
-      // Whenever the server emits 'user left', log it in the chat body
-      socket.on('user left', function (data) {
-        addMessageToList("", false, data.username + " left");
-        addMessageToList("", false, stringifyParticipants(data.users));
-      });
+    // Whenever the server emits 'user left', log it in the chat body
+    socket.on('user left', function (data) {
+      addMessageToList("", false, data.username + " left");
+      addMessageToList("", false, stringifyParticipants(data.users));
+    });
 
-      //Whenever the server emits 'typing', show the typing message
-      socket.on('typing', function (data) {
-        addChatTyping(data);
-      });
+    //Whenever the server emits 'typing', show the typing message
+    socket.on('typing', function (data) {
+      addChatTyping(data);
+    });
 
-      // Whenever the server emits 'stop typing', kill the typing message
-      socket.on('stop typing', function (data) {
-        removeChatTyping(data.username);
-      });
-    // });
+    // Whenever the server emits 'stop typing', kill the typing message
+    socket.on('stop typing', function (data) {
+      removeChatTyping(data.username);
+    });
 
     return socket;
   }

@@ -1,11 +1,10 @@
-angular.module('carpooling.controllers')
+angular.module('carpooling')
 
-.controller('ChatCtrl', ChatCtrl);
+.controller('chatCtrl', chatCtrl);
 
-ChatCtrl.$inject = [
+chatCtrl.$inject = [
   "$scope",
   "socketIo",
-  "$timeout",
   "$stateParams",
   "eventsFactory",
   "$ionicScrollDelegate",
@@ -14,50 +13,71 @@ ChatCtrl.$inject = [
   "mapFactory"
 ];
 
-function ChatCtrl($scope, socketIo, $timeout, $stateParams, eventsFactory,
+function chatCtrl($scope, socketIo, $stateParams, eventsFactory,
   $ionicScrollDelegate, $interval, $ionicModal, mapFactory) {
 
-    $scope.sendMessage = sendMessage;
-    $scope.updateTyping = updateTyping;
     $scope.messages = [];
     $scope.connected = false;
     $scope.attendees = [];
+    $scope.openModal = openModal;
+    $scope.closeModal = closeModal;
+    $scope.sendMessage = sendMessage;
+    $scope.updateTyping = updateTyping;
+    $scope.stopSharingLocation = stopSharingLocation;
+    $scope.viewCarLocation = viewCarLocation;
 
   	var socket = null,
     typing = false,
+    rideId,
     user = $scope.currentUser,
-    eventId = $stateParams.eventId || "";
+    eventId = ($stateParams.eventId || ""),
+    stop,
+    eventLat = "29.0907269",
+    eventLng = "-111.0281571";
 
-    eventsFactory.getRideInfo(user, eventId)
-    .then(function(res) {
-
-      var ride = res.data;
-      $scope.attendees = ride.attendees;
-
-      socket = socketIo.init($scope, user, rideId);
-
-      $scope.connected = true;
+    eventsFactory.getRideInfo(user, eventId).then(function(res) {
+      if(Object.keys(res.data).length) {
+        var ride = res.data;
+        rideId = ride._id;
+        socket = socketIo.init($scope, user, rideId);
+        $scope.attendees = ride.passanger;
+        // console.log($scope.attendees)
+        $scope.connected = true;
+      }
+      else {
+        alert("Inconsistent response from server");
+      }
+    }, function (error) {
+      alert(error);
     });
 
-    $scope.$on('socket::addMessageToList', function (e, msgs) {
-      updateMessages(e, msgs);
-    });
+    function openModal() {
 
-    $scope.$on('socket::removeChatTyping', function (e, msgs) {
-      updateMessages(e, msgs);
-    });
+      $scope.modal.show();
+    }
+
+    function closeModal() {
+
+      $scope.modal.hide();
+    }
 
     function updateMessages(e, msgs) {
+
        $scope.messages = msgs;
     }
 
   	//function called when user hits the send button
     function sendMessage() {
+
       if($scope.message !== undefined && $scope.message !== "") {
-        socket.emit('new message', $scope.message);
+        socket.emit('new message', {
+          message: $scope.message,
+          rideId: rideId
+        });
+
     		socketIo.addMessageToList(user.name, true, $scope.message);
 
-        socket.emit('stop typing');
+        socket.emit('stop typing', rideId);
         typing = false;
 
         $scope.message = "";
@@ -68,27 +88,22 @@ function ChatCtrl($scope, socketIo, $timeout, $stateParams, eventsFactory,
 
   	//function called on Input Change
     function updateTyping() {
+
       if($scope.connected) {
         if (!typing) {
             typing = true;
 
             // Updates the typing event
-            socket.emit('typing', eventId);
+            socket.emit('typing', rideId);
         }
         else if($scope.message === "") {
           typing = false;
-          socket.emit('stop typing');
+          socket.emit('stop typing', rideId);
         }
       }
   	}
 
-    $scope.distance;
-
-    var stop;
-    var eventLat = "29.1011295";
-    var eventLng = "-111.015617";
-
-    $scope.viewCarLocation = function() {
+    function viewCarLocation() {
 
       $ionicModal.fromTemplateUrl('templates/mapModal.html', {
         scope: $scope,
@@ -101,14 +116,15 @@ function ChatCtrl($scope, socketIo, $timeout, $stateParams, eventsFactory,
         stop = $interval(calculateDistance, 10000);
 
         function calculateDistance() {
-          mapFactory.calculateDistance(eventLat,eventLng).then(function(distance) {
+          mapFactory.calculateDistance(eventLat,eventLng)
+          .then(function(distance) {
             $scope.distance = distance;
           });
         }
       });
     };
 
-    $scope.stopSharingLocation = function() {
+    function stopSharingLocation() {
 
       if (angular.isDefined(stop)) {
         $interval.cancel(stop);
@@ -117,22 +133,30 @@ function ChatCtrl($scope, socketIo, $timeout, $stateParams, eventsFactory,
     };
 
     $scope.$on('$destroy', function() {
-      $scope.modal.remove();
+      if($scope.modal) {
+        $scope.modal.remove();
+      }
+
       $scope.stopSharingLocation();
     });
 
     $scope.$on('modal.hidden', function() {
+
       $scope.stopSharingLocation();
     });
     // Execute action on remove modal
     $scope.$on('modal.removed', function() {
+
       $scope.stopSharingLocation();
     });
 
-    $scope.openModal = function() {
-      $scope.modal.show();
-    };
-    $scope.closeModal = function() {
-      $scope.modal.hide();
-    };
+    $scope.$on('socket::addMessageToList', function (e, msgs) {
+
+      updateMessages(e, msgs);
+    });
+
+    $scope.$on('socket::removeChatTyping', function (e, msgs) {
+
+      updateMessages(e, msgs);
+    });
 }

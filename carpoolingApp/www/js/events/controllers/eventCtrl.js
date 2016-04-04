@@ -1,6 +1,6 @@
-angular.module('carpooling.controllers.event', [])
+angular.module('carpooling')
 
-.controller('EventCtrl', function($scope, $window, $state, $stateParams, $cordovaGeolocation, $cordovaLaunchNavigator, carpoolingData) {
+.controller('eventCtrl', function($scope, $window, $state, $stateParams, $cordovaGeolocation, $cordovaLaunchNavigator, carpoolingData) {
   // var locationId = parseInt($stateParams.id) - 1;
   carpoolingData.forEach(function(event) {
     if (event._id === $stateParams.id) {

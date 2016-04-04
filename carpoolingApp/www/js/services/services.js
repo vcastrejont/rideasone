@@ -1,20 +1,27 @@
-angular.module('carpooling.services', [])
+angular.module('carpooling')
 
-.factory('AuthService', function (clientId, $cordovaOauth) {
-  var authService = {};
+.factory('authService', function (clientId, $cordovaOauth) {
 
-  authService.login = function() {
-    return $cordovaOauth.google(clientId, ["email", "profile"]);
+  return {
+    login: login
   };
 
-  return authService;
+  function login() {
+
+    return $cordovaOauth.google(clientId, ["email", "profile"]);
+  };
 })
 
-.factory('ProfileAPIService', function ($http) {
-  var profileAPIService = {};
+.factory('profileAPIService', function ($http) {
 
-  profileAPIService.getProfile = function(accessToken) {
-    var url = 'https://www.googleapis.com/plus/v1/people/me?access_token=' + accessToken;
+  return {
+    getProfile: getProfile
+  };
+
+  function getProfile(accessToken) {
+
+    var url = 'https://www.googleapis.com/plus/v1/people/me?access_token='
+    + accessToken;
 
     return $http.get(url)
     .then(function(response) {
@@ -50,14 +57,22 @@ angular.module('carpooling.services', [])
 
   function getRideInfo(user, eventId) {
 
-    return $http.get("https://gist.githubusercontent.com/vcastrejont/c69be8644fc4e1a8bd7f0613f9bd9f28/raw/aefe1aef8d28abcb021e651bbe7a7e3a3771844e/event.json");
+    // return $http.post(apiUrl + 'events/carbyuser', {
+    //   event_id: eventId,
+    //   user_id: user.id
+    // });
 
-    // return $http.get(apiUrl + 'event/' + eventId);
+    return $http.post(apiUrl + 'events/carbyuser', {
+      event_id: "5702b91582547a1100926167",
+      user_id: "5702c17482547a110092616a"
+    });
+
+
   }
 
   function getAll() {
 
-    return $http.get(apiUrl + 'events/');
+    return $http.get(apiUrl + 'events');
   }
 })
 
