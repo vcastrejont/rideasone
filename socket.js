@@ -3,11 +3,11 @@ module.exports = function(server) {
 
   var io = require('socket.io')(server);
   var users = [];
+  var rideId;
 
   io.on('connection', function (socket) {
-
     var addedUser = false;
-    var rideId;
+
     // when the client emits 'new message', this listens and executes
     socket.on('new message', function (data) {
 
@@ -19,7 +19,6 @@ module.exports = function(server) {
 
     // when the client emits 'add user', this listens and executes
     socket.on('add user', function (data) {
-
       if (addedUser) return;
 
       if(users.length > 0) {
@@ -64,7 +63,7 @@ module.exports = function(server) {
     });
 
     // when the user disconnects.. perform this
-    socket.on('disconnect', function (rideId) {
+    socket.on('disconnect', function () {
 
       if (addedUser) {
         users.splice(users.indexOf(socket.user), 1);

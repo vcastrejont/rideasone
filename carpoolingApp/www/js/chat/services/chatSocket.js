@@ -33,14 +33,15 @@ angular.module('carpooling')
     var socket = socketFactory({
     	ioSocket: myIoSocket
   	});
-
-    socket.on('connect', function() {
-      connected = true;
-      socket.emit('add user', {
-        user: user,
-        rideId: rideId
-      });
-    });
+    //
+    // socket.on('connect', function() {
+    //   console.log(user);
+    //   connected = true;
+    //   socket.emit('add user', {
+    //     user: user,
+    //     rideId: rideId
+    //   });
+    // });
 
     if(!connected) {
       socket.emit('add user', {
