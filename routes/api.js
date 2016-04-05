@@ -48,11 +48,6 @@ router.post('/locations', locationController.create);
 router.put('/locations/:id', locationController.update);
 router.delete('/locations/:id', locationController.remove);
 
-// ----Chat --------
-// router.get('/chat', function(req, res) {
-//   console.log(req);
-// });
-
 // ----Users --------
 router.get('/users', userController.list);
 
