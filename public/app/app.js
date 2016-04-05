@@ -2,9 +2,7 @@ var app = angular.module('carPoolingApp', [
   'geolocation',
   'mapService',
   'ui.bootstrap',
-  'ui.router',
-  'ngSanitize',
-  'btford.socket-io'
+  'ui.router'
 ]);
 
 app.run(['$rootScope', '$location', '$window',
@@ -72,13 +70,7 @@ app.config(function($stateProvider, $urlRouterProvider) {
     url: "/settings",
     templateUrl: 'app/templates/settings.html',
     controller: settingsCtrl
-  },
-  chat = {
-    name: 'chat',
-    url: "/chat",
-    templateUrl: 'app/templates/chat.html',
-    controller: chatCtrl
-  };;
+  };
 
   $stateProvider
   .state(home)
@@ -88,6 +80,5 @@ app.config(function($stateProvider, $urlRouterProvider) {
   .state(events)
   .state(eventShow)
   .state(eventsNew)
-  .state(settings)
-  .state(chat);
+  .state(settings);
 });
