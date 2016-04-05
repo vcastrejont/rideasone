@@ -53,11 +53,15 @@ module.exports = {
                 });
             }
             _.each(event.carpooling, function(car, index) {
-              _.each(car.passanger, function(passanger, index) {
-                console.log(passanger);
-                if(passanger.user_id == user_id)
+              if(car.driver_id == user_id) {
                 result_data = car;
-              });
+              }
+              else{
+                _.each(car.passanger, function(passanger, index) {
+                  if(passanger.user_id == user_id)
+                  result_data = car;
+                });
+              }
             });
             res.status(200).json(result_data);
         });
@@ -168,7 +172,7 @@ module.exports = {
       });
     },
     /**
-     * eventController.Add car()  
+     * eventController.Add car()
      */
     addCar: function(req, res) {
       eventModel.findOne({_id: req.body.id}, function(err, event){
@@ -181,7 +185,7 @@ module.exports = {
           seats       : req.body.seats,
           comments    : req.body.comments
         };
-        eventModel.update({"_id":  req.body.id}, {$push: {"carpooling": carpooling}}, 
+        eventModel.update({"_id":  req.body.id}, {$push: {"carpooling": carpooling}},
         function(err, numAffected){
           if(err){
               console.log(err);
@@ -191,7 +195,7 @@ module.exports = {
           }else{
             console.log(numAffected);
             return res.status(200).json( {
-                message: 'Successfully added!', 
+                message: 'Successfully added!',
                 numAffected: numAffected
             });
           }
@@ -199,13 +203,13 @@ module.exports = {
       });
     },
     /**
-     * eventController delete car()  
+     * eventController delete car()
      */
     deleteCar: function(req, res) {
       var id = req.body.id;
       var carid = req.body.carid;
-    
-      eventModel.update({_id: id}, 
+
+      eventModel.update({_id: id},
       {'$pull': {"carpooling": {"_id": carid}}}, function(err, numAffected){
         if(err){
             console.log(err);
@@ -215,14 +219,14 @@ module.exports = {
         }else{
           console.log(numAffected);
           return res.status(200).json( {
-              message: 'Successfully deleted', 
+              message: 'Successfully deleted',
               numAffected: numAffected
           });
         }
       });
     },
     /**
-     * eventController Join car()  
+     * eventController Join car()
      */
     joinCar: function(req, res) {
       var id = req.body.id;
@@ -232,8 +236,8 @@ module.exports = {
         name      : req.user.name,
         photo     : req.user.photo
       }
-      eventModel.update({_id: id, 'carpooling._id': carid }, 
-      {'$push': {"carpooling.$.passanger": passanger}}, 
+      eventModel.update({_id: id, 'carpooling._id': carid },
+      {'$push': {"carpooling.$.passanger": passanger}},
       function(err, numAffected){
         if(err){
           console.log(err);
@@ -242,21 +246,21 @@ module.exports = {
           });
         }else{
           return res.status(200).json( {
-              message: 'Successfully added!', 
+              message: 'Successfully added!',
               numAffected: numAffected
           });
         }
       });
     },
-    
+
     /**
-     * eventController Leave a car()  
+     * eventController Leave a car()
      */
     leaveCar: function(req, res) {
       var id = req.body.id;
       var carid = req.body.carid;
-      eventModel.update({_id: id, 'carpooling._id': carid }, 
-      {'$pull': {"carpooling.$.passanger": {'user_id':req.user.id }}}, 
+      eventModel.update({_id: id, 'carpooling._id': carid },
+      {'$pull': {"carpooling.$.passanger": {'user_id':req.user.id }}},
       function(err, numAffected){
         if(err){
           console.log(err);
@@ -265,15 +269,15 @@ module.exports = {
           });
         }else{
           return res.status(200).json( {
-              message: 'Successfully removed', 
+              message: 'Successfully removed',
               numAffected: numAffected
           });
         }
       });
     },
-    
+
     /**
-     * eventController.update()  
+     * eventController.update()
      */
     update: function(req, res) {
       var id = req.params.id;
@@ -302,15 +306,15 @@ module.exports = {
               }else{
                 console.log(numAffected);
                 return res.status(200).json( {
-                    message: 'Successfully added!', 
+                    message: 'Successfully added!',
                     numAffected: numAffected
                 });
               }
             });
-            
+
           }else{//if user doenst have car
             if(req.body.driver){//if user found a driver
-              eventModel.update({_id: id, 'attendees.user_id': req.user.id }, 
+              eventModel.update({_id: id, 'attendees.user_id': req.user.id },
               {'$set': {'attendees.$.lift': false}}, //he is not longer looking for a lift
               function(err, numAffected){
                 if(err){
@@ -324,7 +328,7 @@ module.exports = {
                     name      : req.user.name,
                     photo     : req.user.photo
                   }
-                  eventModel.update({_id: id, 'carpooling.driver_id': req.body.driver }, 
+                  eventModel.update({_id: id, 'carpooling.driver_id': req.body.driver },
                   {'$push': {"carpooling.$.passanger": passanger}}, //he is not longer looking for a lift
                   function(err, numAffected){
                     if(err){
@@ -334,17 +338,17 @@ module.exports = {
                       });
                     }else{
                       return res.status(200).json( {
-                          message: 'Successfully added!', 
+                          message: 'Successfully added!',
                           numAffected: numAffected
                       });
                     }
                   });
                 }
               });
-              
-            }else{// user has no driver and  needs a lift  
-              eventModel.update({_id: id, 'attendees.user_id': req.user.id }, 
-              {'$set': {'attendees.$.lift': true}}, 
+
+            }else{// user has no driver and  needs a lift
+              eventModel.update({_id: id, 'attendees.user_id': req.user.id },
+              {'$set': {'attendees.$.lift': true}},
               function(err, numAffected){
                 if(err){
                   return res.status(500).json( {
@@ -352,19 +356,19 @@ module.exports = {
                   });
                 }else{
                   return res.status(200).json( {
-                      message: 'Successfully added!', 
+                      message: 'Successfully added!',
                       numAffected: numAffected
                   });
                 }
               });
             }
-          }  
+          }
         }else{//Event not found
           return res.json(404, {message: 'No such event'});
         }
       });
     },
-    
+
     /**
      * eventController.signup()  Event sign up
      */
@@ -386,7 +390,7 @@ module.exports = {
         if(!event) {
           return res.json(404, {message: 'No such event'});
         }
-        eventModel.findOne({"_id":id, "attendees.user_id": req.user.id}, function(err, attendee){ 
+        eventModel.findOne({"_id":id, "attendees.user_id": req.user.id}, function(err, attendee){
           if(attendee){
             console.log("Already exists");
             return res.json(200, {message: 'Already signed'});
@@ -400,20 +404,20 @@ module.exports = {
               }
             });
           }
-        });   
-          
-        
+        });
+
+
         /*
         event.name =  req.body.name ? req.body.name : event.name;
         event.save(function(err, event){
-          if(err)   
+          if(err)
             return res.json(500, {  message: 'Error saving event.'});
           return res.json(event);
         });
         */
       });
     },
-    
+
 
     /**
      * eventController.remove()

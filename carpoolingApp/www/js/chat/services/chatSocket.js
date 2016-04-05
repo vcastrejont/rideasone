@@ -89,6 +89,11 @@ angular.module('carpooling')
       removeChatTyping(data.username);
     });
 
+    // Whenever the server emits 'location shared', log the emiter's location
+    socket.on('location shared', function (data) {
+      console.log(data);
+    });
+
     return socket;
   }
 

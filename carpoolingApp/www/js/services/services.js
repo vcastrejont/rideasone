@@ -57,16 +57,16 @@ angular.module('carpooling')
 
   function getRideInfo(user, eventId) {
 
-    // return $http.post(apiUrl + 'events/carbyuser', {
-    //   event_id: eventId,
-    //   user_id: user.id
-    // });
-
     return $http.post(apiUrl + 'events/carbyuser', {
-      event_id: "5702b91582547a1100926167",
-      user_id: "5702c17482547a110092616a"
+      event_id: eventId,
+      user_id: user.id
     });
-
+    //
+    // return $http.post(apiUrl + 'events/carbyuser', {
+    //   event_id: "5702b91582547a1100926167",
+    //   user_id: "5702c17482547a110092616a"
+    // });
+    //
 
   }
 
@@ -87,7 +87,8 @@ angular.module('carpooling')
   var bounds = new google.maps.LatLngBounds();
 
   return {
-    calculateDistance: calculateDistance
+    calculateDistance: calculateDistance,
+    getGeolocation: getGeolocation
   };
 
   function calculateDistance(lat, lng) {
@@ -95,13 +96,10 @@ angular.module('carpooling')
     distance,
     myLatLng;
 
-    return $cordovaGeolocation.getCurrentPosition({
-      timeout: 10000, enableHighAccuracy: true
-    })
-    .then(function(position) {
+    return getGeolocation().then(function(position) {
 
-      myLatLng = new google.maps.LatLng(position.coords.latitude,
-      position.coords.longitude);
+      myLatLng = new google.maps.LatLng(position.latitude,
+      position.longitude);
 
       mapOptions.center = myLatLng;
 
@@ -136,6 +134,16 @@ angular.module('carpooling')
       distance = google.maps.geometry.spherical.computeDistanceBetween(myLatLng, eventLatLng);
 
       return distance;
+    });
+  }
+
+  function getGeolocation() {
+    return $cordovaGeolocation.getCurrentPosition({
+      timeout: 10000, enableHighAccuracy: true
+    })
+    .then(function(position) {
+
+      return position.coords;
     });
   }
 });

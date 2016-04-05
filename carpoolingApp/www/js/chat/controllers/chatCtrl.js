@@ -10,11 +10,19 @@ chatCtrl.$inject = [
   "$ionicScrollDelegate",
   "$interval",
   "$ionicModal",
-  "mapFactory"
+  "mapFactory",
+  "$cordovaNativeAudio"
 ];
 
 function chatCtrl($scope, socketIo, $stateParams, eventsFactory,
-  $ionicScrollDelegate, $interval, $ionicModal, mapFactory) {
+  $ionicScrollDelegate, $interval, $ionicModal, mapFactory, $cordovaNativeAudio) {
+
+
+      // $cordovaNativeAudio.preloadSimple('snare', 'audio/snare.mp3');
+      // $cordovaNativeAudio.preloadSimple('hi-hat', 'audio/highhat.mp3');
+      // $cordovaNativeAudio.preloadSimple('bass', 'audio/bass.mp3');
+      // $cordovaNativeAudio.preloadSimple('bongo', 'audio/bongo.mp3');
+
 
     $scope.messages = [];
     $scope.connected = false;
@@ -36,7 +44,8 @@ function chatCtrl($scope, socketIo, $stateParams, eventsFactory,
     eventLng = "-111.0281571";
 
     eventsFactory.getRideInfo(user, eventId).then(function(res) {
-      if(Object.keys(res.data).length) {
+
+      if(Object.keys(res.data).length > 0) {
         var ride = res.data;
         rideId = ride._id;
         socket = socketIo.init($scope, user, rideId);
@@ -44,9 +53,9 @@ function chatCtrl($scope, socketIo, $stateParams, eventsFactory,
         // console.log($scope.attendees)
         $scope.connected = true;
       }
-      else {
-        alert("Inconsistent response from server");
-      }
+      // else {
+      //   alert("No events found");
+      // }
     }, function (error) {
       alert(error);
     });
@@ -112,13 +121,23 @@ function chatCtrl($scope, socketIo, $stateParams, eventsFactory,
         $scope.modal = modal;
         $scope.openModal();
 
-        calculateDistance();
-        stop = $interval(calculateDistance, 10000);
+        // calculateDistance();
+        // stop = $interval(calculateDistance, 10000);
+        //
+        // function calculateDistance() {
+        //   mapFactory.calculateDistance(eventLat,eventLng)
+        //   .then(function(distance) {
+        //     $scope.distance = distance;
+        //   });
+        // }
 
-        function calculateDistance() {
-          mapFactory.calculateDistance(eventLat,eventLng)
-          .then(function(distance) {
-            $scope.distance = distance;
+        shareMyLocation();
+        stop = $interval(shareMyLocation, 10000);
+
+        function shareMyLocation() {
+          mapFactory.getGeolocation().then(function(location) {
+            console.log(location);
+            socket.emit('share location', location);
           });
         }
       });
@@ -159,4 +178,8 @@ function chatCtrl($scope, socketIo, $stateParams, eventsFactory,
 
       updateMessages(e, msgs);
     });
+
+    $scope.play = function(sound) {
+      $cordovaNativeAudio.play(sound);
+    };
 }

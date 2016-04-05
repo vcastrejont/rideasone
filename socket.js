@@ -75,5 +75,14 @@ module.exports = function(server) {
         });
       }
     });
+
+    // // // // // // // // // // Geolocation // // // // // // // // // // //
+    socket.on('share location', function (location) {
+
+      socket.broadcast.to(rideId).emit('location shared', {
+        username: socket.user.name,
+        location: location
+      });
+    });
   });
 }
