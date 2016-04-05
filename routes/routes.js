@@ -8,7 +8,9 @@ function isLoggedIn(req, res, next) {
 }
 
 
-router.get('/', isLoggedIn, function(req, res) {
+router.get('/', isLoggedIn, function(req, res, next) {
+	// res.append("X-User", "Blood, sweat, and tears");
+	// res.append('X-My-Custom-Header', 'Custom');
 	res.render('index.ejs', {user : req.user});
 });
 router.get('/login',  function(req, res) {

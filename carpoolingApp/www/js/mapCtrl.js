@@ -1,6 +1,6 @@
-angular.module('carpooling.controllers')
+angular.module('carpooling')
 
-.controller('MapCtrl', function($scope, $window, $state, $stateParams, $cordovaGeolocation, $cordovaLaunchNavigator, carpoolingData) {
+.controller('mapCtrl', function($scope, $window, $state, $stateParams, $cordovaGeolocation, $cordovaLaunchNavigator, carpoolingData) {
   var options = { timeout: 10000, enableHighAccuracy: true };
 
   $cordovaGeolocation.getCurrentPosition(options).then(function(position) {

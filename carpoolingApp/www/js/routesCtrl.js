@@ -1,5 +1,5 @@
-angular.module('carpooling.controllers')
+angular.module('carpooling')
 
-.controller('RoutesCtrl', function($scope) {
+.controller('routesCtrl', function($scope) {
 
 });

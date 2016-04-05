@@ -1,5 +1,5 @@
-angular.module('carpooling.controllers.settings', [])
+angular.module('carpooling')
 
-.controller('SettingsCtrl', function($scope) {
+.controller('settingsCtrl', function($scope) {
 
 });

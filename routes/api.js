@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var settingsController = require('../controllers/settingController.js');
-var eventsController = require('../controllers/eventController.js'); 
+var eventsController = require('../controllers/eventController.js');
 var locationController = require('../controllers/locationController.js');
 var userController = require('../controllers/userController.js');
 router.get('/', function(req, res) {
@@ -48,10 +48,12 @@ router.post('/locations', locationController.create);
 router.put('/locations/:id', locationController.update);
 router.delete('/locations/:id', locationController.remove);
 
+// ----Chat --------
+// router.get('/chat', function(req, res) {
+//   console.log(req);
+// });
+
 // ----Users --------
 router.get('/users', userController.list);
-
-
-
 
 module.exports = router;

@@ -1,15 +1,14 @@
 <ion-view view-title="Events">
   <ion-content>
+    <ion-spinner icon="spiral" ng-hide="loaded"></ion-spinner>
     <ul class="list">
       <li class="item" ng-repeat="event in events">
         <h2>{{event.name}}</h2>
-        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Distinctio illum possimus quisquam repudiandae rerum!
-        Consequatur distinctio dolorum eos, iure molestiae omnis perferendis quos repellat, repellendus soluta unde veritatis vero voluptatem.</p>
-        <a href="#/app/events/{{event._id}}">Detalles</a>         
+        <div><small>{{event.place}}</small></div>
+        <div>
+          <a ui-sref="app.chat({eventId: event._id})">Chat</a>
+        </div>
       </li>
     </ul>
-    <div ng-repeat="event in events">
-      <br><br><br>
-    </div>
   </ion-content>
 </ion-view>
