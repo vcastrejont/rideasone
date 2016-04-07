@@ -1,7 +1,9 @@
 var eventModel = require('../models/eventModel.js');
+var mailerController = require('../controllers/mailerController.js');
 var mongoose = require('mongoose');
-var _ = require('underscore');
 
+//var _ = require('lodash');
+var _ = require('underscore');
 /**
  * eventController.js
  *
@@ -52,7 +54,7 @@ module.exports = {
                     message: 'No such event'
                 });
             }
-            _.each(event.carpooling, function(car, index) {
+            _.each(event.cars, function(car, index) {
               _.each(car.passanger, function(passanger, index) {
                 console.log(passanger);
                 if(passanger.user_id == user_id)
@@ -158,7 +160,7 @@ module.exports = {
      */
     byDriver: function(req, res) {
       var id = req.params.id;
-      eventModel.find({"carpooling.driver_id":mongoose.Types.ObjectId(id)}, function(err, events){
+      eventModel.find({"cars.driver_id":mongoose.Types.ObjectId(id)}, function(err, events){
           if(err) {
               return res.json(500, {
                   message: 'Error getting event.'
@@ -174,14 +176,15 @@ module.exports = {
       eventModel.findOne({_id: req.body.id}, function(err, event){
         if(err)
           return res.json(500, {  message: 'Error', error: err  });
-        var carpooling = {
-          driver_id   : req.user.id,
-          driver      : req.user.name,
-          driver_photo: req.user.photo,
-          seats       : req.body.seats,
-          comments    : req.body.comments
+        var car = {
+          driver_id     : req.user.id,
+          driver        : req.user.name,
+          driver_photo  : req.user.photo,
+          driver_email  : req.user.email,
+          seats         : req.body.seats,
+          comments      : req.body.comments
         };
-        eventModel.update({"_id":  req.body.id}, {$push: {"carpooling": carpooling}}, 
+        eventModel.update({"_id":  req.body.id}, {$push: {"cars": car}}, 
         function(err, numAffected){
           if(err){
               console.log(err);
@@ -189,7 +192,7 @@ module.exports = {
                   message: 'Error updating event', error: err
               });
           }else{
-            console.log(numAffected);
+          
             return res.status(200).json( {
                 message: 'Successfully added!', 
                 numAffected: numAffected
@@ -203,10 +206,10 @@ module.exports = {
      */
     deleteCar: function(req, res) {
       var id = req.body.id;
-      var carid = req.body.carid;
+      var car_id = req.body.carid;
     
       eventModel.update({_id: id}, 
-      {'$pull': {"carpooling": {"_id": carid}}}, function(err, numAffected){
+      {'$pull': {"cars": {"_id": car_id}}}, function(err, numAffected){
         if(err){
             console.log(err);
             return res.status(500).json( {
@@ -225,15 +228,15 @@ module.exports = {
      * eventController Join car()  
      */
     joinCar: function(req, res) {
-      var id = req.body.id;
-      var carid = req.body.carid;
+      var event_id = req.body.event_id;
+      var car_id = req.body.car_id;
       var passanger = {
         user_id   : req.user.id,
         name      : req.user.name,
         photo     : req.user.photo
       }
-      eventModel.update({_id: id, 'carpooling._id': carid }, 
-      {'$push': {"carpooling.$.passanger": passanger}}, 
+      eventModel.update({_id: event_id, 'cars._id': car_id }, 
+      {'$push': {"cars.$.passanger": passanger}}, 
       function(err, numAffected){
         if(err){
           console.log(err);
@@ -241,6 +244,13 @@ module.exports = {
               message: 'Error updating event', error: err
           });
         }else{
+          eventModel.findOne({_id: event_id}, function(err, event){
+            var car = _.filter(event.cars, function (item) {
+              return item._id.toString() === car_id;
+            })
+            mailerController.joinCar(passanger.name, event.name, car[0].driver_email);
+          });
+           
           return res.status(200).json( {
               message: 'Successfully added!', 
               numAffected: numAffected
@@ -253,10 +263,15 @@ module.exports = {
      * eventController Leave a car()  
      */
     leaveCar: function(req, res) {
-      var id = req.body.id;
-      var carid = req.body.carid;
-      eventModel.update({_id: id, 'carpooling._id': carid }, 
-      {'$pull': {"carpooling.$.passanger": {'user_id':req.user.id }}}, 
+      var event_id  = req.body.event_id;
+      var car_id    = req.body.car_id;
+      var passanger = {
+        user_id   : req.user.id,
+        name      : req.user.name,
+        photo     : req.user.photo
+      }
+      eventModel.update({_id: event_id, 'cars._id': car_id }, 
+      {'$pull': {"cars.$.passanger": {'user_id':req.user.id }}}, 
       function(err, numAffected){
         if(err){
           console.log(err);
@@ -264,6 +279,13 @@ module.exports = {
               message: 'Error updating event', error: err
           });
         }else{
+          eventModel.findOne({_id: event_id}, function(err, event){
+            var car = _.filter(event.cars, function (item) {
+              return item._id.toString() === car_id;
+            });
+            mailerController.leaveCar(passanger.name, event.name, car[0].driver_email);
+          });
+          
           return res.status(200).json( {
               message: 'Successfully removed', 
               numAffected: numAffected
@@ -286,14 +308,14 @@ module.exports = {
         }
         if(event) {//Event   found
           if (req.body.option==1){//if user wants to share a ride
-            var carpooling = {
+            var cars = {
               driver_id   : req.user.id,
               driver      : req.user.name,
               driver_photo: req.user.photo,
               seats       : req.body.seats,
               comments    : req.body.comments
             }
-            eventModel.update({"_id": id}, {$push: {"carpooling": carpooling}}, function(err, numAffected){
+            eventModel.update({"_id": id}, {$push: {"cars": cars}}, function(err, numAffected){
               if(err){
                   console.log(err);
                   return res.status(500).json( {
@@ -324,8 +346,8 @@ module.exports = {
                     name      : req.user.name,
                     photo     : req.user.photo
                   }
-                  eventModel.update({_id: id, 'carpooling.driver_id': req.body.driver }, 
-                  {'$push': {"carpooling.$.passanger": passanger}}, //he is not longer looking for a lift
+                  eventModel.update({_id: id, 'cars.driver_id': req.body.driver }, 
+                  {'$push': {"cars.$.passanger": passanger}}, //he is not longer looking for a lift
                   function(err, numAffected){
                     if(err){
                       console.log(err);

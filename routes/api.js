@@ -1,9 +1,10 @@
-var express = require('express');
-var router = express.Router();
-var settingsController = require('../controllers/settingController.js');
-var eventsController = require('../controllers/eventController.js');
-var locationController = require('../controllers/locationController.js');
-var userController = require('../controllers/userController.js');
+var express             = require('express');
+var router              = express.Router();
+var settingsController  = require('../controllers/settingController.js');
+var eventsController    = require('../controllers/eventController.js');
+var locationController  = require('../controllers/locationController.js');
+var userController      = require('../controllers/userController.js');
+var mailerController    = require('../controllers/mailerController.js');
 router.get('/', function(req, res) {
  res.send('API list');
 });
@@ -32,7 +33,7 @@ router.post('/events/deletecar', eventsController.deleteCar);
 //      Delete an event
 router.post('/events/joincar', eventsController.joinCar);
 //     Leave a car
-router.post('/events/leaveCar', eventsController.leaveCar);
+router.post('/events/leavecar', eventsController.leaveCar);
 //      Delete an event
 router.delete('/event/:id', eventsController.remove);
 //      Driver available for  an event
@@ -50,5 +51,6 @@ router.delete('/locations/:id', locationController.remove);
 
 // ----Users --------
 router.get('/users', userController.list);
+
 
 module.exports = router;

@@ -26,7 +26,7 @@ function eventsShowCtrl ($scope, $http,  $state, $window) {
         self.event = response.data;
         self.event.avail = 0;
         self.event.signed = _.where(response.data.attendees, {user_id: self.user.id});
-        _.each(response.data.carpooling, function(carpool, index) {
+        _.each(response.data.cars, function(carpool, index) {
           var avail = carpool.seats -  carpool.passanger.length;
           self.event.avail += avail;
         });
@@ -122,8 +122,8 @@ function eventsShowCtrl ($scope, $http,  $state, $window) {
     },
     joinCar:function(carid){
       var carData = {
-        id         : $scope.view.event._id,
-        carid      : carid
+        event_id : $scope.view.event._id,
+        car_id   : carid
       };
       var self = this;
       $http.post('/api/events/joincar', carData).then(function(response) {
@@ -140,11 +140,11 @@ function eventsShowCtrl ($scope, $http,  $state, $window) {
     leaveCar:function(carid){
       if (confirm("Are you sure ?")) {
         var carData = {
-          id         : $scope.view.event._id,
-          carid      : carid
+          event_id  : $scope.view.event._id,
+          car_id    : carid
         };
         var self = this;
-        $http.post('/api/events/leaveCar', carData).then(function(response) {
+        $http.post('/api/events/leavecar', carData).then(function(response) {
             self.alerts.push({msg: response.data.message});
             setTimeout(function () {
                $scope.$apply(function()  {  self.closeAlert(); });
