@@ -50,5 +50,6 @@ router.delete('/locations/:id', locationController.remove);
 
 // ----Users --------
 router.get('/users', userController.list);
+router.post('/users/create', userController.create);
 
 module.exports = router;
