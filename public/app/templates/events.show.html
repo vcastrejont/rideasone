@@ -80,16 +80,26 @@
                   <span ng-repeat="p in car.passanger" ng-class="{'sel': p.user_id == view.user.id }">{{p.name}}<span ng-if="!$last">, </span></span>
                </p>
                <p>
-                 <strong>Available seats:</strong> {{car.seats-car.passanger.length}} 
+                 <strong>Available seats:</strong> {{car.seats-(car.passanger.length)}} 
+               </p>
+               <p>
+                 <strong>Extra passangers:</strong>
+                 
+                 <select class="" name="" ng-model="view.extra">
+                   <option value="{{$index+1}}" ng-repeat="i in view.getNumber(car.seats-(car.passanger.length)) track by $index">{{$index+1}}</option>  
+                 </select>
+                 <button ng-click="view.addExtra()" type="button" class="btn btn-primary btn-xsmall">Save</button>
                </p>
                <div ng-if=" car.driver_id == view.user.id" class="text-center"> 
                  <button class="btn btn-danger btn-xs" ng-click="view.deleteCar(car._id)" >Remove my car</button>
                </div>
                <div ng-if="(car.driver_id !== view.user.id && car.passanger.length < car.seats && !view.isSigned(car) )" class="text-center"> 
-                 <button class="btn btn-primary btn-xs" ng-click="view.joinCar(car._id)" >Join this ride</button>
+                 <button class="btn btn-primary btn-xs btn-control" ng-click="view.joinCar(car._id)" >Join this ride</button>
                </div>
-               <div class="text-center" ng-if="view.isSigned(car)"> 
-                 <button class="btn btn-danger btn-xs" ng-click="view.leaveCar(car._id)" >Leave this ride</button>
+               <div class="text-center"  ng-if="view.isSigned(car)"> 
+                 <button class="btn btn-danger btn-xs btn-control" ng-click="view.leaveCar(car._id)" >Leave this ride</button>
+            
+                
                </div>
              </div> 
          </div>

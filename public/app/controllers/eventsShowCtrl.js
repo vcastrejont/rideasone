@@ -19,6 +19,9 @@ function eventsShowCtrl ($scope, $http,  $state, $window) {
       var temp = _.findWhere(car.passanger, {user_id: $scope.view.user.id});
       return temp  ? true : false;
     },
+    getNumber: function(num) {
+      return new Array(num);   
+    },  
     init:function(){
       //Load data, Todo create a service for this
       var self = this;
