@@ -158,24 +158,23 @@ function eventsShowCtrl ($scope, $http,  $state, $window) {
         });	
       }
     },
-    carPooling:function(){
-      var self = this;
-      var eventData = {
-        option : this.option,
-        seats  : this.seats,
-        driver : this.driver
+    addExtra:function(carid){
+      var carData = {
+        event_id : this.event._id,
+        car_id   : carid,
+        extra    : this.extra 
       };
-      $http.put('/api/events/'+$scope.id, eventData).then(function(response) {
-            console.log(response);
-            self.alerts.push({msg: response.data.message});
-            setTimeout(function () {
-               $scope.$apply(function()  {  self.closeAlert(); });
-            }, 2000);
+      var self = this;
+      $http.post('/api/events/addExtra', carData).then(function(response) {
+          self.alerts.push({msg: response.data.message});
+          setTimeout(function () {
+             $scope.$apply(function()  {  self.closeAlert(); });
+             $scope.view.init();
+          }, 1000);
         }, function(response) {
             console.log('Error: ' + response);
       });	
     },
-  
     closeAlert : function(index) {
       this.alerts.splice(index, 1);
     }

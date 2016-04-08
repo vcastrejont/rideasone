@@ -258,7 +258,37 @@ module.exports = {
         }
       });
     },
-    
+    /**
+     * eventController addExtra()  
+     */
+    addExtra: function(req, res) {
+      var event_id  = req.body.event_id;
+      var car_id    = req.body.car_id;
+      var extra     = req.body.extra;
+      var passanger = {
+        user_id   : req.user.id,
+        name      : req.user.name,
+        photo     : req.user.photo
+      }
+      for (i = 0; i < extra; i++) { 
+        eventModel.update({_id: event_id, 'cars._id': car_id }, 
+        {'$push': {"cars.$.passanger": passanger}}, 
+        function(err, numAffected){
+          if(err){
+            console.log(err);
+            return res.status(500).json( {
+                message: 'Error updating event', error: err
+            });
+          }else{
+            //nothing here
+          }
+        });
+      }
+      return res.status(200).json( {
+          message: 'Successfully added!'
+      });     
+
+    },
     /**
      * eventController Leave a car()  
      */

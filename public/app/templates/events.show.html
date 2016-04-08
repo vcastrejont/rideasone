@@ -77,7 +77,9 @@
                </p>
                <p>
                  <strong>Passenger:</strong> 
-                  <span ng-repeat="p in car.passanger" ng-class="{'sel': p.user_id == view.user.id }">{{p.name}}<span ng-if="!$last">, </span></span>
+                  <span ng-repeat="p in car.passanger" ng-class="{'sel': p.user_id == view.user.id }">
+                    {{p.name}}<span ng-if="!$last">, </span>
+                  </span>
                </p>
                <p>
                  <strong>Available seats:</strong> {{car.seats-(car.passanger.length)}} 
@@ -88,7 +90,7 @@
                  <select class="" name="" ng-model="view.extra">
                    <option value="{{$index+1}}" ng-repeat="i in view.getNumber(car.seats-(car.passanger.length)) track by $index">{{$index+1}}</option>  
                  </select>
-                 <button ng-click="view.addExtra()" type="button" class="btn btn-primary btn-xsmall">Save</button>
+                 <button ng-click="view.addExtra(car._id)" type="button" class="btn btn-primary btn-xsmall">Save</button>
                </p>
                <div ng-if=" car.driver_id == view.user.id" class="text-center"> 
                  <button class="btn btn-danger btn-xs" ng-click="view.deleteCar(car._id)" >Remove my car</button>
