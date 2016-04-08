@@ -30,14 +30,14 @@ module.exports = {
           }
 
     			if(!err && user != null) {
-            return res.json(200, user);
+            return res.status(200).json(user);
           }
 
     			var user = new userModel({
     				provider_id	: profile.id,
     				provider		: profile.provider,
     				name			  : profile.displayName,
-    				photo				: profile.photos[0].value,
+    				photo				: profile.photos ? profile.photos[0].value : "",
             email       : profile.emails[0].value
     			});
 

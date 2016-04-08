@@ -9,11 +9,11 @@ module.exports = function(server) {
     var addedUser = false;
     var rideId;
     // when the client emits 'new message', this listens and executes
-    socket.on('new message', function (data) {
+    socket.on('new message', function (message) {
 
-      socket.broadcast.to(data.rideId).emit('new message', {
+      socket.broadcast.to(rideId).emit('new message', {
         username: socket.user.name,
-        message: data.message
+        message: message
       });
     });
 
@@ -33,7 +33,7 @@ module.exports = function(server) {
 
       // we store the username in the socket session for this client
       rideId = data.rideId;
-      socket.join(data.rideId);
+      socket.join(rideId);
       socket.user = data.user;
       users.push(socket.user);
       addedUser = true;
@@ -41,14 +41,14 @@ module.exports = function(server) {
       socket.emit('login', users);
 
       // echo globally (all clients) that a person has connected
-      socket.broadcast.to(data.rideId).emit('user joined', {
+      socket.broadcast.to(rideId).emit('user joined', {
         username: socket.user.name,
         users: users
       });
     });
 
     // when the client emits 'typing', we broadcast it to others
-    socket.on('typing', function (rideId) {
+    socket.on('typing', function () {
 
       socket.broadcast.to(rideId).emit('typing', {
         username: socket.user.name
@@ -56,7 +56,7 @@ module.exports = function(server) {
     });
 
     // when the client emits 'stop typing', we broadcast it to others
-    socket.on('stop typing', function (rideId) {
+    socket.on('stop typing', function () {
 
       socket.broadcast.to(rideId).emit('stop typing', {
         username: socket.user.name
@@ -64,7 +64,7 @@ module.exports = function(server) {
     });
 
     // when the user disconnects.. perform this
-    socket.on('disconnect', function (rideId) {
+    socket.on('disconnect', function () {
 
       if (addedUser) {
         users.splice(users.indexOf(socket.user), 1);

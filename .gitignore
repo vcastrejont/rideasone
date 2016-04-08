@@ -34,3 +34,6 @@ npm-debug.log
 
 #Libs
 carpoolingApp/www/lib/
+
+#vscode
+.vscode/
