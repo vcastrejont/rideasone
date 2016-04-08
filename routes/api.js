@@ -4,6 +4,8 @@ var settingsController = require('../controllers/settingController.js');
 var eventsController = require('../controllers/eventController.js');
 var locationController = require('../controllers/locationController.js');
 var userController = require('../controllers/userController.js');
+var chatController = require('../controllers/chatController.js');
+
 router.get('/', function(req, res) {
  res.send('API list');
 });
@@ -51,5 +53,8 @@ router.delete('/locations/:id', locationController.remove);
 // ----Users --------
 router.get('/users', userController.list);
 router.post('/users/create', userController.create);
+
+// ----Chat --------
+router.post('/chat/addMessage', chatController.addMessage);
 
 module.exports = router;
