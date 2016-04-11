@@ -76,7 +76,7 @@ module.exports = function(server) {
       socket.join(rideId);
       // we store the username in the socket session for this client
       socket.user = data.user;
-      console.log(socket.user);
+      
       for(i = 0; i < users.length; i++) {
         if(users[i].id === socket.user.id) {
           exists = true;
