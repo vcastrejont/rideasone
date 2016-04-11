@@ -62,6 +62,22 @@ module.exports = {
         });
       }
     });
+  },
+  getMessages: function(req, res) {
+    var rideId = req.params.rideId;
+
+    chatModel.findOne({
+      "ride_id": rideId
+    },
+    function(err, data) {
+      if(err) {
+        return res.status(500).json({
+          message: err
+        });
+      }
+
+      return res.status(200).json(data ? data.messages : null);
+    });
   }
 };
 

@@ -55,6 +55,7 @@ router.get('/users', userController.list);
 router.post('/users/create', userController.create);
 
 // ----Chat --------
+router.get('/chat/messages/:rideId', chatController.getMessages);
 router.post('/chat/addMessage', chatController.addMessage);
 
 module.exports = router;
