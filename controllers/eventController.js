@@ -27,7 +27,7 @@ module.exports = {
     past: function(req, res) {
       var d = new Date();
       d.setDate(d.getDate() - 1);
-      eventModel.find({"datetime":{"$lt": d }},function(err, events){
+      eventModel.find({"datetime":{"$lt": d }},{}, { limit : 5, sort: {datetime: -1} },function(err, events){
           if(err) {
               return res.json(500, {
                   message: 'Error getting event.'

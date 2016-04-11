@@ -14,8 +14,8 @@
         <ul class="trips">
           <li ng-repeat="event in nextEvents">
             <p class="title"><a ui-sref="eventshow({ id: event._id})">{{event.name}}</a></p>
-            <p>{{event.datetime | date:'medium'}}</p>
-            <p>Place: {{event.place}} </p>
+            <p> <strong>{{event.datetime | date:'medium'}} at {{event.place}} </strong>  </p>
+            <p>Organizer: {{event.organizer}}  </p>
             <p>Cars: {{event.cars.length}} </p>
           </li>
         </ul>
@@ -24,13 +24,12 @@
     <div class="col-sm-4 ">
       <div class="card">
         <h2>Past events</h2>
-        <ul class="events">
+        <ul class="trips">
           <li ng-repeat="event in pastEvents">
             <a ui-sref="eventshow({ id: event._id})">{{event.name}}</a>
-            {{event.datetime | date:'medium'}}
-            at {{event.place}} by <strong> {{event.organizer}}</strong> 
-            <td class="text-center">{{event.seats}}
-            <td class="text-center">{{event.lift.length}}
+            {{event.datetime |  date:'longDate'}}
+            <br />  at {{event.place}}
+            <br /> by <strong> {{event.organizer}}</strong> 
           </li>
         </ul>
       </div>
