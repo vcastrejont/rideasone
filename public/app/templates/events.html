@@ -4,10 +4,8 @@
       <h1>Events</h1>
     </div>
     <div class="col-md-6 text-right">
-      
         <input type="text" class="form-control search in" placeholder="Search" ng-model="filters.search">
 
-      
       <a ui-sref="eventsnew"  class="btn btn-primary in "><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Create event</a>
     </div>
   </header>
@@ -35,17 +33,12 @@
             </thead>
             <tbody>
               <tr ng-repeat="event in events  | filter:filters.search | orderBy:filters.order:filters.sortReverse" >
-                <td class="text-lg"><a ui-sref="eventshow({ id: event._id})" ng-class="{ 'past' : checkDate(event.datetime)}">{{event.name}}</a></td>
-                <td class="text-sm">{{event.datetime | date:'shortDate'}}</td>
+                <td class="text-lg"><a ui-sref="eventshow({ id: event._id})" ng-class="{ 'past' : checkDate(event.datetime)}"><strong>{{event.name}}</strong>  </a></td>
+                <td class="text-sm">{{event.datetime | date:'longDate'}}</td>
                 <td class="text-sm">{{event.datetime | date:'shortTime'}}</td>
                 <td class="text-sm">{{event.place}}</td>
                 <td class="text-sm">{{event.organizer}}</td>
-                <td>
-                  <span ng-repeat="user in event.attendees" >
-                      <img src="{{user.photo}}" title="{{user.user}}" class="profile-small" tooltip-placement="top" uib-tooltip="{{user.user}}"/>
-                  </span>
-                  
-                </td>
+                <td class="text-center text-sm">{{ event.attendees.length}}</td>
                 <td class="text-center text-sm">{{event.avail}}</td>
                 
               </tr>

@@ -12,12 +12,11 @@
         <h2>Next events </h2>
       
         <ul class="trips">
-          <li ng-repeat="ride in nextEvents">
-            <p class="title"><a ui-sref="eventshow({ id: ride._id})">{{ride.name}}</a></p>
-            <p>{{ride.datetime | date:'medium'}}</p>
-            <p>Place: {{ride.place}} </p>
-            <p ng-if="ride.carpooling[0].passanger.length">Passengers: <img src="{{passanger.photo}}" class="profile-small" ng-repeat="passanger in ride.carpooling[0].passanger" tooltip-placement="top" uib-tooltip="{{passanger.name}}"></p>
-            <p>Seats available: {{ride.carpooling[0].seats - ride.carpooling[0].passanger.length}} out of {{ride.carpooling[0].seats}}  </p>
+          <li ng-repeat="event in nextEvents">
+            <p class="title"><a ui-sref="eventshow({ id: event._id})">{{event.name}}</a></p>
+            <p>{{event.datetime | date:'medium'}}</p>
+            <p>Place: {{event.place}} </p>
+            <p>Cars: {{event.cars.length}} </p>
           </li>
         </ul>
       </div>

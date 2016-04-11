@@ -14,16 +14,9 @@ module.exports = {
      * eventController.list()
      */
     list: function(req, res) {
-      var type = req.body.type;
-      console.log(req.query);
       var d = new Date();
-      d.setDate(d.getDate() - 1); // Yesterday
-      if(type = "past"){
-        dateQuery = {"$gte": d};
-      }else{
-        dateQuery = {"$lt": d};
-      }
-      eventModel.find({"datetime":dateQuery}, {}, { limit : 1 },function(err, events){
+      d.setDate(d.getDate() - 1);
+      eventModel.find({"datetime":{"$gte": d}}, {}, { limit : 5, sort: "datetime" },function(err, events){
           if(err) {
               return res.json(500, {
                   message: 'Error getting event.'
@@ -33,6 +26,34 @@ module.exports = {
       });
     },
     
+    past: function(req, res) {
+      var d = new Date();
+      d.setDate(d.getDate() - 1);
+      eventModel.find({"datetime":{"$lt": d }},function(err, events){
+          if(err) {
+              return res.json(500, {
+                  message: 'Error getting event.'
+              });
+          }
+          return res.json(events);
+      });
+    },
+    /**
+     * eventController.carbyuser()
+     */
+    byuser: function(req, res) {
+      var d = new Date();
+      var user = req.params.user;
+      d.setDate(d.getDate() - 1);
+      eventModel.find({"datetime":{"$gte": d}, "attendees.user_id": user }, {}, { sort: "datetime" },function(err, events){
+          if(err) {
+              return res.json(500, {
+                  message: 'Error getting event.'
+              });
+          }
+          return res.json(events);
+      });
+    },
     /**
      * eventController.carbyuser()
      */

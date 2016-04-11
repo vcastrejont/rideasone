@@ -25,7 +25,7 @@ function eventsShowCtrl ($scope, $http,  $state, $window) {
     init:function(){
       //Load data, Todo create a service for this
       var self = this;
-      $http.get('/api/event/'+$scope.id).then(function(response) {
+      $http.get('/api/events/'+$scope.id).then(function(response) {
         self.event = response.data;
         self.event.avail = 0;
         self.event.signed = _.where(response.data.attendees, {user_id: self.user.id});
@@ -65,16 +65,16 @@ function eventsShowCtrl ($scope, $http,  $state, $window) {
       this.driver = "";
     },
     deleteEvent:function(){
-      $http.delete('/api/event/'+$scope.id).then(function(response) {
+      $http.delete('/api/events/'+$scope.id).then(function(response) {
         $state.go('events');
       }, function(response) {
-        console.log('Error: ' + response);
+        console.error('Error: ' + response);
       });	
     },
     signMe:function(){
       var self = this;
       this.signed = true;
-      $http.put('/api/event/signup/'+$scope.id).then(function(response) {
+      $http.put('/api/events/signup/'+$scope.id).then(function(response) {
           self.alerts.push({msg: response.data.message});
           setTimeout(function () {
             $scope.$apply(function()  {  self.closeAlert(); });
@@ -83,7 +83,7 @@ function eventsShowCtrl ($scope, $http,  $state, $window) {
               $scope.view.init();
             //console.log(response);
         }, function(response) {
-            console.log('Error: ' + response);
+            console.error('Error: ' + response);
       });	
     },
     addCar:function(){
@@ -95,14 +95,13 @@ function eventsShowCtrl ($scope, $http,  $state, $window) {
         driver_id  : $scope.view.user.id
       };
       $http.post('/api/events/addcar', eventData).then(function(response) {
-            console.log(response);
             self.alerts.push({msg: response.data.message});
             setTimeout(function () {
                $scope.$apply(function()  {  self.closeAlert(); });
                $scope.view.init();
             }, 1000);
         }, function(response) {
-            console.log('Error: ' + response);
+            console.error('Error: ' + response);
       });	
     },
     deleteCar:function(carid){
