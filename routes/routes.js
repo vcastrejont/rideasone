@@ -7,7 +7,6 @@ function isLoggedIn(req, res, next) {
 	res.redirect('/login');
 }
 
-
 router.get('/', isLoggedIn, function(req, res, next) {
 	// res.append("X-User", "Blood, sweat, and tears");
 	// res.append('X-My-Custom-Header', 'Custom');

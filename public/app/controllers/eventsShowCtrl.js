@@ -19,14 +19,17 @@ function eventsShowCtrl ($scope, $http,  $state, $window) {
       var temp = _.findWhere(car.passanger, {user_id: $scope.view.user.id});
       return temp  ? true : false;
     },
+    getNumber: function(num) {
+      return new Array(num);   
+    },  
     init:function(){
       //Load data, Todo create a service for this
       var self = this;
-      $http.get('/api/event/'+$scope.id).then(function(response) {
+      $http.get('/api/events/'+$scope.id).then(function(response) {
         self.event = response.data;
         self.event.avail = 0;
         self.event.signed = _.where(response.data.attendees, {user_id: self.user.id});
-        _.each(response.data.carpooling, function(carpool, index) {
+        _.each(response.data.cars, function(carpool, index) {
           var avail = carpool.seats -  carpool.passanger.length;
           self.event.avail += avail;
         });
@@ -62,16 +65,16 @@ function eventsShowCtrl ($scope, $http,  $state, $window) {
       this.driver = "";
     },
     deleteEvent:function(){
-      $http.delete('/api/event/'+$scope.id).then(function(response) {
+      $http.delete('/api/events/'+$scope.id).then(function(response) {
         $state.go('events');
       }, function(response) {
-        console.log('Error: ' + response);
+        console.error('Error: ' + response);
       });	
     },
     signMe:function(){
       var self = this;
       this.signed = true;
-      $http.put('/api/event/signup/'+$scope.id).then(function(response) {
+      $http.put('/api/events/signup/'+$scope.id).then(function(response) {
           self.alerts.push({msg: response.data.message});
           setTimeout(function () {
             $scope.$apply(function()  {  self.closeAlert(); });
@@ -80,7 +83,7 @@ function eventsShowCtrl ($scope, $http,  $state, $window) {
               $scope.view.init();
             //console.log(response);
         }, function(response) {
-            console.log('Error: ' + response);
+            console.error('Error: ' + response);
       });	
     },
     addCar:function(){
@@ -92,14 +95,13 @@ function eventsShowCtrl ($scope, $http,  $state, $window) {
         driver_id  : $scope.view.user.id
       };
       $http.post('/api/events/addcar', eventData).then(function(response) {
-            console.log(response);
             self.alerts.push({msg: response.data.message});
             setTimeout(function () {
                $scope.$apply(function()  {  self.closeAlert(); });
                $scope.view.init();
             }, 1000);
         }, function(response) {
-            console.log('Error: ' + response);
+            console.error('Error: ' + response);
       });	
     },
     deleteCar:function(carid){
@@ -122,8 +124,8 @@ function eventsShowCtrl ($scope, $http,  $state, $window) {
     },
     joinCar:function(carid){
       var carData = {
-        id         : $scope.view.event._id,
-        carid      : carid
+        event_id : $scope.view.event._id,
+        car_id   : carid
       };
       var self = this;
       $http.post('/api/events/joincar', carData).then(function(response) {
@@ -140,11 +142,11 @@ function eventsShowCtrl ($scope, $http,  $state, $window) {
     leaveCar:function(carid){
       if (confirm("Are you sure ?")) {
         var carData = {
-          id         : $scope.view.event._id,
-          carid      : carid
+          event_id  : $scope.view.event._id,
+          car_id    : carid
         };
         var self = this;
-        $http.post('/api/events/leaveCar', carData).then(function(response) {
+        $http.post('/api/events/leavecar', carData).then(function(response) {
             self.alerts.push({msg: response.data.message});
             setTimeout(function () {
                $scope.$apply(function()  {  self.closeAlert(); });
@@ -155,24 +157,23 @@ function eventsShowCtrl ($scope, $http,  $state, $window) {
         });	
       }
     },
-    carPooling:function(){
-      var self = this;
-      var eventData = {
-        option : this.option,
-        seats  : this.seats,
-        driver : this.driver
+    addExtra:function(carid){
+      var carData = {
+        event_id : this.event._id,
+        car_id   : carid,
+        extra    : this.extra 
       };
-      $http.put('/api/events/'+$scope.id, eventData).then(function(response) {
-            console.log(response);
-            self.alerts.push({msg: response.data.message});
-            setTimeout(function () {
-               $scope.$apply(function()  {  self.closeAlert(); });
-            }, 2000);
+      var self = this;
+      $http.post('/api/events/addExtra', carData).then(function(response) {
+          self.alerts.push({msg: response.data.message});
+          setTimeout(function () {
+             $scope.$apply(function()  {  self.closeAlert(); });
+             $scope.view.init();
+          }, 1000);
         }, function(response) {
             console.log('Error: ' + response);
       });	
     },
-  
     closeAlert : function(index) {
       this.alerts.splice(index, 1);
     }

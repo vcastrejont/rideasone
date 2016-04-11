@@ -21,26 +21,14 @@ app.run(['$rootScope', '$location', '$window',
   }
 ]);
 
-
 app.config(function($stateProvider, $urlRouterProvider) {
   $urlRouterProvider.otherwise('/');
   var home = {
     name: 'home',
     url: '^/',
     templateUrl: "app/templates/index.html",
-    templateUrl: "app/templates/mycarpooling.html",
-    controller: myCarpoolingCtrl
-  },
-  mycarpooling = {
-    name: 'mycarpooling',
-    url: '/mycarpooling',
-    templateUrl: "app/templates/mycarpooling.html"  ,
-    controller: myCarpoolingCtrl
-  },
-  myroutes = {
-    name: 'myroutes',
-    url: '/myroutes',
-    templateUrl: "app/templates/myroutes.html"
+    templateUrl: "app/templates/home.html",
+    controller: homeCtrl
   },
   getaride = {
     name: 'getaride',
@@ -64,21 +52,12 @@ app.config(function($stateProvider, $urlRouterProvider) {
     url: '^/events/new',
     templateUrl: "app/templates/events.new.html",
     controller: eventsNewCtrl
-  },
-  settings = {
-    name: 'settings',
-    url: "/settings",
-    templateUrl: 'app/templates/settings.html',
-    controller: settingsCtrl
   };
 
   $stateProvider
   .state(home)
-  .state(mycarpooling)
-  .state(myroutes)
   .state(getaride)
   .state(events)
   .state(eventShow)
-  .state(eventsNew)
-  .state(settings);
+  .state(eventsNew);
 });

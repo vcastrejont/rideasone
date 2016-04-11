@@ -1,0 +1,42 @@
+
+<div class="container box bg" id="dashboard" >
+  <header class="row">
+    <div class="col-md-3">
+      <h1>Welcome</h1>
+    </div>
+    
+  </header>
+  <main class="row">
+    <div class="col-sm-8 ">
+      <div class="card">
+        <h2>Next events </h2>
+      
+        <ul class="trips">
+          <li ng-repeat="event in nextEvents">
+            <p class="title"><a ui-sref="eventshow({ id: event._id})">{{event.name}}</a></p>
+            <p>{{event.datetime | date:'medium'}}</p>
+            <p>Place: {{event.place}} </p>
+            <p>Cars: {{event.cars.length}} </p>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div class="col-sm-4 ">
+      <div class="card">
+        <h2>Past events</h2>
+        <ul class="events">
+          <li ng-repeat="event in pastEvents">
+            <a ui-sref="eventshow({ id: event._id})">{{event.name}}</a>
+            {{event.datetime | date:'medium'}}
+            at {{event.place}} by <strong> {{event.organizer}}</strong> 
+            <td class="text-center">{{event.seats}}
+            <td class="text-center">{{event.lift.length}}
+          </li>
+        </ul>
+      </div>
+    </div>
+    
+  </main>
+  <footer>&nbsp;</footer>
+
+</div>
