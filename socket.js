@@ -71,13 +71,12 @@ module.exports = function(server) {
       var exists,
       i;
 
-      addedUser = true;
       rideId = data.rideId;
       // join the conversation
       socket.join(rideId);
       // we store the username in the socket session for this client
       socket.user = data.user;
-
+      
       for(i = 0; i < users.length; i++) {
         if(users[i].id === socket.user.id) {
           exists = true;
@@ -87,14 +86,15 @@ module.exports = function(server) {
 
       if(!exists) {
         users.push(socket.user);
-        // echo globally (all clients) that a person has connected
-        socket.broadcast.to(rideId).emit('location updated', {
-          username: socket.user.name,
-          users: users
-        });
       }
 
-      socket.emit('my location shared', users);
+      // echo globally (all clients) that a person has connected
+      io.sockets.in(rideId).emit('location updated', users);
+
+      if(!addedUser) {
+        addedUser = true;
+        socket.emit('my location shared', users);
+      }
     });
 
     // when the user disconnects.. perform this
