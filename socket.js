@@ -5,45 +5,48 @@ module.exports = function(server) {
   var users = [];
 
   io.on('connection', function (socket) {
-
     var addedUser = false;
     var rideId;
+
+    // when the client emits 'add user', this listens and executes
+    socket.on('add user', function (data) {
+      var exists,
+      i;
+
+      addedUser = true;
+      rideId = data.rideId;
+
+      // we store the username in the socket session for this client
+      socket.user = data.user;
+
+      for(i = 0; i < users.length; i++) {
+        if(users[i].id === socket.user.id) {
+          exists = true;
+        }
+      }
+
+      if(!exists) {
+        users.push(socket.user);
+
+        // echo globally (all clients) that a person has connected
+        socket.broadcast.to(rideId).emit('user joined', {
+          username: socket.user.name,
+          users: users
+        });
+      }
+
+      socket.emit('login', users);
+
+      // join the conversation
+      socket.join(rideId);
+    });
+
     // when the client emits 'new message', this listens and executes
     socket.on('new message', function (message) {
 
       socket.broadcast.to(rideId).emit('new message', {
         username: socket.user.name,
         message: message
-      });
-    });
-
-    // when the client emits 'add user', this listens and executes
-    socket.on('add user', function (data) {
-
-      if (addedUser) return;
-
-      if(users.length > 0) {
-        for(var i = 0; i < users.length; i++) {
-          if(data.user.id === users[i].id) {
-            socket.emit('already logged in');
-            return;
-          }
-        }
-      }
-
-      // we store the username in the socket session for this client
-      rideId = data.rideId;
-      socket.join(rideId);
-      socket.user = data.user;
-      users.push(socket.user);
-      addedUser = true;
-
-      socket.emit('login', users);
-
-      // echo globally (all clients) that a person has connected
-      socket.broadcast.to(rideId).emit('user joined', {
-        username: socket.user.name,
-        users: users
       });
     });
 
@@ -63,9 +66,39 @@ module.exports = function(server) {
       });
     });
 
+    // when the client emits 'add passenger', this listens and executes
+    socket.on('share location', function (data) {
+      var exists,
+      i;
+
+      addedUser = true;
+      rideId = data.rideId;
+      // join the conversation
+      socket.join(rideId);
+      // we store the username in the socket session for this client
+      socket.user = data.user;
+
+      for(i = 0; i < users.length; i++) {
+        if(users[i].id === socket.user.id) {
+          exists = true;
+          users[i] = socket.user;
+        }
+      }
+
+      if(!exists) {
+        users.push(socket.user);
+        // echo globally (all clients) that a person has connected
+        socket.broadcast.to(rideId).emit('location updated', {
+          username: socket.user.name,
+          users: users
+        });
+      }
+
+      socket.emit('my location shared', users);
+    });
+
     // when the user disconnects.. perform this
     socket.on('disconnect', function () {
-
       if (addedUser) {
         users.splice(users.indexOf(socket.user), 1);
 

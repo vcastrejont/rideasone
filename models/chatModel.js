@@ -6,7 +6,11 @@ var chatSchema = new Schema({
   ride_id: String,
   messages: [{
     content: String,
-    username: String
+    username: String,
+    created_at: {
+      type: Date,
+      default: Date.now
+    },
   }],
 	created_at: {
     type: Date,
