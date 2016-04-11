@@ -14,7 +14,16 @@ module.exports = {
      * eventController.list()
      */
     list: function(req, res) {
-      eventModel.find({"datetime":{"$gte":new Date()}},function(err, events){
+      var type = req.body.type;
+      console.log(req.query);
+      var d = new Date();
+      d.setDate(d.getDate() - 1); // Yesterday
+      if(type = "past"){
+        dateQuery = {"$gte": d};
+      }else{
+        dateQuery = {"$lt": d};
+      }
+      eventModel.find({"datetime":dateQuery}, {}, { limit : 1 },function(err, events){
           if(err) {
               return res.json(500, {
                   message: 'Error getting event.'
@@ -23,19 +32,7 @@ module.exports = {
           return res.json(events);
       });
     },
-    /**
-     * eventController.list()
-     */
-    past: function(req, res) {
-      eventModel.find(function(err, events){
-          if(err) {
-              return res.json(500, {
-                  message: 'Error getting event.'
-              });
-          }
-          return res.json(events);
-      });
-    },
+    
     /**
      * eventController.carbyuser()
      */

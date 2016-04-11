@@ -2,17 +2,17 @@
 <div class="container box bg" id="dashboard" >
   <header class="row">
     <div class="col-md-3">
-      <h1>My Carpooling </h1>
+      <h1>Welcome</h1>
     </div>
     
   </header>
   <main class="row">
-    <div class="col-sm-4 ">
+    <div class="col-sm-8 ">
       <div class="card">
-        <h2>My trips</h2>
+        <h2>Next events </h2>
       
         <ul class="trips">
-          <li ng-repeat="ride in rides">
+          <li ng-repeat="ride in nextEvents">
             <p class="title"><a ui-sref="eventshow({ id: ride._id})">{{ride.name}}</a></p>
             <p>{{ride.datetime | date:'medium'}}</p>
             <p>Place: {{ride.place}} </p>
@@ -24,9 +24,9 @@
     </div>
     <div class="col-sm-4 ">
       <div class="card">
-        <h2>Upcoming events</h2>
+        <h2>Past events</h2>
         <ul class="events">
-          <li ng-repeat="event in events">
+          <li ng-repeat="event in pastEvents">
             <a ui-sref="eventshow({ id: event._id})">{{event.name}}</a>
             {{event.datetime | date:'medium'}}
             at {{event.place}} by <strong> {{event.organizer}}</strong> 
@@ -36,14 +36,7 @@
         </ul>
       </div>
     </div>
-    <div class="col-sm-4 ">
-      <div class="card">
-        <h2>My friends</h2>
-        <ul class="friends" >
-        <li ng-repeat="user in users | limitTo: 5"><img src="{{user.photo}}" class="profile-small"/> {{user.name}} </li>
-        </ul>
-      </div>
-    </div>
+    
   </main>
   <footer>&nbsp;</footer>
 

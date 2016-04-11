@@ -30,8 +30,7 @@
           <script src="/app/controllers/eventsShowCtrl.js"></script>
           <script src="/app/controllers/eventsNewCtrl.js"></script>
           <script src="/app/controllers/settingsCtrl.js"></script>
-          <!-- <script src="/app/controllers/chatCtrl.js"></script> -->
-          <script src="/app/controllers/myCarpoolingCtrl.js"></script>
+          <script src="/app/controllers/homeCtrl.js"></script>
           <script>
             var user=<%- JSON.stringify(user) %>;
             var user_name="<%= user.name%>";
@@ -43,16 +42,14 @@
         <header ng-controller="headerCtrl" >
           <div class="container">
             <div class="row">
-              <div class="col-sm-3 logo">
+              <a ui-sref="home" class="col-sm-3 logo">        
                 <img src="/assets/img/logo.svg" style="float:left; margin-right:10px" />
-                <h1><a ui-sref="home">Carpooling</a></h1>
+                <h1>Carpooling</h1>
                 <span><strong>nearsoft</strong> labs</span>
-              </div>
+              </a>
 
               <div class="col-sm-7 menu">
                 <ul>
-
-
                   <li><a ui-sref="events"  ui-sref-active="active">Events</a></li>
                   <li><a style="text-decoration:line-through;">Get a ride</a></li>
                   <li><a style="text-decoration:line-through;">company transport</a></li>
