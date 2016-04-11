@@ -16,6 +16,7 @@ router.get('/', function(req, res) {
 router.get('/events', eventsController.list);                 // List events
 router.get('/events/past', eventsController.past);            // List  past events
 router.get('/events/user/:user', eventsController.byuser);    // List  by user
+router.post('/events/carbyuser', eventsController.carbyuser); //    Car polling by user
 router.post('/events', eventsController.create);              //Create a new event
 router.get('/events/:id', eventsController.show);             //Show an event
 router.put('/events/signup/:id', eventsController.signup);    // Event sign up
