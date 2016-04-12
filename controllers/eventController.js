@@ -58,6 +58,7 @@ module.exports = {
      /**
       * eventController.carbyuser()
       */
+
      carbyuser: function(req, res) {
          var event_id = req.body.event_id;
          var user_id = req.body.user_id;
@@ -85,12 +86,14 @@ module.exports = {
                      result_data = car;
                    }
                  });
-               }
-             });
 
-             res.status(200).json(result_data);
-         });
-     },
+               }
+            });
+          }
+        });
+        res.status(200).json(result_data);
+     });
+    },
     /**
      * eventController.show()
      */
