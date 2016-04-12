@@ -23,7 +23,7 @@ module.exports = {
           return res.json(events);
       });
     },
-    
+
     past: function(req, res) {
       var d = new Date();
       d.setDate(d.getDate() - 1);
@@ -75,7 +75,7 @@ module.exports = {
                  });
              }
 
-             _.each(event.carpooling, function(car, index) {
+             _.each(event.cars, function(car, index) {
                if(car.driver_id == user_id) {
                  result_data = car;
                }
@@ -212,7 +212,7 @@ module.exports = {
           comments      : req.body.comments
         };
 
-        eventModel.update({"_id":  req.body.id}, {$push: {"cars": car}}, 
+        eventModel.update({"_id":  req.body.id}, {$push: {"cars": car}},
         function(err, numAffected){
           if(err){
               console.log(err);
@@ -220,7 +220,7 @@ module.exports = {
                   message: 'Error updating event', error: err
               });
           }else{
-          
+
             return res.status(200).json( {
                 message: 'Successfully added!',
                 numAffected: numAffected
@@ -235,7 +235,7 @@ module.exports = {
     deleteCar: function(req, res) {
       var id = req.body.id;
       var car_id = req.body.carid;
-      eventModel.update({_id: id}, 
+      eventModel.update({_id: id},
       {'$pull': {"cars": {"_id": car_id}}}, function(err, numAffected){
         if(err){
             console.log(err);
@@ -263,8 +263,8 @@ module.exports = {
         photo     : req.user.photo
       }
 
-      eventModel.update({_id: event_id, 'cars._id': car_id }, 
-      {'$push': {"cars.$.passanger": passanger}}, 
+      eventModel.update({_id: event_id, 'cars._id': car_id },
+      {'$push': {"cars.$.passanger": passanger}},
 
       function(err, numAffected){
         if(err){
@@ -279,7 +279,7 @@ module.exports = {
             })
             mailerController.joinCar(passanger.name, event.name, car[0].driver_email);
           });
-           
+
           return res.status(200).json( {
               message: 'Successfully added!',
               numAffected: numAffected
@@ -289,7 +289,7 @@ module.exports = {
     },
 
     /**
-     * eventController addExtra()  
+     * eventController addExtra()
      */
     addExtra: function(req, res) {
       var event_id  = req.body.event_id;
@@ -300,9 +300,9 @@ module.exports = {
         name      : req.user.name,
         photo     : req.user.photo
       }
-      for (i = 0; i < extra; i++) { 
-        eventModel.update({_id: event_id, 'cars._id': car_id }, 
-        {'$push': {"cars.$.passanger": passanger}}, 
+      for (i = 0; i < extra; i++) {
+        eventModel.update({_id: event_id, 'cars._id': car_id },
+        {'$push': {"cars.$.passanger": passanger}},
         function(err, numAffected){
           if(err){
             console.log(err);
@@ -316,7 +316,7 @@ module.exports = {
       }
       return res.status(200).json( {
           message: 'Successfully added!'
-      });     
+      });
 
     },
 
@@ -332,8 +332,8 @@ module.exports = {
         name      : req.user.name,
         photo     : req.user.photo
       }
-      eventModel.update({_id: event_id, 'cars._id': car_id }, 
-      {'$pull': {"cars.$.passanger": {'user_id':req.user.id }}}, 
+      eventModel.update({_id: event_id, 'cars._id': car_id },
+      {'$pull': {"cars.$.passanger": {'user_id':req.user.id }}},
 
       function(err, numAffected){
         if(err){
@@ -348,7 +348,7 @@ module.exports = {
             });
             mailerController.leaveCar(passanger.name, event.name, car[0].driver_email);
           });
-          
+
           return res.status(200).json( {
               message: 'Successfully removed',
               numAffected: numAffected
@@ -410,7 +410,7 @@ module.exports = {
                     photo     : req.user.photo
                   }
 
-                  eventModel.update({_id: id, 'cars.driver_id': req.body.driver }, 
+                  eventModel.update({_id: id, 'cars.driver_id': req.body.driver },
                   {'$push': {"cars.$.passanger": passanger}}, //he is not longer looking for a lift
 
                   function(err, numAffected){
