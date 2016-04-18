@@ -2,7 +2,8 @@ var app = angular.module('carPoolingApp', [
   'geolocation',
   'mapService',
   'ui.bootstrap',
-  'ui.router'
+  'ui.router',
+  'spinner'
 ]);
 
 app.run(['$rootScope', '$location', '$window',
