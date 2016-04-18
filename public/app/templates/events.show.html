@@ -84,7 +84,7 @@
                <p>
                  <strong>Available seats:</strong> {{car.seats-(car.passanger.length)}} 
                </p>
-               <p>
+               <p ng-if="view.isSigned(car) ">
                  <strong>Extra passangers:</strong>
                  
                  <select class="" name="" ng-model="view.extra">
