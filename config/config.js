@@ -1,4 +1,4 @@
-var mongoUri = process.env.MONGOLAB_URI || 'mongodb://localhost/carpooling'
+var mongoUri = process.env.MONGODB_URI || 'mongodb://localhost/carpooling'
 
 module.exports = {
   db: {
