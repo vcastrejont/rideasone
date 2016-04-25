@@ -1,23 +1,10 @@
 angular.module('carpoolingVan')
 
-.factory("routesService", function($firebaseArray, firebaseRef, $http,
+.factory("routesService", function($firebaseArray, $firebaseObject, firebaseRef, $http,
   dateService, usersService) {
 
   var routesRef = new Firebase(firebaseRef + "routes"),
-    routes = $firebaseArray(routesRef);
-
-  // routes.$loaded()
-  // .then(function() {
-  //   angular.forEach(routes, function(r) {
-  //     angular.forEach(r.passengers, function(p, i) {
-  //       usersService.get(i)
-  //       .then(function(user) {
-  //         p.location = user.location;
-  //         p.name = user.name;
-  //       });
-  //     });
-  //   });
-  // });
+  routes = $firebaseArray(routesRef);
 
   return {
     routes: routes,
@@ -30,15 +17,12 @@ angular.module('carpoolingVan')
   };
 
   function addUser(user, route, routes) {
-
     angular.forEach(routes, function(r) {
       if(r.$id == route.$id) {
-        var name = user.name,
-          loc = user.location,
-          userObj = {};
+        var userObj = {};
           userObj[user.$id] = {
-            "name": name,
-            "location": loc
+            "bypass": false,
+            "onboard": false
           };
 
         $http.patch(firebaseRef + "routes/" + route.$id + "/passengers.json",
@@ -54,13 +38,11 @@ angular.module('carpoolingVan')
   }
 
   function deleteUser(user, route) {
-
     return $http.delete(firebaseRef + "routes/" + route.$id + "/passengers/" +
       user.$id + ".json");
   }
 
   function pickupUser(userId, route, flag) {
-
     return $http.patch(firebaseRef + "routes/" + route.$id + "/passengers/" +
       userId + ".json", {
         onboard: flag ? dateService.format("now", "HH:mm:ss") : false
@@ -94,7 +76,7 @@ angular.module('carpoolingVan')
       }
     });
 
-    if(passengersLeft == 0) {
+    if(passengersLeft === 0) {
       iterateOverPassengers(route, bypassUser, false);
 
       return $http.patch(firebaseRef + "routes/" + route.$id + ".json", {

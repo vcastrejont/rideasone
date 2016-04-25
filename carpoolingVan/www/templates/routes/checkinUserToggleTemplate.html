@@ -1,7 +1,5 @@
 <label ng-if="!user.bypass && route.departureTime" class="toggle toggle-balanced">
   <input type="checkbox" ng-checked="user.onboard"
-     ng-click="pickupUser(userId, route, user.onboard)">
-  <div class="track">
-    <div class="handle"></div>
-  </div>
+     ng-click="pickupUser(userId, user.onboard)">
+  <div class="track"><div class="handle"></div></div>
 </label>

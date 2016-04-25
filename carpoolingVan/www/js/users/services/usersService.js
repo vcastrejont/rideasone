@@ -7,35 +7,24 @@ angular.module('carpoolingVan')
   return {
     users: users,
     get: get,
-    update: update,
-    remove: remove
-  }
+    update: update
+  };
 
   function get(userId) {
-
     var userRef = new Firebase(firebaseRef + "users/" + userId);
     var obj = $firebaseObject(userRef);
-
     return obj.$loaded();
   }
 
   function update(user) {
-
     var userId = user.$id,
-      user = {
-        location: {
-          "address": user.location.address,
-          "lat": user.location.lat,
-          "lng": user.location.lng
-        },
-        name: user.name
-      };
-
-    return $http.put(firebaseRef + "users/" + userId + ".json", user);
-  }
-
-  function remove(userId) {
-
-    return $http.delete(firebaseRef + "users/" + userId + ".json");
+    u = {
+      location: {
+        "address": user.location.address,
+        "lat": user.location.lat,
+        "lng": user.location.lng
+      }
+    };
+    return $http.patch(firebaseRef + "users/" + userId + ".json", u);
   }
 });

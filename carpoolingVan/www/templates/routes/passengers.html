@@ -1,13 +1,4 @@
-
-<ion-modal-view>
-  <ion-header-bar class="bar bar-dark">
-    <h1 class="title">
-      <i class="icon ion-clock"></i>
-      <modal-title></modal-title>
-    </h1>
-    <button class="button button-clear button-stable close" ng-click="closeModal()">X</button>
-  </ion-header-bar>
-
+<ion-view view-title="Passengers">
   <ion-content>
     <ul ng-if="route.passengers" class="list">
       <li class="item item-icon-left item-toggle"
@@ -20,7 +11,7 @@
          <small ng-show="user.onboard && route.departureTime" class="balanced">
            Board at {{user.onboard}}
          </small>
-         <modal-toggle-control></modal-toggle-control>
+         <toggle-control></toggle-control>
       </li>
     </ul>
 

@@ -1,6 +1,10 @@
 angular.module('carpoolingVan', ['ionic', 'firebase', 'ngCordova'])
 
-.run(function($ionicPlatform) {
+.constant("firebaseRef", "https://blazing-heat-3837.firebaseio.com/")
+.constant("clientId", "501324647645-0nt79uniegb99kmfgfhb84n7eao7dodv.apps.googleusercontent.com")
+.constant("clientSecret", "tOdtnYK2ErrF_7GUrrAqR8bt")
+
+.run(function($ionicPlatform, $rootScope, authFactory, $state) {
   $ionicPlatform.ready(function() {
     if(window.cordova && window.cordova.plugins.Keyboard) {
       // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
@@ -16,11 +20,23 @@ angular.module('carpoolingVan', ['ionic', 'firebase', 'ngCordova'])
       StatusBar.styleDefault();
     }
   });
+
+  $rootScope.$on('$stateChangeStart', function (event, next) {
+    if (!authFactory.isAuthenticated()) {
+      authFactory.logout();
+
+      if (next.name !== 'van.login') {
+        event.preventDefault();
+        $state.go('van.login');
+      }
+    }
+    else if (next.name === 'van.login') {
+      authFactory.logout();
+    }
+  });
 })
 
-.constant("firebaseRef", "https://blazing-heat-3837.firebaseio.com/")
-
-.config(function($stateProvider, $urlRouterProvider) {
+.config(function($stateProvider, $urlRouterProvider, $locationProvider) {
   $stateProvider
 
   .state('van', {
@@ -68,8 +84,43 @@ angular.module('carpoolingVan', ['ionic', 'firebase', 'ngCordova'])
         controller: 'routesCtrl'
       }
     }
+  })
+
+  .state('van.passengers', {
+    url: '/passengers/list',
+    views: {
+      'content': {
+        templateUrl: 'templates/routes/passengers.html',
+        controller: 'passengerCtrl'
+      }
+    },
+    params: {
+      route: null
+    }
+  })
+
+  .state('van.userList', {
+    url: '/routes/addUser',
+    views: {
+      'content': {
+        templateUrl: 'templates/routes/userList.html',
+        controller: 'routesCtrl'
+      }
+    },
+    params: {
+      route: null
+    }
+  })
+
+  .state('van.login', {
+    url: '/login',
+    views: {
+      'content': {
+        templateUrl: 'templates/login.html',
+        controller: 'appCtrl'
+      }
+    }
   });
 
-  // if none of the above states are matched, use this as the fallback
-  $urlRouterProvider.otherwise('van/user/routes');
+  $urlRouterProvider.otherwise('van/users');
 });

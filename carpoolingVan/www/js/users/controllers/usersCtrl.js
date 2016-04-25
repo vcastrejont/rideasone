@@ -1,115 +1,24 @@
 angular.module('carpoolingVan')
 
-.controller("usersCtrl", function($scope, usersService, $ionicModal, mapService,
-  $ionicLoading, popupService) {
+.controller("usersCtrl", function($scope, usersService, $state, mapFactory,
+  $ionicLoading, popupService, authFactory) {
 
   $scope.users = usersService.users;
-  $scope.addUser = addUser;
-  $scope.saveUser = saveUser;
   $scope.updateUser = updateUser;
-  $scope.viewInfo = viewInfo;
-  $scope.showDeleteUserModal = showDeleteUserModal;
-  
-
-  //Cleanup the modal when we're done with it!
-  $scope.$on('$destroy', function() {
-    $scope.modal.remove();
-    $scope.user;
-  });
-
-  function addUser() {
-    $ionicLoading.show({
-      template: 'Loading map'
-    });
-
-    $scope.user = {};
-
-    $ionicModal.fromTemplateUrl('templates/users/newUserModal.html', {
-      scope: $scope,
-      animation: 'slide-in-up'
-    }).then(function(modal) {
-      $scope.modal = modal;
-
-      initMap()
-      .then(function(map) {
-        $scope.map = map;
-        $ionicLoading.hide();
-      });
-
-      $scope.openModal();
-    });
-
-    $scope.openModal = function() {
-      $scope.modal.show();
-    };
-    $scope.closeModal = function() {
-      $scope.modal.hide();
-    };
-  }
-
-  function saveUser() {
-    $scope.users.$add($scope.user)
-    .then(function okSaveUser() {
-      $scope.closeModal();
-    },
-    function errorSaveUser(error) {
-      console.log(error);
-    });
-  }
 
   function updateUser() {
-
     usersService.update($scope.user)
     .then(function okUpdateUser() {
-      $scope.closeModal();
+      popupService.alert("User updated", "The information was successfully updated");
+      $state.go("van.users");
     },
     function errorUpdateUser(error) {
       alert(error);
     });
   }
 
-  function showDeleteUserModal(userId) {
-
-    popupService.showConfirm("Delete user", "Are you sure?", function() {
-      deleteUser(userId)
-      .then(function() {
-        alert("User removed");
-      });
-    });
-  }
-
-  function deleteUser(userId) {
-    return usersService.remove(userId);
-  }
-
-  function viewInfo(user) {
-    $scope.user = user;
-
-    $ionicModal.fromTemplateUrl('templates/users/userModal.html', {
-      scope: $scope,
-      animation: 'slide-in-up'
-    }).then(function(modal) {
-      $scope.modal = modal;
-
-      initMap(user.location)
-      .then(function(map) {
-        $scope.map = map;
-      });
-
-      $scope.openModal();
-    });
-
-    $scope.openModal = function() {
-      $scope.modal.show();
-    };
-    $scope.closeModal = function() {
-      $scope.modal.hide();
-    };
-  }
-
   function initMap(location) {
-
-    return mapService.initMap(location)
+    return mapFactory.drawMap(location)
     .then(function(map) {
       var marker;
 
@@ -119,7 +28,6 @@ angular.module('carpoolingVan')
       else {
         marker = mapService.createEmptyMarker();
       }
-
 
       var searchInput = document.getElementById('autocomplete');
       autocomplete = new google.maps.places.Autocomplete(searchInput);

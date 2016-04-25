@@ -1,68 +1,38 @@
 angular.module('carpoolingVan')
 
 .controller("routesCtrl", function($scope, routesService, usersService,
-  mapService, $ionicModal, $ionicListDelegate) {
+  mapFactory, $ionicPopup, $ionicListDelegate, $stateParams) {
 
+  $scope.route = $stateParams.route;
   $scope.users = usersService.users;
   $scope.routes = routesService.routes;
-  // usersService.get(userId)
-  // .then(function(user) {
-  //   // console.log(user.name);
-  //   return user.name;
-  // });
-
   $scope.addRoute = addRoute;
   $scope.start = start;
   $scope.stop = stop;
   $scope.showPassengersModal = showPassengersModal;
-  $scope.showAllUsers = showAllUsers;
   $scope.addUserToRoute = addUserToRoute;
   $scope.pickupUser = pickupUser;
   $scope.bypassUser = bypassUser;
   $scope.passengerCount = passengerCount;
 
   $scope.getUserName = function(userId) {
-    return usersService.get(userId)
-    .then(function(user) {
-      // console.log(user.name);
+    return usersService.get(userId).then(function(user) {
       return user.name;
     });
   };
 
-  $scope.$on('$destroy', function() {
-
-    $scope.modal.remove();
-    delete $scope.route;
-    delete $scope.role;
-  });
-
-  $scope.$on('modal.hidden', function() {
-
-    $ionicListDelegate.closeOptionButtons();
-  });
-
-  $scope.openModal = function() {
-
-    $scope.modal.show();
-  };
-  $scope.closeModal = function() {
-
-    $scope.modal.hide();
-  };
-
   function addRoute () {
-
-    var time = prompt("Type the time of departure");
-
-    if (time) {
+    $ionicPopup.prompt({
+      title: 'New route',
+      template: 'Type the time of departure'
+    }).then(function(time) {
       $scope.routes.$add({
         "time": time
       });
-    }
+    });
   }
 
   function start(route) {
-
     routesService.start(route)
     .then(function okStartRoute(res) {
       if(res.data) {
@@ -79,7 +49,6 @@ angular.module('carpoolingVan')
   }
 
   function stop(route) {
-
     routesService.stop(route)
     .then(function okStopRoute(res) {
       if(res.data) {
@@ -95,31 +64,26 @@ angular.module('carpoolingVan')
     });
   }
 
-  function addUser(user, route) {
-
-    routesService.addUser(user, route, $scope.routes);
+  function addUser(user) {
+    routesService.addUser(user, $scope.route, $scope.routes);
   }
 
-  function deleteUser(user, route) {
-
-    routesService.deleteUser(user, route)
-    .then(null, function errorDeleteUser(error) {
+  function deleteUser(user) {
+    routesService.deleteUser(user, $scope.route).then(null, function(error) {
       alert(error);
     });
   }
 
-  function addUserToRoute(user, route, flag) {
-
+  function addUserToRoute(user, flag) {
     if(flag === undefined){
-      addUser(user, route);
+      addUser(user);
     }
     else {
-      deleteUser(user, route);
+      deleteUser(user);
     }
   }
 
   function pickupUser(userId, route, flag) {
-
     routesService.pickupUser(userId, route, !flag)
     .then(null, function errorPickupUser(error) {
       alert(error);
@@ -134,22 +98,7 @@ angular.module('carpoolingVan')
     });
   }
 
-  function showAllUsers(route) {
-
-    $scope.route = route;
-
-    $ionicModal.fromTemplateUrl(
-      'templates/routes/routeAddUserModal.html', {
-      scope: $scope,
-      animation: 'slide-in-up'
-    }).then(function(modal) {
-        $scope.modal = modal;
-        $scope.openModal();
-    });
-  }
-
   function showPassengersModal(route, role) {
-
     $scope.role = role;
     $scope.route = route;
 
@@ -180,7 +129,6 @@ angular.module('carpoolingVan')
   }
 
   function passengerCount(route) {
-
     var count = 0;
 
     if(route.passengers) {
