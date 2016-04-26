@@ -2,10 +2,7 @@ angular.module('carpooling', [
   'ionic',
   'ngCordova',
   'ngCordovaOauth',
-  'carpooling.controllers',
-  'carpooling.services',
   'carpooling.directives',
-  'carpooling.data',
   'ngSanitize',
   'btford.socket-io',
   'ionic-datepicker'
@@ -14,6 +11,11 @@ angular.module('carpooling', [
 .constant("clientId", "764821343773-cjpf8lnubnnmjrupiu8oen4vsacgcq9n.apps.googleusercontent.com")
 .constant("clientSecret", "5sAsJshpCHf_s4Tzk17_7nTK")
 
+.constant("serverUrl", "http://localhost:3001/")
+.constant("apiUrl", "http://localhost:3001/api/")
+
+// .constant("serverUrl", "http://nscarpooling.herokuapp.com/")
+// .constant("apiUrl", "http://nscarpooling.herokuapp.com/api/")
 
 .run(function($ionicPlatform) {
   $ionicPlatform.ready(function() {
@@ -58,53 +60,54 @@ angular.module('carpooling', [
     url: '/app',
     abstract: true,
     templateUrl: 'templates/menu.html',
-    controller: 'AppCtrl'
+    controller: 'appCtrl'
   })
 
-    .state('app.profile', {
-      url: '/profile',
-      views: {
-        'menuContent': {
-          templateUrl: 'templates/profile.html',
-          controller: 'ProfileCtrl'
-        }
-      }
-    })
-
-    .state('app.routes', {
-      url: '/my-routes',
-      views: {
-        'menuContent': {
-          templateUrl: 'templates/routes.html',
-          controller: 'RoutesCtrl'
-        }
-      }
-    })
-
-    .state('app.search', {
-      url: '/search',
-      views: {
-        'menuContent': {
-          templateUrl: 'templates/search.html'
-        }
-      }
-    })
-
-    .state('app.map', {
-      url: '/map',
-      views: {
-        'menuContent': {
-          templateUrl: 'templates/map.html',
-          controller: 'MapCtrl'
-        }
-      }
-    })
+    // .state('app.profile', {
+    //   url: '/profile',
+    //   views: {
+    //     'menuContent': {
+    //       templateUrl: 'templates/profile.html',
+    //       controller: 'profileCtrl'
+    //     }
+    //   }
+    // })
+    //
+    // .state('app.routes', {
+    //   url: '/my-routes',
+    //   views: {
+    //     'menuContent': {
+    //       templateUrl: 'templates/routes.html',
+    //       controller: 'routesCtrl'
+    //     }
+    //   }
+    // })
+    //
+    // .state('app.search', {
+    //   url: '/search',
+    //   views: {
+    //     'menuContent': {
+    //       templateUrl: 'templates/search.html'
+    //     }
+    //   }
+    // })
+    //
+    // .state('app.map', {
+    //   url: '/map',
+    //   views: {
+    //     'menuContent': {
+    //       templateUrl: 'templates/map.html',
+    //       controller: 'mapCtrl'
+    //     }
+    //   }
+    // })
 
     .state('app.events', {
       url: '/events',
       views: {
         'menuContent': {
           templateUrl: 'templates/events.html',
+<<<<<<< HEAD
           controller: 'EventsCtrl'
         }
       }
@@ -126,19 +129,32 @@ angular.module('carpooling', [
         'menuContent': {
           templateUrl: 'templates/event.html',
           controller: 'EventCtrl'
+=======
+          controller: 'eventsCtrl'
+>>>>>>> b7f6445086e665a4de1a8890351509bdbb08c636
         }
       }
     })
 
-    .state('app.settings', {
-      url: '/settings',
-      views: {
-        'menuContent': {
-          templateUrl: 'templates/settings.html',
-          controller: 'SettingsCtrl'
-        }
-      }
-    })
+    // .state('app.event', {
+    //   url: '/events/:id',
+    //   views: {
+    //     'menuContent': {
+    //       templateUrl: 'templates/event.html',
+    //       controller: 'eventCtrl'
+    //     }
+    //   }
+    // })
+    //
+    // .state('app.settings', {
+    //   url: '/settings',
+    //   views: {
+    //     'menuContent': {
+    //       templateUrl: 'templates/settings.html',
+    //       controller: 'settingsCtrl'
+    //     }
+    //   }
+    // })
 
     .state('app.login', {
         url: '/login',
@@ -150,11 +166,11 @@ angular.module('carpooling', [
     })
 
     .state('app.chat', {
-      url: '/chat',
+      url: '/chat/:eventId',
       views: {
         'menuContent': {
           templateUrl: "templates/chat.html",
-          controller: 'ChatCtrl'
+          controller: 'chatCtrl'
         }
       }
     });

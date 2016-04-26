@@ -12,17 +12,19 @@ var passport  = require('passport');
 var session   = require('express-session');
 var MongoStore = require('connect-mongo')(session);
 var routes = require('./routes/routes');
+var _ = require('underscore');
 
 require('./controllers/passport')(passport);
 //  Database
 // ------------------------------------------------------
 var mongoose = require('mongoose');
-mongoose.connect(config.database);
+mongoose.connect(config.db.database);
 var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function() {
   console.log("DB connection succesful!");
 });
+
 
 
 // Express
@@ -41,12 +43,13 @@ app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
-// app.use(function(req, res, next) {
-//   res.header("Access-Control-Allow-Origin", "*");
-//   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-//   res.header("Access-Control-Expose-Headers", "X-User");
-//   next();
-// });
+
+// Headers
+app.use(function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  next();
+});
 
 app.use(require('less-middleware')(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, 'public')));
@@ -58,7 +61,6 @@ app.use(session({
   }));
 app.use(passport.initialize());
 app.use(passport.session());
-
 
 // Routes
 // ------------------------------------------------------

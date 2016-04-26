@@ -2,9 +2,23 @@ var app = angular.module('carPoolingApp', [
   'geolocation',
   'mapService',
   'ui.bootstrap',
-  'ui.router',
-  'ngSanitize',
-  'btford.socket-io'
+  'ui.router'
+]);
+
+app.run(['$rootScope', '$location', '$window',
+  function($rootScope, $location, $window) {
+    
+    $rootScope.$on('$stateChangeSuccess',
+      function(event) {
+        if (!$window.ga) {
+          return;
+        }
+        console.log($location.path());
+        $window.ga('send', 'pageview', {
+          page: $location.path()
+        });
+      });
+  }
 ]);
 
 app.config(function($stateProvider, $urlRouterProvider) {
@@ -12,12 +26,9 @@ app.config(function($stateProvider, $urlRouterProvider) {
   var home = {
     name: 'home',
     url: '^/',
-    templateUrl: "app/templates/index.html"
-  },
-  myroutes = {
-    name: 'myroutes',
-    url: '/myroutes',
-    templateUrl: "app/templates/myroutes.html"
+    templateUrl: "app/templates/index.html",
+    templateUrl: "app/templates/home.html",
+    controller: homeCtrl
   },
   getaride = {
     name: 'getaride',
@@ -41,27 +52,12 @@ app.config(function($stateProvider, $urlRouterProvider) {
     url: '^/events/new',
     templateUrl: "app/templates/events.new.html",
     controller: eventsNewCtrl
-  },
-  settings = {
-    name: 'settings',
-    url: "/settings",
-    templateUrl: 'app/templates/settings.html',
-    controller: settingsCtrl
-  },
-  chat = {
-    name: 'chat',
-    url: "/chat",
-    templateUrl: 'app/templates/chat.html',
-    controller: chatCtrl
-  };;
+  };
 
   $stateProvider
   .state(home)
-  .state(myroutes)
   .state(getaride)
   .state(events)
   .state(eventShow)
-  .state(eventsNew)
-  .state(settings)
-  .state(chat);
+  .state(eventsNew);
 });

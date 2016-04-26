@@ -1,6 +1,6 @@
-angular.module('carpooling.controllers.profile', [])
+angular.module('carpooling')
 
-.controller('ProfileCtrl', function($scope) {
+.controller('profileCtrl', function($scope) {
   $scope.profile = {
     username: 'Username',
     avatar: 'avatar.jpg',
