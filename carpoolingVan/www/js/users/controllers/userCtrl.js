@@ -3,7 +3,6 @@ angular.module('carpoolingVan')
 .controller("userCtrl", function($scope, $stateParams, usersService, mapFactory,
   $ionicPopup, $state) {
 
-  //this should be a service and should handle responses for asyncrounous calls
   var handler = {
     users: {
       success: function (res) {
@@ -11,7 +10,6 @@ angular.module('carpoolingVan')
         initAutocompleteMap($scope.user.location);
       },
       error: function (res) {
-        //do something. throw error
         return res;
       }
     }

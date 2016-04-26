@@ -2,8 +2,7 @@ angular.module('carpoolingVan')
 
 .factory('mapFactory', function($cordovaGeolocation, $filter) {
   var map,
-  markers = [],
-  bounds = new google.maps.LatLngBounds();
+  markers = [];
 
   return {
     drawMap: drawMap,
@@ -52,7 +51,7 @@ angular.module('carpoolingVan')
   }
 
   // Adds a marker to the map and push to the array.
-  function addMarker(latLng, markerIcon) {
+  function addMarker(latLng, markerIcon, info) {
     var markerOptions = {
       position: latLng,
       map: map
@@ -66,9 +65,9 @@ angular.module('carpoolingVan')
       var marker = new google.maps.Marker(markerOptions);
 
       calculateDistance(latLng).then(function(distance) {
-        createInfoWindow('Distance: ' + $filter("number")(distance / 1000, 2) + " km", marker);
+        createInfoWindow(info + '<br>Distance: ' + $filter("number")(distance / 1000, 2) + " km", marker);
       }, function() {
-        createInfoWindow('Unable to compute distance', marker);
+        createInfoWindow(info + '<br>Unable to compute distance', marker);
       });
 
       markers.push(marker);
@@ -96,7 +95,9 @@ angular.module('carpoolingVan')
   }
 
   function setMarkers(newMarkers) {
-    var pos;
+    var bounds = new google.maps.LatLngBounds(),
+    pos;
+
     clearMarkers();
 
     angular.forEach(newMarkers, function(marker) {
@@ -104,7 +105,7 @@ angular.module('carpoolingVan')
         pos = new google.maps.LatLng(marker.location.latitude,
           marker.location.longitude);
 
-        addMarker(pos, marker.icon);
+        addMarker(pos, marker.icon, marker.info);
 
         bounds.extend(pos);
         map.fitBounds(bounds);

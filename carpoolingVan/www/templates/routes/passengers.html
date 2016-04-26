@@ -25,7 +25,7 @@
     </div>
   </ion-content>
 
-  <ion-footer-bar class="bar bar-dark">
+  <ion-footer-bar class="bar bar-dark" ng-show="route.departureTime">
     <label ng-show="route.departureTime" class="footer-label">
       <i class="ion-android-car"></i>
       Departed at {{route.departureTime}}

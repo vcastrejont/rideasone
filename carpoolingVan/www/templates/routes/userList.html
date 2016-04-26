@@ -1,15 +1,16 @@
-<ion-view view-title="Manage passengers {{route.time}}">
+<ion-view view-title="{{route.time}} passengers">
   <ion-content>
     <ul class="list">
       <li class="item item-toggle" ng-repeat="user in users">
          {{user.name}}
-         <label class="toggle toggle-balanced" ng-if="!route.departureTime">
+         <label class="toggle toggle-balanced" ng-if="!route.departureTime && !user.driver">
            <input type="checkbox" ng-checked="!!route.passengers[user.$id]"
               ng-click="addUserToRoute(user, !!route.passengers[user.$id])">
            <div class="track">
              <div class="handle"></div>
            </div>
          </label>
+         <label class="toggle" ng-if="user.driver">Driver</label>
       </li>
     </ul>
   </ion-content>
