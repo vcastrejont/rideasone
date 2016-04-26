@@ -1,7 +1,7 @@
 angular.module('carpoolingVan')
 
 .controller("routesCtrl", function($scope, routesService, usersService,
-  mapFactory, $ionicPopup, $ionicListDelegate, $stateParams) {
+  mapFactory, popupService, $ionicListDelegate, $stateParams) {
 
   $scope.route = $stateParams.route;
   $scope.users = usersService.users;
@@ -11,18 +11,17 @@ angular.module('carpoolingVan')
   $scope.stop = stop;
   $scope.addUserToRoute = addUserToRoute;
   $scope.passengerCount = passengerCount;
+  $scope.getUserName = getUserName;
 
-  $scope.getUserName = function(userId) {
+  function getUserName(userId) {
     return usersService.get(userId).then(function(user) {
       return user.name;
     });
-  };
+  }
 
-  function addRoute () {
-    $ionicPopup.prompt({
-      title: 'New route',
-      template: 'Type the time of departure'
-    }).then(function(time) {
+  function addRoute() {
+    popupService.showPrompt('New route', 'Type the time of departure',
+    function(time) {
       $scope.routes.$add({
         "time": time
       });
@@ -30,17 +29,15 @@ angular.module('carpoolingVan')
   }
 
   function start(route) {
-    routesService.start(route)
-    .then(function okStartRoute(res) {
+    routesService.start(route).then(function(res) {
       if(res.data) {
         alert("Yay, let's drive!");
-        $ionicListDelegate.closeOptionButtons();
       }
       else {
         alert("Oh, oh... something went wrong :(");
-        $ionicListDelegate.closeOptionButtons();
       }
-    }, function errorStartRoute(error) {
+      $ionicListDelegate.closeOptionButtons();
+    }, function(error) {
       alert(error);
     });
   }
@@ -50,12 +47,11 @@ angular.module('carpoolingVan')
     .then(function okStopRoute(res) {
       if(res.data) {
         alert("Yes, you made it!");
-        $ionicListDelegate.closeOptionButtons();
       }
       else {
         alert("Oh, oh... something went wrong :(");
-        $ionicListDelegate.closeOptionButtons();
       }
+      $ionicListDelegate.closeOptionButtons();
     }, function errorStartRoute(error) {
       alert(error);
     });

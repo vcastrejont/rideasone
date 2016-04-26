@@ -7,10 +7,10 @@ angular.module('carpoolingVan')
       var templateUrl;
 
       if(scope.$parent.role == 'driver') {
-        templateUrl = "templates/routes/checkinUserToggleTemplate.html";
+        templateUrl = "components/routes/checkinUserToggleTemplate.html";
       }
       else {
-        templateUrl = "templates/routes/bypassUserToggleTemplate.html";
+        templateUrl = "components/routes/bypassUserToggleTemplate.html";
       }
 
       scope.contentUrl = templateUrl;

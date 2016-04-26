@@ -1,8 +1,9 @@
 {
   "name": "ionic-project",
   "version": "1.1.1",
-  "description": "An Ionic project",
+  "description": "Nearsoft Van Project",
   "dependencies": {
+    "angular-socket-io": "^0.7.0",
     "gulp": "^3.9.1",
     "gulp-concat": "^2.6.0",
     "gulp-jshint": "^2.0.0",

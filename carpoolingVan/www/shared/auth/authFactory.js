@@ -6,7 +6,7 @@ angular.module('carpoolingVan')
   localStorageSession = "firebase:session::blazing-heat-3837";
 
   return {
-    login: function login() {
+    login: function() {
       var deferred = $q.defer(),
       ref = new Firebase(firebaseRef);
 
@@ -14,15 +14,7 @@ angular.module('carpoolingVan')
         if (error) {
           deferred.reject("Login Failed! " + error);
         } else {
-          ref.once("value", function(snapshot) {
-            if(!snapshot.child("users/" + authData.uid).exists()) {
-              ref.child("users").child(authData.uid).set({
-                name: authData.google.displayName,
-                image: authData.google.profileImageURL
-              });
-            }
-          });
-
+          saveIfDoesntExists(ref, authData);
           useCredentials(authData);
           deferred.resolve(true);
         }
@@ -56,5 +48,16 @@ angular.module('carpoolingVan')
     session = undefined;
     isAuthenticated = false;
     window.localStorage.removeItem(localStorageSession);
+  }
+
+  function saveIfDoesntExists(ref, authData) {
+    ref.once("value", function(snapshot) {
+      if(!snapshot.child("users/" + authData.uid).exists()) {
+        ref.child("users").child(authData.uid).set({
+          name: authData.google.displayName,
+          image: authData.google.profileImageURL
+        });
+      }
+    });
   }
 });

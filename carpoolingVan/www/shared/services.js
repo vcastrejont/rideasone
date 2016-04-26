@@ -30,7 +30,9 @@ angular.module('carpoolingVan')
 .factory("popupService", function($ionicPopup) {
 
   return {
-    showConfirm: showConfirm
+    showConfirm: showConfirm,
+    showPrompt: showPrompt,
+    showAlert: showAlert
   };
 
   function showConfirm(title, template, onConfirm, onCancel) {
@@ -54,4 +56,33 @@ angular.module('carpoolingVan')
      }
    });
  }
+
+  function showPrompt(title, template, callback) {
+     var promptPopup = $ionicPopup.prompt({
+       title: title,
+       template: template
+     });
+
+    promptPopup.then(function(str) {
+      if(str) {
+        if(callback && angular.isFunction(callback)) {
+          callback(str);
+        }
+        else {
+          alert("No action performed");
+        }
+      }
+    });
+  }
+
+  function showAlert(title, template, callback) {
+    var promptPopup = $ionicPopup.alert({
+      title: title,
+      template: template
+    });
+
+    if(callback && angular.isFunction(callback)) {
+      callback();
+    }
+  }
 });

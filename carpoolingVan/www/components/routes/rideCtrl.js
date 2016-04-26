@@ -1,21 +1,30 @@
 angular.module('carpoolingVan')
 
 .controller("rideCtrl", function($scope, usersService, $stateParams,
-  routesService, mapFactory) {
+  routesService, mapFactory, geolocationSocket) {
 
-  var route = $stateParams.route;
+  var route = $stateParams.route, intervalId;
+
+  $scope.role = $stateParams.role == "driver" ? "driver" : "passenger";
+  $scope.pickupUser = pickupUser;
+  $scope.bypassUser = bypassUser;
+
   routesService.getRoute(route.$id).then(function(r) {
     $scope.route = r;
 
     if($scope.route.passengers) {
       setPassengerInfo();
       initMap();
+
+      geolocationSocket.open($scope.route.$id);
+
+      if($scope.role == "driver") {
+        intervalId = $interval(function() {
+          geolocationSocket.shareDriverLocation();
+        }, 20000);
+      }
     }
   });
-
-  $scope.role = $stateParams.role == "driver" ? "driver" : "passenger";
-  $scope.pickupUser = pickupUser;
-  $scope.bypassUser = bypassUser;
 
   function pickupUser(userId, flag) {
     routesService.pickupUser(userId, $scope.route, !flag).then(setPassengerInfo,
@@ -59,4 +68,15 @@ angular.module('carpoolingVan')
       mapFactory.setMarkers(markers);
     });
   }
+
+  function stopSharingLocation() {
+    if (angular.isDefined(intervalId)) {
+      $interval.cancel(intervalId);
+      intervalId = undefined;
+    }
+  }
+
+  $scope.$on('$destroy', function() {
+    stopSharingLocation();
+  });
 });

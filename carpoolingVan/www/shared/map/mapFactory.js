@@ -6,9 +6,11 @@ angular.module('carpoolingVan')
 
   return {
     drawMap: drawMap,
+    drawAutocompleteMap: drawAutocompleteMap,
     calculateDistance: calculateDistance,
     getGeolocation: getGeolocation,
     addMarker: addMarker,
+    clearMarker: clearMarker,
     setMarkers: setMarkers
   };
 
@@ -26,6 +28,52 @@ angular.module('carpoolingVan')
       return map;
     }, function(err) {
       return err;
+    });
+  }
+
+  function drawAutocompleteMap(loc, scope) {
+    $scope = scope;
+
+    return drawMap().then(function(map) {
+      var marker;
+      var searchInput = document.getElementById('autocomplete');
+      var autocomplete = new google.maps.places.Autocomplete(searchInput);
+
+      if(loc) {
+        var markers = setMarkers([{
+          location: {
+            latitude: loc.lat,
+            longitude: loc.lng
+          }
+        }]);
+        marker = markers[0];
+      }
+
+      autocomplete.bindTo('bounds', map);
+
+      autocomplete.addListener('place_changed', function() {
+        var place = autocomplete.getPlace();
+
+        if (!place.geometry) {
+          window.alert("Autocomplete's returned place contains no geometry");
+          return;
+        }
+
+        if (place.geometry.viewport) {
+          map.fitBounds(place.geometry.viewport);
+        } else {
+          map.setCenter(place.geometry.location);
+          map.setZoom(17);
+        }
+
+        if(!marker) {
+          marker = new google.maps.Marker({map: map});
+        }
+
+        marker.setPosition(place.geometry.location);
+        $scope.$emit('mapFactory::updatePosition', place);
+      });
+      return map;
     });
   }
 
@@ -87,9 +135,13 @@ angular.module('carpoolingVan')
     }
   }
 
+  function clearMarker(marker) {
+    marker.setMap(null);
+  }
+
   function clearMarkers() {
     for (var i = 0; i < markers.length; i++) {
-      markers[i].setMap(null);
+      clearMarker(markers[i]);
     }
     markers = [];
   }

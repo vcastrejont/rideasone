@@ -1,8 +1,9 @@
 angular.module('carpoolingVan')
 
-.controller('appCtrl', appCtrl);
+.controller('loginCtrl', loginCtrl);
 
-function appCtrl($scope, authFactory, $ionicHistory, $state) {
+function loginCtrl($scope, authFactory, $ionicHistory, $state) {
+  
   $scope.isAuthenticated = authFactory.isAuthenticated;
   $scope.login = login;
   $scope.logout = logout;
@@ -16,16 +17,17 @@ function appCtrl($scope, authFactory, $ionicHistory, $state) {
         });
       }
       else {
-        $state.go('van.login');
+        reject();
       }
-    },
-    function(error) {
-      $state.go('van.login');
-    });
+    }, reject);
   }
 
   function logout() {
     authFactory.logout();
+    reject();
+  }
+
+  function reject() {
     $state.go("van.login");
   }
 }

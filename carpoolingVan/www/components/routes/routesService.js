@@ -117,13 +117,23 @@ angular.module('carpoolingVan')
   }
 
   function start(route) {
+    var def = $q.defer();
 
-    iterateOverPassengers(route, pickupUser, false);
+    iterateOverPassengers(route, pickupUser, false);    
 
-    return $http.patch(firebaseRef + "routes/" + route.$id + ".json", {
+    routesRef.child(route.$id).update({
       departureTime: dateService.format("now", "HH:mm:ss"),
       arrivalTime: false
+    }, function(error) {
+      if(!error) {
+        def.resolve(true);
+      }
+      else {
+        def.reject(error);
+      }
     });
+
+    return def.promise;
   }
 
   function stop(route) {

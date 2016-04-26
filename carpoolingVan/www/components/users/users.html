@@ -3,9 +3,6 @@
     <ion-list>
       <ion-item ng-repeat="user in users" ui-sref="van.userProfile({userId: user.$id})">
         {{user.name}}
-        <!-- <ion-option-button class="button-assertive" ng-click="showDeleteUserModal(user.$id)">
-          <i class="icon ion-minus-circled"></i>
-        </ion-option-button> -->
       </ion-item>
     </ion-list>
   </ion-content>
