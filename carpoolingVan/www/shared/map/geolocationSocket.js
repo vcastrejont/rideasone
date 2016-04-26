@@ -5,20 +5,21 @@ angular.module('carpoolingVan')
 
   var $scope,
   socket,
-  socketUserId,
+  socketUser,
   socketRouteId,
   driverMarker,
   connected = false;
 
   return {
     open: open,
-    shareDriverLocation: shareDriverLocation
+    shareDriverLocation: shareDriverLocation,
+    connected: connected
   };
 
   function open(routeId) {
     if(!routeId) return;
 
-    socketUserId = authFactory.session().uid;
+    socketUser = { id: authFactory.session().uid };
     socketRouteId = routeId;
 
     if(!connected) {
@@ -47,7 +48,7 @@ angular.module('carpoolingVan')
       connected = true;
 
       socket.emit("add user to van", {
-        userId: socketUserId,
+        user: socketUser,
         routeId: socketRouteId
       });
     });
@@ -69,7 +70,7 @@ angular.module('carpoolingVan')
       };
 
       socket.emit("update driver location", {
-        userId: socketUserId,
+        user: socketUser,
         routeId: socketRouteId
       });
     }, function(err) {
@@ -84,9 +85,10 @@ angular.module('carpoolingVan')
         mapFactory.clearMarker(driverMarker);
       }
 
-      driverMarker = mapFactory.addMarker({
-        location: driver.location
-      });
+      var latLng = new google.maps.LatLng(driver.location.latitude,
+      driver.location.longitude);
+
+      driverMarker = mapFactory.addMarker(latLng);
     }
   }
 });

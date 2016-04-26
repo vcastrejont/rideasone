@@ -109,6 +109,10 @@ angular.module('carpoolingVan')
       markerOptions.icon = markerIcon;
     }
 
+    if(!info) {
+      info = "";
+    }
+    
     if(map) {
       var marker = new google.maps.Marker(markerOptions);
 

@@ -18,11 +18,11 @@
         <ion-item menu-close ui-sref="van.users">
           Users
         </ion-item>
-        <ion-item menu-close ui-sref="van.driverRoutes">
-          Routes: Driver View
+        <ion-item menu-close ui-sref="van.driverRoutes" ng-if="isDriver()">
+          Routes
         </ion-item>
-        <ion-item menu-close ui-sref="van.userRoutes">
-          Routes: User View
+        <ion-item menu-close ui-sref="van.userRoutes" ng-if="!isDriver()">
+          Routes
         </ion-item>
         <ion-item menu-close ui-sref="van.login">
           Logout

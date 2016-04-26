@@ -1,11 +1,11 @@
 angular.module('carpoolingVan')
 
 .controller("rideCtrl", function($scope, usersService, $stateParams,
-  routesService, mapFactory, geolocationSocket) {
+  routesService, mapFactory, geolocationSocket, $interval, authFactory) {
 
   var route = $stateParams.route, intervalId;
 
-  $scope.role = $stateParams.role == "driver" ? "driver" : "passenger";
+  $scope.role = authFactory.currentUser().driver ? "driver" : "passenger";
   $scope.pickupUser = pickupUser;
   $scope.bypassUser = bypassUser;
 
@@ -18,10 +18,10 @@ angular.module('carpoolingVan')
 
       geolocationSocket.open($scope.route.$id);
 
-      if($scope.role == "driver") {
+      if($scope.role == "driver" && $scope.route.departureTime) {
         intervalId = $interval(function() {
           geolocationSocket.shareDriverLocation();
-        }, 20000);
+        }, 5000);
       }
     }
   });
