@@ -6,7 +6,7 @@
   </ion-nav-buttons>
   <ion-content>
     <ion-list>
-      <ion-item ng-repeat="route in routes" ui-sref="van.passengers({route: route})" class="item item-icon-left">
+      <ion-item ng-repeat="route in routes" ui-sref="van.passengers({route: route, role: 'driver'})" class="item item-icon-left">
         <i ng-show="route.departureTime" class="icon ion-android-car balanced"></i>
         <i ng-show="!route.departureTime" class="icon ion-android-home assertive"></i>
         <strong>{{route.time}}</strong>

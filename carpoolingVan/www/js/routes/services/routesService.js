@@ -1,13 +1,14 @@
 angular.module('carpoolingVan')
 
-.factory("routesService", function($firebaseArray, $firebaseObject, firebaseRef, $http,
-  dateService, usersService) {
+.factory("routesService", function($firebaseArray, $firebaseObject, firebaseRef,
+  $http, dateService, usersService, $q) {
 
   var routesRef = new Firebase(firebaseRef + "routes"),
   routes = $firebaseArray(routesRef);
 
   return {
     routes: routes,
+    getRoute: getRoute,
     addUser: addUser,
     deleteUser: deleteUser,
     start: start,
@@ -16,17 +17,39 @@ angular.module('carpoolingVan')
     bypassUser: bypassUser
   };
 
+  function getRoute(routeId) {
+    var routeRef = routesRef.child(routeId),
+    obj = $firebaseObject(routeRef);
+    return obj.$loaded();
+  }
+
   function addUser(user, route, routes) {
     angular.forEach(routes, function(r) {
       if(r.$id == route.$id) {
-        var userObj = {};
-          userObj[user.$id] = {
-            "bypass": false,
-            "onboard": false
-          };
+        // var userObj = {};
+        //   userObj[user.$id] = {
+        //     "bypass": false,
+        //     "onboard": false
+        //   };
+        //
+        // $http.patch(firebaseRef + "routes/" + route.$id + "/passengers.json",
+        //   userObj);
 
-        $http.patch(firebaseRef + "routes/" + route.$id + "/passengers.json",
-          userObj);
+        var def = $q.defer();
+
+        routesRef.child(route.$id).child("passengers").child(user.$id).set({
+          bypass: false,
+          onboard: false
+        }, function(error) {
+          if(!error) {
+            def.resolve(true);
+          }
+          else {
+            def.reject(error);
+          }
+        });
+
+        return def.promise;
       }
       else {
         deleteUser(user, r)
@@ -38,23 +61,59 @@ angular.module('carpoolingVan')
   }
 
   function deleteUser(user, route) {
-    return $http.delete(firebaseRef + "routes/" + route.$id + "/passengers/" +
-      user.$id + ".json");
+    var def = $q.defer();
+
+    routesRef.child(route.$id).child("passengers").child(user.$id).remove(function(error) {
+      if(!error) {
+        def.resolve(true);
+      }
+      else {
+        def.reject(error);
+      }
+    });
+
+    return def.promise;
   }
 
+  // function pickupUser(userId, route, flag) {
+  //   return $http.patch(firebaseRef + "routes/" + route.$id + "/passengers/" +
+  //     userId + ".json", {
+  //       onboard: flag ? dateService.format("now", "HH:mm:ss") : false
+  //   });
+  // }
+
   function pickupUser(userId, route, flag) {
-    return $http.patch(firebaseRef + "routes/" + route.$id + "/passengers/" +
-      userId + ".json", {
-        onboard: flag ? dateService.format("now", "HH:mm:ss") : false
+    var def = $q.defer();
+
+    routesRef.child(route.$id).child("passengers").child(userId).update({
+      onboard: flag ? dateService.format("now", "HH:mm:ss") : false
+    }, function(error) {
+      if(!error) {
+        def.resolve(true);
+      }
+      else {
+        def.reject(error);
+      }
     });
+
+    return def.promise;
   }
 
   function bypassUser(userId, route, bypass) {
+    var def = $q.defer();
 
-    return $http.patch(firebaseRef + "routes/" + route.$id + "/passengers/" +
-      userId + ".json", {
-        bypass: bypass ? dateService.format("now", "HH:mm:ss") : false
+    routesRef.child(route.$id).child("passengers").child(userId).update({
+      bypass: bypass ? dateService.format("now", "HH:mm:ss") : false
+    }, function(error) {
+      if(!error) {
+        def.resolve(true);
+      }
+      else {
+        def.reject(error);
+      }
     });
+
+    return def.promise;
   }
 
   function start(route) {

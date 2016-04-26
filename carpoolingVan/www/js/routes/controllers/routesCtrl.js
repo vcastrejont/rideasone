@@ -9,10 +9,7 @@ angular.module('carpoolingVan')
   $scope.addRoute = addRoute;
   $scope.start = start;
   $scope.stop = stop;
-  $scope.showPassengersModal = showPassengersModal;
   $scope.addUserToRoute = addUserToRoute;
-  $scope.pickupUser = pickupUser;
-  $scope.bypassUser = bypassUser;
   $scope.passengerCount = passengerCount;
 
   $scope.getUserName = function(userId) {
@@ -65,66 +62,33 @@ angular.module('carpoolingVan')
   }
 
   function addUser(user) {
+    if(!$scope.route.passengers) {
+      $scope.route.passengers = {};
+    }
+    $scope.route.passengers[user.$id] = user;
+
     routesService.addUser(user, $scope.route, $scope.routes);
   }
 
   function deleteUser(user) {
+    angular.forEach($scope.route.passengers, function(p, id)
+    {
+      if(id == user.$id) {
+        delete $scope.route.passengers[id];
+      }
+    });
+
     routesService.deleteUser(user, $scope.route).then(null, function(error) {
       alert(error);
     });
   }
 
   function addUserToRoute(user, flag) {
-    if(flag === undefined){
+    if(!flag){
       addUser(user);
     }
     else {
       deleteUser(user);
-    }
-  }
-
-  function pickupUser(userId, route, flag) {
-    routesService.pickupUser(userId, route, !flag)
-    .then(null, function errorPickupUser(error) {
-      alert(error);
-    });
-  }
-
-  function bypassUser(userId, route, bypass) {
-
-    routesService.bypassUser(userId, route, !bypass)
-    .then(null, function errorBypassUser(error) {
-      alert(error);
-    });
-  }
-
-  function showPassengersModal(route, role) {
-    $scope.role = role;
-    $scope.route = route;
-
-    if(route.passengers) {
-      $ionicModal.fromTemplateUrl(
-        'templates/routes/passengersModal.html', {
-        scope: $scope,
-        animation: 'slide-in-up'
-      })
-      .then(function(modal) {
-        $scope.modal = modal;
-
-        mapService.initMap()
-        .then(function(map) {
-          angular.forEach($scope.route.passengers, function(p) {
-            if(!p.bypass && !p.onboard) {
-              mapService.addMarker(p.location.lat, p.location.lng);
-            }
-          });
-        });
-
-        $scope.openModal();
-      });
-    }
-    else {
-      alert("No folks in this route yet :(");
     }
   }
 

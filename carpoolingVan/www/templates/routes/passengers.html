@@ -4,9 +4,10 @@
       <li class="item item-icon-left item-toggle"
         ng-repeat="(userId, user) in route.passengers">
          <i ng-if="user.onboard && route.departureTime" class="icon ion-checkmark-circled balanced"></i>
-         <strong ng-class="{strike: user.bypass}">{{user.name}}</strong>
+         <i ng-if="user.bypass" class="icon ion-minus-circled assertive"></i>
+         <strong ng-class="{strike: user.bypass}">{{user.info.name}}</strong>
          <br>
-         <small ng-class="{strike: user.bypass}">{{user.location.address}}</small>
+         <small ng-class="{strike: user.bypass}">{{user.info.location.address}}</small>
          <br>
          <small ng-show="user.onboard && route.departureTime" class="balanced">
            Board at {{user.onboard}}

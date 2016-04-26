@@ -91,11 +91,12 @@ angular.module('carpoolingVan', ['ionic', 'firebase', 'ngCordova'])
     views: {
       'content': {
         templateUrl: 'templates/routes/passengers.html',
-        controller: 'passengerCtrl'
+        controller: 'rideCtrl'
       }
     },
     params: {
-      route: null
+      route: null,
+      role: null
     }
   })
 

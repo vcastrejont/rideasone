@@ -5,7 +5,7 @@
          {{user.name}}
          <label class="toggle toggle-balanced" ng-if="!route.departureTime">
            <input type="checkbox" ng-checked="!!route.passengers[user.$id]"
-              ng-click="addUserToRoute(user, route.passengers[user.$id])">
+              ng-click="addUserToRoute(user, !!route.passengers[user.$id])">
            <div class="track">
              <div class="handle"></div>
            </div>

@@ -1,7 +1,7 @@
 <ion-view view-title="Routes">
   <ion-content>
     <ion-list>
-      <ion-item ng-repeat="route in routes" ng-click="showPassengersModal(route, 'passenger')"
+      <ion-item ng-repeat="route in routes" ui-sref="van.passengers({route: route, role: 'passenger'})"
         class="item item-icon-left">
         <i ng-show="route.departureTime" class="icon ion-android-car balanced"></i>
         <i ng-show="!route.departureTime" class="icon ion-android-home assertive"></i>
