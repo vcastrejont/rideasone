@@ -64,19 +64,6 @@ angular.module('carpoolingVan')
     }
   })
 
-  .state('van.userList', {
-    url: '/routes/addUser',
-    views: {
-      'content': {
-        templateUrl: 'components/routes/userList.html',
-        controller: 'routesCtrl'
-      }
-    },
-    params: {
-      route: null
-    }
-  })
-
   .state('van.login', {
     url: '/login',
     views: {

@@ -12,7 +12,11 @@
          <small ng-show="user.onboard && route.departureTime" class="balanced">
            Board at {{user.onboard}}
          </small>
-         <toggle-control></toggle-control>
+         <label ng-if="role == 'driver' && !user.bypass && route.departureTime" class="toggle toggle-balanced">
+           <input type="checkbox" ng-checked="user.onboard"
+              ng-click="pickupUser(userId, user.onboard)">
+           <div class="track"><div class="handle"></div></div>
+         </label>
       </li>
     </ul>
 

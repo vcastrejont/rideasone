@@ -1,0 +1,21 @@
+
+<i ng-show="route.departureTime" class="icon ion-android-car balanced"></i>
+<i ng-show="!route.departureTime" class="icon ion-android-home assertive"></i>
+<strong>{{route.time}}</strong>
+<div ng-class="{right: true, balanced: passengerCount(route) > 0, assertive: passengerCount(route) == 0}">
+    <i class="ion-ios-body"></i>
+  <small>{{passengerCount(route)}}</small>
+</div>
+<br>
+<small ng-show="route.departureTime" class="balanced">
+  Departed at {{route.departureTime}}
+</small>
+<small ng-show="route.arrivalTime" class="assertive">
+  Arrived at {{route.arrivalTime}}
+</small>
+<ion-option-button ng-show="!route.departureTime && passengerCount(route) > 0" class="button-balanced" ng-click="start(route)">
+  <i class="icon ion-android-car"></i>
+</ion-option-button>
+<ion-option-button ng-show="route.departureTime" class="button-assertive" ng-click="stop(route)">
+  <i class="icon ion-flag"></i>
+</ion-option-button>

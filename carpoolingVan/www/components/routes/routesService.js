@@ -23,18 +23,9 @@ angular.module('carpoolingVan')
     return obj.$loaded();
   }
 
-  function addUser(user, route, routes) {
+  function addUser(user, route) {
     angular.forEach(routes, function(r) {
       if(r.$id == route.$id) {
-        // var userObj = {};
-        //   userObj[user.$id] = {
-        //     "bypass": false,
-        //     "onboard": false
-        //   };
-        //
-        // $http.patch(firebaseRef + "routes/" + route.$id + "/passengers.json",
-        //   userObj);
-
         var def = $q.defer();
 
         routesRef.child(route.$id).child("passengers").child(user.$id).set({
@@ -75,13 +66,6 @@ angular.module('carpoolingVan')
     return def.promise;
   }
 
-  // function pickupUser(userId, route, flag) {
-  //   return $http.patch(firebaseRef + "routes/" + route.$id + "/passengers/" +
-  //     userId + ".json", {
-  //       onboard: flag ? dateService.format("now", "HH:mm:ss") : false
-  //   });
-  // }
-
   function pickupUser(userId, route, flag) {
     var def = $q.defer();
 
@@ -119,7 +103,7 @@ angular.module('carpoolingVan')
   function start(route) {
     var def = $q.defer();
 
-    iterateOverPassengers(route, pickupUser, false);    
+    iterateOverPassengers(route, pickupUser, false);
 
     routesRef.child(route.$id).update({
       departureTime: dateService.format("now", "HH:mm:ss"),
@@ -137,6 +121,7 @@ angular.module('carpoolingVan')
   }
 
   function stop(route) {
+    var def = $q.defer();
     var passengersLeft = 0;
 
     iterateOverPassengers(route, function(userId, route, flag, p) {
@@ -148,17 +133,26 @@ angular.module('carpoolingVan')
     if(passengersLeft === 0) {
       iterateOverPassengers(route, bypassUser, false);
 
-      return $http.patch(firebaseRef + "routes/" + route.$id + ".json", {
+      routesRef.child(route.$id).update({
         departureTime: false,
         arrivalTime: dateService.format("now", "HH:mm:ss")
+      }, function(error) {
+        if(!error) {
+          def.resolve(true);
+        }
+        else {
+          def.reject(error);
+        }
       });
     }
     else {
       var pluralized = passengersLeft == 1 ? ["is", "buddy"] : ["are", "buddies"];
 
-      return Promise.reject("Hey! There " + pluralized[0] + " still " +
+      def.reject("Hey! There " + pluralized[0] + " still " +
         passengersLeft + " " + pluralized[1] + " " + "waiting for you");
     }
+
+    return def.promise;
   }
 
   function iterateOverPassengers(route, callback, flag) {
