@@ -1,12 +1,11 @@
 angular.module('carpoolingVan')
 
-.controller("routesCtrl", function($scope, routesService, usersService,
-  mapFactory, popupService, $ionicListDelegate, $stateParams) {
+.controller("routesCtrl", function($scope, routesService, authFactory,
+  popupService) {
 
-  $scope.route = $stateParams.route;
+  $scope.user = authFactory.currentUser();
   $scope.routes = routesService.routes;
   $scope.addRoute = addRoute;
-  $scope.passengerCount = passengerCount;
 
   function addRoute() {
     popupService.showPrompt('New route', 'Type the time of departure',
@@ -15,19 +14,5 @@ angular.module('carpoolingVan')
         "time": time
       });
     });
-  }
-
-  function passengerCount(route) {
-    var count = 0;
-
-    if(route.passengers) {
-      angular.forEach(route.passengers, function(p) {
-        if(!p.bypass) {
-          count++;
-        }
-      });
-    }
-
-    return count;
   }
 });

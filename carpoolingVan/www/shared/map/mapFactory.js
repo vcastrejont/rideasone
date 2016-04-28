@@ -18,8 +18,8 @@ angular.module('carpoolingVan')
     clearMarkers();
 
     return getGeolocation(true).then(function(position) {
-      if(!position) return;
-
+      if(!position || !document.getElementById("map")) return;
+      
       map = new google.maps.Map(document.getElementById("map"), {
         center: position,
         zoom: 15
@@ -112,7 +112,7 @@ angular.module('carpoolingVan')
     if(!info) {
       info = "";
     }
-    
+
     if(map) {
       var marker = new google.maps.Marker(markerOptions);
 

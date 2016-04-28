@@ -1,6 +1,8 @@
 angular.module('carpoolingVan')
 
-.config(function($stateProvider, $urlRouterProvider, $locationProvider) {
+.config(function($stateProvider, $urlRouterProvider, $ionicConfigProvider) {
+  $ionicConfigProvider.views.maxCache(0);
+
   $stateProvider
 
   .state('van', {
@@ -20,38 +22,28 @@ angular.module('carpoolingVan')
     }
   })
 
-  .state('van.userProfile', {
-    url: '/users/:userId',
+  .state('van.profile', {
+    url: '/profile',
     views: {
       'content': {
         templateUrl: 'components/users/profile.html',
-        controller: 'userCtrl'
+        controller: 'profileCtrl'
       }
     }
   })
 
-  .state('van.userRoutes', {
-    url: '/user/routes',
+  .state('van.routes', {
+    url: '/routes',
     views: {
       'content': {
-        templateUrl: 'components/routes/userRoutes.html',
-        controller: 'routesCtrl'
-      }
-    }
-  })
-
-  .state('van.driverRoutes', {
-    url: '/driver/routes',
-    views: {
-      'content': {
-        templateUrl: 'components/routes/driverRoutes.html',
+        templateUrl: 'components/routes/routes.html',
         controller: 'routesCtrl'
       }
     }
   })
 
   .state('van.passengers', {
-    url: '/passengers/list',
+    url: '/passengers',
     views: {
       'content': {
         templateUrl: 'components/routes/passengers.html',
@@ -59,8 +51,7 @@ angular.module('carpoolingVan')
       }
     },
     params: {
-      route: null,
-      role: null
+      route: null
     }
   })
 

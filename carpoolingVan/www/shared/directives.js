@@ -1,14 +1,18 @@
 angular.module('carpoolingVan')
 
-.directive("userRouteItem", function(authFactory, routesService, $ionicListDelegate) {
+.directive("routeItem", function(routesService, $ionicListDelegate, popupService) {
   return {
     restrict: 'E',
-    link: function($scope, $elem, $attr) {
-      $scope.user = authFactory.currentUser();
+    link: function($scope) {
+      $scope.toggleUserInRoute = toggleUserInRoute;
+      $scope.passengerCount = passengerCount;
+      $scope.bypass = bypass;
+      $scope.start = start;
+      $scope.stop = stop;
 
-      $scope.toggleUserInRoute = function() {
-        if(!$scope.$parent.route.passengers ||
-        !$scope.$parent.route.passengers[$scope.user.$id]){
+      function toggleUserInRoute() {
+        if(!$scope.route.passengers ||
+        !$scope.route.passengers[$scope.user.$id]){
           join();
         }
         else {
@@ -17,68 +21,69 @@ angular.module('carpoolingVan')
         $ionicListDelegate.closeOptionButtons();
       };
 
-      function join() {
-        if(!$scope.$parent.route.passengers) {
-          $scope.$parent.route.passengers = {};
-        }
-        $scope.$parent.route.passengers[$scope.user.$id] = $scope.user;
+      function passengerCount() {
+        var count = 0;
 
-        routesService.addUser($scope.user, $scope.$parent.route);
+        if($scope.route.passengers) {
+          angular.forEach($scope.route.passengers, function(p) {
+            if(!p.bypass) {
+              count++;
+            }
+          });
+        }
+        return count;
+      };
+
+      function bypass(flag) {
+        var user = authFactory.currentUser();
+        routesService.bypass(null, $scope.route, !flag).then(user.$id, function(error) {
+          popupService.showAlert("Error", error);
+        });
+        $ionicListDelegate.closeOptionButtons();
+      };
+
+      function join() {
+        routesService.join($scope.route).then(null,
+        function(error) {
+          popupService.showAlert("Error", error);
+        });
       }
 
       function leave() {
-        angular.forEach($scope.$parent.route.passengers, function(p, id)
-        {
-          if(id == $scope.user.$id) {
-            delete $scope.$parent.route.passengers[id];
-          }
-        });
-
-        routesService.deleteUser($scope.user, $scope.$parent.route).then(null,
+        routesService.leave($scope.route).then(null,
         function(error) {
-          alert(error);
+          popupService.showAlert("Error", error);
         });
       }
-    },
-    templateUrl: 'components/routes/userRouteTmpl.html'
-  };
-})
-
-.directive("driverRouteItem", function(routesService, $ionicListDelegate) {
-  return {
-    restrict: 'E',
-    link: function($scope, $elem, $attr) {
-      $scope.start = start;
-      $scope.stop = stop;
 
       function start() {
         routesService.start($scope.$parent.route).then(function(success) {
           if(success) {
-            alert("Yay, let's drive!");
+            popupService.showAlert("Start route", "Yay, let's drive!");
           }
           else {
-            alert("Oh, oh... something went wrong :(");
+            popupService.showAlert("Error", "Oh, oh... something went wrong");
           }
           $ionicListDelegate.closeOptionButtons();
         }, function(error) {
-          alert(error);
+          popupService.showAlert("Error", error);
         });
       }
 
       function stop(route) {
         routesService.stop($scope.$parent.route).then(function(success) {
           if(success) {
-            alert("Yes, you made it!");
+            popupService.showAlert("Stop route", "Yes, you made it!");
           }
           else {
-            alert("Oh, oh... something went wrong :(");
+            popupService.showAlert("Error", "Oh, oh... something went wrong");
           }
           $ionicListDelegate.closeOptionButtons();
         }, function(error) {
-          alert(error);
+          popupService.showAlert("Error", error);
         });
       }
     },
-    templateUrl: 'components/routes/driverRouteTmpl.html'
+    templateUrl: 'components/routes/routeTmpl.html'
   };
 });

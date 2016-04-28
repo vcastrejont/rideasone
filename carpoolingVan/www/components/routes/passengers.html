@@ -1,26 +1,28 @@
 <ion-view view-title="Passengers">
   <ion-content>
     <ul ng-if="route.passengers" class="list">
-      <li class="item item-icon-left item-toggle"
-        ng-repeat="(userId, user) in route.passengers">
-         <i ng-if="user.onboard && route.departureTime" class="icon ion-checkmark-circled balanced"></i>
-         <i ng-if="user.bypass" class="icon ion-minus-circled assertive"></i>
-         <strong ng-class="{strike: user.bypass}">{{user.info.name}}</strong>
+      <li class="item item-icon-left item-toggle item-avatar"
+        ng-repeat="(passId, pass) in route.passengers">
+
+         <img ng-src="{{ pass.info.image }}">
+         <strong ng-class="{strike: pass.bypass}">{{pass.info.name}}</strong>
          <br>
-         <small ng-class="{strike: user.bypass}">{{user.info.location.address}}</small>
+         <small ng-class="{strike: pass.bypass}">{{pass.info.location.address}}</small>
          <br>
-         <small ng-show="user.onboard && route.departureTime" class="balanced">
-           Board at {{user.onboard}}
+         <i ng-if="pass.onboard && route.departureTime" class="icon ion-checkmark-circled balanced"></i>
+         <i ng-if="pass.bypass" class="icon ion-minus-circled assertive"></i>
+         <small ng-show="pass.onboard && route.departureTime" class="balanced">
+           Board at {{pass.onboard}}
          </small>
-         <label ng-if="role == 'driver' && !user.bypass && route.departureTime" class="toggle toggle-balanced">
-           <input type="checkbox" ng-checked="user.onboard"
-              ng-click="pickupUser(userId, user.onboard)">
+         <label ng-if="user.driver && !pass.bypass && route.departureTime" class="toggle toggle-balanced">
+           <input type="checkbox" ng-checked="pass.onboard"
+              ng-click="pickupUser(passId, pass.onboard)">
            <div class="track"><div class="handle"></div></div>
          </label>
       </li>
     </ul>
 
-    <div ng-if="route.passengers" id="map" data-tap-disabled="true"></div>
+    <div ng-show="route.passengers" id="map" data-tap-disabled="true"></div>
 
     <div>
       <strong class="center assertive" ng-if="!route.passengers">
@@ -29,7 +31,7 @@
     </div>
   </ion-content>
 
-  <ion-footer-bar class="bar bar-dark" ng-show="route.departureTime">
+  <ion-footer-bar class="bar bar-dark">
     <label ng-show="route.departureTime" class="footer-label">
       <i class="ion-android-car"></i>
       Departed at {{route.departureTime}}

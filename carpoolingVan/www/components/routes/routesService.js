@@ -1,7 +1,7 @@
 angular.module('carpoolingVan')
 
 .factory("routesService", function($firebaseArray, $firebaseObject, firebaseRef,
-  $http, dateService, usersService, $q) {
+  dateService, $q, authFactory) {
 
   var routesRef = new Firebase(firebaseRef + "routes"),
   routes = $firebaseArray(routesRef);
@@ -9,12 +9,12 @@ angular.module('carpoolingVan')
   return {
     routes: routes,
     getRoute: getRoute,
-    addUser: addUser,
-    deleteUser: deleteUser,
+    join: join,
+    leave: leave,
     start: start,
     stop: stop,
     pickupUser: pickupUser,
-    bypassUser: bypassUser
+    bypass: bypass
   };
 
   function getRoute(routeId) {
@@ -23,11 +23,12 @@ angular.module('carpoolingVan')
     return obj.$loaded();
   }
 
-  function addUser(user, route) {
+  function join(route) {
+    var user = authFactory.currentUser();
+    var def = $q.defer();
+
     angular.forEach(routes, function(r) {
       if(r.$id == route.$id) {
-        var def = $q.defer();
-
         routesRef.child(route.$id).child("passengers").child(user.$id).set({
           bypass: false,
           onboard: false
@@ -39,19 +40,20 @@ angular.module('carpoolingVan')
             def.reject(error);
           }
         });
-
-        return def.promise;
       }
       else {
-        deleteUser(user, r)
-        .then(null, function errorDeleteUser(error) {
-          alert(error);
+        leave(r).then(function() {
+          def.resolve(true);
+        }, function errorDeleteUser(error) {
+          def.reject(error);
         });
       }
     });
+    return def.promise;
   }
 
-  function deleteUser(user, route) {
+  function leave(route) {
+    var user = authFactory.currentUser();
     var def = $q.defer();
 
     routesRef.child(route.$id).child("passengers").child(user.$id).remove(function(error) {
@@ -62,7 +64,6 @@ angular.module('carpoolingVan')
         def.reject(error);
       }
     });
-
     return def.promise;
   }
 
@@ -83,7 +84,7 @@ angular.module('carpoolingVan')
     return def.promise;
   }
 
-  function bypassUser(userId, route, bypass) {
+  function bypass(userId, route, bypass) {
     var def = $q.defer();
 
     routesRef.child(route.$id).child("passengers").child(userId).update({
@@ -131,7 +132,7 @@ angular.module('carpoolingVan')
     });
 
     if(passengersLeft === 0) {
-      iterateOverPassengers(route, bypassUser, false);
+      iterateOverPassengers(route, bypass, false);
 
       routesRef.child(route.$id).update({
         departureTime: false,

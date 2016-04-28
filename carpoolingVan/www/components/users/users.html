@@ -1,9 +1,12 @@
 <ion-view view-title="Users">
   <ion-content>
-    <ion-list>
-      <ion-item ng-repeat="user in users" ui-sref="van.userProfile({userId: user.$id})">
-        {{user.name}}
-      </ion-item>
-    </ion-list>
+    <div class="list">
+      <a ng-repeat="user in users" ui-sref="van.profile" href="#" class="item item-avatar">
+        <img ng-src="{{ user.image }}">
+        <span>{{ user.name }}</span>
+        <br>
+        <small>{{ user.location.address }}</small>
+      </a>
+    </div>
   </ion-content>
 </ion-view>

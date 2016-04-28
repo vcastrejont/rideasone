@@ -1,19 +1,13 @@
 angular.module('carpoolingVan')
 
-.controller("userCtrl", function($scope, $stateParams, usersService, mapFactory,
+.controller("profileCtrl", function($scope, authFactory, usersService, mapFactory,
   popupService, $state) {
 
-  $scope.updateUser = updateUser;
-  $scope.userId = $stateParams.userId;
+  $scope.update = update;
+  $scope.user = authFactory.currentUser();
+  initAutocompleteMap();
 
-  usersService.get($scope.userId).then(function (res) {
-    $scope.user = res;
-    initAutocompleteMap($scope.user.location);
-  }, function(error) {
-    popupService.showAlert("Error!", error);
-  });
-
-  function updateUser() {
+  function update() {
     usersService.update($scope.user).then(function() {
       popupService.showAlert("Done!", "User was succesfully updated", function() {
         $state.go("van.users");
@@ -23,8 +17,8 @@ angular.module('carpoolingVan')
     });
   }
 
-  function initAutocompleteMap(loc) {
-    mapFactory.drawAutocompleteMap(loc, $scope);
+  function initAutocompleteMap() {
+    mapFactory.drawAutocompleteMap($scope.user.location, $scope);
   }
 
   function updatePosition(place) {

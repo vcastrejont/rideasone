@@ -5,9 +5,8 @@ angular.module('carpoolingVan')
 
   var route = $stateParams.route, intervalId;
 
-  $scope.role = authFactory.currentUser().driver ? "driver" : "passenger";
+  $scope.user = authFactory.currentUser();
   $scope.pickupUser = pickupUser;
-  $scope.bypassUser = bypassUser;
 
   routesService.getRoute(route.$id).then(function(r) {
     $scope.route = r;
@@ -18,7 +17,7 @@ angular.module('carpoolingVan')
 
       geolocationSocket.open($scope.route.$id);
 
-      if($scope.role == "driver" && $scope.route.departureTime) {
+      if($scope.user.driver && $scope.route.departureTime) {
         intervalId = $interval(function() {
           geolocationSocket.shareDriverLocation();
         }, 5000);
@@ -28,13 +27,6 @@ angular.module('carpoolingVan')
 
   function pickupUser(userId, flag) {
     routesService.pickupUser(userId, $scope.route, !flag).then(setPassengerInfo,
-    function(error) {
-      alert(error);
-    });
-  }
-
-  function bypassUser(userId, flag) {
-    routesService.bypassUser(userId, $scope.route, !flag).then(setPassengerInfo,
     function(error) {
       alert(error);
     });
@@ -59,7 +51,7 @@ angular.module('carpoolingVan')
               latitude: p.info.location.lat,
               longitude: p.info.location.lng
             },
-            icon: p.info.image + "?sz=30",
+            icon: p.bypass ? "http://www.free-icons-download.net/images/cancel-icon-33806.png" : p.info.image + "?sz=30",
             info: p.info.name + "<br>" + p.info.location.address
           });
         }
@@ -78,5 +70,9 @@ angular.module('carpoolingVan')
 
   $scope.$on('$destroy', function() {
     stopSharingLocation();
+  });
+
+  $scope.$watchCollection("route.passengers", function(ol, nu) {
+    setPassengerInfo();
   });
 });

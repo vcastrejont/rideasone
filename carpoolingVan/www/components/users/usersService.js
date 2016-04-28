@@ -2,9 +2,6 @@ angular.module('carpoolingVan')
 
 .factory("usersService", function($firebaseArray, $firebaseObject, firebaseRef, $http) {
   var usersRef = new Firebase(firebaseRef + "users");
-  // usersRef.orderByChild("driver").on("child_added", function(snapshot) {
-  //   console.log(snapshot.key() + " was " + snapshot.val().height + " meters tall");
-  // });
   var users = $firebaseArray(usersRef);
 
   return {
@@ -14,7 +11,7 @@ angular.module('carpoolingVan')
   };
 
   function get(userId) {
-    var userRef = new Firebase(firebaseRef + "users/" + userId);
+    var userRef = usersRef.child(userId);
     var obj = $firebaseObject(userRef);
     return obj.$loaded();
   }

@@ -19,7 +19,7 @@ angular.module('carpoolingVan')
   function open(routeId) {
     if(!routeId) return;
 
-    socketUser = { id: authFactory.session().uid };
+    socketUser = { id: authFactory.currentUser().$id };
     socketRouteId = routeId;
 
     if(!connected) {
@@ -57,6 +57,12 @@ angular.module('carpoolingVan')
       updateDriverLocation(driver);
     });
 
+    socket.on('driver left', function () {
+      if(driverMarker) {
+        mapFactory.clearMarker(driverMarker);
+      }
+    });
+
     return socket;
   }
 
@@ -88,7 +94,7 @@ angular.module('carpoolingVan')
       var latLng = new google.maps.LatLng(driver.location.latitude,
       driver.location.longitude);
 
-      driverMarker = mapFactory.addMarker(latLng);
+      driverMarker = mapFactory.addMarker(latLng, null, "The magical mistery van");
     }
   }
 });

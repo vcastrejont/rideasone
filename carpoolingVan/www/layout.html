@@ -15,13 +15,13 @@
     </ion-header-bar>
     <ion-content>
       <ion-list>
-        <ion-item menu-close ui-sref="van.users">
+        <ion-item menu-close ui-sref="van.profile" ng-if="!user.driver">
+          Profile
+        </ion-item>
+        <ion-item menu-close ui-sref="van.users" ng-if="user.driver">
           Users
         </ion-item>
-        <ion-item menu-close ui-sref="van.driverRoutes" ng-if="isDriver()">
-          Routes
-        </ion-item>
-        <ion-item menu-close ui-sref="van.userRoutes" ng-if="!isDriver()">
+        <ion-item menu-close ui-sref="van.routes">
           Routes
         </ion-item>
         <ion-item menu-close ui-sref="van.login">
