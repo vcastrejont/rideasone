@@ -1,12 +1,12 @@
 <ion-view view-title="Users">
   <ion-content>
-    <div class="list">
-      <a ng-repeat="user in users" ui-sref="van.profile" href="#" class="item item-avatar">
+    <ul class="list">
+      <li ng-repeat="user in users" class="item item-avatar">
         <img ng-src="{{ user.image }}">
         <span>{{ user.name }}</span>
         <br>
         <small>{{ user.location.address }}</small>
-      </a>
-    </div>
+      </li>
+    </ul>
   </ion-content>
 </ion-view>

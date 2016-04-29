@@ -5,7 +5,10 @@ angular.module('carpoolingVan')
 
   $scope.update = update;
   $scope.user = authFactory.currentUser();
-  initAutocompleteMap();
+
+  (function initAutocompleteMap() {
+    mapFactory.drawAutocompleteMap($scope.user.location, $scope);
+  })();
 
   function update() {
     usersService.update($scope.user).then(function() {
@@ -15,10 +18,6 @@ angular.module('carpoolingVan')
     }, function(error) {
       popupService.showAlert("Error!", error);
     });
-  }
-
-  function initAutocompleteMap() {
-    mapFactory.drawAutocompleteMap($scope.user.location, $scope);
   }
 
   function updatePosition(place) {

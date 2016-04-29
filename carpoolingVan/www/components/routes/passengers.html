@@ -9,10 +9,13 @@
          <br>
          <small ng-class="{strike: pass.bypass}">{{pass.info.location.address}}</small>
          <br>
-         <i ng-if="pass.onboard && route.departureTime" class="icon ion-checkmark-circled balanced"></i>
-         <i ng-if="pass.bypass" class="icon ion-minus-circled assertive"></i>
+         <i ng-if="pass.onboard && route.departureTime" class="icon ion-checkmark-circled balanced right"></i>
+         <i ng-if="pass.bypass" class="icon ion-minus-circled assertive right"></i>
          <small ng-show="pass.onboard && route.departureTime" class="balanced">
            Board at {{pass.onboard}}
+         </small>
+         <small ng-hide="pass.onboard || !route.departureTime" class="assertive">
+           Pending
          </small>
          <label ng-if="user.driver && !pass.bypass && route.departureTime" class="toggle toggle-balanced">
            <input type="checkbox" ng-checked="pass.onboard"
@@ -31,7 +34,7 @@
     </div>
   </ion-content>
 
-  <ion-footer-bar class="bar bar-dark">
+  <ion-footer-bar ng-class="{ bar: true, 'bar-dark': !route.departureTime, 'bar-balanced': route.departureTime }">
     <label ng-show="route.departureTime" class="footer-label">
       <i class="ion-android-car"></i>
       Departed at {{route.departureTime}}

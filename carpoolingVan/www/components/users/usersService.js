@@ -1,6 +1,6 @@
 angular.module('carpoolingVan')
 
-.factory("usersService", function($firebaseArray, $firebaseObject, firebaseRef, $http) {
+.factory("usersService", function($firebaseArray, $firebaseObject, firebaseRef, $q) {
   var usersRef = new Firebase(firebaseRef + "users");
   var users = $firebaseArray(usersRef);
 
@@ -17,14 +17,23 @@ angular.module('carpoolingVan')
   }
 
   function update(user) {
-    var userId = user.$id,
-    u = {
+    var def = $q.defer();
+
+    usersRef.child(user.$id).update({
       location: {
         "address": user.location.address,
         "lat": user.location.lat,
         "lng": user.location.lng
       }
-    };
-    return $http.patch(firebaseRef + "users/" + userId + ".json", u);
+    }, function(error) {
+      if(!error) {
+        def.resolve(true);
+      }
+      else {
+        def.reject(error);
+      }
+    });
+
+    return def.promise;
   }
 });

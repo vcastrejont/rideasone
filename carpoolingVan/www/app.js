@@ -5,7 +5,7 @@ angular.module('carpoolingVan', [
   'btford.socket-io'
 ])
 
-.run(function($ionicPlatform, $rootScope, authFactory, $state) {
+.run(function($ionicPlatform, $rootScope, authFactory, $state, geolocationSocket) {
   $ionicPlatform.ready(function() {
     if(window.cordova && window.cordova.plugins.Keyboard) {
       cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);

@@ -1,44 +1,47 @@
-<i ng-show="route.departureTime" class="icon ion-android-car balanced"></i>
-<i ng-show="!route.departureTime" class="icon ion-android-home assertive"></i>
-<strong>{{route.time}}</strong>
-<div ng-class="{right: true, balanced: passengerCount() > 0, assertive: passengerCount() == 0}">
-  <i class="ion-ios-body"></i>
-  <small>{{passengerCount()}}</small>
-</div>
-<div>
-  <small ng-show="route.departureTime" class="balanced">
-    Departed at {{route.departureTime}}
-  </small>
-  <small ng-show="route.arrivalTime" class="assertive">
-    Arrived at {{route.arrivalTime}}
-  </small>
-</div>
-<small ng-show="route.passengers[user.$id]" class="balanced">You go here</small>
-<div ng-if="!user.driver">
-  <ion-option-button ng-show="!route.departureTime && !route.passengers[user.$id]"
-  class="button-balanced" ng-click="toggleUserInRoute()">
-    Join
-  </ion-option-button>
-  <ion-option-button ng-if="!route.departureTime && route.passengers[user.$id]
-  && !route.passengers[user.$id].bypass"
-  class="button-energized" ng-click="bypass(false)">
-    Bypass
-  </ion-option-button>
-  <ion-option-button ng-if="!route.departureTime && route.passengers[user.$id]
-  && route.passengers[user.$id].bypass"
-  class="button-positive" ng-click="bypass(true)">
-    Get back
-  </ion-option-button>
-  <ion-option-button ng-show="!route.departureTime && route.passengers[user.$id]"
-  class="button-assertive" ng-click="toggleUserInRoute()">
-    Leave
-  </ion-option-button>
-</div>
-<div ng-if="user.driver">
-  <ion-option-button ng-show="!route.departureTime && passengerCount() > 0" class="button-balanced" ng-click="start()">
-    Start
-  </ion-option-button>
-  <ion-option-button ng-show="route.departureTime" class="button-assertive" ng-click="stop()">
-    Stop
-  </ion-option-button>
+<div ng-init="pass = route.passengers[user.$id]">
+  <i ng-show="route.departureTime" class="icon ion-android-car balanced"></i>
+  <i ng-show="!route.departureTime" class="icon ion-android-home assertive"></i>
+  <strong>{{route.time}}</strong>
+  <div ng-class="{right: true, balanced: passengerCount() > 0, assertive: passengerCount() == 0}">
+    <i class="ion-ios-body"></i>
+    <small>{{passengerCount()}}</small>
+  </div>
+  <div>
+    <small ng-show="route.departureTime" class="balanced">
+      Departed at {{route.departureTime}}
+    </small>
+    <small ng-show="route.arrivalTime" class="assertive">
+      Arrived at {{route.arrivalTime}}
+    </small>
+  </div>
+  <div ng-show="pass">
+    <small>You go here</small>
+    <small class="assertive" ng-show="pass.bypass">(Bypass)</small>
+  </div>
+  <div ng-if="!user.driver">
+    <ion-option-button ng-if="!route.departureTime && !pass"
+    class="button-balanced" ng-click="join()">
+      Join
+    </ion-option-button>
+    <ion-option-button ng-if="!route.departureTime && pass && !pass.bypass"
+    class="button-energized" ng-click="bypass(false)">
+      Bypass
+    </ion-option-button>
+    <ion-option-button ng-if="!route.departureTime && pass && pass.bypass"
+    class="button-positive" ng-click="bypass(true)">
+      Get back
+    </ion-option-button>
+    <ion-option-button ng-if="!route.departureTime && pass"
+    class="button-assertive" ng-click="leave()">
+      Leave
+    </ion-option-button>
+  </div>
+  <div ng-if="user.driver">
+    <ion-option-button ng-show="!route.departureTime && passengerCount() > 0" class="button-balanced" ng-click="start()">
+      Start
+    </ion-option-button>
+    <ion-option-button ng-show="route.departureTime" class="button-assertive" ng-click="stop()">
+      Stop
+    </ion-option-button>
+  </div>
 </div>

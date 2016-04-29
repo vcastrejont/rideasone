@@ -6,7 +6,8 @@ function loginCtrl($scope, authFactory, $ionicHistory, $state) {
   $scope.login = login;
   $scope.logout = logout;
   $scope.isAuthenticated = authFactory.isAuthenticated;
-  
+  $scope.isDriver = isDriver;
+
   function login() {
     authFactory.login().then(function (user) {
       $scope.user = user;
@@ -30,5 +31,9 @@ function loginCtrl($scope, authFactory, $ionicHistory, $state) {
 
   function reject() {
     $state.go("van.login");
+  }
+
+  function isDriver() {
+    return authFactory.currentUser().driver;
   }
 }

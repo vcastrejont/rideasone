@@ -1,25 +1,19 @@
 angular.module('carpoolingVan')
 
-.directive("routeItem", function(routesService, $ionicListDelegate, popupService) {
+.directive("routeItem", function(routesService, $ionicListDelegate, popupService,
+  authFactory, geolocationSocket, $interval) {
+
+  var intervalId;
+
   return {
     restrict: 'E',
     link: function($scope) {
-      $scope.toggleUserInRoute = toggleUserInRoute;
+      $scope.join = join;
+      $scope.leave = leave;
       $scope.passengerCount = passengerCount;
       $scope.bypass = bypass;
       $scope.start = start;
       $scope.stop = stop;
-
-      function toggleUserInRoute() {
-        if(!$scope.route.passengers ||
-        !$scope.route.passengers[$scope.user.$id]){
-          join();
-        }
-        else {
-          leave();
-        }
-        $ionicListDelegate.closeOptionButtons();
-      };
 
       function passengerCount() {
         var count = 0;
@@ -36,29 +30,40 @@ angular.module('carpoolingVan')
 
       function bypass(flag) {
         var user = authFactory.currentUser();
-        routesService.bypass(null, $scope.route, !flag).then(user.$id, function(error) {
+        routesService.bypass(user.$id, $scope.route, !flag).then(function() {
+          geolocationSocket.redrawMarkers();
+        }, function(error) {
           popupService.showAlert("Error", error);
         });
         $ionicListDelegate.closeOptionButtons();
       };
 
       function join() {
-        routesService.join($scope.route).then(null,
+        routesService.join($scope.route).then(function() {
+          geolocationSocket.redrawMarkers();
+        },
         function(error) {
           popupService.showAlert("Error", error);
         });
+        $ionicListDelegate.closeOptionButtons();
       }
 
       function leave() {
-        routesService.leave($scope.route).then(null,
+        routesService.leave($scope.route).then(function() {
+          geolocationSocket.redrawMarkers();
+        },
         function(error) {
           popupService.showAlert("Error", error);
         });
+        $ionicListDelegate.closeOptionButtons();
       }
 
       function start() {
         routesService.start($scope.$parent.route).then(function(success) {
           if(success) {
+            intervalId = $interval(function() {
+              geolocationSocket.shareDriverLocation();
+            }, 5000);
             popupService.showAlert("Start route", "Yay, let's drive!");
           }
           else {
@@ -73,6 +78,11 @@ angular.module('carpoolingVan')
       function stop(route) {
         routesService.stop($scope.$parent.route).then(function(success) {
           if(success) {
+            if(intervalId) {
+              $interval.cancel(intervalId);
+              intervalId = undefined;
+            }
+            geolocationSocket.stopSharingLocation();
             popupService.showAlert("Stop route", "Yes, you made it!");
           }
           else {

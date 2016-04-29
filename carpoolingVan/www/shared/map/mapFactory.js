@@ -2,16 +2,17 @@ angular.module('carpoolingVan')
 
 .factory('mapFactory', function($cordovaGeolocation, $filter) {
   var map,
-  markers = [];
+  markers = [],
+  bounds;
 
   return {
     drawMap: drawMap,
     drawAutocompleteMap: drawAutocompleteMap,
-    calculateDistance: calculateDistance,
     getGeolocation: getGeolocation,
     addMarker: addMarker,
     clearMarker: clearMarker,
-    setMarkers: setMarkers
+    setMarkers: setMarkers,
+    extendBounds: extendBounds
   };
 
   function drawMap() {
@@ -19,7 +20,7 @@ angular.module('carpoolingVan')
 
     return getGeolocation(true).then(function(position) {
       if(!position || !document.getElementById("map")) return;
-      
+
       map = new google.maps.Map(document.getElementById("map"), {
         center: position,
         zoom: 15
@@ -35,42 +36,42 @@ angular.module('carpoolingVan')
     $scope = scope;
 
     return drawMap().then(function(map) {
-      var marker;
-      var searchInput = document.getElementById('autocomplete');
-      var autocomplete = new google.maps.places.Autocomplete(searchInput);
+      var marker,
+      bounds,
+      searchInput = document.getElementById('autocomplete');
+      autocomplete = new google.maps.places.Autocomplete(searchInput);
 
       if(loc) {
-        var markers = setMarkers([{
-          location: {
-            latitude: loc.lat,
-            longitude: loc.lng
-          }
-        }]);
-        marker = markers[0];
+        marker = addMarker({
+          latitude: loc.lat,
+          longitude: loc.lng
+        });
+
+        bounds = new google.maps.LatLngBounds(new google.maps.LatLng(loc.lat, loc.lng));
+        map.fitBounds(bounds);
+        map.panToBounds(bounds);
       }
 
       autocomplete.bindTo('bounds', map);
 
       autocomplete.addListener('place_changed', function() {
-        var place = autocomplete.getPlace();
+        var place = autocomplete.getPlace(),
+        lat = place.geometry.location.lat(),
+        lng = place.geometry.location.lng();
 
-        if (!place.geometry) {
-          window.alert("Autocomplete's returned place contains no geometry");
-          return;
+        if(marker) {
+          clearMarker(marker);
         }
 
-        if (place.geometry.viewport) {
-          map.fitBounds(place.geometry.viewport);
-        } else {
-          map.setCenter(place.geometry.location);
-          map.setZoom(17);
-        }
+        marker = addMarker({
+          latitude: lat,
+          longitude: lng
+        });
+        
+        var bounds = new google.maps.LatLngBounds(new google.maps.LatLng(lat, lng));
+        map.fitBounds(bounds);
+        map.panToBounds(bounds);
 
-        if(!marker) {
-          marker = new google.maps.Marker({map: map});
-        }
-
-        marker.setPosition(place.geometry.location);
         $scope.$emit('mapFactory::updatePosition', place);
       });
       return map;
@@ -99,21 +100,22 @@ angular.module('carpoolingVan')
   }
 
   // Adds a marker to the map and push to the array.
-  function addMarker(latLng, markerIcon, info) {
-    var markerOptions = {
-      position: latLng,
-      map: map
-    };
+  function addMarker(location, markerIcon, info) {
+    if(map && location.latitude && location.longitude) {
+      var latLng = new google.maps.LatLng(location.latitude, location.longitude),
+      markerOptions = {
+        position: latLng,
+        map: map
+      };
 
-    if(markerIcon) {
-      markerOptions.icon = markerIcon;
-    }
+      if(markerIcon) {
+        markerOptions.icon = markerIcon;
+      }
 
-    if(!info) {
-      info = "";
-    }
+      if(!info) {
+        info = "";
+      }
 
-    if(map) {
       var marker = new google.maps.Marker(markerOptions);
 
       calculateDistance(latLng).then(function(distance) {
@@ -147,27 +149,35 @@ angular.module('carpoolingVan')
     for (var i = 0; i < markers.length; i++) {
       clearMarker(markers[i]);
     }
+    bounds = new google.maps.LatLngBounds();
     markers = [];
   }
 
-  function setMarkers(newMarkers) {
-    var bounds = new google.maps.LatLngBounds(),
-    pos;
-
+  function setMarkers(passengers) {
+    var marker;
     clearMarkers();
 
-    angular.forEach(newMarkers, function(marker) {
-      if(marker.location && marker.location.latitude && marker.location.longitude) {
-        pos = new google.maps.LatLng(marker.location.latitude,
-          marker.location.longitude);
+    angular.forEach(passengers, function(p) {
+      if(p.info && p.info.location && p.info.location.lat && p.info.location.lng &&
+      !p.bypass) {
+        marker = {
+          location: {
+            latitude: p.info.location.lat,
+            longitude: p.info.location.lng
+          },
+          icon: p.info.image + "?sz=30",
+          info: p.info.name + "<br>" + p.info.location.address
+        };
 
-        addMarker(pos, marker.icon, marker.info);
-
-        bounds.extend(pos);
-        map.fitBounds(bounds);
-        map.panToBounds(bounds);
+        addMarker(marker.location, marker.icon, marker.info);
+        bounds.extend(new google.maps.LatLng(p.info.location.lat, p.info.location.lng));
       }
     });
+
+    if(map) {
+      map.fitBounds(bounds);
+      map.panToBounds(bounds);
+    }
 
     return markers;
   }
@@ -176,5 +186,17 @@ angular.module('carpoolingVan')
     return getGeolocation(true).then(function(pointB) {
       return google.maps.geometry.spherical.computeDistanceBetween(pointA, pointB);
     });
+  }
+
+  function extendBounds(latLng) {
+    if(map) {
+      if(!bounds) {
+        bounds = google.maps.LatLngBounds();
+      }
+
+      bounds.extend(latLng);
+      map.fitBounds(bounds);
+      map.panToBounds(bounds);
+    }
   }
 });
