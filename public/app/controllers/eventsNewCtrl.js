@@ -110,7 +110,7 @@ function eventsNewCtrl ($scope, $http, mapService, $state) {
       category      : $scope.event.category,
       datetime      : $scope.event.date
     };
-    $http.post("/api/events", eventData).then(function(response) {
+    $http.post("/api/events/new", eventData).then(function(response) {
       $state.go('events');
     });
   };
