@@ -1,7 +1,0 @@
-{
-  "name": "Nearsoft Carpooling",
-  "version": "0.1.0",
-  "description": "Api for carpooling events",
-  "title": "Carpooling api doc",
-  "sampleUrl": "http://nstesting.herokuapp.com/api/"
-}
