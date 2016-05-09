@@ -8,26 +8,30 @@ var eventSchema = new Schema({
   place          : String,
   place_id       : String,
 	organizer_id   : ObjectId,
-  organizer      : String,
   name           : String,
 	description    : String,
 	category       : String,
   datetime       : Date,
   tags           : [{tag: String }],
   attendees	     : [{
-                  user_id     : ObjectId,
-                  user        : String,
-                  photo       : String,
-		              comments    : String
-                  }],
-  cars     : [{
-                  driver_id   : ObjectId,
-                  driver      : String,
-                  driver_email: String,
-                  seats       : Number,
-                  passanger   : [{user_id :ObjectId, name: String, photo : String}],
-                  comments    : String
-                  }],               									
+    user_id      : ObjectId,
+    user         : String,
+    photo        : String,
+    comments     : String
+  }],
+  cars           : [{
+    driver      : String,
+    driver_id   : ObjectId,
+    driver_email: String,
+    driver_photo: String,
+    seats       : Number,
+    comments    : String,
+    passenger   : [{
+      user_id :ObjectId, 
+      name: String, 
+      photo : String
+    }]
+  }],               									
 	created_at		: {type: Date, default: Date.now},
 	updated_at		: {type: Date, default: Date.now}
 });

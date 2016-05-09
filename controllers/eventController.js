@@ -8,104 +8,103 @@ var _ = require('underscore');
  * @description :: Server-side logic for managing events.
  */
 module.exports = {
-    /**
-     * eventController.list()
-     */
-    list: function(req, res) {
-      var d = new Date();
-      d.setDate(d.getDate() - 1);
-      eventModel.find({"datetime":{"$gte": d}}, {}, { limit : 5, sort: "datetime" },function(err, events){
-          if(err) {
-              return res.json(500, {
-                  message: 'Error getting event.'
-              });
-          }
-          return res.json(events);
-      });
-    },
-
-    past: function(req, res) {
-      var d = new Date();
-      d.setDate(d.getDate() - 1);
-      eventModel.find({"datetime":{"$lt": d }},{}, { limit : 5, sort: {datetime: -1} },function(err, events){
-          if(err) {
-              return res.json(500, {
-                  message: 'Error getting event.'
-              });
-          }
-          return res.json(events);
-      });
-    },
-    /**
-     * eventController.byuser()
-     */
-    byuser: function(req, res) {
-      var d = new Date();
-      var user = req.params.user;
-      d.setDate(d.getDate() - 1);
-      eventModel.find({"datetime":{"$gte": d}, "attendees.user_id": user }, {}, { sort: "datetime" },function(err, events){
-          if(err) {
-              return res.json(500, {
-                  message: 'Error getting event.'
-              });
-          }
-          return res.json(events);
-      });
-    },
-    /**
-     * eventController.carbyuser()
-     */
-     /**
-      * eventController.carbyuser()
-      */
-      carbyuser: function(req, res) {
-        var event_id = req.body.event_id;
-        var user_id = req.body.user_id;
-        var result_data = {};
-        eventModel.findOne({_id: event_id}, function(err, event){
+  /**
+   * List all the events from yesterday to the end of the time.
+   */
+  list: function(req, res) {
+    var d = new Date();
+    d.setDate(d.getDate() - 1);
+    eventModel.find({"datetime":{"$gte": d}}, {}, { limit : 5, sort: "datetime" },function(err, events){
         if(err) {
-          return res.json(500, {
-           message: 'Error getting event.'
-          });
-        }
-        if(!event) {
-          return res.json(404, {
-          message: 'No such event'
-          });
-        }
-        _.each(event.cars, function(car, index) {
-          if(car.driver_id == user_id) {
-            result_data = car;
-          } else {
-            _.each(car.passanger, function(passanger, index) {
-              if(passanger.user_id == user_id) {
-                result_data = car;
-              }
+            return res.json(500, {
+                message: 'Error getting event.'
             });
+        }
+        return res.json(events);
+    });
+  },
+  /**
+   * List all the events up to  yesterday.
+   */
+  past: function(req, res) {
+    var d = new Date();
+    d.setDate(d.getDate() - 1);
+    eventModel.find({"datetime":{"$lt": d }},{}, { limit : 5, sort: {datetime: -1} },function(err, events){
+        if(err) {
+            return res.json(500, {
+                message: 'Error getting event.'
+            });
+        }
+        return res.json(events);
+    });
+  },
+  /**
+   * eventController.byuser()
+   */
+  byuser: function(req, res) {
+    var d = new Date();
+    var user = req.params.user;
+    d.setDate(d.getDate() - 1);
+    eventModel.find({"datetime":{"$gte": d}, "attendees.user_id": user }, {}, { sort: "datetime" },function(err, events){
+        if(err) {
+            return res.json(500, {
+                message: 'Error getting event.'
+            });
+        }
+        return res.json(events);
+    });
+  },
+  /**
+  * eventController.carbyuser()
+  */
+  carbyuser: function(req, res) {
+    var event_id = req.body.event_id;
+    var user_id = req.body.user_id;
+    var result_data = {};
+    eventModel.findOne({_id: event_id}, function(err, event){
+    if(err) {
+      return res.json(500, {
+       message: 'Error getting event.'
+      });
+    }
+    if(!event) {
+      return res.json(404, {
+      message: 'No such event'
+      });
+    }
+    _.each(event.cars, function(car, index) {
+      if(car.driver_id == user_id) {
+        result_data = car;
+      } else {
+        _.each(car.passanger, function(passanger, index) {
+          if(passanger.user_id == user_id) {
+            result_data = car;
           }
         });
-        res.status(200).json(result_data);
-     });
-    },
-    /**
-     * eventController.show()
-     */
-    show: function(req, res) {
-        var id = req.params.id;
-        eventModel.findOne({_id: id}, function(err, event){
-            if(err) {
-                return res.json(500, {
-                    message: 'Error getting event.'
-                });
-            }
-            if(!event) {
-                return res.json(404, {
-                    message: 'No such event'
-                });
-            }
-            return res.json(event);
-        });
-    },
+      }
+    });
+    res.status(200).json(result_data);
+   });
+  },
+  /**
+   * eventController.show()
+   */
+  show: function(req, res) {
+      var id = req.params.id;
+      eventModel.findOne({_id: id}, function(err, event){
+          if(err) {
+              return res.json(500, {
+                  message: 'Error getting event.'
+              });
+          }
+          if(!event) {
+              return res.json(404, {
+                  message: 'No such event'
+              });
+          }
+          return res.json(event);
+      });
+  },
     /**
      * eventController.addEvent()
      */
