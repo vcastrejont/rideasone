@@ -3,5 +3,5 @@
   "version": "0.1.0",
   "description": "Api for carpooling events",
   "title": "Carpooling api doc",
-  "sampleUrl": "http://nstesting.herokuapp.com/api/"
+  "sampleUrl": "https://nstesting.herokuapp.com/api/"
 }
