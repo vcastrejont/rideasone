@@ -26,9 +26,14 @@ app.config(function($stateProvider, $urlRouterProvider) {
   var home = {
     name: 'home',
     url: '^/',
-    templateUrl: "app/templates/index.html",
     templateUrl: "app/templates/home.html",
     controller: homeCtrl
+  },
+  setlocation = {
+    name: 'setlocation',
+    url: '^/setlocation',
+    templateUrl: "app/templates/setlocation.html",
+    controller: setlocationCtrl
   },
   getaride = {
     name: 'getaride',
@@ -56,6 +61,7 @@ app.config(function($stateProvider, $urlRouterProvider) {
 
   $stateProvider
   .state(home)
+  .state(setlocation)
   .state(getaride)
   .state(events)
   .state(eventShow)
