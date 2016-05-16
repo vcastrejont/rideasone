@@ -41,11 +41,14 @@ module.exports = {
   /**
    * eventController.byuser()
    */
-  byuser: function(req, res) {
-    var d = new Date();
+  user: function(req, res) {
     var user = req.params.user;
-    d.setDate(d.getDate() - 1);
-    eventModel.find({"datetime":{"$gte": d}, "attendees.user_id": user }, {}, { sort: "datetime" },function(err, events){
+    var today = new Date(new Date().setHours(0,0,0,0));
+    eventModel.find(
+    {
+      "datetime":{"$gte": today},
+      $or: [{"organizer_id": user }, {'cars.driver_id': user}]
+    }, {}, { sort: "datetime" },function(err, events){
         if(err) {
             return res.json(500, {
                 message: 'Error getting event.'

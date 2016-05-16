@@ -13,12 +13,6 @@ var eventSchema = new Schema({
 	category       : String,
   datetime       : Date,
   tags           : [{tag: String }],
-  attendees	     : [{
-    user_id      : ObjectId,
-    user         : String,
-    photo        : String,
-    comments     : String
-  }],
   cars           : [{
     driver      : String,
     driver_id   : ObjectId,
@@ -27,9 +21,10 @@ var eventSchema = new Schema({
     seats       : Number,
     comments    : String,
     passenger   : [{
-      user_id :ObjectId, 
-      name: String, 
-      photo : String
+      passenger      : String, 
+      passenger_id   :ObjectId, 
+      passenger_photo :  String,
+      passenger_email :  String
     }]
   }],               									
 	created_at		: {type: Date, default: Date.now},

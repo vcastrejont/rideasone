@@ -33,7 +33,7 @@
             </thead>
             <tbody>
               <tr ng-repeat="event in events  | filter:filters.search | orderBy:filters.order:filters.sortReverse" >
-                <td class="text-lg"><a ui-sref="eventshow({ id: event._id})" ng-class="{ 'past' : checkDate(event.datetime)}"><strong>{{event.name}}</strong>  </a></td>
+                <td class="text-lg"><a ui-sref="eventshow({ id: event._id})" ><strong>{{event.name}}</strong>  </a></td>
                 <td class="text-sm">{{event.datetime | date:'longDate'}}</td>
                 <td class="text-sm">{{event.datetime | date:'shortTime'}}</td>
                 <td class="text-sm">{{event.place}}</td>
