@@ -1,22 +1,22 @@
 angular.module('carPoolingApp').controller('settingsCtrl', settingsCtrl);
 
-settingsCtrl.$inject = ['$scope', '$http'];
+settingsCtrl.$inject = ['$scope', 'apiservice'];
 
-function settingsCtrl ($scope, $http) {
-  
+function settingsCtrl ($scope, apiservice) {
+
   $scope.settings = {};
 
-    $http.get('/api/settings')
+    apiservice.getSettings()
         .success(function(data) {
             $scope.settings = data;
         })
         .error(function(data) {
             console.error('Error: ' + data);
         });
-        
-    
+
+
       $scope.saveData = function() {
-        $http.post('/api/settings', $scope.settings)
+        apiservice.saveSettings($scope.settings)
         .success(function(res, status) {
           if(res.ok)
              $scope.apiSuccess = true;

@@ -1,26 +1,26 @@
 angular.module('carPoolingApp').controller('eventsNewCtrl', eventsNewCtrl);
 
-eventsNewCtrl.$inject = ['$scope', '$http', 'mapService',  '$state' ];
+eventsNewCtrl.$inject = ['$scope', apiservice, 'mapService',  '$state' ];
 
-function eventsNewCtrl ($scope, $http, mapService, $state) {
+function eventsNewCtrl ($scope, apiservice, mapService, $state) {
   $scope.location = {};
   $scope.event = {
     date: new Date()
   };
   $scope.displayDate= false;
-  
-  
+
+
   var options = {
       center: new google.maps.LatLng(29.0729673, -110.95591),
       zoom: 13,
       disableDefaultUI: true,
-      draggable: true   
+      draggable: true
   };
   var mapCanvas = document.getElementById("map");
   var searchInput =   document.getElementById('input');
   var map = new google.maps.Map(mapCanvas, options);
   var autocomplete = new google.maps.places.Autocomplete(searchInput);
-  
+
   autocomplete.bindTo('bounds', map);
   autocomplete.addListener('place_changed', fillInAddress);
   var componentForm = {
@@ -37,8 +37,8 @@ function eventsNewCtrl ($scope, $http, mapService, $state) {
     map: map,
     anchorPoint: new google.maps.Point(0, -29)
   });
-  
-  
+
+
   function fillInAddress() {
     var place = autocomplete.getPlace();
     $scope.location.address=place.formatted_address;
@@ -54,7 +54,7 @@ function eventsNewCtrl ($scope, $http, mapService, $state) {
     if (place.address_components[6])
     $scope.location.country=place.address_components[6].long_name || "";
     $scope.location.place=place.name || "";
-    
+
     $scope.$apply()
 
   }
@@ -68,12 +68,12 @@ function eventsNewCtrl ($scope, $http, mapService, $state) {
        return;
      }
 
-     
+
      if (place.geometry.viewport) {
        map.fitBounds(place.geometry.viewport);
      } else {
        map.setCenter(place.geometry.location);
-       map.setZoom(17);  
+       map.setZoom(17);
      }
      marker.setIcon(/** @type {google.maps.Icon} */({
        url: place.icon,
@@ -110,7 +110,7 @@ function eventsNewCtrl ($scope, $http, mapService, $state) {
       category      : $scope.event.category,
       datetime      : $scope.event.date
     };
-    $http.post("/api/events/new", eventData).then(function(response) {
+    apiservice.createEvent(eventData).then(function(response) {
       $state.go('events');
     });
   };
