@@ -1,8 +1,8 @@
 angular.module('carPoolingApp').controller('eventsShowCtrl', eventsShowCtrl);
 
-eventsShowCtrl.$inject = ['$scope', '$http', '$state','$window'];
+eventsShowCtrl.$inject = ['$scope', 'apiservice', '$state','$window'];
 
-function eventsShowCtrl ($scope, $http,  $state, $window) {
+function eventsShowCtrl ($scope, apiservice,  $state, $window) {
   $scope.id = $state.params.id
   $scope.view= {
     alerts:[],
@@ -20,12 +20,12 @@ function eventsShowCtrl ($scope, $http,  $state, $window) {
       return temp  ? true : false;
     },
     getNumber: function(num) {
-      return new Array(num);   
-    },  
+      return new Array(num);
+    },
     init:function(){
       //Load data, Todo create a service for this
       var self = this;
-      $http.get('/api/events/'+$scope.id).then(function(response) {
+      apiservice.getEvent($scope.id).then(function(response) {
         self.event = response.data;
         self.event.avail = 0;
         self.event.signed = _.where(response.data.attendees, {user_id: self.user.id});
@@ -44,47 +44,47 @@ function eventsShowCtrl ($scope, $http,  $state, $window) {
           center: new google.maps.LatLng(this.event.location[1], this.event.location[0]),
           zoom: 17,
           disableDefaultUI: false,
-          draggable: true   
+          draggable: true
       };
       var mapCanvas = document.getElementById("map");
-      var map = new google.maps.Map(mapCanvas, options); 
+      var map = new google.maps.Map(mapCanvas, options);
       var infowindow = new google.maps.InfoWindow();
       var marker = new google.maps.Marker({
         position: myLatLng,
         map: map,
         title: ''
       });
-      
+
       var infowindow = new google.maps.InfoWindow({
         content: this.event.place
       });
       infowindow.open(map, marker);
     },
     clearOptions:function(){
-      this.seats = "";	
+      this.seats = "";
       this.driver = "";
     },
     deleteEvent:function(){
-      $http.delete('/api/events/'+$scope.id).then(function(response) {
+      apiservice.deleteEvent($scope.id).then(function(response) {
         $state.go('events');
       }, function(response) {
         console.error('Error: ' + response);
-      });	
+      });
     },
     signMe:function(){
       var self = this;
       this.signed = true;
-      $http.put('/api/events/signup/'+$scope.id).then(function(response) {
+      apiservice.signupToEvent($scope.id).then(function(response) {
           self.alerts.push({msg: response.data.message});
           setTimeout(function () {
             $scope.$apply(function()  {  self.closeAlert(); });
             $scope.view.init();
-          }, 1000); 
+          }, 1000);
               $scope.view.init();
             //console.log(response);
         }, function(response) {
             console.error('Error: ' + response);
-      });	
+      });
     },
     addCar:function(){
       var self = this;
@@ -94,7 +94,7 @@ function eventsShowCtrl ($scope, $http,  $state, $window) {
         comments   : $scope.view.comments,
         driver_id  : $scope.view.user.id
       };
-      $http.post('/api/events/addcar', eventData).then(function(response) {
+      apiservice.addCarToEvent(eventData).then(function(response) {
             self.alerts.push({msg: response.data.message});
             setTimeout(function () {
                $scope.$apply(function()  {  self.closeAlert(); });
@@ -102,7 +102,7 @@ function eventsShowCtrl ($scope, $http,  $state, $window) {
             }, 1000);
         }, function(response) {
             console.error('Error: ' + response);
-      });	
+      });
     },
     deleteCar:function(carid){
       if (confirm("Are you sure?")) {
@@ -111,7 +111,7 @@ function eventsShowCtrl ($scope, $http,  $state, $window) {
           carid      : carid
         };
         var self = this;
-        $http.post('/api/events/deletecar', carData).then(function(response) {
+        apiservice.deleteCarFromEvent(carData).then(function(response) {
             self.alerts.push({msg: response.data.message});
             setTimeout(function () {
                $scope.$apply(function()  {  self.closeAlert(); });
@@ -119,7 +119,7 @@ function eventsShowCtrl ($scope, $http,  $state, $window) {
             }, 1000);
           }, function(response) {
               console.log('Error: ' + response);
-        });	
+        });
       }
     },
     joinCar:function(carid){
@@ -128,7 +128,7 @@ function eventsShowCtrl ($scope, $http,  $state, $window) {
         car_id   : carid
       };
       var self = this;
-      $http.post('/api/events/joincar', carData).then(function(response) {
+      apiservice.joinCar(carData).then(function(response) {
           self.alerts.push({msg: response.data.message});
           setTimeout(function () {
              $scope.$apply(function()  {  self.closeAlert(); });
@@ -136,8 +136,8 @@ function eventsShowCtrl ($scope, $http,  $state, $window) {
           }, 1000);
         }, function(response) {
             console.log('Error: ' + response);
-      });	
-      
+      });
+
     },
     leaveCar:function(carid){
       if (confirm("Are you sure ?")) {
@@ -146,7 +146,7 @@ function eventsShowCtrl ($scope, $http,  $state, $window) {
           car_id    : carid
         };
         var self = this;
-        $http.post('/api/events/leavecar', carData).then(function(response) {
+        apiservice.leaveCar(carData).then(function(response) {
             self.alerts.push({msg: response.data.message});
             setTimeout(function () {
                $scope.$apply(function()  {  self.closeAlert(); });
@@ -154,17 +154,17 @@ function eventsShowCtrl ($scope, $http,  $state, $window) {
             }, 1000);
           }, function(response) {
               console.log('Error: ' + response);
-        });	
+        });
       }
     },
     addExtra:function(carid){
       var carData = {
         event_id : this.event._id,
         car_id   : carid,
-        extra    : this.extra 
+        extra    : this.extra
       };
       var self = this;
-      $http.post('/api/events/addExtra', carData).then(function(response) {
+      apiservice.addExtraCar(carData).then(function(response) {
           self.alerts.push({msg: response.data.message});
           setTimeout(function () {
              $scope.$apply(function()  {  self.closeAlert(); });
@@ -172,16 +172,16 @@ function eventsShowCtrl ($scope, $http,  $state, $window) {
           }, 1000);
         }, function(response) {
             console.log('Error: ' + response);
-      });	
+      });
     },
     closeAlert : function(index) {
       this.alerts.splice(index, 1);
     }
-    
+
   };
 
 
-    
+
   $scope.view.init();
-  
+
 };
