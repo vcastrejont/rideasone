@@ -1,6 +1,6 @@
 angular.module('carPoolingApp').controller('eventsNewCtrl', eventsNewCtrl);
 
-eventsNewCtrl.$inject = ['$scope', apiservice, 'mapService',  '$state' ];
+eventsNewCtrl.$inject = ['$scope', 'apiservice', 'mapService',  '$state' ];
 
 function eventsNewCtrl ($scope, apiservice, mapService, $state) {
   $scope.location = {};
