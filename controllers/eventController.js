@@ -203,7 +203,7 @@ module.exports = {
           return res.json(500, {  message: 'Error', error: err  });
         var car = {
           driver_id     : req.user.id,
-          driver        : req.user.name,
+          driver_name   : req.user.name,
           driver_photo  : req.user.photo,
           driver_email  : req.user.email,
           seats         : req.body.seats,
@@ -255,14 +255,14 @@ module.exports = {
     joinCar: function(req, res) {
       var event_id = req.body.event_id;
       var car_id = req.body.car_id;
-      var passanger = {
-        user_id   : req.user.id,
-        name      : req.user.name,
-        photo     : req.user.photo
+      var passenger = {
+        passenger_id        : req.user.id,
+        passenger_name      : req.user.name,
+        passenger_photo     : req.user.photo
       }
 
       eventModel.update({_id: event_id, 'cars._id': car_id },
-      {'$push': {"cars.$.passanger": passanger}},
+      {'$push': {"cars.$.passengers": passenger}},
 
       function(err, numAffected){
         if(err){
@@ -275,7 +275,7 @@ module.exports = {
             var car = _.filter(event.cars, function (item) {
               return item._id.toString() === car_id;
             })
-            mailerController.joinCar(passanger.name, event.name, car[0].driver_email);
+            mailerController.joinCar(passenger.passenger, event.name, car[0].driver_email);
           });
 
           return res.status(200).json( {
@@ -293,14 +293,14 @@ module.exports = {
       var event_id  = req.body.event_id;
       var car_id    = req.body.car_id;
       var extra     = req.body.extra;
-      var passanger = {
+      var passenger = {
         user_id   : req.user.id,
         name      : req.user.name,
         photo     : req.user.photo
       }
       for (i = 0; i < extra; i++) {
         eventModel.update({_id: event_id, 'cars._id': car_id },
-        {'$push': {"cars.$.passanger": passanger}},
+        {'$push': {"cars.$.passengers": passenger}},
         function(err, numAffected){
           if(err){
             console.log(err);
@@ -325,13 +325,12 @@ module.exports = {
 
       var event_id  = req.body.event_id;
       var car_id    = req.body.car_id;
-      var passanger = {
-        user_id   : req.user.id,
-        name      : req.user.name,
-        photo     : req.user.photo
+      var passenger = {
+        passenger_id   : req.user.id,
+        passenger_name      : req.user.name
       }
       eventModel.update({_id: event_id, 'cars._id': car_id },
-      {'$pull': {"cars.$.passanger": {'user_id':req.user.id }}},
+      {'$pull': {"cars.$.passengers": {'user_id':req.user.id }}},
 
       function(err, numAffected){
         if(err){
@@ -344,7 +343,7 @@ module.exports = {
             var car = _.filter(event.cars, function (item) {
               return item._id.toString() === car_id;
             });
-            mailerController.leaveCar(passanger.name, event.name, car[0].driver_email);
+            mailerController.leaveCar(passenger.passenger_name, event.name, car[0].driver_email);
           });
 
           return res.status(200).json( {

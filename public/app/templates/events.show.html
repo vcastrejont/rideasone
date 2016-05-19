@@ -34,13 +34,7 @@
         <p><legend>Status</legend>
           <span class="label label-success" ng-show="view.event.signed.length">  You are signed </span>
         </p>
-        <p><legend>Attendees </legend>
-          <span class="profiles">
-            <span ng-repeat="user in view.event.attendees" >
-                <img src="{{user.photo}}" title="{{user.user}}" class="profile-small" tooltip-placement="top" uib-tooltip="{{user.user}}"/>
-            </span>
-          </span>
-        </p>
+        
         <p><legend>Organizer</legend>
           {{view.event.organizer}}
         </p>
@@ -55,11 +49,7 @@
       <div id="map"></div>
     </div>
     <div class="col-sm-12">
-      <div  ng-show="!view.event.signed.length" class="text-center">
-        <button class="btn btn-primary btn-xs" ng-click="view.signMe()" >Join this event</button>
-      </div>
-      
-      <div  ng-show="view.event.signed.length">
+  
       <legend>Carpooling</legend>
       <div class="tabs">
          <div class="tab" ng-repeat="car in view.event.cars">
@@ -70,19 +60,19 @@
              </label>
              <div class="content">
                <p>
-                 <strong>Driver:</strong> <span ng-class="{'driving': car.driver_id == view.user.id }"> {{car.driver}}</span> 
+                 <strong>Driver:</strong> <span ng-class="{'driving': car.driver_id == view.user.id }"> {{car.driver_name}}</span> 
                </p>
                <p>
                  <strong>Driver's comments:</strong>  {{car.comments}}
                </p>
                <p>
                  <strong>Passenger:</strong> 
-                  <span ng-repeat="p in car.passanger" ng-class="{'sel': p.user_id == view.user.id }">
-                    {{p.name}}<span ng-if="!$last">, </span>
+                  <span ng-repeat="p in car.passengers" ng-class="{'sel': p.passenger_id == view.user.id }">
+                    {{p.passenger_name}}<span ng-if="!$last">, </span>
                   </span>
                </p>
                <p>
-                 <strong>Available seats:</strong> {{car.seats-(car.passanger.length)}} 
+                 <strong>Available seats:</strong> {{car.seats-(car.passengers.length)}} 
                </p>
                <p ng-if="view.isSigned(car) ">
                  <strong>Extra passangers:</strong>
@@ -93,9 +83,10 @@
                  <button ng-click="view.addExtra(car._id)" type="button" class="btn btn-primary btn-xsmall">Save</button>
                </p>
                <div ng-if=" car.driver_id == view.user.id" class="text-center"> 
-                 <button class="btn btn-danger btn-xs" ng-click="view.deleteCar(car._id)" >Remove my car</button>
+                 <button class="btn btn-danger btn-xs" ng-click="view.deleteCar(car._id)">Remove my car</button>
                </div>
-               <div ng-if="(car.driver_id !== view.user.id && car.passanger.length < car.seats && !view.isSigned(car) )" class="text-center"> 
+               
+               <div ng-if="(car.driver_id !== view.user.id && car.passengers.length < car.seats && !view.isSigned(car) )" class="text-center"> 
                  <button class="btn btn-primary btn-xs btn-control" ng-click="view.joinCar(car._id)" >Join this ride</button>
                </div>
                <div class="text-center"  ng-if="view.isSigned(car)"> 
@@ -134,7 +125,7 @@
            </div>
          </div>
         </div>
-      </div><!-- -->
+      
     </div>  
 
         
