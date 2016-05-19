@@ -16,7 +16,7 @@ function eventsShowCtrl ($scope, apiservice,  $state, $window) {
       name: $window.user_name,
     },
     isSigned: function (car) {
-      var temp = _.findWhere(car.passanger, {user_id: $scope.view.user.id});
+      var temp = _.findWhere(car.passengers, {passenger_id: $scope.view.user.id});
       return temp  ? true : false;
     },
     getNumber: function(num) {
@@ -30,7 +30,7 @@ function eventsShowCtrl ($scope, apiservice,  $state, $window) {
         self.event.avail = 0;
         self.event.signed = _.where(response.data.attendees, {user_id: self.user.id});
         _.each(response.data.cars, function(carpool, index) {
-          var avail = carpool.seats -  carpool.passanger.length;
+          var avail = carpool.seats -  carpool.passengers.length;
           self.event.avail += avail;
         });
         self.showMap();

@@ -17,29 +17,30 @@ router.get('/', function(req, res) {
   * @apiGroup Events
   * @apiDescription Display all users events with date greater than yesterday.
   *
-  * @apiSuccess {ObjectId} id                     Mongo generated ID.
-  * @apiSuccess {String}   name                   Event name
-  * @apiSuccess {String}   description            Event full description
-  * @apiSuccess {String}   address                Full place address 
-  * @apiSuccess {String}   place                  Event venue  name
-  * @apiSuccess {String}   place_id               Id from google place api (unique)
-  * @apiSuccess {String}   organizer              Organizer full name
-  * @apiSuccess {ObjectId} organizer_id           Organizer user ID
-  * @apiSuccess {String}   category               Event category
-  * @apiSuccess {Date}     datetime               Event date and time
-  * @apiSuccess {String[]} tags                   List of tags (Array of Strings)
-  * @apiSuccess {Object[]} cars                   Avaiable cars array
-  * @apiSuccess {ObjectId} cars.driver_id         Car driver id
-  * @apiSuccess {String}   cars.driver            Car driver name
-  * @apiSuccess {Number}   cars.seats             Car avaiable seats for carpooling
-  * @apiSuccess {String}   car.comments           Car driver comments
-  * @apiSuccess {Object[]} car.passanger          Each car passenger (there is a typo error)
-  * @apiSuccess {ObjectId} car.passanger.user_id  Passenger user id  
-  * @apiSuccess {String}   car.passanger.name     Passenger name
-  * @apiSuccess {String}   car.passanger.photo    Passenger photo
-  * @apiSuccess {Object[]} location               Location: longitude and latitude.
-  * @apiSuccess {Date}     created_at             Document creation  date
-  * @apiSuccess {Date}     updated_at             Last updated
+  * @apiSuccess {ObjectId} id                               Mongo generated ID.
+  * @apiSuccess {String}   name                             Event name
+  * @apiSuccess {String}   description                      Event full description
+  * @apiSuccess {String}   address                          Full place address 
+  * @apiSuccess {String}   place                            Event venue  name
+  * @apiSuccess {String}   place_id                         Id from google place api (unique)
+  * @apiSuccess {String}   organizer                        Organizer full name
+  * @apiSuccess {ObjectId} organizer_id                     Organizer user ID
+  * @apiSuccess {String}   category                         Event category
+  * @apiSuccess {Date}     datetime                         Event date and time
+  * @apiSuccess {String[]} tags                             List of tags (Array of Strings)
+  * @apiSuccess {Object[]} cars                             Avaiable cars array
+  * @apiSuccess {ObjectId} cars.driver_id                   Car driver id
+  * @apiSuccess {String}   cars.driver_name                 Car driver name
+  * @apiSuccess {Number}   cars.seats                       Car avaiable seats for carpooling
+  * @apiSuccess {String}   car.comments                     Car driver comments
+  * @apiSuccess {Object[]} car.passenger                    Each car passenger
+  * @apiSuccess {ObjectId} car.passenger.passenger_id       Passenger user id  
+  * @apiSuccess {String}   car.passenger.passenger_name     Passenger name
+  * @apiSuccess {String}   car.passanger.passenger_photo    Passenger photo
+  * @apiSuccess {String}   car.passanger.passenger_email    Passenger email address
+  * @apiSuccess {Object[]} location                         Location: longitude and latitude.
+  * @apiSuccess {Date}     created_at                       Document creation  date
+  * @apiSuccess {Date}     updated_at                       Last updated
   */
   router.get('/events', eventsController.list);         
   
@@ -48,29 +49,30 @@ router.get('/', function(req, res) {
   * @apiName past
   * @apiGroup Events
   *
-  * @apiSuccess {ObjectId} id                     Mongo generated ID.
-  * @apiSuccess {String}   name                   Event name
-  * @apiSuccess {String}   description            Event full description
-  * @apiSuccess {String}   address                Full place address 
-  * @apiSuccess {String}   place                  Event venue name
-  * @apiSuccess {String}   place_id               Id from google place api (unique)
-  * @apiSuccess {String}   organizer              Organizer full name
-  * @apiSuccess {ObjectId} organizer_id           Organizer user ID
-  * @apiSuccess {String}   category               Event category
-  * @apiSuccess {Date}     datetime               Event date and time
-  * @apiSuccess {String[]} tags                   List of tags (Array of Strings)
-  * @apiSuccess {Object[]} cars                   Avaiable cars array
-  * @apiSuccess {ObjectId} cars.driver_id         Car driver id
-  * @apiSuccess {String}   cars.driver            Car driver name
-  * @apiSuccess {Number}   cars.seats             Car avaiable seats for carpooling
-  * @apiSuccess {String}   car.comments           Car driver comments
-  * @apiSuccess {Object[]} car.passanger          Each car passenger (there is a typo error)
-  * @apiSuccess {ObjectId} car.passanger.user_id  Passenger user id  
-  * @apiSuccess {String}   car.passanger.name     Passenger name
-  * @apiSuccess {String}   car.passanger.photo    Passenger photo
-  * @apiSuccess {Object[]} location               Location: longitude and latitude.
-  * @apiSuccess {Date}     created_at             Document creation  date
-  * @apiSuccess {Date}     updated_at             Last updated
+  * @apiSuccess {ObjectId} id                               Mongo generated ID.
+  * @apiSuccess {String}   name                             Event name
+  * @apiSuccess {String}   description                      Event full description
+  * @apiSuccess {String}   address                          Full place address 
+  * @apiSuccess {String}   place                            Event venue  name
+  * @apiSuccess {String}   place_id                         Id from google place api (unique)
+  * @apiSuccess {String}   organizer                        Organizer full name
+  * @apiSuccess {ObjectId} organizer_id                     Organizer user ID
+  * @apiSuccess {String}   category                         Event category
+  * @apiSuccess {Date}     datetime                         Event date and time
+  * @apiSuccess {String[]} tags                             List of tags (Array of Strings)
+  * @apiSuccess {Object[]} cars                             Avaiable cars array
+  * @apiSuccess {ObjectId} cars.driver_id                   Car driver id
+  * @apiSuccess {String}   cars.driver_name                 Car driver name
+  * @apiSuccess {Number}   cars.seats                       Car avaiable seats for carpooling
+  * @apiSuccess {String}   car.comments                     Car driver comments
+  * @apiSuccess {Object[]} car.passenger                    Each car passenger
+  * @apiSuccess {ObjectId} car.passenger.passenger_id       Passenger user id  
+  * @apiSuccess {String}   car.passenger.passenger_name     Passenger name
+  * @apiSuccess {String}   car.passanger.passenger_photo    Passenger photo
+  * @apiSuccess {String}   car.passanger.passenger_email    Passenger email address
+  * @apiSuccess {Object[]} location                         Location: longitude and latitude.
+  * @apiSuccess {Date}     created_at                       Document creation  date
+  * @apiSuccess {Date}     updated_at                       Last updated
   */
   router.get('/events/past', eventsController.past);  
 
@@ -97,38 +99,72 @@ router.get('/', function(req, res) {
   * @apiDescription Display an event details
   * @apiParam {String}     [id]                  Event id
   *
-  * @apiSuccess {ObjectId} id                     Mongo generated ID.
-  * @apiSuccess {String}   name                   Event name
-  * @apiSuccess {String}   description            Event full description
-  * @apiSuccess {String}   address                Full place address 
-  * @apiSuccess {String}   place                  Event venue  name
-  * @apiSuccess {String}   place_id               Id from google place api (unique)
-  * @apiSuccess {String}   organizer              Organizer full name
-  * @apiSuccess {ObjectId} organizer_id           Organizer user ID
-  * @apiSuccess {String}   category               Event category
-  * @apiSuccess {Date}     datetime               Event date and time
-  * @apiSuccess {String[]} tags                   List of tags (Array of Strings)
-  * @apiSuccess {Object[]} cars                   Avaiable cars array
-  * @apiSuccess {ObjectId} cars.driver_id         Car driver id
-  * @apiSuccess {String}   cars.driver            Car driver name
-  * @apiSuccess {Number}   cars.seats             Car avaiable seats for carpooling
-  * @apiSuccess {String}   car.comments           Car driver comments
-  * @apiSuccess {Object[]} car.passanger          Each car passenger (there is a typo error)
-  * @apiSuccess {ObjectId} car.passanger.user_id  Passenger user id  
-  * @apiSuccess {String}   car.passanger.name     Passenger name
-  * @apiSuccess {String}   car.passanger.photo    Passenger photo
-  * @apiSuccess {Object[]} location               Location: longitude and latitude.
-  * @apiSuccess {Date}     created_at             Document creation  date
-  * @apiSuccess {Date}     updated_at             Last updated
+  * @apiSuccess {ObjectId} id                               Mongo generated ID.
+  * @apiSuccess {String}   name                             Event name
+  * @apiSuccess {String}   description                      Event full description
+  * @apiSuccess {String}   address                          Full place address 
+  * @apiSuccess {String}   place                            Event venue  name
+  * @apiSuccess {String}   place_id                         Id from google place api (unique)
+  * @apiSuccess {String}   organizer                        Organizer full name
+  * @apiSuccess {ObjectId} organizer_id                     Organizer user ID
+  * @apiSuccess {String}   category                         Event category
+  * @apiSuccess {Date}     datetime                         Event date and time
+  * @apiSuccess {String[]} tags                             List of tags (Array of Strings)
+  * @apiSuccess {Object[]} cars                             Avaiable cars array
+  * @apiSuccess {ObjectId} cars.driver_id                   Car driver id
+  * @apiSuccess {String}   cars.driver_name                 Car driver name
+  * @apiSuccess {Number}   cars.seats                       Car avaiable seats for carpooling
+  * @apiSuccess {String}   car.comments                     Car driver comments
+  * @apiSuccess {Object[]} car.passenger                    Each car passenger
+  * @apiSuccess {ObjectId} car.passenger.passenger_id       Passenger user id  
+  * @apiSuccess {String}   car.passenger.passenger_name     Passenger name
+  * @apiSuccess {String}   car.passanger.passenger_photo    Passenger photo
+  * @apiSuccess {String}   car.passanger.passenger_email    Passenger email address
+  * @apiSuccess {Object[]} location                         Location: longitude and latitude.
+  * @apiSuccess {Date}     created_at                       Document creation  date
+  * @apiSuccess {Date}     updated_at                       Last updated
   */
   router.get('/events/:id', eventsController.show);             //Show an event
 
+  /**
+  * @api {get} events/user/:user User events  
+  * @apiName User events
+  * @apiGroup Events
+  * @apiDescription List all events from that user
+  * @apiParam {String}     user                 User id
+  *
+  * @apiSuccess {ObjectId} id                               Mongo generated ID.
+  * @apiSuccess {String}   name                             Event name
+  * @apiSuccess {String}   description                      Event full description
+  * @apiSuccess {String}   address                          Full place address 
+  * @apiSuccess {String}   place                            Event venue  name
+  * @apiSuccess {String}   place_id                         Id from google place api (unique)
+  * @apiSuccess {String}   organizer                        Organizer full name
+  * @apiSuccess {ObjectId} organizer_id                     Organizer user ID
+  * @apiSuccess {String}   category                         Event category
+  * @apiSuccess {Date}     datetime                         Event date and time
+  * @apiSuccess {String[]} tags                             List of tags (Array of Strings)
+  * @apiSuccess {Object[]} cars                             Avaiable cars array
+  * @apiSuccess {ObjectId} cars.driver_id                   Car driver id
+  * @apiSuccess {String}   cars.driver_name                 Car driver name
+  * @apiSuccess {Number}   cars.seats                       Car avaiable seats for carpooling
+  * @apiSuccess {String}   car.comments                     Car driver comments
+  * @apiSuccess {Object[]} car.passenger                    Each car passenger
+  * @apiSuccess {ObjectId} car.passenger.passenger_id       Passenger user id  
+  * @apiSuccess {String}   car.passenger.passenger_name     Passenger name
+  * @apiSuccess {String}   car.passanger.passenger_photo    Passenger photo
+  * @apiSuccess {String}   car.passanger.passenger_email    Passenger email address
+  * @apiSuccess {Object[]} location                         Location: longitude and latitude.
+  * @apiSuccess {Date}     created_at                       Document creation  date
+  * @apiSuccess {Date}     updated_at                       Last updated
+  */
+  router.get('/events/user/:user', eventsController.user);    // List  by user
+  
+  
+router.post('/events/carbyuser', eventsController.carbyuser); // Carpooling by user[no longer used]
 
-router.get('/events/user/:user', eventsController.byuser);    // List  by user
-router.post('/events/carbyuser', eventsController.carbyuser); // Car polling by user
 
-
-router.put('/events/signup/:id', eventsController.signup);    // Event sign up
+router.put('/events/signup/:id', eventsController.signup);    // Event sign up [no longer used]
 router.put('/events/:id', eventsController.update);           //Update an event
 router.post('/events/addcar', eventsController.addCar);       //Add a car
 router.post('/events/deletecar', eventsController.deleteCar); //Delete a car
