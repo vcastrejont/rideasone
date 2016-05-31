@@ -1,4 +1,5 @@
 var eventModel = require('../models/eventModel.js');
+var userModel = require('../models/userModel.js');
 var mailerController = require('../controllers/mailerController.js');
 var mongoose = require('mongoose');
 var _ = require('underscore');
@@ -198,33 +199,37 @@ module.exports = {
      * eventController.Add car()
      */
     addCar: function(req, res) {
-      eventModel.findOne({_id: req.body.id}, function(err, event){
-        if(err)
-          return res.json(500, {  message: 'Error', error: err  });
-        var car = {
-          driver_id     : req.user.id,
-          driver_name   : req.user.name,
-          driver_photo  : req.user.photo,
-          driver_email  : req.user.email,
-          seats         : req.body.seats,
-          comments      : req.body.comments
-        };
-
-        eventModel.update({"_id":  req.body.id}, {$push: {"cars": car}},
-        function(err, numAffected){
-          if(err){
-              console.log(err);
-              return res.status(500).json( {
-                  message: 'Error updating event', error: err
-              });
-          }else{
-
-            return res.status(200).json( {
-                message: 'Successfully added!',
-                numAffected: numAffected
+      findUser(req.body.driver_id, function(error, user) {
+        if(error) {
+          return res.status(500).json({'message': error});
+        }
+        else {
+          var car = {
+            driver_id     : user._id,
+            driver_name   : user.name,
+            driver_photo  : user.photo,
+            driver_email  : user.email,
+            seats         : req.body.seats,
+            comments      : req.body.comments
+          };
+          eventModel.findOne({_id: req.params.event}, function(err, event){
+            eventModel.update({"_id":  req.params.event}, {$push: {"cars": car}},
+            function(err, numAffected){
+              if(err){
+                  console.log(err);
+                  return res.status(500).json( {
+                      message: 'Error updating event', error: err
+                  });
+              }else{
+                return res.status(200).json( {
+                    message: 'Successfully added!',
+                    numAffected: numAffected,
+                    'user': user.name, 'event': event.name
+                });
+              }
             });
-          }
-        });
+          });
+        }
       });
     },
     /**
@@ -514,3 +519,10 @@ module.exports = {
         });
     }
 };
+
+
+function findUser(user_id, cb) {
+  return userModel.findOne({_id: user_id},function(err, model) {
+    cb(err, model);
+  });
+}

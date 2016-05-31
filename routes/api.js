@@ -162,12 +162,36 @@ router.get('/', function(req, res) {
   
   
 router.post('/events/carbyuser', eventsController.carbyuser); // Carpooling by user[no longer used]
-
-
 router.put('/events/signup/:id', eventsController.signup);    // Event sign up [no longer used]
 router.put('/events/:id', eventsController.update);           //Update an event
-router.post('/events/addcar', eventsController.addCar);       //Add a car
-router.post('/events/deletecar', eventsController.deleteCar); //Delete a car
+
+  /**
+  * @api {post} events/:event/car Add car  
+  * @apiName Addcar
+  * @apiGroup Cars
+  * @apiDescription add a new car to the event
+  * @apiParam {String}     event                            Event id
+  * @apiParam {String}     driver_id                        Driver id
+  *
+  * @apiSuccess {ObjectId} id                               Mongo generated ID.
+  * @apiSuccess {Date}     created_at                       Document creation  date
+  */
+  router.post('/events/:event/car', eventsController.addCar);       //Add a car
+
+  /**
+  * @api {post} events/car Add car  
+  * @apiName Addcar
+  * @apiGroup Cars
+  * @apiDescription add a new car to the event
+  * @apiParam {String}     event                            Event id
+  * @apiParam {String}     user                             User id
+  *
+  * @apiSuccess {ObjectId} id                               Mongo generated ID.
+  * @apiSuccess {Date}     created_at                       Document creation  date
+  */
+router.delete('/events/deletecar', eventsController.deleteCar); //Delete a car
+
+
 router.post('/events/joincar', eventsController.joinCar);     //Join a car
 router.post('/events/addExtra', eventsController.addExtra);   //Add extra passanger
 router.post('/events/leavecar', eventsController.leaveCar);   //Leave a car
