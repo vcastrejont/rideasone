@@ -5,6 +5,7 @@ var eventsController = require('../controllers/eventController.js');
 var locationController = require('../controllers/locationController.js');
 var userController = require('../controllers/userController.js');
 var chatController = require('../controllers/chatController.js');
+var fcmController = require('../controllers/fcmController.js');
 
 router.get('/', function(req, res) {
  res.send('API list');
@@ -20,7 +21,7 @@ router.get('/', function(req, res) {
   * @apiSuccess {ObjectId} id                               Mongo generated ID.
   * @apiSuccess {String}   name                             Event name
   * @apiSuccess {String}   description                      Event full description
-  * @apiSuccess {String}   address                          Full place address 
+  * @apiSuccess {String}   address                          Full place address
   * @apiSuccess {String}   place                            Event venue  name
   * @apiSuccess {String}   place_id                         Id from google place api (unique)
   * @apiSuccess {String}   organizer                        Organizer full name
@@ -34,7 +35,7 @@ router.get('/', function(req, res) {
   * @apiSuccess {Number}   cars.seats                       Car avaiable seats for carpooling
   * @apiSuccess {String}   car.comments                     Car driver comments
   * @apiSuccess {Object[]} car.passenger                    Each car passenger
-  * @apiSuccess {ObjectId} car.passenger.passenger_id       Passenger user id  
+  * @apiSuccess {ObjectId} car.passenger.passenger_id       Passenger user id
   * @apiSuccess {String}   car.passenger.passenger_name     Passenger name
   * @apiSuccess {String}   car.passanger.passenger_photo    Passenger photo
   * @apiSuccess {String}   car.passanger.passenger_email    Passenger email address
@@ -42,8 +43,8 @@ router.get('/', function(req, res) {
   * @apiSuccess {Date}     created_at                       Document creation  date
   * @apiSuccess {Date}     updated_at                       Last updated
   */
-  router.get('/events', eventsController.list);         
-  
+  router.get('/events', eventsController.list);
+
   /**
   * @api {get} events/past Past events
   * @apiName past
@@ -52,7 +53,7 @@ router.get('/', function(req, res) {
   * @apiSuccess {ObjectId} id                               Mongo generated ID.
   * @apiSuccess {String}   name                             Event name
   * @apiSuccess {String}   description                      Event full description
-  * @apiSuccess {String}   address                          Full place address 
+  * @apiSuccess {String}   address                          Full place address
   * @apiSuccess {String}   place                            Event venue  name
   * @apiSuccess {String}   place_id                         Id from google place api (unique)
   * @apiSuccess {String}   organizer                        Organizer full name
@@ -66,7 +67,7 @@ router.get('/', function(req, res) {
   * @apiSuccess {Number}   cars.seats                       Car avaiable seats for carpooling
   * @apiSuccess {String}   car.comments                     Car driver comments
   * @apiSuccess {Object[]} car.passenger                    Each car passenger
-  * @apiSuccess {ObjectId} car.passenger.passenger_id       Passenger user id  
+  * @apiSuccess {ObjectId} car.passenger.passenger_id       Passenger user id
   * @apiSuccess {String}   car.passenger.passenger_name     Passenger name
   * @apiSuccess {String}   car.passanger.passenger_photo    Passenger photo
   * @apiSuccess {String}   car.passanger.passenger_email    Passenger email address
@@ -74,7 +75,7 @@ router.get('/', function(req, res) {
   * @apiSuccess {Date}     created_at                       Document creation  date
   * @apiSuccess {Date}     updated_at                       Last updated
   */
-  router.get('/events/past', eventsController.past);  
+  router.get('/events/past', eventsController.past);
 
   /**
   * @api {post} events/new New event
@@ -82,7 +83,7 @@ router.get('/', function(req, res) {
   * @apiGroup Events
   * @apiParam {String}   [name]                   Event name
   * @apiParam {String}   description              Event full description
-  * @apiParam {String}   [address]                Full place address 
+  * @apiParam {String}   [address]                Full place address
   * @apiParam {Object[]} [location]               Location: longitude and latitude.
   * @apiParam {String}   [place]                  Event venue name
   * @apiParam {String}   [organizer]              Organizer full name
@@ -91,9 +92,9 @@ router.get('/', function(req, res) {
   * @apiParam {Date}     [datetime]               Event date and time
   * @apiParam {String[]} tags                     List of tags (Array of Strings)
   */
-  router.post('/events/new', eventsController.create);          
+  router.post('/events/new', eventsController.create);
   /**
-  * @api {get} events/:id Show an event 
+  * @api {get} events/:id Show an event
   * @apiName show
   * @apiGroup Events
   * @apiDescription Display an event details
@@ -102,7 +103,7 @@ router.get('/', function(req, res) {
   * @apiSuccess {ObjectId} id                               Mongo generated ID.
   * @apiSuccess {String}   name                             Event name
   * @apiSuccess {String}   description                      Event full description
-  * @apiSuccess {String}   address                          Full place address 
+  * @apiSuccess {String}   address                          Full place address
   * @apiSuccess {String}   place                            Event venue  name
   * @apiSuccess {String}   place_id                         Id from google place api (unique)
   * @apiSuccess {String}   organizer                        Organizer full name
@@ -116,7 +117,7 @@ router.get('/', function(req, res) {
   * @apiSuccess {Number}   cars.seats                       Car avaiable seats for carpooling
   * @apiSuccess {String}   car.comments                     Car driver comments
   * @apiSuccess {Object[]} car.passenger                    Each car passenger
-  * @apiSuccess {ObjectId} car.passenger.passenger_id       Passenger user id  
+  * @apiSuccess {ObjectId} car.passenger.passenger_id       Passenger user id
   * @apiSuccess {String}   car.passenger.passenger_name     Passenger name
   * @apiSuccess {String}   car.passanger.passenger_photo    Passenger photo
   * @apiSuccess {String}   car.passanger.passenger_email    Passenger email address
@@ -127,7 +128,7 @@ router.get('/', function(req, res) {
   router.get('/events/:id', eventsController.show);             //Show an event
 
   /**
-  * @api {get} events/user/:user User events  
+  * @api {get} events/user/:user User events
   * @apiName User events
   * @apiGroup Events
   * @apiDescription List all events from that user
@@ -136,7 +137,7 @@ router.get('/', function(req, res) {
   * @apiSuccess {ObjectId} id                               Mongo generated ID.
   * @apiSuccess {String}   name                             Event name
   * @apiSuccess {String}   description                      Event full description
-  * @apiSuccess {String}   address                          Full place address 
+  * @apiSuccess {String}   address                          Full place address
   * @apiSuccess {String}   place                            Event venue  name
   * @apiSuccess {String}   place_id                         Id from google place api (unique)
   * @apiSuccess {String}   organizer                        Organizer full name
@@ -150,7 +151,7 @@ router.get('/', function(req, res) {
   * @apiSuccess {Number}   cars.seats                       Car avaiable seats for carpooling
   * @apiSuccess {String}   car.comments                     Car driver comments
   * @apiSuccess {Object[]} car.passenger                    Each car passenger
-  * @apiSuccess {ObjectId} car.passenger.passenger_id       Passenger user id  
+  * @apiSuccess {ObjectId} car.passenger.passenger_id       Passenger user id
   * @apiSuccess {String}   car.passenger.passenger_name     Passenger name
   * @apiSuccess {String}   car.passanger.passenger_photo    Passenger photo
   * @apiSuccess {String}   car.passanger.passenger_email    Passenger email address
@@ -159,8 +160,8 @@ router.get('/', function(req, res) {
   * @apiSuccess {Date}     updated_at                       Last updated
   */
   router.get('/events/user/:user', eventsController.user);    // List  by user
-  
-  
+
+
 router.post('/events/carbyuser', eventsController.carbyuser); // Carpooling by user[no longer used]
 
 
@@ -195,8 +196,8 @@ router.post('/settings', settingsController.update);
 * @apiSuccess {String}   name                   User full name
 * @apiSuccess {String}   provider               Provider name (google, facebook, etc)
 * @apiSuccess {String}   provider_id            Provider unique id
-* @apiSuccess {String}   photo                  User url photo 
-* @apiSuccess {String}   email                  User email adddres 
+* @apiSuccess {String}   photo                  User url photo
+* @apiSuccess {String}   email                  User email adddres
 * @apiSuccess {Date}     created_at             Document creation  date
 */
   router.get('/users', userController.list);
@@ -204,19 +205,19 @@ router.post('/settings', settingsController.update);
 * @api {post} users/create Create user
 * @apiName CreateUser
 * @apiGroup Users
-* @apiParam {String}     provider_id            Provider unique id 
+* @apiParam {String}     provider_id            Provider unique id
 * @apiParam {String}     name                   User full name
 * @apiParam {String}     provider               Provider name (google, facebook, etc)
-* @apiParam {String}     [photo]                User url photo 
-* @apiParam {String}     email                  User email adddres 
+* @apiParam {String}     [photo]                User url photo
+* @apiParam {String}     email                  User email adddres
 
 *
 * @apiSuccess {ObjectId} id                     Mongo generated ID.
 * @apiSuccess {String}   name                   User full name
 * @apiSuccess {String}   provider               Provider name (google, facebook, etc)
 * @apiSuccess {String}   provider_id            Provider unique id
-* @apiSuccess {String}   photo                  User url photo 
-* @apiSuccess {String}   email                  User email adddres 
+* @apiSuccess {String}   photo                  User url photo
+* @apiSuccess {String}   email                  User email adddres
 * @apiSuccess {Date}     created_at             Document creation  date
 */
 router.post('/users/create', userController.create);
@@ -226,14 +227,14 @@ router.post('/users/create', userController.create);
 * @api {post} chats/add Add message
 * @apiName add
 * @apiGroup Chats
-* @apiDescription Add a chat message to a car 
+* @apiDescription Add a chat message to a car
 * @apiParam {String}     rideid                 Car ride ID
 * @apiParam {String}     message                Message content
 * @apiParam {String}     user                   Full User names
 * @apiSuccess {ObjectId} id                     Mongo generated ID.
 * @apiSuccess {String}   name                   Event name
 * @apiSuccess {String}   description            Event full description
-* @apiSuccess {String}   address                Full place address 
+* @apiSuccess {String}   address                Full place address
 */
 router.post('/chats/add', chatController.addMessage);
 
@@ -242,7 +243,7 @@ router.post('/chats/add', chatController.addMessage);
 * @api {get} chats/:rideid Get messages
 * @apiName get
 * @apiGroup Chats
-* @apiDescription Get a chat log from a car 
+* @apiDescription Get a chat log from a car
 * @apiParam {String} rideid The Car ID.
 *
 * @apiExample Example usage:
@@ -252,9 +253,13 @@ router.post('/chats/add', chatController.addMessage);
 * @apiSuccess {String}   messages.username      Car driver name
 * @apiSuccess {Date}     messages.created_at    Car avaiable seats for carpooling
 * @apiSuccess {Date}     created_at             Event full description
-* @apiSuccess {Date}     updated_at             Full place address 
+* @apiSuccess {Date}     updated_at             Full place address
 */
 router.get('/chats/:rideid', chatController.getMessages);
+
+
+router.get('/fcm/registerUserToken', fcmController.registerUserToken);
+router.get('/fcm/send', fcmController.send);
 
 
 module.exports = router;
