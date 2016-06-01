@@ -210,7 +210,7 @@ module.exports = {
             driver_photo  : user.photo,
             driver_email  : user.email,
             seats         : req.body.seats,
-            comments      : req.body.comments
+            comments      : req.body.comments,
             departure_time: req.body.departure_time
             
           };
