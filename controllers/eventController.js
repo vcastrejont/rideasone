@@ -277,7 +277,7 @@ module.exports = {
             var car = _.filter(event.cars, function (item) {
               return item._id.toString() === car_id;
             })
-            // mailerController.joinCar(passenger.passenger, event.name, car[0].driver_email);
+            mailerController.joinCar(passenger.passenger, event.name, car[0].driver_email);
           });
 
           return res.status(200).json( {
@@ -370,7 +370,7 @@ module.exports = {
             var car = _.filter(event.cars, function (item) {
               return item._id.toString() === car_id;
             });
-            // mailerController.leaveCar(passenger.passenger_name, event.name, car[0].driver_email);
+            mailerController.leaveCar(passenger.passenger_name, event.name, car[0].driver_email);
           });
 
           return res.status(200).json( {
