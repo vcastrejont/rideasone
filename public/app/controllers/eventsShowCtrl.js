@@ -13,22 +13,20 @@ function addDestinationMarkerToMap(map, myLatLng, content) {
         title: ''
     });
 
-    var infowindow = new google.maps.InfoWindow({
+    var infoWindow = new google.maps.InfoWindow({
         content: content
     });
-    infowindow.open(map, marker);
-    (function (marker, content, leWindow, leMap) {
+    infoWindow.open(map, marker);
+    (function (marker, infoWindow, map) {
         google.maps.event.addListener(marker, "click", function (e) {
-            leWindow.open(leMap, marker);
+            infoWindow.open(map, marker);
         });
-    })(marker, content, infowindow, map);
+    })(marker, infoWindow, map);
     return marker;
 }
 
 
-function renderDirectionsBetweenMarkers(infoWindow, map, eventDestinationMarker, originMarker, directionsService, directionsDisplay) {
-    infoWindow.open(map, originMarker);
-
+function renderDirectionsBetweenMarkers(map, eventDestinationMarker, originMarker, directionsService, directionsDisplay) {
     var bounds = new google.maps.LatLngBounds();
     var end = eventDestinationMarker.position;
     var start = originMarker.position;
@@ -51,9 +49,8 @@ function renderDirectionsBetweenMarkers(infoWindow, map, eventDestinationMarker,
         }
     });
 }
-function addCarMarkerToMap(mapData, carPosition, content) {
 
-    //map, carPosition, content, directionsService,  directionsDisplay, eventDestinationMarker
+function addCarMarkerToMap(mapData, carPosition, content) {
     var carMarker = new google.maps.Marker({
         position: carPosition,
         map: mapData.map,
@@ -72,7 +69,8 @@ function addCarMarkerToMap(mapData, carPosition, content) {
         var directionsDisplay = mapData.directionsDisplay;
         var eventDestinationMarker = mapData.eventDestinationMarker;
         google.maps.event.addListener(carMarker, "click", function (e) {
-            renderDirectionsBetweenMarkers(infoWindow, map, eventDestinationMarker, carMarker, directionsService, directionsDisplay);
+            infoWindow.open(map, carMarker);
+            renderDirectionsBetweenMarkers(map, eventDestinationMarker, carMarker, directionsService, directionsDisplay);
         });
     })(infoWindow, mapData, carMarker);
 
