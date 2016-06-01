@@ -25,47 +25,56 @@ function addDestinationMarkerToMap(map, myLatLng, content) {
     return marker;
 }
 
-//TODO Fer refactor
-function addCarMarkerToMap(map, carPosition, content, directionsService,  directionsDisplay, eventDestinationMarker) {
+
+function renderDirectionsBetweenMarkers(infoWindow, map, eventDestinationMarker, originMarker, directionsService, directionsDisplay) {
+    infoWindow.open(map, originMarker);
+
+    var bounds = new google.maps.LatLngBounds();
+    var end = eventDestinationMarker.position;
+    var start = originMarker.position;
+
+    bounds.extend(start);
+    bounds.extend(end);
+    map.fitBounds(bounds);
+
+    var request = {
+        origin: start,
+        destination: end,
+        travelMode: google.maps.TravelMode.DRIVING
+    };
+    directionsService.route(request, function (response, status) {
+        if (status == google.maps.DirectionsStatus.OK) {
+            directionsDisplay.setDirections(response);
+            directionsDisplay.setMap(map);
+        } else {
+            alert("Directions Request from " + start.toUrlValue(6) + " to " + end.toUrlValue(6) + " failed: " + status);
+        }
+    });
+}
+function addCarMarkerToMap(mapData, carPosition, content) {
+
+    //map, carPosition, content, directionsService,  directionsDisplay, eventDestinationMarker
     var carMarker = new google.maps.Marker({
         position: carPosition,
-        map: map,
+        map: mapData.map,
         title: ''
     });
 
-    var infowindow = new google.maps.InfoWindow({
+    var infoWindow = new google.maps.InfoWindow({
         content: content
     });
 
-    (function (marker, content, leWindow, leMap, eventMarker, directionsService, directionsDisplay) {
-        google.maps.event.addListener(marker, "click", function (e) {
-            //infoWindow.setContent("<div style = 'width:200px;min-height:40px'>" + data.description + "</div>");
-            leWindow.open(leMap, marker);
+    //TODO cleanup names
+    (function (infoWindow, mapData, carMarker) {
 
-            var bounds = new google.maps.LatLngBounds();
-            var end = eventMarker.position;
-            var start = marker.position;
-
-            bounds.extend(start);
-            bounds.extend(end);
-            leMap.fitBounds(bounds);
-
-            var request = {
-                origin: start,
-                destination: end,
-                travelMode: google.maps.TravelMode.DRIVING
-            };
-            directionsService.route(request, function (response, status) {
-                if (status == google.maps.DirectionsStatus.OK) {
-                    directionsDisplay.setDirections(response);
-                    directionsDisplay.setMap(leMap);
-                } else {
-                    alert("Directions Request from " + start.toUrlValue(6) + " to " + end.toUrlValue(6) + " failed: " + status);
-                }
-            });
-
+        var map = mapData.map;
+        var directionsService = mapData.directionsService;
+        var directionsDisplay = mapData.directionsDisplay;
+        var eventDestinationMarker = mapData.eventDestinationMarker;
+        google.maps.event.addListener(carMarker, "click", function (e) {
+            renderDirectionsBetweenMarkers(infoWindow, map, eventDestinationMarker, carMarker, directionsService, directionsDisplay);
         });
-    })(carMarker, content, infowindow, map, eventDestinationMarker, directionsService, directionsDisplay);
+    })(infoWindow, mapData, carMarker);
 
     return carMarker;
 }
@@ -73,7 +82,14 @@ function addCarMarkerToMap(map, carPosition, content, directionsService,  direct
 //TODO remove? move to backend?
 function stubData(cars) {
     for (var i = 0; i < cars.length; i++) {
-        cars[i].location = [-86.7694625854492, 21.0904502868652];
+        //cars[i].location = [-86.7694625854492, 21.0904502868652];
+
+        if (i === 0) {
+            cars[0].location = [-86.7694625854492, 21.0904502868652];
+        }
+        else if (i === 1) {
+            cars[1].location = [-86.7728805541992, 21.1417503356934];
+        }
     }
 }
 
@@ -91,10 +107,15 @@ function eventsShowCtrl ($scope, apiservice,  $state, $window) {
       id: $window.user_id,
       name: $window.user_name
     },
+      mapData: {}
+      ,
     isSigned: function (car) {
       var temp = _.findWhere(car.passengers, {passenger_id: $scope.view.user.id});
       return temp  ? true : false;
     },
+      showDirectionsForCar: function(index) {
+          console.log("selected car: " + JSON.stringify(this.event.cars[index]));
+      },
     getNumber: function(num) {
       return new Array(num);
     },
@@ -127,7 +148,6 @@ function eventsShowCtrl ($scope, apiservice,  $state, $window) {
           };
 
           var directionsService = new google.maps.DirectionsService();
-
           var mapCanvas = document.getElementById("map");
           var map = new google.maps.Map(mapCanvas, options);
 
@@ -142,11 +162,23 @@ function eventsShowCtrl ($scope, apiservice,  $state, $window) {
           //TODO Fer remove
           stubData(cars);
 
-          var car;
+          this.mapData = {
+              map: map,
+              directionsService: directionsService,
+              directionsDisplay: directionsDisplay,
+              eventDestinationMarker:eventDestinationMarker
+          };
+
+          var car, carMarker;
+          var markers = [];
           for (var i = 0; i < cars.length; i++) {
               car = cars[i];
-              addCarMarkerToMap(map, new google.maps.LatLng(car.location[1], car.location[0]) , car.driver_name, directionsService, directionsDisplay, eventDestinationMarker);
+              carMarker = addCarMarkerToMap(this.mapData, new google.maps.LatLng(car.location[1], car.location[0]) , car.driver_name);
+              markers.push(carMarker);
           }
+
+
+          this.mapData.carMarkers = markers;
       },
     clearOptions:function(){
       this.seats = "";
