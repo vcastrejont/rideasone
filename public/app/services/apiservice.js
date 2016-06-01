@@ -16,6 +16,10 @@ function apiservice($http) {
 		return $http.delete('/api/events/' + eventId);
 	};
 
+	service.shareEvent = function(eventId, data) {
+		return $http.post('/api/events/share/' + eventId, data);
+	};
+
 	service.getPastEvents = function() {
 		return $http.get('/api/events/past');
 	};

@@ -109,6 +109,30 @@ module.exports = {
           return res.json(event);
       });
   },
+
+    /**
+     * eventController.shareEvent()
+     */
+    shareEvent: function(req, res) {
+        var eventId = req.params.id;
+
+        //TODO validate
+        //TODO support a list of emails
+        var targetEmail  = req.body.target_email;
+        var message  = req.body.message;
+
+        eventModel.findOne({_id: eventId}, function(err, event){
+            var linkUrl = generateShortenedUrl(req, event);
+            mailerController.shareEvent(targetEmail, event.name, linkUrl, message);
+        });
+
+
+        return res.status(200).json( {
+            message: 'Shared event!'
+        });
+
+    },
+
     /**
      * eventController.addEvent()
      */
@@ -527,4 +551,9 @@ function findUser(user_id, cb) {
   return userModel.findOne({_id: user_id},function(err, model) {
     cb(err, model);
   });
+}
+
+function generateShortenedUrl(req, event) {
+    var host = "http://somehost/shortenedEndpoint/";//TODO get the host from current req
+    return host + event.shortenedUrl();
 }

@@ -25,8 +25,8 @@ module.exports = {
       var mailOpts = {
           from: config.mailer.from,
           to: driver_email,
-          subject: 'You have a new passanger',
-          text : 'You have a new passanger',
+          subject: 'You have a new passenger',
+          text : 'You have a new passenger',
           html : html_text
       };
       transporter.sendMail(mailOpts, function (err, response) {
@@ -45,8 +45,8 @@ module.exports = {
       var mailOpts = {
           from: config.mailer.from,
           to: driver_email,
-          subject: 'A passanger has left your car',
-          text : 'A passanger has left your car',
+          subject: 'A passenger has left your car',
+          text : 'A passenger has left your car',
           html : html_text
       };
       transporter.sendMail(mailOpts, function (err, response) {
@@ -56,5 +56,27 @@ module.exports = {
            console.log("Mail send to: " +mailOpts.to);
           }
       });
+    },
+    shareEvent: function(targetEmail, eventName, linkUrl, message) {
+        //TODO use a template
+        var htmlText = 'Hello, <br> <p>An event has been shared with you: <b><a href="' + linkUrl + '">' + eventName + '</a></b></p>';
+        htmlText += '<p>' + message +'</p>';
+        htmlText += '<p>The carpooling app</p>';
+
+        var mailOpts = {
+            from: config.mailer.from,
+            to: targetEmail,
+            subject: 'Someone shared you an event',
+            text : htmlText,
+            html : htmlText
+        };
+        transporter.sendMail(mailOpts, function (err, response) {
+            if (err) {
+                console.log(err);
+            } else {
+                console.log("Mail sent to: " + targetEmail);
+            }
+        });
     }
-};
+}
+;

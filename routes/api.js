@@ -196,6 +196,7 @@ router.post('/events/joincar', eventsController.joinCar);     //Join a car
 router.post('/events/addExtra', eventsController.addExtra);   //Add extra passanger
 router.post('/events/leavecar', eventsController.leaveCar);   //Leave a car
 router.post('/events/carbyuser', eventsController.carbyuser); //Car polling by user
+router.post('/events/share/:id', eventsController.shareEvent); //Share an event
 router.delete('/events/:id', eventsController.remove);        //Delete an event
 
 // ----Locations --------

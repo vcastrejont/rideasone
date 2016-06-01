@@ -176,8 +176,34 @@ function eventsShowCtrl ($scope, apiservice,  $state, $window) {
     },
     closeAlert : function(index) {
       this.alerts.splice(index, 1);
-    }
+    },
+      //TODO use ui.bootstrap.modal)
+      shareEvent: function() {
+          $('#share-modal').modal('show');
+      },
+      shareEventEmail: function() {
+          //TODO validate
+          //TODO support a list of emails
 
+          var form = $('#share-event-form');
+          var data = {};
+
+          $.each(form.serializeArray(), function(i, field) {
+              data[field.name] = field.value;
+          });
+
+          console.log("Sending email...");
+          apiservice.shareEvent($scope.id, data).then(
+          function(response) {
+              //TODO show notification to user
+              $('#share-modal').modal('hide');
+
+          }, function(response) {
+              console.error('Error: ' + response);
+              $('#share-modal').modal('hide');
+          });
+          //TODO show spinner
+      }
   };
 
 
