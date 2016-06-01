@@ -19,6 +19,7 @@ var eventSchema = new Schema({
     driver_email : String,
     driver_photo : String,
     seats        : Number,
+    departure_time: Date,
     comments     : String,
     passengers   : [{
       passenger_name  : String, 
