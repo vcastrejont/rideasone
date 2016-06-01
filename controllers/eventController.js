@@ -543,8 +543,6 @@ module.exports = {
     },
 
     messageDriver: function(req, res) {
-        console.log(req.user);
-        
         var eventId = req.params.id;
         var carId = req.params.carId;
         if(!req.body.message) return res.json(400, { message: 'The message is required' });

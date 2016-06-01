@@ -5,6 +5,34 @@ eventsShowCtrl.$inject = ['$scope', 'apiservice', '$state','$window'];
 function eventsShowCtrl ($scope, apiservice,  $state, $window) {
   $scope.id = $state.params.id;
 
+  $scope.messageCar = null;
+  $scope.message = {
+      text: ""
+  };
+
+  $scope.messageDriver = function(car) {
+      $scope.messageCar = car;
+
+      $('#sendMessageModal').modal("show");
+  };
+
+  $scope.sendMessage = function() {
+      if(!$scope.message.text) return;
+
+      apiservice.sendMessage({
+          eventId: $state.params.id,
+          carId: $scope.messageCar["_id"],
+          message: $scope.message.text
+      })
+      .success(function(data) {
+          $('#sendMessageModal').modal("hide");
+          alert("Message sent!");
+      })
+      .error(function(error) {
+          console.error(error);
+      });
+  };
+
   $scope.view= {
     alerts:[],
     signed:false,
@@ -116,7 +144,7 @@ function eventsShowCtrl ($scope, apiservice,  $state, $window) {
     addCar:function(){
       var self = this;
       var eventData = {
-        
+
         seats      : $scope.view.seats,
         comments   : $scope.view.comments,
         driver_id  : $scope.view.user.id
