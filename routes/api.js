@@ -166,7 +166,7 @@ router.post('/events/carbyuser', eventsController.carbyuser); // Carpooling by u
 
 router.put('/events/signup/:id', eventsController.signup);    // Event sign up [no longer used]
 router.put('/events/:id', eventsController.update);           //Update an event
-router.post('/events/addcar', eventsController.addCar);       //Add a car
+router.post('/events/:eventId/car', eventsController.addCar); //Add a car
 router.post('/events/deletecar', eventsController.deleteCar); //Delete a car
 router.post('/events/joincar', eventsController.joinCar);     //Join a car
 router.post('/events/addExtra', eventsController.addExtra);   //Add extra passanger

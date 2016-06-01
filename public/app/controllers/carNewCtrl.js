@@ -14,8 +14,12 @@ function carNewCtrl ($q, $state, apiservice) {
   vm.isRoundTrip = false;
   vm.departureTime = null;
   vm.returnTime = null;
-  vm.departureTrip = {};
-  vm.returnTrip = {};
+  vm.departureTrip = {
+    type: 0 // 0 = departure, 1 = return
+  };
+  vm.returnTrip = {
+    type: 1
+  };
   vm.event = {
     _id: $state.params.eventId
   };

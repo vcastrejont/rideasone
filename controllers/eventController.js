@@ -197,33 +197,40 @@ module.exports = {
     /**
      * eventController.Add car()
      */
-    addCar: function(req, res) {
-      eventModel.findOne({_id: req.body.id}, function(err, event){
-        if(err)
-          return res.json(500, {  message: 'Error', error: err  });
-        var car = {
-          driver_id     : req.user.id,
-          driver_name   : req.user.name,
-          driver_photo  : req.user.photo,
-          driver_email  : req.user.email,
-          seats         : req.body.seats,
-          comments      : req.body.comments
-        };
-
-        eventModel.update({"_id":  req.body.id}, {$push: {"cars": car}},
-        function(err, numAffected){
-          if(err){
-              console.log(err);
-              return res.status(500).json( {
-                  message: 'Error updating event', error: err
-              });
-          }else{
-
-            return res.status(200).json( {
-                message: 'Successfully added!',
-                numAffected: numAffected
-            });
+    addCar: function (req, res) {
+      function carFromData (data) {
+        return {
+          driver_id: req.user.id,
+          driver_name: req.user.name,
+          driver_photo: req.user.photo,
+          driver_email: req.user.email,
+          seats: data.seats,
+          comments: data.comments,
+          type: data.type,
+          time: data.time,
+          meeting_point: {
+            place: data.place,
+            place_id: data.place_id,
+            address: data.address,
+            location: data.location
           }
+        };
+      }
+      eventModel.findById(req.params.eventId, function (err, event) {
+        if (err) return res.status(500).json({ message: err.message, error: err });
+        // Handle cases when the body is a single car or an array of cars
+        if (req.body.constructor === Array) {
+          var cars = req.body;
+          cars.array.forEach(function (carData) {
+            event.cars.push(carFromData(carData));
+          });
+        } else {
+          event.cars.push(carFromData(req.body));
+        }
+
+        event.save(function (err, event) {
+          if (err) return res.status(500).json({ message: err.message, error: err });
+          return res.json({ ok: true });
         });
       });
     },

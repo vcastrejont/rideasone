@@ -20,8 +20,8 @@ var eventSchema = new Schema({
   // trips : { type: ObjectId, ref: 'trip' },
   cars           : [{
     type         : Number, // See TripType enum below
+    time         : Date,
     meeting_point: {
-      time       : Date,
       location   : [Number],
       address    : String,
       place      : String,
