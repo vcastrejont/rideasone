@@ -3,7 +3,7 @@ angular.module('carPoolingApp').controller('eventsShowCtrl', eventsShowCtrl);
 eventsShowCtrl.$inject = ['$scope', 'apiservice', '$state','$window'];
 
 function eventsShowCtrl ($scope, apiservice,  $state, $window) {
-  $scope.id = $state.params.id
+  $scope.id = $state.params.id;
   $scope.view= {
     alerts:[],
     signed:false,
@@ -13,7 +13,7 @@ function eventsShowCtrl ($scope, apiservice,  $state, $window) {
     option:1,
     user:{
       id: $window.user_id,
-      name: $window.user_name,
+      name: $window.user_name
     },
     isSigned: function (car) {
       var temp = _.findWhere(car.passengers, {passenger_id: $scope.view.user.id});
