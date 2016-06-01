@@ -14,9 +14,14 @@ var eventSchema = new Schema({
 	category       : String,
   datetime       : Date,
   tags           : [{ tag: String }],
+  // SUGGESTION: Separate cars into its own model. Maybe call it "trip"
+  // This will make it way easier when you want to get all trips available for a single event.
+  // Uncomment below:
+  // trips : { type: ObjectId, ref: 'trip' },
   cars           : [{
     type         : Number, // See TripType enum below
     meeting_point: {
+      time       : Date,
       location   : [Number],
       address    : String,
       place      : String,
@@ -49,14 +54,5 @@ eventSchema.statics.TripType = {
   GOING: 0,
   RETURNING: 1
 };
-
-eventSchema.pre('save', function(next){
-    now = new Date();
-    this.updated_at = now;
-    if(!this.created_at) {
-        this.created_at = now
-    }
-    next();
-});
 
 module.exports = mongoose.model('event', eventSchema);
