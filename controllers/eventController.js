@@ -2,6 +2,7 @@ var eventModel = require('../models/eventModel.js');
 var mailerController = require('../controllers/mailerController.js');
 var mongoose = require('mongoose');
 var _ = require('underscore');
+
 /**
  * eventController.js
  *
@@ -538,6 +539,36 @@ module.exports = {
                 });
             }
             return res.json(event);
+        });
+    },
+
+    messageDriver: function(req, res) {
+        console.log(req.user);
+        
+        var eventId = req.params.id;
+        var carId = req.params.carId;
+        if(!req.body.message) return res.json(400, { message: 'The message is required' });
+
+        eventModel.findById(eventId, function(err, event) {
+            if(err) return res.json(500, { message: 'Error getting event.' });
+
+            var car = _.find(event.cars, function(car) {
+                return car['_id'] == carId;
+            });
+
+            if(!car) return res.json(400, { message: 'Invalid car ID' });
+
+            mailerController.messageDriver({
+                driver_email: car.driver_email,
+                content: req.body.message,
+                user_email: req.user.email
+            }, function (err, response) {
+                if (err) return res.send(500, { message: 'Error sending message' });
+
+                console.log("Mail sent to: " + car.driver_email);
+                res.sendStatus(200);
+            })
+
         });
     }
 };
