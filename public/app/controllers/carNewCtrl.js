@@ -159,7 +159,8 @@ function carNewCtrl ($q, $state, apiservice) {
     if (error) return;
 
     apiservice.addCarsToEvent(vm.event.id, [vm.departureTrip, vm.returnTrip]).then(function (response) {
-      // TODO: Car saved. Go home. (You're drunk).
+      console.log('Success!');
+      $state.go('home');
     }, function (response) {
       if (response.error) {
         vm.error = error;
