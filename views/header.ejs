@@ -32,6 +32,7 @@
           <script src="/app/controllers/eventsNewCtrl.js"></script>
           <script src="/app/controllers/settingsCtrl.js"></script>
           <script src="/app/controllers/homeCtrl.js"></script>
+          <script src="/app/controllers/carNewCtrl.js"></script>
           <script>
             var user=<%- JSON.stringify(user) %>;
             var user_name="<%= user.name%>";
@@ -40,7 +41,7 @@
     </head>
     <body>
 
-        <header ng-controller="headerCtrl" >
+        <header ng-controller="headerCtrl">
           <div class="container">
             <div class="row">
               <a ui-sref="home" class="col-sm-3 logo">
