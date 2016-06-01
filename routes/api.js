@@ -160,20 +160,42 @@ router.get('/', function(req, res) {
   * @apiSuccess {Date}     updated_at                       Last updated
   */
   router.get('/events/user/:user', eventsController.user);    // List  by user
-
-
-router.post('/events/carbyuser', eventsController.carbyuser); // Carpooling by user[no longer used]
-
-
 router.put('/events/signup/:id', eventsController.signup);    // Event sign up [no longer used]
 router.put('/events/:id', eventsController.update);           //Update an event
-router.post('/events/addcar', eventsController.addCar);       //Add a car
-router.post('/events/deletecar', eventsController.deleteCar); //Delete a car
+
+  /**
+  * @api {post} events/:event/car Add car
+  * @apiName Addcar
+  * @apiGroup Cars
+  * @apiDescription add a new car to the event
+  * @apiParam {String}     event                            Event id
+  * @apiParam {String}     driver_id                        Driver id
+  *
+  * @apiSuccess {ObjectId} id                               Mongo generated ID.
+  * @apiSuccess {Date}     created_at                       Document creation  date
+  */
+  router.post('/events/:event/car', eventsController.addCar);       //Add a car
+
+  /**
+  * @api {post} events/car Add car
+  * @apiName Addcar
+  * @apiGroup Cars
+  * @apiDescription add a new car to the event
+  * @apiParam {String}     event                            Event id
+  * @apiParam {String}     user                             User id
+  *
+  * @apiSuccess {ObjectId} id                               Mongo generated ID.
+  * @apiSuccess {Date}     created_at                       Document creation  date
+  */
+router.delete('/events/deletecar', eventsController.deleteCar); //Delete a car
+
+
 router.post('/events/joincar', eventsController.joinCar);     //Join a car
 router.post('/events/addExtra', eventsController.addExtra);   //Add extra passanger
 router.post('/events/leavecar', eventsController.leaveCar);   //Leave a car
 router.post('/events/carbyuser', eventsController.carbyuser); //Car polling by user
 router.delete('/events/:id', eventsController.remove);        //Delete an event
+router.post('/events/:id/car/:carId/message', eventsController.messageDriver);
 
 // ----Locations --------
 router.get('/locations', locationController.list);

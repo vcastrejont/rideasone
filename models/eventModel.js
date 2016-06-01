@@ -21,12 +21,14 @@ var eventSchema = new Schema({
     seats        : Number,
     comments     : String,
     passengers   : [{
-      passenger_name  : String, 
-      passenger_id    :ObjectId, 
-      passenger_photo :  String,
-      passenger_email :  String
+      passenger_name  : String,
+      passenger_id    : ObjectId,
+      passenger_photo : String,
+      passenger_email : String,
+      going           : Boolean,
+      back            : Boolean
     }]
-  }],               									
+  }],
 	created_at		: {type: Date, default: Date.now},
 	updated_at		: {type: Date, default: Date.now}
 });

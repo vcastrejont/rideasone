@@ -2,6 +2,7 @@ var eventModel = require('../models/eventModel.js');
 var mailerController = require('../controllers/mailerController.js');
 var mongoose = require('mongoose');
 var _ = require('underscore');
+
 /**
  * eventController.js
  *
@@ -253,13 +254,15 @@ module.exports = {
      * eventController Join car()
      */
     joinCar: function(req, res) {
-      var event_id = req.body.event_id;
-      var car_id = req.body.car_id;
-      var passenger = {
+      var event_id = req.body.event_id,
+      car_id = req.body.car_id,
+      passenger = {
         passenger_id        : req.user.id,
         passenger_name      : req.user.name,
-        passenger_photo     : req.user.photo
-      }
+        passenger_photo     : req.user.photo,
+        going               : !!req.body.going,
+        back                : !!req.body.back
+      };
 
       eventModel.update({_id: event_id, 'cars._id': car_id },
       {'$push': {"cars.$.passengers": passenger}},
@@ -290,15 +293,21 @@ module.exports = {
      * eventController addExtra()
      */
     addExtra: function(req, res) {
-      var event_id  = req.body.event_id;
-      var car_id    = req.body.car_id;
-      var extra     = req.body.extra;
-      var passenger = {
+      var event_id    = req.body.event_id,
+      car_id      = req.body.car_id,
+      extra_going = req.body.extra_going,
+      extra_back = req.body.extra_back,
+      passenger = {
         user_id   : req.user.id,
         name      : req.user.name,
-        photo     : req.user.photo
+        photo     : req.user.photo,
+        going     : false,
+        back      : false
       }
-      for (i = 0; i < extra; i++) {
+
+      for (i = 0; i < extra_going; i++) {
+        passenger.going = true;
+
         eventModel.update({_id: event_id, 'cars._id': car_id },
         {'$push': {"cars.$.passengers": passenger}},
         function(err, numAffected){
@@ -312,6 +321,25 @@ module.exports = {
           }
         });
       }
+
+      for (i = 0; i < extra_back; i++) {
+        passenger.going = false;
+        passenger.back = true;
+
+        eventModel.update({_id: event_id, 'cars._id': car_id },
+        {'$push': {"cars.$.passengers": passenger}},
+        function(err, numAffected){
+          if(err){
+            console.log(err);
+            return res.status(500).json( {
+                message: 'Error updating event', error: err
+            });
+          }else{
+            //nothing here
+          }
+        });
+      }
+
       return res.status(200).json( {
           message: 'Successfully added!'
       });
@@ -511,6 +539,34 @@ module.exports = {
                 });
             }
             return res.json(event);
+        });
+    },
+
+    messageDriver: function(req, res) {
+        var eventId = req.params.id;
+        var carId = req.params.carId;
+        if(!req.body.message) return res.json(400, { message: 'The message is required' });
+
+        eventModel.findById(eventId, function(err, event) {
+            if(err) return res.json(500, { message: 'Error getting event.' });
+
+            var car = _.find(event.cars, function(car) {
+                return car['_id'] == carId;
+            });
+
+            if(!car) return res.json(400, { message: 'Invalid car ID' });
+
+            mailerController.messageDriver({
+                driver_email: car.driver_email,
+                content: req.body.message,
+                user_email: req.user.email
+            }, function (err, response) {
+                if (err) return res.send(500, { message: 'Error sending message' });
+
+                console.log("Mail sent to: " + car.driver_email);
+                res.sendStatus(200);
+            })
+
         });
     }
 };
