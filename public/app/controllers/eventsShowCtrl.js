@@ -3,7 +3,8 @@ angular.module('carPoolingApp').controller('eventsShowCtrl', eventsShowCtrl);
 eventsShowCtrl.$inject = ['$scope', 'apiservice', '$state','$window'];
 
 function eventsShowCtrl ($scope, apiservice,  $state, $window) {
-  $scope.id = $state.params.id
+  $scope.id = $state.params.id;
+
   $scope.view= {
     alerts:[],
     signed:false,
@@ -14,6 +15,16 @@ function eventsShowCtrl ($scope, apiservice,  $state, $window) {
     user:{
       id: $window.user_id,
       name: $window.user_name,
+      going: true,
+      back: true
+    },
+    goingRide: {
+      passengers: [],
+      extraPass: 0
+    },
+    backRide: {
+      passengers: [],
+      extraPass: 0
     },
     isSigned: function (car) {
       var temp = _.findWhere(car.passengers, {passenger_id: $scope.view.user.id});
@@ -32,6 +43,22 @@ function eventsShowCtrl ($scope, apiservice,  $state, $window) {
         _.each(response.data.cars, function(carpool, index) {
           var avail = carpool.seats -  carpool.passengers.length;
           self.event.avail += avail;
+
+          self.goingRide.passengers = [];
+          self.backRide.passengers = [];
+
+          self.goingRide.extraPass = 0;
+          self.backRide.extraPass = 0;
+
+          angular.forEach(carpool.passengers, function(p) {
+            if(p.going) {
+              self.goingRide.passengers.push(p);
+            }
+
+            if(p.back){
+              self.backRide.passengers.push(p);
+            }
+          });
         });
         self.showMap();
       }, function(response) {
@@ -125,7 +152,9 @@ function eventsShowCtrl ($scope, apiservice,  $state, $window) {
     joinCar:function(carid){
       var carData = {
         event_id : $scope.view.event._id,
-        car_id   : carid
+        car_id   : carid,
+        going    : $scope.view.user.going,
+        back     : $scope.view.user.back
       };
       var self = this;
       apiservice.joinCar(carData).then(function(response) {
@@ -159,9 +188,10 @@ function eventsShowCtrl ($scope, apiservice,  $state, $window) {
     },
     addExtra:function(carid){
       var carData = {
-        event_id : this.event._id,
-        car_id   : carid,
-        extra    : this.extra
+        event_id    : this.event._id,
+        car_id      : carid,
+        extra_going : this.goingRide.extraPass,
+        extra_back  : this.backRide.extraPass,
       };
       var self = this;
       apiservice.addExtraCar(carData).then(function(response) {

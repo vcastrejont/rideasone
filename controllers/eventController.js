@@ -1,5 +1,4 @@
 var eventModel = require('../models/eventModel.js');
-var userModel = require('../models/userModel.js');
 var mailerController = require('../controllers/mailerController.js');
 var mongoose = require('mongoose');
 var _ = require('underscore');
@@ -199,39 +198,33 @@ module.exports = {
      * eventController.Add car()
      */
     addCar: function(req, res) {
-      findUser(req.body.driver_id, function(error, user) {
-        if(error) {
-          return res.status(500).json({'message': error});
-        }
-        else {
-          var car = {
-            driver_id     : user._id,
-            driver_name   : user.name,
-            driver_photo  : user.photo,
-            driver_email  : user.email,
-            seats         : req.body.seats,
-            comments      : req.body.comments,
-            departure_time: req.body.departure_time
-            
-          };
-          eventModel.findOne({_id: req.params.event}, function(err, event){
-            eventModel.update({"_id":  req.params.event}, {$push: {"cars": car}},
-            function(err, numAffected){
-              if(err){
-                  console.log(err);
-                  return res.status(500).json( {
-                      message: 'Error updating event', error: err
-                  });
-              }else{
-                return res.status(200).json( {
-                    message: 'Successfully added!',
-                    numAffected: numAffected,
-                    'user': user.name, 'event': event.name
-                });
-              }
+      eventModel.findOne({_id: req.body.id}, function(err, event){
+        if(err)
+          return res.json(500, {  message: 'Error', error: err  });
+        var car = {
+          driver_id     : req.user.id,
+          driver_name   : req.user.name,
+          driver_photo  : req.user.photo,
+          driver_email  : req.user.email,
+          seats         : req.body.seats,
+          comments      : req.body.comments
+        };
+
+        eventModel.update({"_id":  req.body.id}, {$push: {"cars": car}},
+        function(err, numAffected){
+          if(err){
+              console.log(err);
+              return res.status(500).json( {
+                  message: 'Error updating event', error: err
+              });
+          }else{
+
+            return res.status(200).json( {
+                message: 'Successfully added!',
+                numAffected: numAffected
             });
-          });
-        }
+          }
+        });
       });
     },
     /**
@@ -260,13 +253,15 @@ module.exports = {
      * eventController Join car()
      */
     joinCar: function(req, res) {
-      var event_id = req.body.event_id;
-      var car_id = req.body.car_id;
-      var passenger = {
+      var event_id = req.body.event_id,
+      car_id = req.body.car_id,
+      passenger = {
         passenger_id        : req.user.id,
         passenger_name      : req.user.name,
-        passenger_photo     : req.user.photo
-      }
+        passenger_photo     : req.user.photo,
+        going               : !!req.body.going,
+        back                : !!req.body.back
+      };
 
       eventModel.update({_id: event_id, 'cars._id': car_id },
       {'$push': {"cars.$.passengers": passenger}},
@@ -282,7 +277,7 @@ module.exports = {
             var car = _.filter(event.cars, function (item) {
               return item._id.toString() === car_id;
             })
-            mailerController.joinCar(passenger.passenger, event.name, car[0].driver_email);
+            // mailerController.joinCar(passenger.passenger, event.name, car[0].driver_email);
           });
 
           return res.status(200).json( {
@@ -297,15 +292,21 @@ module.exports = {
      * eventController addExtra()
      */
     addExtra: function(req, res) {
-      var event_id  = req.body.event_id;
-      var car_id    = req.body.car_id;
-      var extra     = req.body.extra;
-      var passenger = {
+      var event_id    = req.body.event_id,
+      car_id      = req.body.car_id,
+      extra_going = req.body.extra_going,
+      extra_back = req.body.extra_back,
+      passenger = {
         user_id   : req.user.id,
         name      : req.user.name,
-        photo     : req.user.photo
+        photo     : req.user.photo,
+        going     : false,
+        back      : false
       }
-      for (i = 0; i < extra; i++) {
+
+      for (i = 0; i < extra_going; i++) {
+        passenger.going = true;
+
         eventModel.update({_id: event_id, 'cars._id': car_id },
         {'$push': {"cars.$.passengers": passenger}},
         function(err, numAffected){
@@ -319,6 +320,25 @@ module.exports = {
           }
         });
       }
+
+      for (i = 0; i < extra_back; i++) {
+        passenger.going = false;
+        passenger.back = true;
+
+        eventModel.update({_id: event_id, 'cars._id': car_id },
+        {'$push': {"cars.$.passengers": passenger}},
+        function(err, numAffected){
+          if(err){
+            console.log(err);
+            return res.status(500).json( {
+                message: 'Error updating event', error: err
+            });
+          }else{
+            //nothing here
+          }
+        });
+      }
+
       return res.status(200).json( {
           message: 'Successfully added!'
       });
@@ -350,7 +370,7 @@ module.exports = {
             var car = _.filter(event.cars, function (item) {
               return item._id.toString() === car_id;
             });
-            mailerController.leaveCar(passenger.passenger_name, event.name, car[0].driver_email);
+            // mailerController.leaveCar(passenger.passenger_name, event.name, car[0].driver_email);
           });
 
           return res.status(200).json( {
@@ -521,10 +541,3 @@ module.exports = {
         });
     }
 };
-
-
-function findUser(user_id, cb) {
-  return userModel.findOne({_id: user_id},function(err, model) {
-    cb(err, model);
-  });
-}
