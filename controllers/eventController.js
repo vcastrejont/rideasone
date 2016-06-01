@@ -211,6 +211,8 @@ module.exports = {
             driver_email  : user.email,
             seats         : req.body.seats,
             comments      : req.body.comments
+            departure_time: req.body.departure_time
+            
           };
           eventModel.findOne({_id: req.params.event}, function(err, event){
             eventModel.update({"_id":  req.params.event}, {$push: {"cars": car}},
