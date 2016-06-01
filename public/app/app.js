@@ -53,12 +53,20 @@ app.config(function($stateProvider, $urlRouterProvider) {
     url: '^/events/new',
     templateUrl: "app/templates/events.new.html",
     controller: eventsNewCtrl
+  },
+  carNew = {
+    name: 'carnew',
+    url: '^/event/:eventId/car/new',
+    templateUrl: 'app/templates/car.new.html',
+    controller: 'carNewCtrl',
+    controllerAs: 'vm'
   };
-
+  
   $stateProvider
   .state(home)
   .state(getaride)
   .state(events)
   .state(eventShow)
-  .state(eventsNew);
+  .state(eventsNew)
+  .state(carNew);
 });
