@@ -41,9 +41,4 @@ eventSchema.pre('save', function(next){
     next();
 });
 
-eventSchema.methods.shortenedUrl = function() {
-    //TODO perform shortenning
-    return this._id;
-};
-
 module.exports = mongoose.model('event', eventSchema);

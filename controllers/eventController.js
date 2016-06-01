@@ -555,5 +555,6 @@ function findUser(user_id, cb) {
 
 function generateShortenedUrl(req, event) {
     var host = "http://somehost/shortenedEndpoint/";//TODO get the host from current req
-    return host + event.shortenedUrl();
+    var shortenedUrl = host + event.id;//TODO call shortening service
+    return shortenedUrl;
 }
