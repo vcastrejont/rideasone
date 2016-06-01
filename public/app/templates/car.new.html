@@ -1,0 +1,90 @@
+<style>
+  .root {
+    position: relative;
+    min-height: 50em;
+    padding: 20px;
+    margin-top: -20px;
+  }
+  .map {
+    position: absolute; 
+    top: 0; right: 0; left: 0; bottom: 0;
+  }
+  .time-container {
+    margin-top: 15px;
+  }
+  .alert-dismissible .close {
+    right: 0;
+  }
+</style>
+
+<div class="root" id="cars">
+  <div id="mapContainer" class="map" style=""></div>
+  <div class="container">
+    
+    <form ng-submit="vm.submit()" class="panel panel-default col-md-4">
+      <uib-alert type="danger" ng-show="vm.error" close="vm.dismissError()">
+        {{ vm.error.message }}
+      </uib-alert>
+      <!--<pre>
+        departure = {{ vm.departureTrip }}
+        return = {{ vm.returnTrip }}
+      </pre>-->
+      <h1>Add my car</h1>
+      <div class="form-group">
+        <label for="departure" class="control-label">Select a departure location*</label>
+        <input name="departure" type="text" id="departure" class="form-control"
+            minlength="3" placeholder="Place to departure from" required />
+      </div>
+      <div class="form-group">
+        <label class="control-label">Available seats*</label>
+        <div>
+          <uib-rating ng-model="vm.departure.seats" max="10"></uib-rating>
+          <span class="badge">{{ vm.departure.seats || '0' }}</span>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="control-label">Departure hour*</label>
+        <div class="time-container">
+          <uib-timepicker ng-model="vm.departureTime" ng-change="vm.departureTimeChanged()" hour-step="1" minute-step="5" show-meridian="true"></uib-timepicker>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="control-label">Comment</label>
+        <textarea class="form-control" ng-model="vm.departure.comment" rows="3" placeholder="Add a comment about your trip"></textarea>
+      </div>
+      <div class="form-group">
+        <div>
+          <label class="control-label">Round trip</label>
+        </div>
+        <div class="btn-group">
+          <label class="btn btn-default" ng-model="vm.isRoundTrip" uib-btn-radio="false">No</label>
+          <label class="btn btn-default" ng-model="vm.isRoundTrip" uib-btn-radio="true">Yes</label>
+        </div>
+      </div>
+      <div ng-show="vm.isRoundTrip">
+        <div class="form-group">
+          <label for="return" class="control-label">Select a return location*</label>
+          <input name="return" type="text" id="return" class="form-control" 
+              minlength="3" placeholder="Place to return" />
+        </div>
+        <div class="form-group">
+          <label class="control-label">Available seats*</label>
+          <div>
+            <uib-rating ng-model="vm.return.seats" max="10"></uib-rating>
+            <span class="badge">{{ vm.return.seats || '0' }}</span>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="control-label">Return hour*</label>
+          <div class="time-container">
+            <uib-timepicker ng-model="vm.return.time" ng-change="vm.returnTimeChanged()" hour-step="1" minute-step="5" show-meridian="true"></uib-timepicker>
+          </div>
+        </div>
+      </div>
+      <div class="form-group text-right">
+        <a ui-sref="events" class="cancel">Cancel</a>
+        <button class="btn btn-primary" type="submit" ng-click="submitted=true">Save car</button>
+      </div>
+    </form> 
+  </div>
+</div>
