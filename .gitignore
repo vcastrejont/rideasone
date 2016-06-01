@@ -39,3 +39,4 @@ carpoolingApp/www/lib/
 .vscode/
 
 .vagrant
+.DS_Store
