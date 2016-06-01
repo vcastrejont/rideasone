@@ -50,7 +50,9 @@ function renderDirectionsBetweenMarkers(map, eventDestinationMarker, originMarke
     });
 }
 
-function addCarMarkerToMap(mapData, carPosition, content) {
+function addCarMarkerToMap(mapData, car) {
+    var carPosition = new google.maps.LatLng(car.location[1], car.location[0]);
+    var content = car.driver_name;
     var carMarker = new google.maps.Marker({
         position: carPosition,
         map: mapData.map,
@@ -61,7 +63,6 @@ function addCarMarkerToMap(mapData, carPosition, content) {
         content: content
     });
 
-    //TODO cleanup names
     (function (infoWindow, mapData, carMarker) {
 
         var map = mapData.map;
@@ -112,7 +113,13 @@ function eventsShowCtrl ($scope, apiservice,  $state, $window) {
       return temp  ? true : false;
     },
       showDirectionsForCar: function(index) {
-          console.log("selected car: " + JSON.stringify(this.event.cars[index]));
+          var mapData = this.mapData;
+          var map = mapData.map;
+          var eventDestinationMarker = mapData.eventDestinationMarker;
+          var carMarker = mapData.carMarkers[index];
+          var directionsDisplay = mapData.directionsDisplay;
+          var directionsService = mapData.directionsService;
+          renderDirectionsBetweenMarkers(map, eventDestinationMarker, carMarker, directionsService, directionsDisplay);
       },
     getNumber: function(num) {
       return new Array(num);
@@ -135,8 +142,6 @@ function eventsShowCtrl ($scope, apiservice,  $state, $window) {
     },
       showMap: function () {
           var event = this.event;
-          //TODO Fer remove
-          console.log("#######" + JSON.stringify(event));
           var eventDestination = new google.maps.LatLng(event.location[1], event.location[0]);
           var options = {
               center: eventDestination,
@@ -154,13 +159,12 @@ function eventsShowCtrl ($scope, apiservice,  $state, $window) {
 
 
           var eventDestinationMarker = addDestinationMarkerToMap(map, eventDestination, event.place);
-
           var cars = event.cars;
 
           //TODO Fer remove
           stubData(cars);
 
-          this.mapData = {
+          var mapData = {
               map: map,
               directionsService: directionsService,
               directionsDisplay: directionsDisplay,
@@ -171,12 +175,12 @@ function eventsShowCtrl ($scope, apiservice,  $state, $window) {
           var markers = [];
           for (var i = 0; i < cars.length; i++) {
               car = cars[i];
-              carMarker = addCarMarkerToMap(this.mapData, new google.maps.LatLng(car.location[1], car.location[0]) , car.driver_name);
+              carMarker = addCarMarkerToMap(mapData, car);
               markers.push(carMarker);
           }
+          mapData.carMarkers = markers;
 
-
-          this.mapData.carMarkers = markers;
+          this.mapData = mapData;
       },
     clearOptions:function(){
       this.seats = "";

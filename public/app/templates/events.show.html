@@ -52,7 +52,7 @@
   
       <legend>Carpooling</legend>
       <div class="tabs">
-         <div class="tab" ng-repeat="car in view.event.cars">
+         <div class="tab" ng-repeat="car in view.event.cars" ng-click="view.showDirectionsForCar($index)">
              <input type="radio" id="tab-car{{$index+1}}" name="carpooling-tabs"  ng-checked="$index == 0">
              <label for="tab-car{{$index+1}}">Car #{{$index+1}} 
                <span class="label label-primary" ng-if="car.driver_id==view.user.id">Driving</span>
