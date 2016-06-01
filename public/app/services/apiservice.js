@@ -28,10 +28,10 @@ function apiservice($http) {
 		return $http.put('/api/events/signup/' + eventId);
 	};
 
-	service.addCarToEvent = function(carData) {
+	service.addCarToEvent = function(eventId, carData) {
 		// This route should be:
 		// POST /api/events/:eventId/car
-		return $http.post('/api/events/addcar', carData);
+		return $http.post('/api/events/'+eventId+'/car', carData);
 	};
 
 	service.deleteCarFromEvent = function(carData) {

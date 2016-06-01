@@ -89,12 +89,12 @@ function eventsShowCtrl ($scope, apiservice,  $state, $window) {
     addCar:function(){
       var self = this;
       var eventData = {
-        id         : $scope.view.event._id,
+        
         seats      : $scope.view.seats,
         comments   : $scope.view.comments,
         driver_id  : $scope.view.user.id
       };
-      apiservice.addCarToEvent(eventData).then(function(response) {
+      apiservice.addCarToEvent($scope.view.event._id, eventData).then(function(response) {
             self.alerts.push({msg: response.data.message});
             setTimeout(function () {
                $scope.$apply(function()  {  self.closeAlert(); });
