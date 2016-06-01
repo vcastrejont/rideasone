@@ -53,6 +53,12 @@ app.config(function($stateProvider, $urlRouterProvider) {
     url: '^/events/new',
     templateUrl: "app/templates/events.new.html",
     controller: eventsNewCtrl
+  },
+  setLocation = {
+    name: 'setlocation',
+    url: '^/setlocation',
+    templateUrl: 'app/templates/setlocation.html',
+    controller: setLocationCtrl
   };
 
   $stateProvider
@@ -60,5 +66,6 @@ app.config(function($stateProvider, $urlRouterProvider) {
   .state(getaride)
   .state(events)
   .state(eventShow)
-  .state(eventsNew);
+  .state(eventsNew)
+  .state(setLocation);
 });

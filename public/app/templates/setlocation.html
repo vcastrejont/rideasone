@@ -1,0 +1,40 @@
+<div class="container box bg" id="events" >
+  <form name="loginform" novalidate  class="row form-horizontal"  ng-submit="submit()" >
+    
+  <main class="row">
+  
+      <div class="row nomargin" style="text-align:center;">
+      	<div class="col-lg-4 col-lg-offset-4">
+      		<div class="panel panel-default">
+      			<div class="panel-heading center">
+	      			<h4>Please set your default location</h4>
+	      			<p>In most cases this is your home</p>
+      			</div>
+      			<div class="panel-body">
+	      			<form action="">
+	      				<div class="input-group">
+	      					<input type="text" class="form-control" placeholder="Type an address or place" 
+	      					ng-model="searchPlace"  autofocus id="input">
+	      					<div class="input-group-btn" type="button">
+	      						<button type="button" class="btn btn-default" ng-click="getLocation()">
+		      						<span class="glyphicon glyphicon-record"></span>
+	      						</button>
+	      					</div>
+	      				</div>
+	      				<br>
+	      				<a class="btn btn-success" ng-click="saveLocation()">Save Location</a>
+	      			</form>
+      			</div>
+      		</div>
+      	</div>
+      </div>
+      
+      </div>
+      <div class="col-md-7">
+        <div id="map"></div>
+      </div>
+    </div>
+   
+  </main>
+  </form>  
+</div>
