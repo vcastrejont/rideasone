@@ -1,8 +1,12 @@
 angular.module('carPoolingApp').controller('homeCtrl', homeCtrl);
 
-homeCtrl.$inject = ['$scope', '$window', 'apiservice'];
+homeCtrl.$inject = ['$scope', '$window', '$state', 'apiservice'];
 
-function homeCtrl ($scope, $window, apiservice) {
+function homeCtrl ($scope, $window, $state, apiservice) {
+    if (!window.user.location_lat) {
+        $state.go('setlocation');
+    };
+
   apiservice.getEvents()
     .success(function(data) {
         $scope.nextEvents=data;

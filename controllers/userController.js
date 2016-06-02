@@ -42,5 +42,20 @@ module.exports = {
           return res.status(200).json(user);
         });
       });
+    },
+    setuserlocation: function(req, res) {
+      userModel.findOne({ 'user_id': req.body.user_id }, function(err, user) {
+        if(err) {
+          throw err;
+        };
+        user.location_lat = req.body.lat;
+        user.location_lng = req.body.lng;
+        user.save(function(err) {
+          if(err) {
+            throw err;
+          };
+          return res.status(200);
+        })
+      })
     }
 };

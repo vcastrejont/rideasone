@@ -201,6 +201,25 @@ router.post('/settings', settingsController.update);
 */
   router.get('/users', userController.list);
 /**
+* @api {post} users/setuserlocation Set user's latitude and longitude coordinates
+* @apiName SetUserLocation
+* @apiGroup Users
+* @apiParam {String}     provider_id            Provider unique id 
+* @apiParam {Number}     latitude               User latitude
+* @apiParam {Number}     longitude              User longitude
+
+*
+* @apiSuccess {ObjectId} id                     Mongo generated ID.
+* @apiSuccess {String}   name                   User full name
+* @apiSuccess {String}   provider               Provider name (google, facebook, etc)
+* @apiSuccess {String}   provider_id            Provider unique id
+* @apiSuccess {String}   photo                  User url photo 
+* @apiSuccess {String}   email                  User email adddres 
+* @apiSuccess {Date}     created_at             Document creation  date
+*/
+router.post('/users/setuserlocation', userController.setuserlocation);
+
+/**
 * @api {post} users/create Create user
 * @apiName CreateUser
 * @apiGroup Users

@@ -1,8 +1,8 @@
 angular.module('carPoolingApp').controller('setLocationCtrl', setLocationCtrl);
 
-eventsCtrl.$inject = ['$scope', 'apiservice' ];
+eventsCtrl.$inject = ['$scope', 'userservice' ];
 
-function setLocationCtrl($scope, apiservice) {
+function setLocationCtrl($scope, userservice) {
   $scope.location = {};
   $scope.event = {
     date: new Date()
@@ -58,12 +58,28 @@ function setLocationCtrl($scope, apiservice) {
     $scope.$apply()
 
   }
-  
-  $scope.saveLocation = function() {
 
+  $scope.setUserLocation = function(geolocate) {
+    var latitude, longitude;
+
+    if(geolocate) {
+      navigator.geolocation.getCurrentPosition(function(pos) {
+        latitude = pos.latitude;
+        longitude = pos.longitude;
+      });
+    };
+
+    var user = {
+      provider_id: window.user.provider_id,
+      lat: $scope.location.lat,
+      lng: $scope.location.lng
+    }
+
+    userservice.setUserLocation(user)
+    .success()
+    .error();
   }
 
-  $scope.getLocation = function() {
-
+  $scope.getGeolocation = function() {
   }
 }
