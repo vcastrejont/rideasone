@@ -5,6 +5,7 @@ var eventsController = require('../controllers/eventController.js');
 var locationController = require('../controllers/locationController.js');
 var userController = require('../controllers/userController.js');
 var chatController = require('../controllers/chatController.js');
+var fcmController = require('../controllers/fcmController.js');
 
 router.get('/', function(req, res) {
  res.send('API list');
@@ -159,9 +160,6 @@ router.get('/', function(req, res) {
   * @apiSuccess {Date}     updated_at                       Last updated
   */
   router.get('/events/user/:user', eventsController.user);    // List  by user
-
-
-router.post('/events/carbyuser', eventsController.carbyuser); // Carpooling by user[no longer used]
 router.put('/events/signup/:id', eventsController.signup);    // Event sign up [no longer used]
 router.put('/events/:id', eventsController.update);           //Update an event
 
@@ -280,6 +278,10 @@ router.post('/chats/add', chatController.addMessage);
 * @apiSuccess {Date}     updated_at             Full place address
 */
 router.get('/chats/:rideid', chatController.getMessages);
+
+
+router.get('/fcm/registerUserToken', fcmController.registerUserToken);
+router.get('/fcm/send', fcmController.send);
 
 
 module.exports = router;
