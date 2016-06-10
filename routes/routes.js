@@ -6,12 +6,20 @@ function isLoggedIn(req, res, next) {
 		return next();
 	res.redirect('/login');
 }
-
-router.get('/', isLoggedIn, function(req, res, next) {
-	// res.append("X-User", "Blood, sweat, and tears");
-	// res.append('X-My-Custom-Header', 'Custom');
-	res.render('index.ejs', {user : req.user});
+  
+router.get('/', function(req, res, next) {
+	if (req.isAuthenticated()){
+		res.render('app.ejs', {user : req.user});
+	}else{
+		res.render('landing.ejs');
+	}
+	
 });
+
+router.get('/app', isLoggedIn, function(req, res, next) {
+	res.render('app.ejs', {user : req.user});
+});
+
 router.get('/login',  function(req, res) {
 		res.render('login.ejs');
 });
