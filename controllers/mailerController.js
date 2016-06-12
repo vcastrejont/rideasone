@@ -1,5 +1,3 @@
-
-
 /**
  * mailerController.js
  *
@@ -54,6 +52,31 @@ module.exports = {
            console.log(err);
           } else {
            console.log("Mail send to: " +mailOpts.to);
+          }
+      });
+    },
+    
+    contact:  function(req, res) {
+      console.log(req.body);
+      var html_text = 'Hello, <br> <p>We have recived a contact form: </p>'+'<p><strong>Name:</strong>'+req.body.name+'<br>'+'<strong>Email:</strong>'+req.body.email+'<br>'+'<strong>Company:</strong>'+req.body.company+'<br>'+  '<strong>City:</strong>'+req.body.city+'</p>';
+      html_text +='<br><p>The carpooling app</p>';
+      
+      var mailOpts = {
+          from: config.mailer.from,
+          to: config.mailer.default,
+          subject: 'New contact form',
+          text : 'New contact form',
+          html : html_text
+      };
+      transporter.sendMail(mailOpts, function (err, response) {
+          if (err) {
+            return res.status(500).send({ error: err });
+             //return res.status(500).json(message: err);
+           console.log(err);
+          } else {
+            console.log("Mail send to: " +mailOpts.to);
+            return res.status(200).send({ message:'Email sent' });
+            //return res.status(200).json(message: 'Email sent');
           }
       });
     }
