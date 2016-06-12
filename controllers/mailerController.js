@@ -7,9 +7,9 @@
  var config = require('../config/config.js');
  var transporter = nodemailer.createTransport( {
      service:  config.mailer.service,
-     auth: { 
+     auth: {
       user: config.mailer.user,
-      pass: config.mailer.pass 
+      pass: config.mailer.pass
      }
  });
 module.exports = {
@@ -36,10 +36,26 @@ module.exports = {
       });
     },
     
+    messageDriver: function(data, callback) {
+        var html_text = 'Hello, <br> <p>' + data.user_email + ' sent you a message:</p>' +
+            '<p>' + data.content + '</p>' +
+            '<br><p>The carpooling app</p>';
+
+        var mailOpts = {
+            from: config.mailer.from,
+            to: data.driver_email,
+            subject: data.user_email + ' sent you a message',
+            text : 'Hello, ' + data.user_email + ' sent you a message: ' + data.content + ". The carpooling app.",
+            html : html_text
+        };
+        transporter.sendMail(mailOpts, callback);
+
+    },
+
     leaveCar: function(user_name, event_name, driver_email) {
       var html_text = 'Hello, <br> <p>This message is to inform you that <b>'+ user_name+'</b> has left your car for the event: <b>'+ event_name +'</b></p>';
       html_text +='<p>The carpooling app</p>';
-      
+
       var mailOpts = {
           from: config.mailer.from,
           to: driver_email,
@@ -79,5 +95,6 @@ module.exports = {
             //return res.status(200).json(message: 'Email sent');
           }
       });
-    }
+
+    }  
 };

@@ -60,5 +60,9 @@ function apiservice($http) {
 		return $http.post('/api/settings', settings);
 	};
 
+	service.sendMessage = function(options) {
+		return $http.post('/api/events/' + options.eventId + '/car/' + options.carId + '/message', { message: options.message });
+	};
+
 	return service;
 }
