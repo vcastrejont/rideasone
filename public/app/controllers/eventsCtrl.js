@@ -1,4 +1,4 @@
-angular.module('carPoolingApp').controller('eventsCtrl', homeCtrl);
+angular.module('carPoolingApp').controller('eventsCtrl', eventsCtrl);
 
 eventsCtrl.$inject = ['$scope', '$window', 'apiservice'];
 

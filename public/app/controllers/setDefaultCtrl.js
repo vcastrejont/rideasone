@@ -1,6 +1,6 @@
-angular.module('carPoolingApp').controller('homeCtrl', homeCtrl);
+angular.module('carPoolingApp').controller('setDefaultCtrl', setDefaultCtrl);
 
-homeCtrl.$inject = ['$scope', '$window', 'apiservice'];
+setDefaultCtrl.$inject = ['$scope', '$window', 'apiservice'];
 
 function homeCtrl ($scope, $window, apiservice) {
   var options = {
