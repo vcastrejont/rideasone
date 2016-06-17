@@ -1,148 +1,23 @@
-<div class="container box bg" id="events" >
-  <form name="loginform" novalidate  class="row form-horizontal"  ng-submit="submit()" >
-    
-  <header class="row">
-    <div class="col-md-3">
-      <h1>New event</h1>
+<div class="panel left" id="newevent" >
+  <form  novalidate  class=" form-horizontal form-ride"  ng-submit="submit()" >
+    <h3  class="text-center">New event</h3>
+    <div class="form-group ">
+      <label class="control-label">Event name</label>
+      <input type="text" class="form-control" ng-model="event.title" placeholder="Add a name" >
     </div>
-    
-  </header>
-  <main class="row">
-  
-      <div class="row nomargin">
-        <div class="col-xs-12">
-          <h4>Event details</h4>
-        </div>
-      </div>
-      
-      <div class="row nomargin">
-        <div class="col-md-5">
-          <div class="form-group">
-              <label for="event_title" class="col-xs-3 control-label">Title</label>
-              <div class="col-xs-9">
-                  <input name="event_title" type="text" id="event_title" class="form-control" 
-                  ng-model="event.title" ng-minlength="3" placeholder="name your event" required />
-              </div>
-          </div>
-          <div class="form-group">
-              <label for="event_description" class="col-xs-3 control-label">Description</label>
-              <div class="col-xs-9">
-                  <textarea name="event_description" id="event_description" type="text" class="form-control" 
-                  ng-model="event.description"></textarea>
-              </div>
-          </div>
-        </div>
-        <div class="col-md-3">
-          <div class="form-group">
-              <label for="event_date" class="col-xs-3 control-label">Date</label>
-              <div class="col-xs-9">
-                <p class="input-group">
-                  <input type="text" class="form-control" id="event_date" uib-datepicker-popup="dd-MMMM-yyyy" ng-model="event.date" is-open="displayDate"  datepicker-options="dateOptions" ng-required="true"   />
-                  <span class="input-group-btn">
-                    <button type="button" class="btn btn-default" ng-click="displayDate=!displayDate"><i class="glyphicon glyphicon-calendar"></i></button>
-                  </span>
-                </p>
-              </div>
-          </div>
-      
-          <div class="form-group">
-              <label for="event_time" class="col-xs-3 control-label">Hour</label>
-              <div class="col-xs-9">
-                  <uib-timepicker ng-model="event.date" hour-step="1" minute-step="5" show-meridian="true"></uib-timepicker>
-              </div>
-          </div>
-        </div>
-        <div class="col-md-4">
-          <div class="form-group">
-              <label for="event_title" class="col-xs-3 control-label">Category</label>
-              <div class="col-xs-9">
-                <select class="form-control" ng-model="event.category">
-                  <option value="Hermosillo">Hermosillo</option>
-                  <option value="Chihuahua">Chihuahua</option>
-                  <option value="Mexico city">Mexico city</option>
-                </select>
-              </div>
-          </div>
-          <div class="form-group">
-              <label for="event_description" class="col-xs-3 control-label">Tags</label>
-              <div class="col-xs-9">
-                  <input type="text" class="form-control" id="event_date" u ng-model="event.tags"   />
-              </div>
-          </div>
-        </div>
-      </div>
-    <div class="row nomargin">
-      <div class="col-md-5">
-        <h4>Event location</h4>
-        <div class="form-group">
-            <label for="resName" class="col-xs-3 control-label">Search</label>
-          <div class="col-xs-9">
-            <input name="place" type="text" class="form-control" ng-model="searchPlace"  autofocus id="input" />
-          </div>
-        </div>  
-      
-        <div class="form-group">
-            <label for="resName" class="col-xs-3 control-label">Address</label>
-            <div class="col-xs-9">
-                <input name="resid" type="text" class="form-control" 
-                ng-model="location.address" required />
-            </div>
-        </div>
-        <div class="row">
-          <div class="col-sm-6">
-            <div class="form-group">
-                <label for="resLat" class="col-xs-6 control-label">City</label>
-                <div class="col-xs-6">
-                    <input name="resLat" type="text" class="form-control" 
-                    ng-model="location.city"  />
-                </div>
-            </div>
-          </div>
-          <div class="col-sm-6">
-            <div class="form-group">
-                <label for="resLat" class="col-xs-6 control-label">Zip</label>
-                <div class="col-xs-6">
-                    <input name="resLat" type="text" class="form-control" 
-                    ng-model="location.zip"  />
-                </div>
-            </div>
-          </div>
-        
-        </div>
-        <div class="row">
-          <div class="col-sm-6">
-            <div class="form-group">
-                <label for="resLng" class="col-xs-6 control-label">State</label>
-                <div class="col-xs-6">
-                    <input name="resLng" type="text" class="form-control" 
-                    ng-model="location.state"  />
-                </div>
-            </div>
-          </div>
-          <div class="col-sm-6">
-            <div class="form-group">
-                <label for="resLng" class="col-xs-6 control-label">Country</label>
-                <div class="col-xs-6">
-                    <input name="resLng" type="text" class="form-control" 
-                    ng-model="location.country"  />
-                </div>
-            </div>
-          </div>
-        </div>
-        
-      
-      </div>
-      <div class="col-md-7">
-        <div id="map"></div>
-      </div>
+    <div class="form-group  ">
+      <label class="control-label">Location</label>
+      <input type="text" class="form-control" ng-model="event.place" placeholder="Type an address or venue" >
     </div>
+    <div class="form-group ">
+      <label class="control-label">Description</label>
+      <input type="text" class="form-control" ng-model="event.description" placeholder="Tell about your event" >
+    </div>
+      
    
-  </main>
   <footer class="text-center">
-  <p>
     <a ui-sref="events" class="cancel">Cancel</a>
-    <button class="btn btn-primary" type="submit" ng-click="submitted=true" >Save event</button>
-  </p><br>
+    <button class="btn  btn-ride" type="submit" ng-click="submitted=true" >Save event</button>
   </footer>
   </form>  
 </div>

@@ -1,0 +1,38 @@
+// main: app.less 
+//---- Panels -------
+.panel{
+  position: absolute;
+  top:0;
+  background-color: @colorwhite; 
+  margin-top: 120px;
+  
+  padding: 10px;
+  z-index: 2;
+  &.center{
+    width: 80%;
+    min-width: 380px;
+    padding: 40px;
+    min-height: 400px;
+    left: 0;
+    right: 0;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  &.right{
+    right: 20px;
+    width: 35%;
+    min-width: 380px;
+    padding: 40px;
+    min-height: 400px;
+  }
+  &.left{
+    left: 20px;
+    width: 35%;
+    min-width: 380px;
+    padding: 40px;
+    min-height: 400px;
+  }
+  &.small{
+    width: 60%;
+  }
+}
