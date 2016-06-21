@@ -217,6 +217,55 @@ body {
 
 }
 
+#ridedetails{
+  h2{
+    margin: 0;
+  }
+  .email{
+    border-bottom: 1px solid @colorgray;
+    margin-bottom: 5px;
+  }
+  table{
+    font: 13px "Roboto", Helvetica, Arial, sans-serif;
+    width: 100%;
+    margin-bottom: 5px;
+    text-align: left;
+    td{
+      padding: 3px;
+    }
+    tr > td:last-child {
+      text-align: right;
+    }    
+  }
+  .btn{
+    color:@colorblue;
+    border-radius: 20px;
+    border: 1px solid @colorblue;
+    margin: 0 0 10px 0;
+    padding: 5px 15px;
+    &.blue{
+      background-color: @colorblue;
+      border-radius: 20px;
+      color: #fff;
+    }
+  }
+}
+#addride{
+  .form-group{
+    margin: 0;
+    .form-control{
+      margin: 0 0 2px 0;
+      padding: 0;
+      height: 30px;
+    }
+    label{
+      margin: 10px 0 0 0;
+    }
+  }
+  
+  
+}
+
 .search-group{
   input{
     background-color: #F5F5F5;
@@ -234,14 +283,104 @@ body {
   }
 }
 
-.btn.btn-ride{
-  background-color: @colorblue;
-  color: #fff ;
-  border-radius: 0;
-  &:hover{
-    background-color: darken(@colorblue, 20%)  !important;
+.btn{
+  &.btn-ride{
+    background-color: @colorblue;
     color: #fff ;
+    border-radius: 0;
+    &:hover{
+      background-color: darken(@colorblue, 20%)  !important;
+      color: #fff ;
+    }
+    &.sm{
+      padding: 8px 14px;
+      border-radius: 2px;
+    }
+    &.red{
+      background-color: @colorred;
+      &:hover{
+        background-color: darken(@colorred, 20%)  !important;
+        color: #fff ;
+      }
+    }
+    &.orange{
+      background-color: @colororange;
+      &:hover{
+        background-color: darken(@colororange, 20%)  !important;
+        color: #fff ;
+      }
+    }
   }
+
+  &.slim{
+    padding: 0;
+    margin: 0 10px;
+    i{
+      margin-right: 5px;
+    }
+  }
+}
+
+#eventpanel{
+    text-align: center;
+  .time{
+  
+  }
+}
+
+
+.tablerides{
+  font-size: 12px;
+  thead{
+    tr{
+      th{
+        padding: 2px;
+      }
+    }
+  }
+  tbody{
+    tr{
+      &:hover{
+        background-color: @colorlightblue;
+        cursor: pointer;
+      }
+      td{
+        padding: 2px;
+      }
+    }
+  }
+}
+
+//----General----
+a{
+  color:@colorblue;
+}
+
+a[ng-click]{
+    cursor: pointer;
+}
+
+.tc{
+  text-align: center;
+}
+
+.profile{
+  border-radius:50%;
+  height: 30px;
+  margin-right: 10px;
+  &.xs{
+    height: 20px;
+    margin-right: 5px;
+  }
+  &.xl{
+    height: 60px;
+  }
+}
+
+input:focus {
+    outline: none !important;
+    box-shadow:none !important;
+    outline-style:none!important; 
 }
 
 //----Mixins------
@@ -253,17 +392,4 @@ body {
 }
 .shadow{
   box-shadow:1px 1px 1px 0px rgba(50, 50, 50, 0.15);
-}
-
-
-
-//----General----
-a{
-  color:@colorblue;
-}
-
-input:focus {
-    outline: none !important;
-    box-shadow:none !important;
-    outline-style:none!important; 
 }

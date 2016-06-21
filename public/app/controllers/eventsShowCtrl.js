@@ -9,6 +9,7 @@ function eventsShowCtrl ($scope, apiservice,  $state, $window) {
   $scope.message = {
       text: ""
   };
+  
 
   $scope.messageDriver = function(car) {
       $scope.messageCar = car;
@@ -38,6 +39,7 @@ function eventsShowCtrl ($scope, apiservice,  $state, $window) {
     signed:false,
     seats: "",
     driver:"",
+    showride:false,
     signmeup: true,
     option:1,
     user:{
@@ -66,6 +68,11 @@ function eventsShowCtrl ($scope, apiservice,  $state, $window) {
       var self = this;
       apiservice.getEvent($scope.id).then(function(response) {
         self.event = response.data;
+        console.log(response.data.datetime)
+      
+        self.event.date = moment(response.data.datetime).format('MMM. d, YYYY');
+        self.event.dateString = moment(response.data.datetime).calendar() ;
+      
         self.event.avail = 0;
         self.event.signed = _.where(response.data.attendees, {user_id: self.user.id});
         _.each(response.data.cars, function(carpool, index) {
@@ -97,8 +104,8 @@ function eventsShowCtrl ($scope, apiservice,  $state, $window) {
       var myLatLng = {lat: this.event.location[1],lng: this.event.location[0]};
       var options = {
           center: new google.maps.LatLng(this.event.location[1], this.event.location[0]),
-          zoom: 17,
-          disableDefaultUI: false,
+          zoom: 13,
+          disableDefaultUI: true,
           draggable: true
       };
       var mapCanvas = document.getElementById("map");

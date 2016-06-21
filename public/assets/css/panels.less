@@ -7,9 +7,12 @@
   margin-top: 120px;
   padding: 10px;
   z-index: 2;
+  padding: 20px 40px;
+  width: 35%;
+  min-height: 200px;
   &.center{
-    width: 80%;
-    min-width: 380px;
+    width: 60%;
+    min-width: 400px;
     padding: 40px;
     min-height: 400px;
     left: 0;
@@ -19,30 +22,98 @@
   }
   &.right{
     right: 20px;
-    width: 35%;
-    min-width: 380px;
-    padding: 20px 40px;
-    min-height: 400px;
   }
   &.left{
     left: 20px;
-    width: 35%;
-    min-width: 380px;
-    padding: 20px 40px;
-    min-height: 400px;
   }
   &.small{
-    width: 60%;
+  
+  }
+  &.xs{
+    width: 15%;
+    min-width: 300px;
+    padding: 20px;
+  }
+  
+  &.top{
+    top:-30px;
+  }
+  &.bottom{
+    top:220px;
   }
   .close{
     background-color: @colorred;
-    width: 50px;
-    height: 50px;
+    width: 40px;
+    height: 40px;
     border-radius: 50%;
     position: absolute;
     top:10px;
     right: -20px;
     text-align: center;
-    line-height: 50px;
+    line-height: 40px;
+    font-size: 20px;
+    &.left{
+      left:-20px
+    }
   }
+  .back{
+    background-color: @colorblue;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    position: absolute;
+    top:120px;
+    right: -20px;
+    text-align: center;
+    line-height: 40px;
+    font-size: 20px;
+    color: #fff;
+    i{
+      margin-right: 5px;
+    }
+  }
+  .edit{
+    background-color: #fff;
+    width: 20px;
+    height: 40px;
+    border-radius: 0 10px 10px 0 ;
+    position: absolute;
+    top:20px;
+    right: -20px;
+    text-align: center;
+    line-height: 40px;
+    font-size: 12px;
+    color: @colororange;
+    opacity: 0.5;
+    transition: all 0.2s;
+    &:hover{
+      opacity: 1;
+    }
+    i{
+      margin-right: 5px;
+    }
+  }
+  h2{
+    font-size: 22px;
+    margin: 0;
+    &.bg{
+      background-color:@colorbluedark;
+      color:#fff;
+      margin: -20px -20px 10px -20px;
+      padding: 10px 20px;
+    }
+  }
+  ul.links{
+    padding: 0;
+    list-style: none;
+    li{
+      display: inline;
+      margin: 0 10px;
+      a{
+        color:#333;
+      }
+    }
+  }
+
+
 }
