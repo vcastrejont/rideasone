@@ -328,27 +328,86 @@ body {
   }
 }
 
-
-.tablerides{
-  font-size: 12px;
-  thead{
-    tr{
-      th{
-        padding: 2px;
+#availrides{
+  .table{
+    font-size: 12px;
+    thead{
+      tr{
+        th{
+          padding: 2px;
+        }
+      }
+    }
+    tbody{
+      tr{
+        &:hover{
+          background-color: @colorlightblue;
+          cursor: pointer;
+        
+        }
+        &:hover .profile{
+            border: 1px solid @colorblue;
+          }
+        td{
+          padding: 5px 5px 5px 10px;
+          .profile{
+            border: 1px solid #fff;
+            
+          }
+        }
       }
     }
   }
-  tbody{
-    tr{
+  header{
+    margin-top: 10px;
+    overflow: hidden;
+    font-weight: bold;
+    .dr{
+      float: left;
+      width: 50%;
+      text-align: center;
+    }
+    .st{
+      float: left;
+      width: 20%;
+      text-align: center;
+    }
+    .dp{
+      float: left;
+      width: 20%;
+    }
+    
+  }
+  .list{
+    font-size: 12px;
+    > div{
+      border-bottom: 1px solid #ccc;
+      padding: 5px 15px 5px 20px;
       &:hover{
         background-color: @colorlightblue;
         cursor: pointer;
       }
-      td{
-        padding: 2px;
+      &:hover .profile{
+          border: 1px solid @colorblue;
+        }
+      .dr{
+        float: left;
+        width: 50%;
+      }
+      .st{
+        float: left;
+        width: 20%;
+        text-align: center;
+      }
+      .dp{
+        float: left;
+        width: 20%;
       }
     }
+  
+  
   }
+
 }
 
 //----General----

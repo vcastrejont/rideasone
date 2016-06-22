@@ -16,32 +16,24 @@
   
 </div>
 
-<div class="panel left xs bottom">
+<div class="panel left xs bottom" id="availrides">
   <h2>Available rides</h2>
-  <table class="table tablerides">
-    <thead>
-      <tr>
-        <th>Driver</th>
-        <th class="tc">Seats</th>
-        <th class="tc">Departure</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr ng-click="view.showride = !view.showride">
-        <td><img src="https://lh6.googleusercontent.com/-rWrQmSqGOEc/AAAAAAAAAAI/AAAAAAAAABw/ykztfZNaajY/photo.jpg?sz=50" class="profile xs" /> Carloz Gomez</td>
-        <td class="tc">2</td>
-        <td class="tc">1:30</td>
-      </tr>
-      <tr ng-repeat="ride in view.event.cars" ng-click="view.showride = !view.showride" >
-        <td><img src="https://lh6.googleusercontent.com/-rWrQmSqGOEc/AAAAAAAAAAI/AAAAAAAAABw/ykztfZNaajY/photo.jpg?sz=50" class="profile xs">{{ride.driver_name}}</td>
-        <td class="tc">{{ride.seats}}</td>
-        <td class="tc">6:30</td>
-      </tr>
-    </tbody>
-  </table>
-  <div class="tc">
-    <a  class="btn btn-ride sm" ng-click="addcar=true" ><i class="fa fa-plus" aria-hidden="true"></i> Add my car</a>
+  <header>
+    <div class="dr">Driver</div>
+    <div class="st">Seats</div>
+    <div class="dp">Departure</div>
+  </header>
+  <div class="list">
+    <div class="row" ng-repeat="ride in view.event.cars" ng-click="view.showride = !view.showride" >
+      <div class="dr"><img src="https://lh6.googleusercontent.com/-rWrQmSqGOEc/AAAAAAAAAAI/AAAAAAAAABw/ykztfZNaajY/photo.jpg?sz=50" class="profile xs">{{ride.driver_name}}</div>
+      <div class="st">{{ride.seats}}</div>
+      <div class="dr">2:00pm</div>
+    </div>
   </div>
+
+  <footer class="tc">
+    <a  class="btn btn-ride sm" ng-click="addcar=true" ><i class="fa fa-plus" aria-hidden="true"></i> Add my car</a>
+  </footer>
 </div>
 
 
@@ -135,3 +127,19 @@
     
   </form>
 </div>
+
+
+
+<script>
+  $(document).ready(function(){
+    $('#availrides .list').slimScroll({
+      position: 'right',
+      height: '150px',
+      railVisible: false,
+      alwaysVisible: true,
+      color: '#59BFDF',
+      distance: '0',
+      size: '5px'
+    });
+  });
+</script>
