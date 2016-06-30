@@ -5,6 +5,7 @@ var ObjectId = Schema.ObjectId;
 var RideSchema = new Schema({
   meetingPoint: {
     name: String,
+    place_id: String,
     address: String,
     location: {
       lat: { type: Number, required: true },
