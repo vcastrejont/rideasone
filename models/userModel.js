@@ -28,8 +28,8 @@ UserSchema.methods.getEvents = function () {
         .find({ datetime: { $gte: today } })
         .or([
           { organizer: this },
-          { goingRides: { $in: rides } },
-          { returningRides: { $in: rides } }
+          { going_rides: { $in: rides } },
+          { returning_rides: { $in: rides } }
         ])
         .sort('datetime');
     });
