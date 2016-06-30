@@ -12,7 +12,7 @@ module.exports = {
    * List all the events from yesterday to the end of the time.
    */
   list: function (req, res) {
-    Event.getEventsSinceYesterday()
+    Event.getCurrentEvents()
       .then(function (events) {
         res.json(events);
       })
@@ -24,7 +24,7 @@ module.exports = {
    * List all the events up to yesterday.
    */
   past: function (req, res) {
-    Event.getEventsUntilYesterday()
+    Event.getPastEvents()
       .then(function (events) {
         res.json(events);
       })

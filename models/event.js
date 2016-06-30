@@ -24,18 +24,23 @@ var EventSchema = new Schema({
 });
 
 /**
- * Gets all the events scheduled since yesterday to the end of times.
+ * Gets the first 5 events scheduled from 2 hours ago until the end of time.
  *
  * @return A promise with the signature (events: [Event])
  */
-EventSchema.statics.getEventsSinceYesterday = function () {
-  var yesterday = moment().add(1, 'day').toDate();
-  return Event.find({ datetime: { $gte: yesterday } }).sort('datetime').limit(5);
+EventSchema.statics.getCurrentEvents = function () {
+  var twoHoursAgo = moment().subtract(1, 'hour').toDate();
+  return Event.find({ datetime: { $gte: twoHoursAgo } }).sort('datetime').limit(5);
 };
 
-EventSchema.statics.getEventsSinceYesterday = function () {
-  var yesterday = moment().add(1, 'day').toDate();
-  return Event.find({ datetime: { $lt: yesterday } }).sort('-datetime').limit(5);
+/**
+ * Gets the last 5 events that where scheduled before 2 hours ago.
+ *
+ * @return A promise with the signature (events: [Event])
+ */
+EventSchema.statics.getPastEvents = function () {
+  var twoHoursAgo = moment().subtract(1, 'hour').toDate();
+  return Event.find({ datetime: { $lt: twoHoursAgo } }).sort('-datetime').limit(5);
 };
 
 var Event = mongoose.model('event', EventSchema);
