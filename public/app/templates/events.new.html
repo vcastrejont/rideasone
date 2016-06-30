@@ -1,61 +1,46 @@
-<div class="panel left" id="newevent" >
-  <form  novalidate  class="form-horizontal form-ride"  ng-submit="submit()" >
-    <h3 class="text-center">New event</h3>
-    <a class="close" ui-sref="events"><i class="fa fa-times" aria-hidden="true"></i></a>
-    <div class="form-group">
-      <label class="control-label">Event name</label>
-      <input type="text" class="form-control" ng-model="event.title" placeholder="Add a name" >
-    </div>
-    <div class="row">
-      <div class="col-xs-4">
-        <div class="form-group left">
-          <label class="control-label left">When?</label>
-    
-                 <input type="text" class="form-control" id="event_date" uib-datepicker-popup="dd-MMMM-yyyy" ng-model="event.date" is-open="displayDate"  datepicker-options="dateOptions" ng-click="displayDate=!displayDate"  />
-        </div>
+  <div class="panel left" id="newevent" >
+    <form  novalidate  class="form-horizontal form-ride"  ng-submit="submit()" >
+      <h3 class="text-center">New event</h3>
+      <a class="close" ui-sref="events"><i class="fa fa-times" aria-hidden="true"></i></a>
+      <div class="form-group">
+        <label class="control-label">Event name</label>
+        <input type="text" class="form-control" ng-model="event.title" placeholder="Add a name" autofocus >
       </div>
-      <div class="col-xs-4">
-        <div class="form-group ">
-          <label class="control-label">Start time</label>
-          
-          <input type="text" class="form-control timepicker" ng-model="event.starttime" >
+      <div class="row">
+        <div class="col-xs-4">
+          <div class="form-group left">
+            <label class="control-label left">When?</label>
+             <input type="text" class="form-control" id="event_date" uib-datepicker-popup="dd-MMMM-yyyy" ng-model="event.date" is-open="displayDate"  datepicker-options="dateOptions" ng-click="displayDate=!displayDate"  />
+          </div>
         </div>
-      </div>
-      <div class="col-xs-4">
-        <div class="form-group right">
-          <label class="control-label">End time</label>
-          <input type="text" class="form-control timepicker" ng-model="event.endtime" >
+        <div class="col-xs-4">
+          <div class="form-group ">
+            <label class="control-label">Start time</label>
+            
+            <input type="text" class="form-control timepicker" ng-model="event.starttime" >
+          </div>
         </div>
+        <div class="col-xs-4">
+          <div class="form-group right">
+            <label class="control-label">End time</label>
+            <input type="text" class="form-control timepicker" ng-model="event.endtime" >
+          </div>
+        </div>
+        
       </div>
-      
-    </div>
-    <div class="form-group">
-      <label class="control-label">Location</label>
-      <input type="text" class="form-control" ng-model="event.place" placeholder="Type an address or venue" >
-    </div>
-    <div class="form-group">
-      <label class="control-label">Description</label>
-      <input type="text" class="form-control" ng-model="event.description" placeholder="Tell about your event" >
-    </div>
-      
-   
-  <footer class="text-center">
-    <button class="btn  btn-ride" type="submit" ng-click="submitted=true" >Save event</button>
-  </footer>
-  </form>  
-</div>
-<script>
-  $(document).ready(function(){
-    $('.timepicker').timepicker({
-      timeFormat: 'h:mm p',
-      interval: 60,
-      minTime: '10',
-      maxTime: '6:00pm',
-      defaultTime: '11',
-      startTime: '10:00',
-      dynamic: false,
-      dropdown: true,
-      scrollbar: true
-    });
-  });
-</script>
+      <div class="form-group">
+        <label class="control-label">Location</label>
+        <input type="text" id="autocomplete" class="form-control" ng-model="event.place" placeholder="Type an address or venue" >
+      </div>
+      <div class="form-group">
+        <label class="control-label">Description</label>
+        <input type="text" class="form-control" ng-model="event.description" placeholder="Tell about your event" >
+      </div>
+        
+     
+    <footer class="text-center">
+      <button class="btn  btn-ride" type="submit" ng-click="submitted=true" >Save event</button>
+      <button  class="btn " ng-click="injectedObject.takeTablet()" type="button">Call directive function</button>
+    </footer>
+    </form>  
+  </div>

@@ -1,16 +1,16 @@
 angular.module('carPoolingApp').controller('homeCtrl', homeCtrl);
 
-homeCtrl.$inject = ['$scope', '$window', 'apiservice'];
+homeCtrl.$inject = ['$rootScope','$scope', '$window', 'apiservice','mapFactory'];
 
-function homeCtrl ($scope, $window, apiservice) {
-  var options = {
-      center: new google.maps.LatLng(29.0821369,-110.9572747),
-      zoom: 13,
-      disableDefaultUI: true,
-      draggable: true
-  };
-  var mapCanvas = document.getElementById("map");
-  var map = new google.maps.Map(mapCanvas, options);
+function homeCtrl ($rootScope, $scope, $window, apiservice, mapFactory ) {
+  $scope.parque = {lat:29.078235, lng:-110.946711}; 
+  $scope.nearsoft = {lat:29.097443, lng:-111.022077};
+  $scope.api = mapFactory.getApi();
+  $rootScope.$on('mapFactory:success', function () {
+    console.log("yay!");
+    $scope.api = mapFactory.getApi();
+    console.log($scope.api);
+  });
 
   apiservice.getEvents()
     .success(function(data) {

@@ -4,7 +4,7 @@
   <h5>Find or create a new event </h5>
   <form class=""  method="post">
     <div class="input-group search-group">
-      <input type="text" class="form-control" autofocus placeholder="Type to search events…" >
+      <input type="text" class="form-control" autofocus placeholder="Type to search events…" ng-model="eventSearch">
       <a href="#" class="input-group-addon">Search</a>
     </div>
     <div class="results">
@@ -15,7 +15,7 @@
       </ul>
     
       <div class="events">
-        <div class="row event" ng-repeat="event in nextEvents" ui-sref="eventshow({ id: event._id})">
+        <div class="row event" ng-repeat="event in nextEvents | filter:eventSearch" ui-sref="eventshow({ id: event._id})">
           <div class="col-xs-2 date">
             <p class="day">{{event.datetime | date:'d'}}</p>
             <p class="month">{{event.datetime | date:'MMMM'}}</p>

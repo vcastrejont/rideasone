@@ -17,6 +17,7 @@ body {
   position: relative;
 }
 .navbar{
+  padding: 0;
   z-index: 5;
   background-color: #fff;
   color: #333;
@@ -64,14 +65,14 @@ body {
   }
 }
 
-#map { 
+#map_canvas { 
    position:absolute;
    height:auto;
    bottom:0;
    top:0;
    left:0;
    right:0;
-   margin-top:70px; 
+   margin-top:50px; 
   
 }
 .top-buttons{
@@ -329,35 +330,11 @@ body {
 }
 
 #availrides{
-  .table{
-    font-size: 12px;
-    thead{
-      tr{
-        th{
-          padding: 2px;
-        }
-      }
-    }
-    tbody{
-      tr{
-        &:hover{
-          background-color: @colorlightblue;
-          cursor: pointer;
-        
-        }
-        &:hover .profile{
-            border: 1px solid @colorblue;
-          }
-        td{
-          padding: 5px 5px 5px 10px;
-          .profile{
-            border: 1px solid #fff;
-            
-          }
-        }
-      }
-    }
+  text-align: left;
+  h2{
+    font-size: 16px;
   }
+  
   header{
     margin-top: 10px;
     overflow: hidden;
@@ -380,8 +357,8 @@ body {
   }
   .list{
     font-size: 12px;
-    > div{
-      border-bottom: 1px solid #ccc;
+    .row{
+      border-bottom: 1px dotted #ccc;
       padding: 5px 15px 5px 20px;
       &:hover{
         background-color: @colorlightblue;
@@ -403,8 +380,10 @@ body {
         float: left;
         width: 20%;
       }
+      &:last-child{
+        border: none;
+      }
     }
-  
   
   }
 
@@ -440,6 +419,19 @@ input:focus {
     outline: none !important;
     box-shadow:none !important;
     outline-style:none!important; 
+}
+ul.nav li.dropdown:hover  ul.dropdown-menu {
+    display: block;    
+    opacity: 1;
+    visibility: visible;
+    margin-top: 0px; 
+}
+ul.nav li.dropdown:hover, ul.nav li:hover{
+  color:@colorblue;
+}
+
+.ui-timepicker-standard{
+  z-index:9999 !important;
 }
 
 //----Mixins------

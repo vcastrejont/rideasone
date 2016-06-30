@@ -1,8 +1,11 @@
 angular.module('carPoolingApp').controller('eventsShowCtrl', eventsShowCtrl);
 
-eventsShowCtrl.$inject = ['$scope', 'apiservice', '$state','$window'];
+eventsShowCtrl.$inject = ['$scope', 'apiservice', '$state','$window','mapFactory'];
 
-function eventsShowCtrl ($scope, apiservice,  $state, $window) {
+function eventsShowCtrl ($scope, apiservice,  $state, $window, mapFactory ) {
+  $scope.parque = {lat:29.078235, lng:-110.946711}; 
+  $scope.nearsoft = {lat:29.097443, lng:-111.022077};
+  $scope.api = mapFactory.getApi();
   $scope.id = $state.params.id;
 
   $scope.messageCar = null;
@@ -67,10 +70,12 @@ function eventsShowCtrl ($scope, apiservice,  $state, $window) {
       //Load data, Todo create a service for this
       var self = this;
       apiservice.getEvent($scope.id).then(function(response) {
+        console.log( response.data);
         self.event = response.data;
-        console.log(response.data.datetime)
+        
+        $scope.api.addMarker({lat:self.event.location[1], lng:self.event.location[0]});
       
-        self.event.date = moment(response.data.datetime).format('MMM. d, YYYY');
+        self.event.date = moment(response.data.datetime).format('MMM. d, YYYY  H:mm a' );
         self.event.dateString = moment(response.data.datetime).calendar() ;
       
         self.event.avail = 0;
@@ -101,26 +106,26 @@ function eventsShowCtrl ($scope, apiservice,  $state, $window) {
       });
     },
     showMap:function(){
-      var myLatLng = {lat: this.event.location[1],lng: this.event.location[0]};
-      var options = {
-          center: new google.maps.LatLng(this.event.location[1], this.event.location[0]),
-          zoom: 13,
-          disableDefaultUI: true,
-          draggable: true
-      };
-      var mapCanvas = document.getElementById("map");
-      var map = new google.maps.Map(mapCanvas, options);
-      var infowindow = new google.maps.InfoWindow();
-      var marker = new google.maps.Marker({
-        position: myLatLng,
-        map: map,
-        title: ''
-      });
-
-      var infowindow = new google.maps.InfoWindow({
-        content: this.event.place
-      });
-      infowindow.open(map, marker);
+      // var myLatLng = {lat: this.event.location[1],lng: this.event.location[0]};
+      // var options = {
+      //     center: new google.maps.LatLng(this.event.location[1], this.event.location[0]),
+      //     zoom: 13,
+      //     disableDefaultUI: true,
+      //     draggable: true
+      // };
+      // var mapCanvas = document.getElementById("map");
+      // var map = new google.maps.Map(mapCanvas, options);
+      // var infowindow = new google.maps.InfoWindow();
+      // var marker = new google.maps.Marker({
+      //   position: myLatLng,
+      //   map: map,
+      //   title: ''
+      // });
+      // 
+      // var infowindow = new google.maps.InfoWindow({
+      //   content: this.event.place
+      // });
+      // infowindow.open(map, marker);
     },
     clearOptions:function(){
       this.seats = "";
