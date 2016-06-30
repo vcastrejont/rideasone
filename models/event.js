@@ -1,9 +1,13 @@
 var mongoose = require('mongoose');
+var moment = require('moment');
 var Schema = mongoose.Schema;
 var ObjectId = Schema.ObjectId;
 
 var EventSchema = new Schema({
-  location: { type: [Number], required: true }, // [Long, Lat]
+  location: {
+    lat: { type: Number, required: true },
+    lon: { type: Number, required: true }
+  },
   address: String,
   place: String,
   place_id: String,
@@ -19,4 +23,20 @@ var EventSchema = new Schema({
   updated_at: {type: Date, default: Date.now}
 });
 
-module.exports = mongoose.model('event', EventSchema);
+/**
+ * Gets all the events scheduled since yesterday to the end of times.
+ *
+ * @return A promise with the signature (events: [Event])
+ */
+EventSchema.statics.getEventsSinceYesterday = function () {
+  var yesterday = moment().add(1, 'day').toDate();
+  return Event.find({ datetime: { $gte: yesterday } }).sort('datetime').limit(5);
+};
+
+EventSchema.statics.getEventsSinceYesterday = function () {
+  var yesterday = moment().add(1, 'day').toDate();
+  return Event.find({ datetime: { $lt: yesterday } }).sort('-datetime').limit(5);
+};
+
+var Event = mongoose.model('event', EventSchema);
+module.exports = Event;

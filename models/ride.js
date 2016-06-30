@@ -6,7 +6,10 @@ var RideSchema = new Schema({
   meetingPoint: {
     name: String,
     address: String,
-    location: { type: [Number], required: true }
+    location: {
+      lat: { type: Number, required: true },
+      lon: { type: Number, required: true }
+    }
   },
   driver: { type: ObjectId, ref: 'user', required: true },
   seats: Number,
