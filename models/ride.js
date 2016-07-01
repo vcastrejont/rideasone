@@ -3,7 +3,7 @@ var Schema = mongoose.Schema;
 var ObjectId = Schema.ObjectId;
 
 var RideSchema = new Schema({
-  location: {
+  place: {
     name: String,
     place_id: String,
     address: String,
@@ -17,7 +17,7 @@ var RideSchema = new Schema({
   comments: String,
   passengers: [{
     user: { type: ObjectId, ref: 'user' },
-    location: {
+    place: {
       name: String,
       place_id: String,
       address: String,
