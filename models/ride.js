@@ -3,7 +3,7 @@ var Schema = mongoose.Schema;
 var ObjectId = Schema.ObjectId;
 
 var RideSchema = new Schema({
-  meetingPoint: {
+  location: {
     name: String,
     place_id: String,
     address: String,
@@ -15,7 +15,18 @@ var RideSchema = new Schema({
   driver: { type: ObjectId, ref: 'user', required: true },
   seats: Number,
   comments: String,
-  passengers: [{ type: ObjectId, ref: 'user' }],
+  passengers: [{
+    user: { type: ObjectId, ref: 'user' },
+    location: {
+      name: String,
+      place_id: String,
+      address: String,
+      location: {
+        lat: { type: Number, required: true },
+        lon: { type: Number, required: true }
+      }
+    }
+  }],
   chat: [{ type: ObjectId, ref: 'message' }],
   created_at: { type: Date, default: Date.now },
   updated_at: { type: Date, default: Date.now }
