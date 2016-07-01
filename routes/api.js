@@ -1,10 +1,10 @@
 var express = require('express');
 var router = express.Router();
-var settingsController = require('../controllers/settingController.js');
+// var settingsController = require('../controllers/settingController.js');
 var eventsController = require('../controllers/eventController.js');
-var locationController = require('../controllers/locationController.js');
+// var locationController = require('../controllers/locationController.js');
 var userController = require('../controllers/userController.js');
-var chatController = require('../controllers/chatController.js');
+// var chatController = require('../controllers/chatController.js');
 
 router.get('/', function(req, res) {
  res.send('API list');
@@ -175,15 +175,15 @@ router.post('/events/carbyuser', eventsController.carbyuser); //Car polling by u
 router.delete('/events/:id', eventsController.remove);        //Delete an event
 
 // ----Locations --------
-router.get('/locations', locationController.list);
-router.get('/location/:id', locationController.show);
-router.post('/locations', locationController.create);
-router.put('/locations/:id', locationController.update);
-router.delete('/locations/:id', locationController.remove);
+// router.get('/locations', locationController.list);
+// router.get('/location/:id', locationController.show);
+// router.post('/locations', locationController.create);
+// router.put('/locations/:id', locationController.update);
+// router.delete('/locations/:id', locationController.remove);
 
 // ----Settings ------
-router.get('/settings', settingsController.show);
-router.post('/settings', settingsController.update);
+// router.get('/settings', settingsController.show);
+// router.post('/settings', settingsController.update);
 
 // ----Users --------
 /**
@@ -235,7 +235,7 @@ router.post('/users/create', userController.create);
 * @apiSuccess {String}   description            Event full description
 * @apiSuccess {String}   address                Full place address 
 */
-router.post('/chats/add', chatController.addMessage);
+// router.post('/chats/add', chatController.addMessage);
 
 
 /**
@@ -254,7 +254,7 @@ router.post('/chats/add', chatController.addMessage);
 * @apiSuccess {Date}     created_at             Event full description
 * @apiSuccess {Date}     updated_at             Full place address 
 */
-router.get('/chats/:rideid', chatController.getMessages);
+// router.get('/chats/:rideid', chatController.getMessages);
 
 
 module.exports = router;
