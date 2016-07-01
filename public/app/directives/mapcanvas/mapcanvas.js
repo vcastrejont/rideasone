@@ -16,32 +16,32 @@ angular.module('carPoolingApp').directive('mapcanvas', function(mapFactory) {
       var directionsDisplay = new google.maps.DirectionsRenderer();
       var map = new google.maps.Map(document.getElementById(attrs.id), myOptions);
       directionsDisplay.setMap(map);
-      
-      if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(function(position) {
-          defaultPos = {lat: position.coords.latitude, lng: position.coords.longitude};
-          map.setCenter(defaultPos);
-          console.log('defaultpos: '+defaultPos.lat+", "+ defaultPos.lng);
-        }, function() {
-         console.log("Auto geolocation failed");
-        });
-      } 
-      
+
       mapFactory.setApi({
-        doSomething: function() {
-          console.log("api ready");
+        
+        defaultLocation: function(zoom) {
+             zoom = zoom ||13;
+          if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(function(position) {
+              defaultPos = {lat: position.coords.latitude, lng: position.coords.longitude};
+              map.setCenter(defaultPos);
+              map.setZoom(zoom);
+            }, function() {
+             console.log("Auto geolocation failed");
+            });
+          } 
         },
         
-         addMarker : function(pos){
-           var latLng = new google.maps.LatLng(pos.lat,pos.lng);
-           var marker = new google.maps.Marker({
-             position: latLng, 
-             map: map,
-             title:"Hello World!"
-           });
-           map.setCenter(latLng);
-           map.setZoom(15);
-         },
+        addMarker : function(pos){
+         var latLng = new google.maps.LatLng(pos.lat,pos.lng);
+         var marker = new google.maps.Marker({
+           position: latLng, 
+           map: map,
+           title:"Hello World!"
+         });
+         map.setCenter(latLng);
+         map.setZoom(15);
+        },
         
         showRoute: function(pointA, pointB ){
            directionsService.route({
@@ -55,8 +55,70 @@ angular.module('carPoolingApp').directive('mapcanvas', function(mapFactory) {
             window.alert('Directions request failed due to ' + status);
             }
            }); 
+        },
+        
+        placesAutocomplete: function(inputField){
+          var searchInput = document.getElementById(inputField);
+          var autocomplete = new google.maps.places.Autocomplete(searchInput);
+          autocomplete.bindTo('bounds', map);
+          autocomplete.addListener('place_changed', fillInAddress);
+
+          var infowindow = new google.maps.InfoWindow();
+          var marker = new google.maps.Marker({
+           map: map,
+           anchorPoint: new google.maps.Point(0, -29)
+          });
+          
+          function fillInAddress() {
+            var place = autocomplete.getPlace();
+            console.log(place.formatted_address);
+            console.log(place.place_id);
+            console.log(place.geometry.location.lat());
+            console.log(place.geometry.location.lng());
+            console.log(place.name);
+          }
+          autocomplete.addListener('place_changed', function() {
+          infowindow.close();
+          marker.setVisible(false);
+          var place = autocomplete.getPlace();
+          if (!place.geometry) {
+           window.alert("Autocomplete's returned place contains no geometry");
+           return;
+          }
+
+
+          if (place.geometry.viewport) {
+           map.fitBounds(place.geometry.viewport);
+          } else {
+           map.setCenter(place.geometry.location);
+           map.setZoom(17);
+          }
+          marker.setIcon(/** @type {google.maps.Icon} */({
+           url: place.icon,
+           size: new google.maps.Size(71, 71),
+           origin: new google.maps.Point(0, 0),
+           anchor: new google.maps.Point(17, 34),
+           scaledSize: new google.maps.Size(35, 35)
+          }));
+          marker.setPosition(place.geometry.location);
+          marker.setVisible(true);
+
+          var address = '';
+          if (place.address_components) {
+           address = [
+             (place.address_components[0] && place.address_components[0].short_name || ''),
+             (place.address_components[1] && place.address_components[1].short_name || ''),
+             (place.address_components[2] && place.address_components[2].short_name || '')
+           ].join(' ');
+          }
+
+          infowindow.setContent('<div><strong>' + place.name + '</strong><br>' + address);
+          infowindow.open(map, marker);
+          });
+
         }
-      });
-    }
-  };
+        
+      });//setApi
+    } // link
+  }; // return
 });

@@ -1,15 +1,20 @@
 angular.module('carPoolingApp').controller('eventsNewCtrl', eventsNewCtrl);
 
-eventsNewCtrl.$inject = ['$scope', 'apiservice', 'mapService',  '$state' ];
+eventsNewCtrl.$inject = ['$scope', 'apiservice', 'mapService',  '$state','mapFactory' ];
 
-function eventsNewCtrl ($scope, apiservice, mapService, $state) {
+function eventsNewCtrl ($scope, apiservice, mapService, $state, mapFactory ) {
   $scope.location = {};
   $scope.event = {
     date: new Date()
   };
+  $scope.api = mapFactory.getApi();
+  $scope.api.defaultLocation();
+  
   $scope.displayDate= false;
-  $scope.injectedObject = {test:'hello'};
+  
 
+  
+  $scope.api.placesAutocomplete('autocomplete');
   
   $scope.initTimepicker = function () {
     $(function () {
