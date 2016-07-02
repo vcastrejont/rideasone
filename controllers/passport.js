@@ -1,5 +1,5 @@
 
-var User = require('../models/userModel.js');
+var User = require('../models/user.js');
 var config = {
   twitter: {
     key: "jq5f1KwBuSUimnn78MskHlL5i",
