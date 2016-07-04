@@ -13,7 +13,7 @@ router.get('/', function(req, res) {
 // ----Events --------
   /**
   * @api {get} events All future events
-  * @apiName getFutureEvents 
+  * @apiName GetFutureEvents 
   * @apiGroup Events
   * @apiDescription Returns an array of all events with date greater than yesterday.
   *
@@ -34,7 +34,7 @@ router.get('/', function(req, res) {
   
   /**
   * @api {get} events/past Past events
-  * @apiName getPastEvents 
+  * @apiName GetPastEvents 
   * @apiGroup Events
   *
   * @apiSuccess {ObjectId} id                               Mongo generated ID.
@@ -54,7 +54,7 @@ router.get('/', function(req, res) {
 
   /**
   * @api {post} events New event/new
-  * @apiName createEvent 
+  * @apiName CreateEvent 
   * @apiGroup Events
   * @apiParam {String}   [name]                   Event name
   * @apiParam {String}   description              Event full description
@@ -71,7 +71,7 @@ router.get('/', function(req, res) {
   
   /**
   * @api {get} events/:id Show an event 
-  * @apiName getEvent 
+  * @apiName GetEvent 
   * @apiGroup Events
   * @apiDescription Display an event details
   * @apiParam {String}    [id]                              Event id
@@ -94,7 +94,7 @@ router.get('/', function(req, res) {
 
   /**
   * @api {get} events/users/:user User events  
-  * @apiName User events
+  * @apiName GetUserEvents
   * @apiGroup Events
   * @apiDescription List all events from that user
   * @apiParam {String}     user                             User id
