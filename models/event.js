@@ -26,7 +26,7 @@ var EventSchema = new Schema({
 });
 
 /**
- * Gets all of the events scheduled from 2 hours ago until the end of time.
+ * Gets all of the events scheduled for 2 hours ago and later.
  *
  * @return A promise with the signature (events: [Event])
  */
