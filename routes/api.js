@@ -67,7 +67,7 @@ router.get('/', function(req, res) {
   * @apiParam {Date}     [datetime]               Event date and time
   * @apiParam {String[]} tags                     List of tags (Array of Strings)
   */
-  router.post('/events/new', eventsController.create);          
+  router.post('/events', eventsController.create);          
   
   /**
   * @api {get} events/:id Show an event 
@@ -114,7 +114,7 @@ router.get('/', function(req, res) {
   * @apiSuccess {Date}     updated_at                       Last updated  
   */
 
-  router.get('/events/user/:user', eventsController.user);    // List  by user
+  router.get('/users/:user/events', eventsController.user);    // List  by user
   
   
 //router.post('/events/carbyuser', eventsController.carbyuser); // Carpooling by user[no longer used]
@@ -122,12 +122,12 @@ router.get('/', function(req, res) {
 
 //router.put('/events/signup/:id', eventsController.signup);    // Event sign up [no longer used]
 router.put('/events/:id', eventsController.update);           //Update an event
-router.post('/events/addcar', eventsController.addCar);       //Add a car
-router.post('/events/deletecar', eventsController.deleteCar); //Delete a car
-router.post('/events/joincar', eventsController.joinCar);     //Join a car
-router.post('/events/addExtra', eventsController.addExtra);   //Add extra passanger
-router.post('/events/leavecar', eventsController.leaveCar);   //Leave a car
-router.post('/events/carbyuser', eventsController.carbyuser); //Car polling by user
+router.post('/events/add-car', eventsController.addCar);       //Add a car
+router.post('/events/delete-car', eventsController.deleteCar); //Delete a car
+router.post('/events/join-car', eventsController.joinCar);     //Join a car
+router.post('/events/add-passenger', eventsController.addExtra);   //Add extra passanger
+router.post('/events/leave-car', eventsController.leaveCar);   //Leave a car
+router.post('/events/car-by-user', eventsController.carbyuser); //Car polling by user
 router.delete('/events/:id', eventsController.remove);        //Delete an event
 
 // ----Locations --------
@@ -176,7 +176,7 @@ router.delete('/events/:id', eventsController.remove);        //Delete an event
 * @apiSuccess {String}   email                  User email adddres 
 * @apiSuccess {Date}     created_at             Document creation  date
 */
-router.post('/users/create', userController.create);
+router.post('/users', userController.create);
 
 
 /**
