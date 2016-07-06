@@ -8,7 +8,6 @@ var EventSchema = new Schema({
   organizer: { type: ObjectId, ref: 'user' },
   name: String,
   description: String,
-  category: String,
   datetime: Date,
   tags: [{ tag: String }],
   going_rides: [{ type: ObjectId, ref: 'ride' }],
