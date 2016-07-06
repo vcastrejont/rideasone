@@ -7,7 +7,8 @@ var UserSchema = new Schema({
   provider_id: {type: String, unique: true},
   photo: String,
   email: String,
-  createdAt: {type: Date, default: Date.now}
+  createdAt: {type: Date, default: Date.now},
+  defaultPlace: { type: ObjectId, ref: 'place' }
 });
 
 /**

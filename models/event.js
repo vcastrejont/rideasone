@@ -4,15 +4,7 @@ var Schema = mongoose.Schema;
 var ObjectId = Schema.ObjectId;
 
 var EventSchema = new Schema({
-  place: {
-    name: String,
-    place_id: String,
-    address: String,
-    location: {
-      lat: { type: Number, required: true },
-      lon: { type: Number, required: true }
-    }
-  },
+  place: { type: ObjectId, ref: 'place' },
   organizer: { type: ObjectId, ref: 'user' },
   name: String,
   description: String,
