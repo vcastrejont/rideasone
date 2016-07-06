@@ -21,10 +21,10 @@ UserSchema.methods.getEvents = function () {
   var Ride = require('./ride');
   var moment = require('moment');
 
-  var user = this;
   var today = moment().startOf('day').toDate();
-  return Ride.find({ driver: user })
-    .then(function (rides) {
+  return Ride
+    .find({ driver: user })
+    .then((rides) => {
       return Event
         .find({ datetime: { $gte: today } })
         .or([
@@ -32,6 +32,7 @@ UserSchema.methods.getEvents = function () {
           { going_rides: { $in: rides } },
           { returning_rides: { $in: rides } }
         ])
+        .populate('place')
         .sort('datetime');
     });
 };
