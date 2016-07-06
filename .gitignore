@@ -41,3 +41,5 @@ carpoolingApp/www/lib/
 .vscode/
 
 .vagrant
+*.swp
+*.swo
