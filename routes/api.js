@@ -53,7 +53,7 @@ router.get('/', function(req, res) {
   router.get('/events/past', eventsController.past);  
 
   /**
-  * @api {post} events New event/new
+  * @api {post} events New event
   * @apiName CreateEvent 
   * @apiGroup Events
   * @apiParam {String}   [name]                   Event name
@@ -158,7 +158,7 @@ router.delete('/events/:id', eventsController.remove);        //Delete an event
   router.get('/users', userController.list);
 
 /**
-* @api {post} users/create Create user
+* @api {post} users Create user
 * @apiName CreateUser
 * @apiGroup Users
 * @apiParam {String}     provider_id            Provider unique id 
