@@ -43,19 +43,26 @@ UserSchema.methods.getEvents = function () {
  */
 UserSchema.methods.createEvent = function (data) {
   var Event = require('./event');
-  var event = new Event({
-    location: data.location,
+  var Place = require('./place');
+  var place = new Place({
+    location: {
+      lat: data.location.lat,
+      lon: data.location.lon
+    },
     address: data.address,
-    place: data.place,
-    place_id: data.place_id,
+    name: data.place,
+    place_id: data.place_id
+  });
+  var event = new Event({
+    place: place,
     organizer: this,
     name: data.name,
     description: data.description,
-    category: data.category,
     datetime: data.datetime,
     tags: data.tags
   });
-  return event.save();
+  return place.save()
+    .then( place => event.save() );
 };
 
 UserSchema.methods.requestJoiningRide = function (rideId) {
