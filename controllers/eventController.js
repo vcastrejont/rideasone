@@ -99,8 +99,11 @@ module.exports = {
    * eventController.addEvent()
    */
   create: function (req, res) {
-    req.user.createEvent(req.body)
-      .then(function (event) {
+    User.findById(req.body.organizer)
+      .then(user => {
+        return user.createEvent(req.body);
+      })
+     .then(function (event) {
         res.json({ _id: event.id });
       })
       .catch(function (err) {

@@ -61,8 +61,7 @@ router.get('/', function(req, res) {
   * @apiParam {String}   [address]                Full place address 
   * @apiParam {Object[]} [location]               Location: longitude and latitude.
   * @apiParam {String}   [place]                  Event venue name
-  * @apiParam {String}   [organizer]              Organizer full name
-  * @apiParam {ObjectId} [organizer_id]           Organizer user ID
+  * @apiParam {String}   [organizer]              Organizer user ID
   * @apiParam {String}   category                 Event category
   * @apiParam {Date}     [datetime]               Event date and time
   * @apiParam {String[]} tags                     List of tags (Array of Strings)
