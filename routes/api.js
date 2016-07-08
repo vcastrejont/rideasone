@@ -56,12 +56,12 @@ router.get('/', function(req, res) {
   * @api {post} events New event
   * @apiName CreateEvent 
   * @apiGroup Events
-  * @apiParam {String}   [name]                   Event name
+  * @apiParam {String}   name                     Event name
   * @apiParam {String}   description              Event full description
   * @apiParam {String}   [address]                Full place address 
-  * @apiParam {Object[]} [location]               Location: longitude and latitude.
-  * @apiParam {String}   [place]                  Event venue name
-  * @apiParam {String}   [organizer]              Organizer user ID
+  * @apiParam {Object[]} location                 Location: longitude and latitude.
+  * @apiParam {String}   place                    Event venue name
+  * @apiParam {String}   organizer                Organizer user ID
   * @apiParam {String}   category                 Event category
   * @apiParam {Date}     [datetime]               Event date and time
   * @apiParam {String[]} tags                     List of tags (Array of Strings)
