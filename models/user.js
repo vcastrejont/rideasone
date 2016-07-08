@@ -8,7 +8,7 @@ var UserSchema = new Schema({
   photo: String,
   email: String,
   createdAt: {type: Date, default: Date.now},
-  defaultPlace: { type: ObjectId, ref: 'place' }
+  defaultPlace: { type: Schema.ObjectId, ref: 'place' }
 });
 
 /**
