@@ -121,14 +121,35 @@ router.get('/', function(req, res) {
 
 
 //router.put('/events/signup/:id', eventsController.signup);    // Event sign up [no longer used]
-router.put('/events/:id', eventsController.update);           //Update an event
-router.post('/events/add-car', eventsController.addCar);       //Add a car
-router.post('/events/delete-car', eventsController.deleteCar); //Delete a car
-router.post('/events/join-car', eventsController.joinCar);     //Join a car
-router.post('/events/add-passenger', eventsController.addExtra);   //Add extra passanger
-router.post('/events/leave-car', eventsController.leaveCar);   //Leave a car
-router.post('/events/car-by-user', eventsController.carbyuser); //Car polling by user
-router.delete('/events/:id', eventsController.remove);        //Delete an event
+router.put('/events/:event', eventsController.update);           //Update an event
+
+/**
+ * @api {put} events/:event/add-car add event ride
+ * @apiName AddEventRide
+ * @apiGroup Events
+ * @apiDescription Register a car for riding to and from the event
+ * @apiParam driverId
+ * @apiParam seats
+ * @apiParam comment
+ * @apiParam {Boolean} going
+ * @apiParam {Boolean} returning
+ * @apiSuccess numAffected
+ **/
+router.put('/events/:event/add-car', eventsController.addCar);       //Add a car
+router.put('/events/:event/delete-car', eventsController.deleteCar); //Delete a car
+router.put('/events/:event/join-car', eventsController.joinCar);     //Join a car
+router.put('/events/:event/add-passenger', eventsController.addExtra);   //Add extra passanger
+router.put('/events/:event/leave-car', eventsController.leaveCar);   //Leave a car
+router.put('/events/:event/car-by-user', eventsController.carbyuser); //Car polling by user
+
+  /**
+  * @api {delete} events/:event delete an event 
+  * @apiName DeleteEvent
+  * @apiGroup Events
+  * @apiDescription Remove a given Event by ID 
+  */
+
+router.delete('/events/:event', eventsController.remove);        //Delete an event
 
 // ----Locations --------
 // router.get('/locations', locationController.list);

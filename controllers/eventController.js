@@ -1,7 +1,10 @@
 var Event = require('../models/event.js');
 var User = require('../models/user.js');
+var Ride = require('../models/ride.js');
 var mailerController = require('../controllers/mailerController.js');
 var mongoose = require('mongoose');
+var Transaction = require('lx-mongoose-transaction')(mongoose);
+
 /**
  * eventController.js
  *
@@ -111,7 +114,7 @@ module.exports = {
    * eventController.remove()
    */
   remove: function (req, res) {
-    var eventId = req.params.id;
+    var eventId = req.params.event;
     Event.findByIdAndRemove(eventId)
       .then(function (event) {
         return res.json(event);
@@ -162,37 +165,64 @@ module.exports = {
       return res.json(events);
     });
   },
+  
   /**
    * eventController.Add car()
    */
   addCar: function (req, res) {
-    Event.findOne({_id: req.body.id}, function (err, event) {
-      if (err) return res.json(500, { message: 'Error', error: err });
-      var car = {
-        driver_id: req.user.id,
-        driver_name: req.user.name,
-        driver_photo: req.user.photo,
-        driver_email: req.user.email,
-        seats: req.body.seats,
-        comments: req.body.comments
-      };
+		var transaction = new Transaction();
+		var eventToEdit;
+		var ridesToPush = {
+			going_rides: []
+		};
 
-      Event.update({'_id': req.body.id}, {$push: {'cars': car}},
-        function (err, numAffected) {
-          if (err) {
-            console.log(err);
-            return res.status(500).json({
-              message: 'Error updating event', error: err
-            });
-          } else {
-            return res.status(200).json({
-              message: 'Successfully added!',
-              numAffected: numAffected
-            });
-          }
-        });
-    });
-  },
+    Event.findOne({_id: req.params.event})
+		.then(function (event) {
+		  eventToEdit = event;	
+			var car = {
+				driver: req.body.driverId,
+				seats: req.body.seats,
+				comments: req.body.comments
+			};
+
+			if (req.body.going === 'true'){
+				transaction.insert('Ride', car);
+				return transaction.run()
+				.then((createdRide) => {
+					eventToEdit.going_rides.push(createdRide[0]._id);
+				});
+			}
+		})
+		.then(() => {
+			if (req.body.returning === 'true'){
+				transaction.insert('Ride', car);	
+				return transaction.run()
+				.then((createdRide) => {
+					eventToEdit.returning_rides.push(createdRide[0]._id);
+				});
+			}
+		})
+		.then(function (){
+				transaction.update('Event', {'_id': req.params.event}, {
+					going_rides: eventToEdit.going_rides, 
+					returning_rides: eventToEdit.returning_rides
+				});
+				return transaction.run();
+		})
+		.then(function (updatedEvent) {
+			console.log(updatedEvent);
+			var numAffected = updatedEvent.length;
+			return res.status(200).json({
+				message: 'Successfully added!',
+				numAffected: numAffected
+			});
+		})
+		.catch(function(err){
+				console.log(err);
+				if (err) return res.json(500, { message: 'Error', error: err });
+		});
+	},
+
   /**
    * eventController delete car()
    */

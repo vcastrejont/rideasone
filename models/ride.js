@@ -33,4 +33,4 @@ RideSchema.methods.postMessage = function (userId, text) {
   });
 };
 
-module.exports = mongoose.model('ride', RideSchema);
+module.exports = mongoose.model('Ride', RideSchema);
