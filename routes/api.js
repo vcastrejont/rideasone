@@ -154,10 +154,9 @@ router.put('/rides/:ride/join', ridesController.joinRide);     //Join a car
  * @apiName AcceptEventRideRequest
  * @apiGroup Rides 
  * @apiDescription Register to a ride to or from the event
- * @apiParam {String} rideRequest 
  * @apiSuccess numAffected
  **/
-router.put('/ride-request/:request/accept', ridesController.acceptRequest);
+router.put('/ride-request/:request/accept', ridesController.acceptRideRequest);
 router.put('/rides/:ride/add-passenger', ridesController.addExtra);   //Add extra passanger
 
 /**

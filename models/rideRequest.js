@@ -4,6 +4,7 @@ var ObjectId = Schema.ObjectId;
 
 var RideRequestSchema = new Schema({
   passenger: { type: ObjectId, ref: 'User' },
+	place: { type: ObjectId, refL: 'Place'},
   ride: { type: ObjectId, ref: 'Ride' },
   created_at: { type: Date, default: Date.now }
 });
@@ -29,11 +30,6 @@ RideRequestSchema.methods.accept = function (userId, text) {
   });
 };
 
-/**
- * Rejects the request by deleting itself
- *
- * @return a Promise
- */
 RideRequestSchema.methods.reject = function (userId) {
   return this.remove();
 };
