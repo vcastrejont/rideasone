@@ -107,7 +107,7 @@ module.exports = {
         return user.createEvent(req.body);
       })
      .then(function (event) {
-        res.json({ _id: event.id });
+        res.json({ _id: event._id });
       })
       .catch(function (err) {
         res.status(500).json({ message: err.message });
@@ -188,7 +188,7 @@ module.exports = {
 				comments: req.body.comments
 			};
 
-			if (req.body.going === 'true'){
+			if (req.body.going === true){
 				transaction.insert('Ride', car);
 				return transaction.run()
 				.then((createdRide) => {
@@ -197,7 +197,7 @@ module.exports = {
 			}
 		})
 		.then(() => {
-			if (req.body.returning === 'true'){
+			if (req.body.returning === true){
 				transaction.insert('Ride', car);	
 				return transaction.run()
 				.then((createdRide) => {

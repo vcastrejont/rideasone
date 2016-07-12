@@ -22,7 +22,7 @@
     "express-session": "^1.13.0",
     "less-middleware": "^2.1.0",
     "lodash": "^4.8.2",
-    "lx-mongoose-transaction": "0.0.8",
+    "lx-mongoose-transaction": "0.0.9",
     "method-override": "~1.0.0",
     "moment": "~2.13.0",
     "mongoose": "^4.3.7",

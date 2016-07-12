@@ -1,5 +1,8 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
+var Transaction = require('lx-mongoose-transaction')(mongoose);
+var Event = require('./event');
+var Place = require('./place');
 
 var UserSchema = new Schema({
   name: String,
@@ -37,33 +40,48 @@ UserSchema.methods.getEvents = function () {
     });
 };
 
+/*ToDo: this probably goes somewhere else*/
+function findOrCreatePlace(data, transaction){
+  if (data.location && ! data.place){
+    var place = {
+			location: {
+				lat: data.location.lat,
+				lon: data.location.lon
+			},
+				address: data.address,
+				name: data.place,
+				place_name: data.place_name
+    };
+		transaction.insert('Place', place);
+		return transaction.run();
+  } else {
+    return Place.find({_id: data.place});
+  }
+}
+
 /**
  * Creates a new event and sets the user as the organizer.
  *
  * @returns A promise with signature (event: Event)
  */
 UserSchema.methods.createEvent = function (data) {
-  var Event = require('./event');
-  var Place = require('./place');
-  var place = new Place({
-    location: {
-      lat: data.location.lat,
-      lon: data.location.lon
-    },
-    address: data.address,
-    name: data.place,
-    place_id: data.place_id
-  });
-  var event = new Event({
-    place: place,
-    organizer: this,
-    name: data.name,
-    description: data.description,
-    datetime: data.datetime,
-    tags: data.tags
-  });
-  return place.save()
-    .then( place => event.save() );
+  var transaction = new Transaction();
+
+	return findOrCreatePlace(data, transaction)
+	.then((places) => {
+		var event = {
+			place: places[0],
+			organizer: this,
+			name: data.name,
+			description: data.description,
+			datetime: data.datetime,
+			tags: data.tags
+		};
+		transaction.insert('Event', event);
+		return transaction.run()
+		.then(ev => ev[0]._doc); 
+	});
+
 };
 
 UserSchema.methods.requestJoiningRide = function (rideId) {

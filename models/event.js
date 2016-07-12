@@ -9,7 +9,7 @@ var EventSchema = new Schema({
   name: String,
   description: String,
   datetime: Date,
-  tags: [{ tag: String }],
+  tags: Array,
   going_rides: [{ type: ObjectId, ref: 'ride' }],
   returning_rides: [{ type: ObjectId, ref: 'ride' }],
   created_at: {type: Date, default: Date.now},

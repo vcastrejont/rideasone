@@ -5,7 +5,7 @@ var ObjectId = Schema.ObjectId;
 
 var PlaceSchema = new Schema({
   name: String,
-  place_id: String,
+  place_name: String,
   address: String,
   location: {
     lat: { type: Number, required: true },
@@ -15,5 +15,6 @@ var PlaceSchema = new Schema({
   updated_at: {type: Date, default: Date.now}
 });
 
-var Place = mongoose.model('place', EventSchema);
-module.exports = Event;
+var Place = mongoose.model('Place', PlaceSchema);
+
+module.exports = Place;
