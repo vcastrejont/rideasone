@@ -94,4 +94,14 @@ UserSchema.methods.requestJoiningRide = function (rideId) {
   return request.save();
 };
 
+UserSchema.methods.acceptRide = function (rideId) {
+  var RideRequest = require('./rideRequest');
+  var request = new RideRequest({
+    ride: rideId,
+    passenger: this
+  });
+  // TODO: Create driver notification
+  return request.save();
+};
+
 module.exports = mongoose.model('user', UserSchema);

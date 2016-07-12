@@ -4,6 +4,7 @@ var router = express.Router();
 var eventsController = require('../controllers/eventController.js');
 // var locationController = require('../controllers/locationController.js');
 var userController = require('../controllers/userController.js');
+var ridesController = require('../controllers/rideController.js');
 // var chatController = require('../controllers/chatController.js');
 
 router.get('/', function(req, res) {
@@ -59,8 +60,9 @@ router.get('/', function(req, res) {
   * @apiParam {String}   name                     Event name
   * @apiParam {String}   description              Event full description
   * @apiParam {String}   [address]                Full place address 
-  * @apiParam {Object[]} location                 Location: longitude and latitude.
-  * @apiParam {String}   place                    Event venue name
+  * @apiParam {Object}   location                 Location: longitude and latitude.
+  * @apiParam {String}   place_name               Event venue name
+  * @apiParam {String}   place_id                 Event venue reference 
   * @apiParam {String}   organizer                Organizer user ID
   * @apiParam {Date}     [datetime]               Event date and time
   * @apiParam {String[]} tags                     List of tags (Array of Strings)
@@ -122,7 +124,7 @@ router.get('/', function(req, res) {
 router.put('/events/:event', eventsController.update);           //Update an event
 
 /**
- * @api {put} events/:event/add-car add event ride
+ * @api {put} events/:event/add-ride event ride
  * @apiName AddEventRide
  * @apiGroup Events
  * @apiDescription Register a car for riding to and from the event
@@ -133,11 +135,40 @@ router.put('/events/:event', eventsController.update);           //Update an eve
  * @apiParam {Boolean} returning
  * @apiSuccess numAffected
  **/
-router.put('/events/:event/add-car', eventsController.addCar);       //Add a car
-router.put('/events/:event/delete-car', eventsController.deleteCar); //Delete a car
-router.put('/events/:event/join-car', eventsController.joinCar);     //Join a car
-router.put('/events/:event/add-passenger', eventsController.addExtra);   //Add extra passanger
-router.put('/events/:event/leave-car', eventsController.leaveCar);   //Leave a car
+router.put('/events/:event/add-ride', eventsController.addCar);       //Add a car
+
+router.put('/events/:event/delete-ride', eventsController.deleteCar); //Delete a car
+
+/**
+ * @api {put} rides/:ride/join request a spot for a ride
+ * @apiName JoinEventRide
+ * @apiGroup Rides 
+ * @apiDescription Register to a ride to or from the event
+ * @apiParam {String} userId 
+ * @apiSuccess numAffected
+ **/
+router.put('/rides/:ride/join', ridesController.joinRide);     //Join a car
+
+/**
+ * @api {put} ride-request/:request/accept accept a ride request
+ * @apiName AcceptEventRideRequest
+ * @apiGroup Rides 
+ * @apiDescription Register to a ride to or from the event
+ * @apiParam {String} rideRequest 
+ * @apiSuccess numAffected
+ **/
+router.put('/ride-request/:request/accept', ridesController.acceptRequest);
+router.put('/rides/:ride/add-passenger', ridesController.addExtra);   //Add extra passanger
+
+/**
+ * @api {put} rides/:ride/leave cancel spot on event ride
+ * @apiName LeaveEventRide
+ * @apiGroup Rides 
+ * @apiDescription Cancel your spot for a ride to or from an event
+ * @apiParam {String} userId 
+ * @apiSuccess numAffected
+ **/
+router.put('/rides/:ride/leave', ridesController.leaveRide);   //Leave a car
 router.put('/events/:event/car-by-user', eventsController.carbyuser); //Car polling by user
 
   /**
