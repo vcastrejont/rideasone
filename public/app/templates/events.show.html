@@ -27,8 +27,8 @@
       <div class="dp">Departure</div>
     </header>
     <div class="list">
-      <div class="row" ng-repeat="ride in view.event.cars" ng-click="view.showride = !view.showride" >
-        <div class="dr"><img src="https://lh6.googleusercontent.com/-rWrQmSqGOEc/AAAAAAAAAAI/AAAAAAAAABw/ykztfZNaajY/photo.jpg?sz=50" class="profile xs">{{ride.driver_name}}</div>
+      <div class="row" ng-repeat="ride in view.event.cars" ng-click="view.showRide(ride)" >
+        <div class="dr"><img src="{{ride.driver_photo}}" class="profile xs">{{ride.driver_name}}</div>
         <div class="st">{{ride.seats|| "-"}}</div>
         <div class="dp">2:00pm</div>
       </div>
@@ -41,12 +41,11 @@
 
 </div>
 
-
-<div id="ridedetails" class="panel top right xs tc" ng-show="view.showride">
-    <a  class="close left" ng-click="view.showride = !view.showride" ><i class="fa fa-times" aria-hidden="true"></i></a>
-    <img src="http://i.imgur.com/mowBg8D.jpg?1" class="profile xl" />
-  <h2>Hugo reyes</h2>
-  <p class="email">hreyes@nearsfot.com</p>
+<div id="ridedetails" class="panel top right xs tc" ng-show="view.ride">
+  <a class="close left" ng-click="view.showRide()"><i class="fa fa-times" aria-hidden="true"></i></a>
+  <img src="{{view.ride.driver_photo}}" class="profile xl" />
+  <h2>{{view.ride.driver_name}}</h2>
+  <p class="email">{{view.ride.driver_email}}</p>
   <table class="">
     <tr>
       <td>Departure</td>

@@ -39,18 +39,27 @@ angular.module('carPoolingApp').directive('mapcanvas', function(mapFactory) {
            map: map,
            title:"Hello World!"
          });
-         map.setCenter(latLng);
-         map.setZoom(15);
+         
+          if (typeof pos.zoom !== 'undefined') {
+            map.setZoom(map.zoom);
+          }
+          if (pos.center === true) {
+            map.setCenter(latLng);
+          }
+         
+         
         },
         
-        showRoute: function(pointA, pointB ){
+        showRoute: function(origin, destination ){
            directionsService.route({
-             origin: pointA,
-             destination: defaultPos,
+             origin: origin,
+             destination: destination,
              travelMode: google.maps.TravelMode.DRIVING
            }, function(response, status) {
              if (status == google.maps.DirectionsStatus.OK) {
-             directionsDisplay.setDirections(response);
+              directionsDisplay.setOptions({ preserveViewport: true, draggable:true, hideRouteList:true,  suppressMarkers: true });
+              directionsDisplay.setDirections(response);
+              //polylineOptions:{strokeColor:"#2EBFD9",strokeWeight:2}
            } else {
             window.alert('Directions request failed due to ' + status);
             }

@@ -3,9 +3,7 @@ angular.module('carPoolingApp').controller('eventsShowCtrl', eventsShowCtrl);
 eventsShowCtrl.$inject = ['$scope', 'apiservice', '$state','$window','mapFactory'];
 
 function eventsShowCtrl ($scope, apiservice,  $state, $window, mapFactory ) {
-  $scope.parque = {lat:29.078235, lng:-110.946711}; 
-  $scope.nearsoft = {lat:29.097443, lng:-111.022077};
-  $scope.api = mapFactory.getApi();
+  $scope.map = mapFactory.getApi();
   $scope.id = $state.params.id;
 
   $scope.messageCar = null;
@@ -42,7 +40,6 @@ function eventsShowCtrl ($scope, apiservice,  $state, $window, mapFactory ) {
     signed:false,
     seats: "",
     driver:"",
-    showride:false,
     signmeup: true,
     option:1,
     user:{
@@ -59,6 +56,15 @@ function eventsShowCtrl ($scope, apiservice,  $state, $window, mapFactory ) {
       passengers: [],
       extraPass: 0
     },
+    ride:null,
+    showRide: function (ride) {
+      console.log(ride.location);
+      console.log($scope.view.event.location);
+      $scope.view.ride = ride;
+      var origin = ride.location[1]+","+ ride.location[0];
+      var destination = $scope.view.event.location[1]+","+$scope.view.event.location[0]; 
+      $scope.map.showRoute(origin, destination);
+    },
     isSigned: function (car) {
       var temp = _.findWhere(car.passengers, {passenger_id: $scope.view.user.id});
       return temp  ? true : false;
@@ -73,8 +79,15 @@ function eventsShowCtrl ($scope, apiservice,  $state, $window, mapFactory ) {
         console.log( response.data);
         self.event = response.data;
         
-        $scope.api.addMarker({lat:self.event.location[1], lng:self.event.location[0]});
-      
+        $scope.map.addMarker({lat:self.event.location[1], lng:self.event.location[0], center:true});
+
+        var i;
+        for(i = 0; i < self.event.cars.length; i++) {
+          if( self.event.cars[i].location ){
+            $scope.map.addMarker({lat:self.event.cars[i].location[1], lng:self.event.cars[i].location[0]});
+          }
+        }
+        
         self.event.date = moment(response.data.datetime).format('MMM. d, YYYY  H:mm a' );
         self.event.dateString = moment(response.data.datetime).calendar() ;
       
