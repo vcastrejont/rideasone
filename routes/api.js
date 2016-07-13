@@ -4,13 +4,8 @@ var router = express.Router();
 var eventsController = require('../controllers/eventController.js');
 // var locationController = require('../controllers/locationController.js');
 var userController = require('../controllers/userController.js');
-<<<<<<< HEAD
 var ridesController = require('../controllers/rideController.js');
 // var chatController = require('../controllers/chatController.js');
-=======
-var chatController = require('../controllers/chatController.js');
-var fcmController = require('../controllers/fcmController.js');
->>>>>>> master
 
 router.get('/', function(req, res) {
  res.send('API list');
@@ -26,7 +21,6 @@ router.get('/', function(req, res) {
   * @apiSuccess {ObjectId} id                               Mongo generated ID.
   * @apiSuccess {String}   name                             Event name
   * @apiSuccess {String}   description                      Event full description
-<<<<<<< HEAD
   * @apiSuccess {Object}   place                            Information about the venue
   * @apiSuccess {Object}   organizer                        Organizer full name
   * @apiSuccess {String}   category                         Event category
@@ -34,27 +28,6 @@ router.get('/', function(req, res) {
   * @apiSuccess {String[]} tags                             List of tags (Array of Strings)
   * @apiSuccess {Object[]} going_rides                      Rides going to the event
   * @apiSuccess {Object[]} returning_rides                  Rides going from the event
-=======
-  * @apiSuccess {String}   address                          Full place address
-  * @apiSuccess {String}   place                            Event venue  name
-  * @apiSuccess {String}   place_id                         Id from google place api (unique)
-  * @apiSuccess {String}   organizer                        Organizer full name
-  * @apiSuccess {ObjectId} organizer_id                     Organizer user ID
-  * @apiSuccess {String}   category                         Event category
-  * @apiSuccess {Date}     datetime                         Event date and time
-  * @apiSuccess {String[]} tags                             List of tags (Array of Strings)
-  * @apiSuccess {Object[]} cars                             Avaiable cars array
-  * @apiSuccess {ObjectId} cars.driver_id                   Car driver id
-  * @apiSuccess {String}   cars.driver_name                 Car driver name
-  * @apiSuccess {Number}   cars.seats                       Car avaiable seats for carpooling
-  * @apiSuccess {String}   car.comments                     Car driver comments
-  * @apiSuccess {Object[]} car.passenger                    Each car passenger
-  * @apiSuccess {ObjectId} car.passenger.passenger_id       Passenger user id
-  * @apiSuccess {String}   car.passenger.passenger_name     Passenger name
-  * @apiSuccess {String}   car.passanger.passenger_photo    Passenger photo
-  * @apiSuccess {String}   car.passanger.passenger_email    Passenger email address
-  * @apiSuccess {Object[]} location                         Location: longitude and latitude.
->>>>>>> master
   * @apiSuccess {Date}     created_at                       Document creation  date
   * @apiSuccess {Date}     updated_at                       Last updated
   */
@@ -68,7 +41,6 @@ router.get('/', function(req, res) {
   * @apiSuccess {ObjectId} id                               Mongo generated ID.
   * @apiSuccess {String}   name                             Event name
   * @apiSuccess {String}   description                      Event full description
-<<<<<<< HEAD
   * @apiSuccess {Object}   place                            Event venue  name
   * @apiSuccess {Object}   organizer                        Organizer full name
   * @apiSuccess {String}   category                         Event category
@@ -76,27 +48,6 @@ router.get('/', function(req, res) {
   * @apiSuccess {String[]} tags                             List of tags (Array of Strings)
   * @apiSuccess {Object[]} going_rides                      Rides going to the event
   * @apiSuccess {Object[]} returning_rides                  Rides going from the event
-=======
-  * @apiSuccess {String}   address                          Full place address
-  * @apiSuccess {String}   place                            Event venue  name
-  * @apiSuccess {String}   place_id                         Id from google place api (unique)
-  * @apiSuccess {String}   organizer                        Organizer full name
-  * @apiSuccess {ObjectId} organizer_id                     Organizer user ID
-  * @apiSuccess {String}   category                         Event category
-  * @apiSuccess {Date}     datetime                         Event date and time
-  * @apiSuccess {String[]} tags                             List of tags (Array of Strings)
-  * @apiSuccess {Object[]} cars                             Avaiable cars array
-  * @apiSuccess {ObjectId} cars.driver_id                   Car driver id
-  * @apiSuccess {String}   cars.driver_name                 Car driver name
-  * @apiSuccess {Number}   cars.seats                       Car avaiable seats for carpooling
-  * @apiSuccess {String}   car.comments                     Car driver comments
-  * @apiSuccess {Object[]} car.passenger                    Each car passenger
-  * @apiSuccess {ObjectId} car.passenger.passenger_id       Passenger user id
-  * @apiSuccess {String}   car.passenger.passenger_name     Passenger name
-  * @apiSuccess {String}   car.passanger.passenger_photo    Passenger photo
-  * @apiSuccess {String}   car.passanger.passenger_email    Passenger email address
-  * @apiSuccess {Object[]} location                         Location: longitude and latitude.
->>>>>>> master
   * @apiSuccess {Date}     created_at                       Document creation  date
   * @apiSuccess {Date}     updated_at                       Last updated
   */
@@ -108,7 +59,6 @@ router.get('/', function(req, res) {
   * @apiGroup Events
   * @apiParam {String}   name                     Event name
   * @apiParam {String}   description              Event full description
-<<<<<<< HEAD
   * @apiParam {String}   [address]                Full place address 
   * @apiParam {Object}   location                 Location: longitude and latitude.
   * @apiParam {String}   place_name               Event venue name
@@ -122,21 +72,6 @@ router.get('/', function(req, res) {
   /**
   * @api {get} events/:id Show an event 
   * @apiName GetEvent 
-=======
-  * @apiParam {String}   [address]                Full place address
-  * @apiParam {Object[]} [location]               Location: longitude and latitude.
-  * @apiParam {String}   [place]                  Event venue name
-  * @apiParam {String}   [organizer]              Organizer full name
-  * @apiParam {ObjectId} [organizer_id]           Organizer user ID
-  * @apiParam {String}   category                 Event category
-  * @apiParam {Date}     [datetime]               Event date and time
-  * @apiParam {String[]} tags                     List of tags (Array of Strings)
-  */
-  router.post('/events/new', eventsController.create);
-  /**
-  * @api {get} events/:id Show an event
-  * @apiName show
->>>>>>> master
   * @apiGroup Events
   * @apiDescription Display an event details
   * @apiParam {String}    [id]                              Event id
@@ -144,7 +79,6 @@ router.get('/', function(req, res) {
   * @apiSuccess {ObjectId} id                               Mongo generated ID.
   * @apiSuccess {String}   name                             Event name
   * @apiSuccess {String}   description                      Event full description
-<<<<<<< HEAD
   * @apiSuccess {Object}   place                            Event venue  name
   * @apiSuccess {Object}   organizer                        Organizer full name
   * @apiSuccess {String}   category                         Event category
@@ -153,40 +87,14 @@ router.get('/', function(req, res) {
   * @apiSuccess {Object[]} going_rides                      Rides going to the event
   * @apiSuccess {Object[]} returning_rides                  Rides going from the event
   * @apiSuccess {Date}     created_at                       Document creation  date
-=======
-  * @apiSuccess {String}   address                          Full place address
-  * @apiSuccess {String}   place                            Event venue  name
-  * @apiSuccess {String}   place_id                         Id from google place api (unique)
-  * @apiSuccess {String}   organizer                        Organizer full name
-  * @apiSuccess {ObjectId} organizer_id                     Organizer user ID
-  * @apiSuccess {String}   category                         Event category
-  * @apiSuccess {Date}     datetime                         Event date and time
-  * @apiSuccess {String[]} tags                             List of tags (Array of Strings)
-  * @apiSuccess {Object[]} cars                             Avaiable cars array
-  * @apiSuccess {ObjectId} cars.driver_id                   Car driver id
-  * @apiSuccess {String}   cars.driver_name                 Car driver name
-  * @apiSuccess {Number}   cars.seats                       Car avaiable seats for carpooling
-  * @apiSuccess {String}   car.comments                     Car driver comments
-  * @apiSuccess {Object[]} car.passenger                    Each car passenger
-  * @apiSuccess {ObjectId} car.passenger.passenger_id       Passenger user id
-  * @apiSuccess {String}   car.passenger.passenger_name     Passenger name
-  * @apiSuccess {String}   car.passanger.passenger_photo    Passenger photo
-  * @apiSuccess {String}   car.passanger.passenger_email    Passenger email address
-  * @apiSuccess {Object[]} location                         Location: longitude and latitude.
->>>>>>> master
   * @apiSuccess {Date}     created_at                       Document creation  date
   * @apiSuccess {Date}     updated_at                       Last updated
   */
   router.get('/events/:id', eventsController.show);             //Show an event
 
   /**
-<<<<<<< HEAD
   * @api {get} events/users/:user User events  
   * @apiName GetUserEvents
-=======
-  * @api {get} events/user/:user User events
-  * @apiName User events
->>>>>>> master
   * @apiGroup Events
   * @apiDescription List all events from that user
   * @apiParam {String}     user                             User id
@@ -194,7 +102,6 @@ router.get('/', function(req, res) {
   * @apiSuccess {ObjectId} id                               Mongo generated ID.
   * @apiSuccess {String}   name                             Event name
   * @apiSuccess {String}   description                      Event full description
-<<<<<<< HEAD
   * @apiSuccess {Object}   place                            Event venue  name
   * @apiSuccess {Object}   organizer                        Organizer full name
   * @apiSuccess {String}   category                         Event category
@@ -202,32 +109,10 @@ router.get('/', function(req, res) {
   * @apiSuccess {String[]} tags                             List of tags (Array of Strings)
   * @apiSuccess {Object[]} going_rides                      Rides going to the event
   * @apiSuccess {Object[]} returning_rides                  Rides going from the event
-=======
-  * @apiSuccess {String}   address                          Full place address
-  * @apiSuccess {String}   place                            Event venue  name
-  * @apiSuccess {String}   place_id                         Id from google place api (unique)
-  * @apiSuccess {String}   organizer                        Organizer full name
-  * @apiSuccess {ObjectId} organizer_id                     Organizer user ID
-  * @apiSuccess {String}   category                         Event category
-  * @apiSuccess {Date}     datetime                         Event date and time
-  * @apiSuccess {String[]} tags                             List of tags (Array of Strings)
-  * @apiSuccess {Object[]} cars                             Avaiable cars array
-  * @apiSuccess {ObjectId} cars.driver_id                   Car driver id
-  * @apiSuccess {String}   cars.driver_name                 Car driver name
-  * @apiSuccess {Number}   cars.seats                       Car avaiable seats for carpooling
-  * @apiSuccess {String}   car.comments                     Car driver comments
-  * @apiSuccess {Object[]} car.passenger                    Each car passenger
-  * @apiSuccess {ObjectId} car.passenger.passenger_id       Passenger user id
-  * @apiSuccess {String}   car.passenger.passenger_name     Passenger name
-  * @apiSuccess {String}   car.passanger.passenger_photo    Passenger photo
-  * @apiSuccess {String}   car.passanger.passenger_email    Passenger email address
-  * @apiSuccess {Object[]} location                         Location: longitude and latitude.
->>>>>>> master
   * @apiSuccess {Date}     created_at                       Document creation  date
   * @apiSuccess {Date}     created_at                       Document creation  date
   * @apiSuccess {Date}     updated_at                       Last updated  
   */
-<<<<<<< HEAD
 
 router.get('/users/:user/events', eventsController.user);    // List  by user
   
@@ -306,45 +191,6 @@ router.put('/rides/:ride/leave', ridesController.leaveRide);   //Leave a car
   * @apiGroup Events
   * @apiDescription Remove a given Event by ID 
   */
-=======
-  router.get('/events/user/:user', eventsController.user);    // List  by user
-router.put('/events/signup/:id', eventsController.signup);    // Event sign up [no longer used]
-router.put('/events/:id', eventsController.update);           //Update an event
-
-  /**
-  * @api {post} events/:event/car Add car
-  * @apiName Addcar
-  * @apiGroup Cars
-  * @apiDescription add a new car to the event
-  * @apiParam {String}     event                            Event id
-  * @apiParam {String}     driver_id                        Driver id
-  *
-  * @apiSuccess {ObjectId} id                               Mongo generated ID.
-  * @apiSuccess {Date}     created_at                       Document creation  date
-  */
-  router.post('/events/:event/car', eventsController.addCar);       //Add a car
-
-  /**
-  * @api {post} events/car Add car
-  * @apiName Addcar
-  * @apiGroup Cars
-  * @apiDescription add a new car to the event
-  * @apiParam {String}     event                            Event id
-  * @apiParam {String}     user                             User id
-  *
-  * @apiSuccess {ObjectId} id                               Mongo generated ID.
-  * @apiSuccess {Date}     created_at                       Document creation  date
-  */
-router.delete('/events/deletecar', eventsController.deleteCar); //Delete a car
-
-
-router.post('/events/joincar', eventsController.joinCar);     //Join a car
-router.post('/events/addExtra', eventsController.addExtra);   //Add extra passanger
-router.post('/events/leavecar', eventsController.leaveCar);   //Leave a car
-router.post('/events/carbyuser', eventsController.carbyuser); //Car polling by user
-router.delete('/events/:id', eventsController.remove);        //Delete an event
-router.post('/events/:id/car/:carId/message', eventsController.messageDriver);
->>>>>>> master
 
 // ----Locations --------
 // router.get('/locations', locationController.list);
