@@ -5,7 +5,6 @@ var eventsController = require('../controllers/eventController.js');
 // var locationController = require('../controllers/locationController.js');
 var userController = require('../controllers/userController.js');
 var ridesController = require('../controllers/rideController.js');
-// var chatController = require('../controllers/chatController.js');
 var chatController = require('../controllers/chatController.js');
 var fcmController = require('../controllers/fcmController.js');
 
@@ -96,7 +95,7 @@ router.get('/', function(req, res) {
 
   /**
   * @api {get} /api/events/users/:user User events  
-  * @apiName User Events
+  * @apiName GetUserEvents
   * @apiGroup Events
   * @apiDescription List all events from that user
   * @apiParam {String}     user                             User id
