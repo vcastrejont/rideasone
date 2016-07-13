@@ -114,14 +114,28 @@ router.get('/', function(req, res) {
   * @apiSuccess {Date}     updated_at                       Last updated  
   */
 
-  router.get('/users/:user/events', eventsController.user);    // List  by user
+router.get('/users/:user/events', eventsController.user);    // List  by user
   
   
 //router.post('/events/carbyuser', eventsController.carbyuser); // Carpooling by user[no longer used]
 
 
 //router.put('/events/signup/:id', eventsController.signup);    // Event sign up [no longer used]
-router.put('/events/:event', eventsController.update);           //Update an event
+
+/**
+ * @api {put} events/:event/ Edit event
+ * @apiName EditEvent
+ * @apiGroup Events
+ * @apiDescription Edit an event
+ * @apiParam name
+ * @apiParam place
+ * @apiParam datetime
+ * @apiParam description
+ * @apiParam {Boolean} returning
+ * @apiSuccess numAffected
+ **/
+
+router.put('/events/:event', eventsController.edit); 
 
 /**
  * @api {put} events/:event/add-ride event ride
@@ -138,6 +152,8 @@ router.put('/events/:event', eventsController.update);           //Update an eve
 router.put('/events/:event/add-ride', eventsController.addCar);       //Add a car
 
 router.put('/events/:event/delete-ride', eventsController.deleteCar); //Delete a car
+router.put('/events/:event/car-by-user', eventsController.carbyuser); //Car polling by user
+router.delete('/events/:event', eventsController.remove);        //Delete an event
 
 /**
  * @api {put} rides/:ride/join request a spot for a ride
@@ -156,7 +172,7 @@ router.put('/rides/:ride/join', ridesController.joinRide);     //Join a car
  * @apiDescription Register to a ride to or from the event
  * @apiSuccess numAffected
  **/
-router.put('/ride-request/:request/accept', ridesController.acceptRideRequest);
+router.put('/ride-requests/:request/accept', ridesController.acceptRideRequest);
 router.put('/rides/:ride/add-passenger', ridesController.addExtra);   //Add extra passanger
 
 /**
@@ -168,7 +184,6 @@ router.put('/rides/:ride/add-passenger', ridesController.addExtra);   //Add extr
  * @apiSuccess numAffected
  **/
 router.put('/rides/:ride/leave', ridesController.leaveRide);   //Leave a car
-router.put('/events/:event/car-by-user', eventsController.carbyuser); //Car polling by user
 
   /**
   * @api {delete} events/:event delete an event 
@@ -176,8 +191,6 @@ router.put('/events/:event/car-by-user', eventsController.carbyuser); //Car poll
   * @apiGroup Events
   * @apiDescription Remove a given Event by ID 
   */
-
-router.delete('/events/:event', eventsController.remove);        //Delete an event
 
 // ----Locations --------
 // router.get('/locations', locationController.list);
