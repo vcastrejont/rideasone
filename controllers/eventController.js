@@ -179,7 +179,7 @@ module.exports = {
 		var ridesToPush = {
 			going_rides: []
 		};
-      });
+      
     },
     /**
      * eventController delete car()
