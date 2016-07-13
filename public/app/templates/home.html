@@ -1,10 +1,14 @@
 
 <div class="container box bg" id="dashboard" >
   <header class="row">
-    <div class="col-md-3">
-      <h1>Welcome</h1>
+    <div class="col-md-6">
+      <h1>Events</h1>
     </div>
-    
+    <div class="col-md-6 text-right">
+        <input type="text" class="form-control search in" placeholder="Search" ng-model="filters.search">
+
+      <a ui-sref="eventsnew"  class="btn btn-primary in "><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Create event</a>
+    </div>
   </header>
   <main class="row">
     <div class="col-sm-8 ">
