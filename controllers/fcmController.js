@@ -1,5 +1,5 @@
 var config = require('../config/config');
-var userModel = require('../models/userModel.js');
+var userModel = require('../models/user.js');
 var PushMessageModel = require('../models/PushMessageModel.js');
 
 var FCM = require('../lib/fcm').FCM;
