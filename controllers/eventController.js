@@ -1,7 +1,11 @@
 var Event = require('../models/event.js');
 var User = require('../models/user.js');
+var Ride = require('../models/ride.js');
 var mailerController = require('../controllers/mailerController.js');
 var mongoose = require('mongoose');
+var Transaction = require('lx-mongoose-transaction')(mongoose);
+var _ = require('lodash');
+
 /**
  * eventController.js
  *
@@ -104,7 +108,7 @@ module.exports = {
         return user.createEvent(req.body);
       })
      .then(function (event) {
-        res.json({ _id: event.id });
+        res.json({ _id: event._id });
       })
       .catch(function (err) {
         res.status(500).json({ message: err.message });
@@ -114,7 +118,7 @@ module.exports = {
    * eventController.remove()
    */
   remove: function (req, res) {
-    var eventId = req.params.id;
+    var eventId = req.params.event;
     Event.findByIdAndRemove(eventId)
       .then(function (event) {
         return res.json(event);
@@ -165,37 +169,101 @@ module.exports = {
       return res.json(events);
     });
   },
+  
   /**
    * eventController.Add car()
    */
   addCar: function (req, res) {
-    Event.findOne({_id: req.body.id}, function (err, event) {
-      if (err) return res.json(500, { message: 'Error', error: err });
-      var car = {
-        driver_id: req.user.id,
-        driver_name: req.user.name,
-        driver_photo: req.user.photo,
-        driver_email: req.user.email,
-        seats: req.body.seats,
-        comments: req.body.comments
+		var transaction = new Transaction();
+		var eventToEdit;
+		var ridesToPush = {
+			going_rides: []
+		};
+      });
+    },
+    /**
+     * eventController delete car()
+     */
+    deleteCar: function(req, res) {
+      var id = req.body.id;
+      var car_id = req.body.carid;
+      eventModel.update({_id: id},
+      {'$pull': {"cars": {"_id": car_id}}}, function(err, numAffected){
+        if(err){
+            console.log(err);
+            return res.status(500).json( {
+                message: 'Error updating event', error: err
+            });
+        }else{
+          console.log(numAffected);
+          return res.status(200).json( {
+              message: 'Successfully deleted',
+              numAffected: numAffected
+          });
+        }
+      });
+    },
+    /**
+     * eventController Join car()
+     */
+    joinCar: function(req, res) {
+      var event_id = req.body.event_id,
+      car_id = req.body.car_id,
+      passenger = {
+        passenger_id        : req.user.id,
+        passenger_name      : req.user.name,
+        passenger_photo     : req.user.photo,
+        going               : !!req.body.going,
+        back                : !!req.body.back
       };
 
-      Event.update({'_id': req.body.id}, {$push: {'cars': car}},
-        function (err, numAffected) {
-          if (err) {
-            console.log(err);
-            return res.status(500).json({
-              message: 'Error updating event', error: err
-            });
-          } else {
-            return res.status(200).json({
-              message: 'Successfully added!',
-              numAffected: numAffected
-            });
-          }
-        });
-    });
-  },
+    Event.findOne({_id: req.params.event})
+		.then(function (event) {
+		  eventToEdit = event;	
+			var car = {
+				driver: req.body.driverId,
+				seats: req.body.seats,
+				comments: req.body.comments
+			};
+
+			if (req.body.going === true){
+				transaction.insert('Ride', car);
+				return transaction.run()
+				.then((createdRide) => {
+					eventToEdit.going_rides.push(createdRide[0]._id);
+				});
+			}
+		})
+		.then(() => {
+			if (req.body.returning === true){
+				transaction.insert('Ride', car);	
+				return transaction.run()
+				.then((createdRide) => {
+					eventToEdit.returning_rides.push(createdRide[0]._id);
+				});
+			}
+		})
+		.then(function (){
+				transaction.update('Event', {'_id': req.params.event}, {
+					going_rides: eventToEdit.going_rides, 
+					returning_rides: eventToEdit.returning_rides
+				});
+				return transaction.run();
+		})
+		.then(function (updatedEvent) {
+			console.log(updatedEvent);
+			var numAffected = updatedEvent.length;
+			return res.status(200).json({
+				message: 'Successfully added!',
+				numAffected: numAffected
+			});
+		})
+		.catch(function(err){
+				console.log(err);
+				if (err) return res.json(500, { message: 'Error', error: err });
+		});
+	},
+
   /**
    * eventController delete car()
    */
@@ -210,7 +278,6 @@ module.exports = {
             message: 'Error updating event', error: err
           });
         } else {
-          console.log(numAffected);
           return res.status(200).json({
             message: 'Successfully deleted',
             numAffected: numAffected
@@ -218,203 +285,21 @@ module.exports = {
         }
       });
   },
-  /**
-   * eventController Join car()
-   */
-  joinCar: function (req, res) {
-    var event_id = req.body.event_id;
-    var car_id = req.body.car_id;
-    var passenger = {
-      passenger_id: req.user.id,
-      passenger_name: req.user.name,
-      passenger_photo: req.user.photo
-    };
-
-    Event.update({_id: event_id, 'cars._id': car_id },
-      {'$push': {'cars.$.passengers': passenger}},
-
-      function (err, numAffected) {
-        if (err) {
-          console.log(err);
-          return res.status(500).json({
-            message: 'Error updating event', error: err
-          });
-        } else {
-          Event.findOne({_id: event_id}, function (err, event) {
-            var car = _.filter(event.cars, function (item) {
-              return item._id.toString() === car_id;
-            });
-            mailerController.joinCar(passenger.passenger, event.name, car[0].driver_email);
-          });
-
-          return res.status(200).json({
-            message: 'Successfully added!',
-            numAffected: numAffected
-          });
-        }
-      });
-  },
-
-  /**
-   * eventController addExtra()
-   */
-  addExtra: function (req, res) {
-    var event_id = req.body.event_id;
-    var car_id = req.body.car_id;
-    var extra = req.body.extra;
-    var passenger = {
-      user_id: req.user.id,
-      name: req.user.name,
-      photo: req.user.photo
-    };
-    for (i = 0; i < extra; i++) {
-      Event.update({_id: event_id, 'cars._id': car_id },
-        {'$push': {'cars.$.passengers': passenger}},
-        function (err, numAffected) {
-          if (err) {
-            console.log(err);
-            return res.status(500).json({
-              message: 'Error updating event', error: err
-            });
-          } else {
-            // nothing here
-          }
-        });
-    }
-    return res.status(200).json({
-      message: 'Successfully added!'
-    });
-
-  },
-
-  /**
-   * eventController Leave a car()
-   */
-  leaveCar: function (req, res) {
-    var event_id = req.body.event_id;
-    var car_id = req.body.car_id;
-    var passenger = {
-      passenger_id: req.user.id,
-      passenger_name: req.user.name
-    };
-    Event.update({_id: event_id, 'cars._id': car_id },
-      {'$pull': {'cars.$.passengers': {'user_id': req.user.id }}},
-
-      function (err, numAffected) {
-        if (err) {
-          console.log(err);
-          return res.status(500).json({
-            message: 'Error updating event', error: err
-          });
-        } else {
-          Event.findOne({_id: event_id}, function (err, event) {
-            var car = _.filter(event.cars, function (item) {
-              return item._id.toString() === car_id;
-            });
-            mailerController.leaveCar(passenger.passenger_name, event.name, car[0].driver_email);
-          });
-
-          return res.status(200).json({
-            message: 'Successfully removed',
-            numAffected: numAffected
-          });
-        }
-      });
-  },
-
-  /**
-   * eventController.update()
-   */
-  update: function (req, res) {
-    var id = req.params.id;
-    // Find event
-    Event.findOne({_id: id}, function (err, event) {
-      if (err) {
-        return res.json(500, {
-          message: 'Error', error: err
-        });
-      }
-      if (event) { // Event   found
-        if (req.body.option == 1) { // if user wants to share a ride
-          var cars = {
-            driver_id: req.user.id,
-            driver: req.user.name,
-            driver_photo: req.user.photo,
-            seats: req.body.seats,
-            comments: req.body.comments
-          };
-          Event.update({'_id': id}, {$push: {'cars': cars}}, function (err, numAffected) {
-            if (err) {
-              console.log(err);
-              return res.status(500).json({
-                message: 'Error updating event', error: err
-              });
-            } else {
-              console.log(numAffected);
-              return res.status(200).json({
-                message: 'Successfully added!',
-                numAffected: numAffected
-              });
-            }
-          });
-
-        } else { // if user doenst have car
-          if (req.body.driver) { // if user found a driver
-            Event.update({_id: id, 'attendees.user_id': req.user.id },
-              {'$set': {'attendees.$.lift': false}}, // he is not longer looking for a lift
-              function (err, numAffected) {
-                if (err) {
-                  console.log(err);
-                  return res.status(500).json({
-                    message: 'Error updating event', error: err
-                  });
-                } else {
-                  var passanger = {
-                    user_id: req.user.id,
-                    name: req.user.name,
-                    photo: req.user.photo
-                  };
-
-                  Event.update({_id: id, 'cars.driver_id': req.body.driver },
-                    {'$push': {'cars.$.passanger': passanger}}, // he is not longer looking for a lift
-
-                    function (err, numAffected) {
-                      if (err) {
-                        console.log(err);
-                        return res.status(500).json({
-                          message: 'Error updating event', error: err
-                        });
-                      } else {
-                        return res.status(200).json({
-                          message: 'Successfully added!',
-                          numAffected: numAffected
-                        });
-                      }
-                    });
-                }
-              });
-
-          } else { // user has no driver and  needs a lift
-            Event.update({_id: id, 'attendees.user_id': req.user.id },
-              {'$set': {'attendees.$.lift': true}},
-              function (err, numAffected) {
-                if (err) {
-                  return res.status(500).json({
-                    message: 'Error updating event', error: err
-                  });
-                } else {
-                  return res.status(200).json({
-                    message: 'Successfully added!',
-                    numAffected: numAffected
-                  });
-                }
-              });
-          }
-        }
-      } else { // Event not found
-        return res.json(404, {message: 'No such event'});
-      }
-    });
+  edit: function (req, res) {
+		var updates = _.pick(req.body, ['name', 'place', 'description', 'datetime', 'tags']); 
+		
+    Event.update({_id: req.params.event}, {$set: updates})
+		.then(function (event) {
+			return res.status(200).json({
+				message: 'Successfully edited',
+			});
+    })
+		.catch(err => {
+			return res.status(500).json({
+				message: 'Error editing event',
+				error: err
+			});
+		});
   },
 
   /**
@@ -437,6 +322,73 @@ module.exports = {
       }
       if (!event) {
         return res.json(404, {message: 'No such event'});
+    /**
+     * eventController addExtra()
+     */
+    addExtra: function(req, res) {
+      var event_id    = req.body.event_id,
+      car_id      = req.body.car_id,
+      extra_going = req.body.extra_going,
+      extra_back = req.body.extra_back,
+      passenger = {
+        user_id   : req.user.id,
+        name      : req.user.name,
+        photo     : req.user.photo,
+        going     : false,
+        back      : false
+      }
+
+      for (i = 0; i < extra_going; i++) {
+        passenger.going = true;
+
+        eventModel.update({_id: event_id, 'cars._id': car_id },
+        {'$push': {"cars.$.passengers": passenger}},
+        function(err, numAffected){
+          if(err){
+            console.log(err);
+            return res.status(500).json( {
+                message: 'Error updating event', error: err
+            });
+          }else{
+            //nothing here
+          }
+        });
+      }
+
+      for (i = 0; i < extra_back; i++) {
+        passenger.going = false;
+        passenger.back = true;
+
+        eventModel.update({_id: event_id, 'cars._id': car_id },
+        {'$push': {"cars.$.passengers": passenger}},
+        function(err, numAffected){
+          if(err){
+            console.log(err);
+            return res.status(500).json( {
+                message: 'Error updating event', error: err
+            });
+          }else{
+            //nothing here
+          }
+        });
+      }
+
+      return res.status(200).json( {
+          message: 'Successfully added!'
+      });
+
+    },
+
+    /**
+     * eventController Leave a car()
+     */
+    leaveCar: function(req, res) {
+
+      var event_id  = req.body.event_id;
+      var car_id    = req.body.car_id;
+      var passenger = {
+        passenger_id   : req.user.id,
+        passenger_name      : req.user.name
       }
       Event.findOne({'_id': id, 'attendees.user_id': req.user.id}, function (err, attendee) {
         if (attendee) {
@@ -465,4 +417,46 @@ module.exports = {
     });
   }
 
+    /**
+     * eventController.remove()
+     */
+    remove: function(req, res) {
+        var id = req.params.id;
+        eventModel.findByIdAndRemove(id, function(err, event){
+            if(err) {
+                return res.json(500, {
+                    message: 'Error getting event.'
+                });
+            }
+            return res.json(event);
+        });
+    },
+
+    messageDriver: function(req, res) {
+        var eventId = req.params.id;
+        var carId = req.params.carId;
+        if(!req.body.message) return res.json(400, { message: 'The message is required' });
+
+        eventModel.findById(eventId, function(err, event) {
+            if(err) return res.json(500, { message: 'Error getting event.' });
+
+            var car = _.find(event.cars, function(car) {
+                return car['_id'] == carId;
+            });
+
+            if(!car) return res.json(400, { message: 'Invalid car ID' });
+
+            mailerController.messageDriver({
+                driver_email: car.driver_email,
+                content: req.body.message,
+                user_email: req.user.email
+            }, function (err, response) {
+                if (err) return res.send(500, { message: 'Error sending message' });
+
+                console.log("Mail sent to: " + car.driver_email);
+                res.sendStatus(200);
+            })
+
+        });
+    }
 };

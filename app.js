@@ -40,6 +40,7 @@ var port = normalizePort(process.env.PORT || '3000');
 //  Database
 // ------------------------------------------------------
 var mongoose = require('mongoose');
+mongoose.Promise = require('bluebird');
 mongoose.connect(config.db.database);
 var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
@@ -98,11 +99,7 @@ app.use(function(req, res, next) {
 });
 if (app.get('env') === 'development') {
   app.use(function(err, req, res, next) {
-    res.status(err.status || 500);
-    res.render('error', {
-      message: err.message,
-      error: err
-    });
+    res.send(err);
   });
 }
 

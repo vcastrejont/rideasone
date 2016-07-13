@@ -12,7 +12,6 @@ lib-cov
 
 # Coverage directory used by tools like istanbul
 coverage
-
 apidoc
 
 # Grunt intermediate storage (http://gruntjs.com/creating-plugins#storing-task-files)
@@ -43,3 +42,5 @@ carpoolingApp/www/lib/
 .vagrant
 *.swp
 *.swo
+*.orig
+.DS_Store
