@@ -11,6 +11,15 @@ var UserSchema = new Schema({
   defaultPlace: { type: Schema.ObjectId, ref: 'place' }
 });
 
+UserSchema.virtual('profile').get(function () {
+  return {
+    _id: this.id,
+    name: this.name,
+    email: this.email,
+    photo: this.photo
+  };
+});
+
 /**
  * Gets all the events in which the user is either the organizer or the driver of one of the rides
  *

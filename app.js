@@ -86,8 +86,7 @@ app.use(passport.session());
 // ------------------------------------------------------
 app.use('/', routes);
 app.use('/api', api);
-app.get('/auth/google', passport.authenticate('google',{ scope: [ 'email','profile']}));
-app.get('/auth/google/callback', passport.authenticate('google',{ successRedirect: '/', failureRedirect: '/login' }));
+app.use('/auth', require('./routes/auth'));
 
 // error handlers
 // ------------------------------------------------------
