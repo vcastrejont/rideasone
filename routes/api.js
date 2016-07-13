@@ -5,7 +5,8 @@ var eventsController = require('../controllers/eventController.js');
 // var locationController = require('../controllers/locationController.js');
 var userController = require('../controllers/userController.js');
 var ridesController = require('../controllers/rideController.js');
-// var chatController = require('../controllers/chatController.js');
+var chatController = require('../controllers/chatController.js');
+var fcmController = require('../controllers/fcmController.js');
 
 router.get('/', function(req, res) {
  res.send('API list');
@@ -13,7 +14,7 @@ router.get('/', function(req, res) {
 
 // ----Events --------
   /**
-  * @api {get} events All future events
+  * @api {get} /api/events All future events
   * @apiName GetFutureEvents 
   * @apiGroup Events
   * @apiDescription Returns an array of all events with date greater than yesterday.
@@ -34,7 +35,7 @@ router.get('/', function(req, res) {
   router.get('/events', eventsController.list);
 
   /**
-  * @api {get} events/past Past events
+  * @api {get} /api/events/past Past events
   * @apiName GetPastEvents 
   * @apiGroup Events
   *
@@ -54,7 +55,7 @@ router.get('/', function(req, res) {
   router.get('/events/past', eventsController.past);
 
   /**
-  * @api {post} events New event
+  * @api {post} /api/events New event
   * @apiName CreateEvent 
   * @apiGroup Events
   * @apiParam {String}   name                     Event name
@@ -70,7 +71,7 @@ router.get('/', function(req, res) {
   router.post('/events', eventsController.create);          
   
   /**
-  * @api {get} events/:id Show an event 
+  * @api {get} /api/events/:id Show an event 
   * @apiName GetEvent 
   * @apiGroup Events
   * @apiDescription Display an event details
@@ -93,7 +94,7 @@ router.get('/', function(req, res) {
   router.get('/events/:id', eventsController.show);             //Show an event
 
   /**
-  * @api {get} events/users/:user User events  
+  * @api {get} /api/events/users/:user User events  
   * @apiName GetUserEvents
   * @apiGroup Events
   * @apiDescription List all events from that user
@@ -113,7 +114,6 @@ router.get('/', function(req, res) {
   * @apiSuccess {Date}     created_at                       Document creation  date
   * @apiSuccess {Date}     updated_at                       Last updated  
   */
-
 router.get('/users/:user/events', eventsController.user);    // List  by user
   
   
@@ -217,7 +217,7 @@ router.put('/rides/:ride/leave', ridesController.leaveRide);   //Leave a car
 * @apiSuccess {String}   email                  User email adddres
 * @apiSuccess {Date}     created_at             Document creation  date
 */
-  router.get('/users', userController.list);
+router.get('/users', userController.list);
 
 /**
 * @api {post} users Create user
@@ -274,7 +274,6 @@ router.post('/users', userController.create);
 * @apiSuccess {Date}     updated_at             Full place address
 */
 // router.get('/chats/:rideid', chatController.getMessages);
-
 
 router.get('/fcm/registerUserToken', fcmController.registerUserToken);
 router.get('/fcm/send', fcmController.send);
