@@ -43,3 +43,4 @@ carpoolingApp/www/lib/
 *.swp
 *.swo
 *.orig
+.DS_Store

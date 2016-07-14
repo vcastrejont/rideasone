@@ -31,8 +31,8 @@ router.get('/', function(req, res) {
   * @apiSuccess {Date}     created_at                       Document creation  date
   * @apiSuccess {Date}     updated_at                       Last updated
   */
-  router.get('/events', eventsController.list);         
-  
+  router.get('/events', eventsController.list);
+
   /**
   * @api {get} events/past Past events
   * @apiName GetPastEvents 
@@ -51,7 +51,7 @@ router.get('/', function(req, res) {
   * @apiSuccess {Date}     created_at                       Document creation  date
   * @apiSuccess {Date}     updated_at                       Last updated
   */
-  router.get('/events/past', eventsController.past);  
+  router.get('/events/past', eventsController.past);
 
   /**
   * @api {post} events New event
@@ -213,8 +213,8 @@ router.put('/rides/:ride/leave', ridesController.leaveRide);   //Leave a car
 * @apiSuccess {String}   name                   User full name
 * @apiSuccess {String}   provider               Provider name (google, facebook, etc)
 * @apiSuccess {String}   provider_id            Provider unique id
-* @apiSuccess {String}   photo                  User url photo 
-* @apiSuccess {String}   email                  User email adddres 
+* @apiSuccess {String}   photo                  User url photo
+* @apiSuccess {String}   email                  User email adddres
 * @apiSuccess {Date}     created_at             Document creation  date
 */
   router.get('/users', userController.list);
@@ -223,19 +223,19 @@ router.put('/rides/:ride/leave', ridesController.leaveRide);   //Leave a car
 * @api {post} users Create user
 * @apiName CreateUser
 * @apiGroup Users
-* @apiParam {String}     provider_id            Provider unique id 
+* @apiParam {String}     provider_id            Provider unique id
 * @apiParam {String}     name                   User full name
 * @apiParam {String}     provider               Provider name (google, facebook, etc)
-* @apiParam {String}     [photo]                User url photo 
-* @apiParam {String}     email                  User email adddres 
+* @apiParam {String}     [photo]                User url photo
+* @apiParam {String}     email                  User email adddres
 
 *
 * @apiSuccess {ObjectId} id                     Mongo generated ID.
 * @apiSuccess {String}   name                   User full name
 * @apiSuccess {String}   provider               Provider name (google, facebook, etc)
 * @apiSuccess {String}   provider_id            Provider unique id
-* @apiSuccess {String}   photo                  User url photo 
-* @apiSuccess {String}   email                  User email adddres 
+* @apiSuccess {String}   photo                  User url photo
+* @apiSuccess {String}   email                  User email adddres
 * @apiSuccess {Date}     created_at             Document creation  date
 */
 router.post('/users', userController.create);
@@ -245,14 +245,14 @@ router.post('/users', userController.create);
 * @api {post} chats/add Add message
 * @apiName add
 * @apiGroup Chats
-* @apiDescription Add a chat message to a car 
+* @apiDescription Add a chat message to a car
 * @apiParam {String}     rideid                 Car ride ID
 * @apiParam {String}     message                Message content
 * @apiParam {String}     user                   Full User names
 * @apiSuccess {ObjectId} id                     Mongo generated ID.
 * @apiSuccess {String}   name                   Event name
 * @apiSuccess {String}   description            Event full description
-* @apiSuccess {String}   address                Full place address 
+* @apiSuccess {String}   address                Full place address
 */
 // router.post('/chats/add', chatController.addMessage);
 
@@ -261,7 +261,7 @@ router.post('/users', userController.create);
 * @api {get} chats/:rideid Get messages
 * @apiName get
 * @apiGroup Chats
-* @apiDescription Get a chat log from a car 
+* @apiDescription Get a chat log from a car
 * @apiParam {String} rideid The Car ID.
 *
 * @apiExample Example usage:
@@ -271,9 +271,13 @@ router.post('/users', userController.create);
 * @apiSuccess {String}   messages.username      Car driver name
 * @apiSuccess {Date}     messages.created_at    Car avaiable seats for carpooling
 * @apiSuccess {Date}     created_at             Event full description
-* @apiSuccess {Date}     updated_at             Full place address 
+* @apiSuccess {Date}     updated_at             Full place address
 */
 // router.get('/chats/:rideid', chatController.getMessages);
+
+
+//router.get('/fcm/registerUserToken', fcmController.registerUserToken);
+//router.get('/fcm/send', fcmController.send);
 
 
 module.exports = router;

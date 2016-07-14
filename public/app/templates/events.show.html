@@ -18,11 +18,11 @@
         <p><legend>Event name</legend>
           {{view.event.name}}
         </p>
-        
+
         <p><legend>Date</legend>
           {{view.event.datetime | date:'shortDate'}} {{view.event.datetime | date:'shortTime'}}
         </p>
-        
+
         <p><legend>Place</legend>
           {{view.event.place}}
         </p>
@@ -34,67 +34,120 @@
         <p><legend>Status</legend>
           <span class="label label-success" ng-show="view.event.signed.length">  You are signed </span>
         </p>
-        
+
         <p><legend>Organizer</legend>
           {{view.event.organizer}}
         </p>
         <p><legend>Avaiable  seats </legend>
-       {{view.event.avail}} 
+       {{view.event.avail}}
         </p>
       </div>
-      
+
     </div>
     <div class="col-md-6">
       <legend>Location</legend>
       <div id="map"></div>
     </div>
     <div class="col-sm-12">
-  
+      
+
+      <div >
       <legend>Carpooling</legend>
       <div class="tabs">
          <div class="tab" ng-repeat="car in view.event.cars">
              <input type="radio" id="tab-car{{$index+1}}" name="carpooling-tabs"  ng-checked="$index == 0">
-             <label for="tab-car{{$index+1}}">Car #{{$index+1}} 
+             <label for="tab-car{{$index+1}}">Car #{{$index+1}}
                <span class="label label-primary" ng-if="car.driver_id==view.user.id">Driving</span>
                <span class="label label-success" ng-if="view.isSigned(car)">Joined</span>
              </label>
              <div class="content">
-               <p>
-                 <strong>Driver:</strong> <span ng-class="{'driving': car.driver_id == view.user.id }"> {{car.driver_name}}</span> 
-               </p>
-               <p>
-                 <strong>Driver's comments:</strong>  {{car.comments}}
-               </p>
-               <p>
-                 <strong>Passenger:</strong> 
-                  <span ng-repeat="p in car.passengers" ng-class="{'sel': p.passenger_id == view.user.id }">
-                    {{p.passenger_name}}<span ng-if="!$last">, </span>
-                  </span>
-               </p>
-               <p>
-                 <strong>Available seats:</strong> {{car.seats-(car.passengers.length)}} 
-               </p>
-               <p ng-if="view.isSigned(car) ">
-                 <strong>Extra passangers:</strong>
-                 
-                 <select class="" name="" ng-model="view.extra">
-                   <option value="{{$index+1}}" ng-repeat="i in view.getNumber(car.seats-(car.passanger.length)) track by $index">{{$index+1}}</option>  
-                 </select>
-                 <button ng-click="view.addExtra(car._id)" type="button" class="btn btn-primary btn-xsmall">Save</button>
-               </p>
-               <div ng-if=" car.driver_id == view.user.id" class="text-center"> 
-                 <button class="btn btn-danger btn-xs" ng-click="view.deleteCar(car._id)">Remove my car</button>
-               </div>
-               
-               <div ng-if="(car.driver_id !== view.user.id && car.passengers.length < car.seats && !view.isSigned(car) )" class="text-center"> 
-                 <button class="btn btn-primary btn-xs btn-control" ng-click="view.joinCar(car._id)" >Join this ride</button>
-               </div>
-               <div class="text-center"  ng-if="view.isSigned(car)"> 
-                 <button class="btn btn-danger btn-xs btn-control" ng-click="view.leaveCar(car._id)" >Leave this ride</button>
-            
-                
-               </div>
-             </div> 
+               <div class="row">
+                 <div class="col-sm-12">
+                   <p>
+                     <strong>Driver:</strong> <span ng-class="{'driving': car.driver_id == view.user.id }"> {{car.driver_name}}</span>
+                   </p>
+                   <p>
+                     <strong>Driver's comments:</strong>  {{car.comments}}
+                   </p>
+                   <div class="row">
+                     <div class="col-sm-12">
+                       <strong>Passengers:</strong>
+                       <ul>
+                         <li>
+                           <strong>Going:</strong>
+                           <span ng-repeat="p in car.passengers | onlyGoingPassengers" ng-class="{'sel': p.passenger_id == view.user.id }">
+                             {{p.passenger_name}}<span ng-hide="$last">, </span>
+                           </span>
+                         </li>
+
+                         <li>
+                           <strong>Back:</strong>
+                           <span ng-repeat="p in car.passengers | onlyBackPassengers" ng-class="{'sel': p.passenger_id == view.user.id }">
+                             {{p.passenger_name}}<span ng-hide="$last">, </span>
+                           </span>
+                         </li>
+                       </ul>
+                     </div>
+                   </div>
+                   <p>
+                     <strong>Available seats:</strong>
+                     <ul>
+                       <li>
+                         <strong>Going:</strong>{{car.seats-(view.goingRide.passengers.length)}}
+                       </li>
+
+                       <li>
+                         <strong>Back:</strong>{{car.seats-(view.backRide.passengers.length)}}
+                       </li>
+                     </ul>
+                   </p>
+                   <div class="row" ng-if="view.isSigned(car) ">
+                     <div class="col-sm-12">
+                       <strong>Extra passangers:</strong>
+
+                       <ul>
+                         <li>
+                           <strong>Going:</strong>
+                           <select ng-model="view.goingRide.extraPass">
+                             <option value="{{$index+1}}" ng-repeat="i in view.getNumber(car.seats-(view.goingRide.passengers.length)) track by $index">{{$index+1}}</option>
+                           </select>
+                         </li>
+
+                         <li>
+                           <strong>Back:</strong>
+                           <select ng-model="view.backRide.extraPass">
+                             <option value="{{$index+1}}" ng-repeat="i in view.getNumber(car.seats-(view.backRide.passengers.length)) track by $index">{{$index+1}}</option>
+                           </select>
+                         </li>
+                       </ul>
+
+                       <button ng-click="view.addExtra(car._id)" type="button" class="btn btn-primary btn-xsmall">Save</button>
+                     </div>
+                   </div>
+                   <div ng-if="car.driver_id == view.user.id" class="row text-center">
+                     <button class="btn btn-danger btn-xs" ng-click="view.deleteCar(car._id)">Remove my car</button>
+                   </div>
+
+                   <div class="row text-center" ng-hide="view.isSigned(car) || car.driver_id === view.user.id">
+                     <label for="going_check">Going</label>
+                     <input type="checkbox" name="going_check" ng-model="view.user.going">
+                     <label for="back_ride">Back</label>
+                     <input type="checkbox" name="back_check" ng-model="view.user.back">
+                   </div>
+
+                   <div ng-show="(car.driver_id !== view.user.id && car.passengers.length < car.seats && !view.isSigned(car) )" class="row text-center">
+                       <button class="btn btn-primary btn-xs" ng-click="messageDriver(car)" >Send a Message</button>
+                     <button class="btn btn-primary btn-xs btn-control" ng-click="view.joinCar(car._id)" ng-disabled="(!view.user.going && !view.user.back)">
+                       Join this ride
+                     </button>
+                   </div>
+                   <div class="row text-center"  ng-if="view.isSigned(car)">
+                     <button class="btn btn-danger btn-xs btn-control" ng-click="view.leaveCar(car._id)" >Leave this ride</button>
+                   </div>
+                  </div>
+                </div>
+
+             </div>
          </div>
          <div class="tab">
            <input type="radio" id="tab-new" name="carpooling-tabs" >
@@ -125,13 +178,44 @@
            </div>
          </div>
         </div>
-      
-    </div>  
 
-        
-    
-         
+
+    </div>
+
   </main>
-  
+
+
+      </div><!-- -->
+    </div>
+
+
+
+
+  </main>
+
+  <div class="modal fade" id="sendMessageModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+
+      <div class="modal-body">
+          <div style="text-align: center">
+              <h4 style="font-size: 24px">Send message</h4>
+              <p><img src="{{ messageCar.driver_photo }}" style="border-radius: 25px" /> {{ messageCar.driver }}</p>
+          </div>
+        <form>
+          <div class="form-group">
+            <textarea rows="6" class="form-control" id="message" ng-model="message.text" placeholder="Write your message..."></textarea>
+          </div>
+        </form>
+
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-primary" ng-click="sendMessage()">Send</button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
 
 </div>

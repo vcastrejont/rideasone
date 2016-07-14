@@ -39,7 +39,7 @@ app.config(function($stateProvider, $urlRouterProvider) {
   events = {
     name: 'events',
     url: '^/events',
-    templateUrl: "app/templates/events.html",
+    templateUrl: "app/templates/home.html",
     controller: eventsCtrl
   },
   eventShow = {
