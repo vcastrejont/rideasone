@@ -7,7 +7,7 @@ var userController = require('../controllers/userController.js');
 var ridesController = require('../controllers/rideController.js');
 // var chatController = require('../controllers/chatController.js');
 
-var auth = require('../middleware/auth');
+var middleware = require('../middleware');
 
 router.get('/', function (req, res) {
   res.send('API list');
@@ -33,7 +33,7 @@ router.get('/', function (req, res) {
   * @apiSuccess {Date}      created_at              Document creation  date
   * @apiSuccess {Date}      updated_at              Last updated
   */
-router.get('/events', auth.hasToken, eventsController.list);
+router.get('/events', middleware.isAuthenticated, eventsController.list);
 
   /**
   * @api {get} /api/events/past Past events
@@ -53,7 +53,7 @@ router.get('/events', auth.hasToken, eventsController.list);
   * @apiSuccess {Date}      created_at          Document creation  date
   * @apiSuccess {Date}      updated_at          Last updated
   */
-router.get('/events/past', auth.hasToken, eventsController.past);
+router.get('/events/past', middleware.isAuthenticated, eventsController.past);
 
   /**
   * @api {post} /api/events New event
@@ -68,7 +68,7 @@ router.get('/events/past', auth.hasToken, eventsController.past);
   * @apiParam {Date}      [datetime]               Event date and time
   * @apiParam {String[]}  tags                     List of tags (Array of Strings)
   */
-router.post('/events', auth.hasToken, eventsController.create);
+router.post('/events', middleware.isAuthenticated, eventsController.create);
 
   /**
   * @api {get} /api/events/:id Show an event
@@ -91,7 +91,7 @@ router.post('/events', auth.hasToken, eventsController.create);
   * @apiSuccess {Date}      created_at                    Document creation  date
   * @apiSuccess {Date}      updated_at                    Last updated
   */
-router.get('/events/:id', auth.hasToken, eventsController.show);             // Show an event
+router.get('/events/:id', middleware.isAuthenticated, eventsController.show);             // Show an event
 
   /**
   * @api {get} /api/events/users/:user User events
@@ -114,7 +114,7 @@ router.get('/events/:id', auth.hasToken, eventsController.show);             // 
   * @apiSuccess {Date}      created_at                    Document creation  date
   * @apiSuccess {Date}      updated_at                    Last updated
   */
-router.get('/users/:user/events', auth.hasToken, eventsController.user);    // List  by user
+router.get('/users/:user/events', middleware.isAuthenticated, eventsController.user);    // List  by user
 
 // router.post('/events/carbyuser', eventsController.carbyuser); // Carpooling by user[no longer used]
 
@@ -133,7 +133,7 @@ router.get('/users/:user/events', auth.hasToken, eventsController.user);    // L
  * @apiSuccess numAffected
  **/
 
-router.put('/events/:event', auth.hasToken, eventsController.edit);
+router.put('/events/:event', middleware.isAuthenticated, eventsController.edit);
 
 /**
  * @api {put} /api/events/:event_id/add-ride event ride
@@ -147,11 +147,11 @@ router.put('/events/:event', auth.hasToken, eventsController.edit);
  * @apiParam {Boolean} returning
  * @apiSuccess numAffected
  **/
-router.put('/events/:event_id/add-ride', auth.hasToken, eventsController.addCar);       // Add a car
+router.put('/events/:event_id/add-ride', middleware.isAuthenticated, eventsController.addCar);       // Add a car
 
-router.put('/events/:event_id/delete-ride', auth.hasToken, eventsController.deleteCar); // Delete a car
-router.put('/events/:event_id/car-by-user', auth.hasToken, eventsController.carbyuser); // Car polling by user
-router.delete('/events/:event_id', auth.hasToken, auth.isOrganizer, eventsController.remove);        // Delete an event
+router.put('/events/:event_id/delete-ride', middleware.isAuthenticated, eventsController.deleteCar); // Delete a car
+router.put('/events/:event_id/car-by-user', middleware.isAuthenticated, eventsController.carbyuser); // Car polling by user
+router.delete('/events/:event_id', middleware.isAuthenticated, middleware.isOrganizer, eventsController.remove);        // Delete an event
 
 /**
  * @api {put} /api/rides/:ride_id/join request a spot for a ride
@@ -161,7 +161,7 @@ router.delete('/events/:event_id', auth.hasToken, auth.isOrganizer, eventsContro
  * @apiParam {String} userId
  * @apiSuccess numAffected
  **/
-router.put('/rides/:ride_id/join', auth.hasToken, ridesController.joinRide);     // Join a car
+router.put('/rides/:ride_id/join', middleware.isAuthenticated, ridesController.joinRide);     // Join a car
 
 /**
  * @api {put} /api/ride-request/:request/accept accept a ride request
@@ -170,8 +170,8 @@ router.put('/rides/:ride_id/join', auth.hasToken, ridesController.joinRide);    
  * @apiDescription Register to a ride to or from the event
  * @apiSuccess numAffected
  **/
-router.put('/ride-requests/:request/accept', auth.hasToken, ridesController.acceptRideRequest);
-router.put('/rides/:ride_id/add-passenger', auth.hasToken, ridesController.addExtra);   // Add extra passanger
+router.put('/ride-requests/:request/accept', middleware.isAuthenticated, ridesController.acceptRideRequest);
+router.put('/rides/:ride_id/add-passenger', middleware.isAuthenticated, ridesController.addExtra);   // Add extra passanger
 
 /**
  * @api api/rides/:ride_id/leave cancel spot on event ride
@@ -181,7 +181,7 @@ router.put('/rides/:ride_id/add-passenger', auth.hasToken, ridesController.addEx
  * @apiParam {String} userId
  * @apiSuccess numAffected
  **/
-router.put('/rides/:ride_id/leave', auth.hasToken, auth.isPassenger, ridesController.leaveRide);   // Leave a car
+router.put('/rides/:ride_id/leave', middleware.isAuthenticated, middleware.isPassenger, ridesController.leaveRide);   // Leave a car
 
   /**
   * @api {delete} /api/events/:event delete an event
@@ -215,7 +215,7 @@ router.put('/rides/:ride_id/leave', auth.hasToken, auth.isPassenger, ridesContro
 * @apiSuccess {String}    email                  User email adddres
 * @apiSuccess {Date}      created_at             Document creation  date
 */
-router.get('/users', auth.hasToken, userController.list);
+router.get('/users', middleware.isAuthenticated, userController.list);
 
 /**
 * @api {post} /api/users Create user

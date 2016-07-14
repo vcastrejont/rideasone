@@ -1,7 +1,7 @@
 var passport = require('passport');
 
 module.exports = {
-  hasToken: passport.authenticate('jwt', { session: false }),
+  isAuthenticated: passport.authenticate('jwt', { session: false }),
   isPassenger: isPassenger,
   isOrganizer: isOrganizer
 };
