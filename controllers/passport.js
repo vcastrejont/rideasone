@@ -11,18 +11,21 @@ module.exports = function (passport) {
     clientID: config.google.key
   }, function (parsedToken, googleId, done) {
     var profile = parsedToken.payload;
-    User.findOne({ provider_id: googleId }, function (err, user) {
-      if (err) return done(err);
-      if (user) return done(null, user);
-      var newUser = new User({
-        provider_id: googleId,
-        provider: 'google',
-        name: profile.name,
-        photo: profile.picture,
-        email: profile.email
-      });
-      newUser.save(done);
-    });
+    User.findOne({ provider_id: googleId })
+      .then((user) => {
+        if (user) return done(null, user);
+        var newUser = new User({
+          provider_id: googleId,
+          provider: 'google',
+          name: profile.name,
+          photo: profile.picture,
+          email: profile.email
+        });
+        newUser.save
+          .then(user => done(null, user))
+          .catch(err => done(err));
+      })
+      .catch(err => done(err));
   }));
 
   passport.use(new JwtStrategy({
