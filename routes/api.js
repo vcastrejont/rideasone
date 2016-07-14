@@ -65,7 +65,6 @@ router.get('/events/past', auth.hasToken, eventsController.past);
   * @apiParam {Object}    location                 Location: longitude and latitude.
   * @apiParam {String}    place_name               Event venue name
   * @apiParam {String}    place_id                 Event venue reference
-  * @apiParam {String}    organizer                Organizer user ID
   * @apiParam {Date}      [datetime]               Event date and time
   * @apiParam {String[]}  tags                     List of tags (Array of Strings)
   */
@@ -92,7 +91,7 @@ router.post('/events', auth.hasToken, eventsController.create);
   * @apiSuccess {Date}      created_at                    Document creation  date
   * @apiSuccess {Date}      updated_at                    Last updated
   */
-  router.get('/events/:id', auth.hasToken, eventsController.show);             // Show an event
+router.get('/events/:id', auth.hasToken, eventsController.show);             // Show an event
 
   /**
   * @api {get} /api/events/users/:user User events
@@ -119,11 +118,10 @@ router.get('/users/:user/events', auth.hasToken, eventsController.user);    // L
 
 // router.post('/events/carbyuser', eventsController.carbyuser); // Carpooling by user[no longer used]
 
-
 // router.put('/events/signup/:id', eventsController.signup);    // Event sign up [no longer used]
 
 /**
- * @api {put} /api/events/:event/ Edit event
+ * @api {put} /api/events/:event_id/ Edit event
  * @apiName EditEvent
  * @apiGroup Events
  * @apiDescription Edit an event
@@ -138,7 +136,7 @@ router.get('/users/:user/events', auth.hasToken, eventsController.user);    // L
 router.put('/events/:event', auth.hasToken, eventsController.edit);
 
 /**
- * @api {put} /api/events/:event/add-ride event ride
+ * @api {put} /api/events/:event_id/add-ride event ride
  * @apiName AddEventRide
  * @apiGroup Events
  * @apiDescription Register a car for riding to and from the event
@@ -149,21 +147,21 @@ router.put('/events/:event', auth.hasToken, eventsController.edit);
  * @apiParam {Boolean} returning
  * @apiSuccess numAffected
  **/
-router.put('/events/:event/add-ride', auth.hasToken, eventsController.addCar);       // Add a car
+router.put('/events/:event_id/add-ride', auth.hasToken, eventsController.addCar);       // Add a car
 
-router.put('/events/:event/delete-ride', auth.hasToken, eventsController.deleteCar); // Delete a car
-router.put('/events/:event/car-by-user', auth.hasToken, eventsController.carbyuser); // Car polling by user
-router.delete('/events/:event', auth.hasToken, eventsController.remove);        // Delete an event
+router.put('/events/:event_id/delete-ride', auth.hasToken, eventsController.deleteCar); // Delete a car
+router.put('/events/:event_id/car-by-user', auth.hasToken, eventsController.carbyuser); // Car polling by user
+router.delete('/events/:event_id', auth.hasToken, auth.isOrganizer, eventsController.remove);        // Delete an event
 
 /**
- * @api {put} /api/rides/:ride/join request a spot for a ride
+ * @api {put} /api/rides/:ride_id/join request a spot for a ride
  * @apiName JoinEventRide
  * @apiGroup Rides
  * @apiDescription Register to a ride to or from the event
  * @apiParam {String} userId
  * @apiSuccess numAffected
  **/
-router.put('/rides/:ride/join', auth.hasToken, ridesController.joinRide);     // Join a car
+router.put('/rides/:ride_id/join', auth.hasToken, ridesController.joinRide);     // Join a car
 
 /**
  * @api {put} /api/ride-request/:request/accept accept a ride request
@@ -173,17 +171,17 @@ router.put('/rides/:ride/join', auth.hasToken, ridesController.joinRide);     //
  * @apiSuccess numAffected
  **/
 router.put('/ride-requests/:request/accept', auth.hasToken, ridesController.acceptRideRequest);
-router.put('/rides/:ride/add-passenger', auth.hasToken, ridesController.addExtra);   // Add extra passanger
+router.put('/rides/:ride_id/add-passenger', auth.hasToken, ridesController.addExtra);   // Add extra passanger
 
 /**
- * @api api/rides/:ride/leave cancel spot on event ride
+ * @api api/rides/:ride_id/leave cancel spot on event ride
  * @apiName LeaveEventRide
  * @apiGroup Rides
  * @apiDescription Cancel your spot for a ride to or from an event
  * @apiParam {String} userId
  * @apiSuccess numAffected
  **/
-router.put('/rides/:ride/leave', auth.hasToken, auth.isPassenger, ridesController.leaveRide);   // Leave a car
+router.put('/rides/:ride_id/leave', auth.hasToken, auth.isPassenger, ridesController.leaveRide);   // Leave a car
 
   /**
   * @api {delete} /api/events/:event delete an event
@@ -240,7 +238,6 @@ router.get('/users', auth.hasToken, userController.list);
 */
 router.post('/users', userController.create);
 
-
 /**
 * @api {post} /api/chats/add Add message
 * @apiName add
@@ -255,7 +252,6 @@ router.post('/users', userController.create);
 * @apiSuccess {String}    address                Full place address
 */
 // router.post('/chats/add', chatController.addMessage);
-
 
 /**
 * @api {get} /api/chats/:rideid Get messages
