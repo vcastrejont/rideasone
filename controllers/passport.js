@@ -32,6 +32,8 @@ module.exports = function (passport) {
     secretOrKey: config.jwtSecret,
     issuer: config.issuer
   }, function (payload, done) {
-    User.findById(payload.id, done);
+    User.findById(payload.id)
+      .then(user => done(null, user))
+      .catch(err => done(err));
   }));
 };
