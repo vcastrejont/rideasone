@@ -2,17 +2,32 @@ var passport = require('passport');
 
 module.exports = {
   hasToken: passport.authenticate('jwt', { session: false }),
-  isPassenger: isPassenger
+  isPassenger: isPassenger,
+  isOrganizer: isOrganizer
 };
 
 function isPassenger (req, res, next) {
-  if (!req.body.ride) return res.status(400).json({ message: 'ride id is required on field ride' });
-  req.user.isPassenger(req.body.ride)
-    .then((isPassenger) => {
-      if (isPassenger) return next();
-      return res.status(403).json({ message: 'User is not a passenger on this ride' });
+  var rideId = req.body.ride_id || req.params.ride_id;
+  if (!rideId) return res.status(400).json({ message: 'ride_id is required`' });
+  req.user.isPassenger(rideId)
+    .then((ride) => {
+      req.ride = ride;
+      return next();
     })
     .catch((err) => {
-      return res.status(500).json(err);
+      return res.status(err.status || 500).json(err);
+    });
+}
+
+function isOrganizer (req, res, next) {
+  var eventId = req.body.event_id || req.params.event_id;
+  if (!eventId) return res.status(400).json({ message: 'event_id is required' });
+  req.user.isOrganizer(eventId)
+    .then((event) => {
+      req.event = event;
+      return next();
+    })
+    .catch((err) => {
+      return res.status(err.status || 500).json(err);
     });
 }
