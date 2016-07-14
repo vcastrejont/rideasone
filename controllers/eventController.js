@@ -1,6 +1,4 @@
 var Event = require('../models/event.js');
-var User = require('../models/user.js');
-var Ride = require('../models/ride.js');
 var mailerController = require('../controllers/mailerController.js');
 var mongoose = require('mongoose');
 var Transaction = require('lx-mongoose-transaction')(mongoose);
