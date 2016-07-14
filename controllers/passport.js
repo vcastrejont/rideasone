@@ -21,10 +21,9 @@ module.exports = function (passport) {
           photo: profile.picture,
           email: profile.email
         });
-        newUser.save
-          .then(user => done(null, user))
-          .catch(err => done(err));
+        return newUser.save();
       })
+      .then(user => done(null, user))
       .catch(err => done(err));
   }));
 
