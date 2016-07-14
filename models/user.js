@@ -1,7 +1,6 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 var Transaction = require('lx-mongoose-transaction')(mongoose);
-var Event = require('./event');
 var Place = require('./place');
 
 var UserSchema = new Schema({
@@ -35,7 +34,7 @@ UserSchema.methods.getEvents = function () {
 
   var today = moment().startOf('day').toDate();
   return Ride
-    .find({ driver: user })
+    .find({ driver: this })
     .then((rides) => {
       return Event
         .find({ datetime: { $gte: today } })
@@ -101,6 +100,32 @@ UserSchema.methods.requestJoiningRide = function (rideId) {
   });
   // TODO: Create driver notification
   return request.save();
+};
+
+UserSchema.methods.isPassenger = function (rideId) {
+  var Ride = require('../models/ride');
+  return Ride.findOne({ _id: rideId, 'passengers.user': this })
+    .then((ride) => {
+      if (!ride) {
+        var error = new Error('User is not a passenger on this ride');
+        error.status = 403;
+        throw error;
+      }
+      return ride;
+    });
+};
+
+UserSchema.methods.isOrganizer = function (eventId) {
+  var Event = require('../models/event');
+  return Event.findOne({ _id: eventId, organizer: this })
+    .then((event) => {
+      if (!event) {
+        var error = new Error('User is not the organizer of this event');
+        error.status = 403;
+        throw error;
+      }
+      return event;
+    });
 };
 
 module.exports = mongoose.model('user', UserSchema);

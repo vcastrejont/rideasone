@@ -1,6 +1,6 @@
 var express = require('express');
 var router = express.Router();
-var auth = require('../middleware/auth');
+var middleware = require('../middleware');
 var authController = require('../controllers/authController');
 
 /**
@@ -23,6 +23,6 @@ router.post('/google', authController.PostGoogleAuth);
 * @apiSuccess {String}   photo  Picture url
 * @apiHeader (JWT token) {String} Authorization
 */
-router.get('/me', auth.hasToken, authController.GetProfile);
+router.get('/me', middleware.isAuthenticated, authController.GetProfile);
 
 module.exports = router;

@@ -1,5 +1,4 @@
 var Event = require('../models/event.js');
-var User = require('../models/user.js');
 var Ride = require('../models/ride.js');
 var RideRequest = require('../models/rideRequest.js');
 var mailerController = require('../controllers/mailerController.js');
@@ -33,20 +32,17 @@ module.exports = {
       });
   },
   joinRide: function (req, res) {
-		User.findOne({_id: req.body.userId})
-		.then(user => {
-			return user.requestJoiningRide(req.params.ride);
-		})
-		.then(ride => {
-			return res.status(200).json({
-				message: 'Successfully added!'
+    req.user.requestJoiningRide(req.params.ride_id)
+			.then((ride) => {
+        return res.status(200).json({
+					message: 'Successfully added!'
+				});
+			})
+			.catch(err => {
+				res.status(500).json({
+					message: 'Error requesting ride', error: err
+				});
 			});
-		})
-		.catch(err => {
-			res.status(500).json({
-				message: 'Error requesting ride', error: err
-			});
-		});
   },
   addExtra: function (req, res) {
     var event_id = req.body.event_id;
@@ -77,7 +73,7 @@ module.exports = {
 
   },
   leaveRide: function (req, res) {
-    Ride.update({_id: req.params.ride}, {'$pull': {'passengers': {'user_id': req.user}}})
+    Ride.update({ _id: req.params.ride_id }, {'$pull': {'passengers': {'user_id': req.user}}})
 		.then(numAffected => {
 			/*toDo: notify driver*/
 			//mailerController.leaveCar(passenger.passenger_name, event.name, car[0].driver_email);

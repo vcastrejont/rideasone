@@ -1,6 +1,4 @@
 var Event = require('../models/event.js');
-var User = require('../models/user.js');
-var Ride = require('../models/ride.js');
 var mailerController = require('../controllers/mailerController.js');
 var mongoose = require('mongoose');
 var Transaction = require('lx-mongoose-transaction')(mongoose);
@@ -40,13 +38,7 @@ module.exports = {
    * eventController.byuser()
    */
   user: function (req, res) {
-    // TODO: Once passport is implemented, get the user from req.user
-    var userId = req.params.user;
-
-    User.findById(userId)
-      .then(function (user) {
-        return user.getEvents();
-      })
+    req.user.getEvents()
       .then(function (events) {
         res.json(events);
       })
@@ -103,23 +95,20 @@ module.exports = {
    * eventController.addEvent()
    */
   create: function (req, res) {
-    User.findById(req.body.organizer)
-      .then(user => {
-        return user.createEvent(req.body);
-      })
-     .then(function (event) {
+    req.user.createEvent(req.body)
+      .then(function (event) {
         res.json({ _id: event._id });
       })
       .catch(function (err) {
         res.status(500).json({ message: err.message });
       });
   },
+
   /**
    * eventController.remove()
    */
   remove: function (req, res) {
-    var eventId = req.params.event;
-    Event.findByIdAndRemove(eventId)
+    req.event.remove()
       .then(function (event) {
         return res.json(event);
       })
@@ -169,7 +158,7 @@ module.exports = {
       return res.json(events);
     });
   },
-  
+
   /**
    * eventController.Add car()
    */
@@ -249,12 +238,12 @@ module.exports = {
       });
   },
   edit: function (req, res) {
-    var updates = _.pick(req.body, ['name', 'place', 'description', 'datetime', 'tags']); 
-    
-    Event.update({_id: req.params.event}, {$set: updates})
+    var updates = _.pick(req.body, ['name', 'place', 'description', 'datetime', 'tags']);
+
+    Event.update({ _id: req.params.event_id }, {$set: updates})
     .then(function (event) {
       return res.status(200).json({
-        message: 'Successfully edited',
+        message: 'Successfully edited'
       });
     })
     .catch(err => {
@@ -312,21 +301,6 @@ module.exports = {
     */
     });
   },
-
-	/**
-	 * eventController.remove()
-	 */
-	remove: function(req, res) {
-			var id = req.params.id;
-			eventModel.findByIdAndRemove(id, function(err, event){
-					if(err) {
-							return res.json(500, {
-									message: 'Error getting event.'
-							});
-					}
-					return res.json(event);
-			});
-	},
 
 	messageDriver: function(req, res) {
 			var eventId = req.params.id;
