@@ -5,8 +5,7 @@ var eventsController = require('../controllers/eventController.js');
 // var locationController = require('../controllers/locationController.js');
 var userController = require('../controllers/userController.js');
 var ridesController = require('../controllers/rideController.js');
-var chatController = require('../controllers/chatController.js');
-var fcmController = require('../controllers/fcmController.js');
+// var chatController = require('../controllers/chatController.js');
 
 router.get('/', function(req, res) {
  res.send('API list');
@@ -94,7 +93,11 @@ router.get('/', function(req, res) {
   router.get('/events/:id', eventsController.show);             //Show an event
 
   /**
+<<<<<<< HEAD
   * @api {get} /api/events/users/:user User events  
+=======
+  * @api {get} events/users/:user User events  
+>>>>>>> Development
   * @apiName GetUserEvents
   * @apiGroup Events
   * @apiDescription List all events from that user
@@ -275,8 +278,7 @@ router.post('/users', userController.create);
 */
 // router.get('/chats/:rideid', chatController.getMessages);
 
-router.get('/fcm/registerUserToken', fcmController.registerUserToken);
-router.get('/fcm/send', fcmController.send);
-
+// router.get('/fcm/registerUserToken', fcmController.registerUserToken);
+// router.get('/fcm/send', fcmController.send);
 
 module.exports = router;
