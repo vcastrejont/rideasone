@@ -33,7 +33,10 @@ module.exports = function (passport) {
     issuer: config.issuer
   }, function (payload, done) {
     User.findById(payload.id)
-      .then(user => done(null, user))
+      .then((user) => {
+        if (!user) return done(new Error('User not found'));
+        return done(null, user);
+      })
       .catch(err => done(err));
   }));
 };
