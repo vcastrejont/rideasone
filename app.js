@@ -13,11 +13,34 @@ var session   = require('express-session');
 var MongoStore = require('connect-mongo')(session);
 var routes = require('./routes/routes');
 var _ = require('underscore');
+var debug = require('debug')('nspoolingcar:server');
 
 require('./controllers/passport')(passport);
+
+
+function normalizePort(val) {
+  var port = parseInt(val, 10);
+
+  if (isNaN(port)) {
+    // named pipe
+    return val;
+  }
+
+  if (port >= 0) {
+    // port number
+    return port;
+  }
+
+  return false;
+}
+
+var port = normalizePort(process.env.PORT || '3000');
+
+
 //  Database
 // ------------------------------------------------------
 var mongoose = require('mongoose');
+mongoose.Promise = require('bluebird');
 mongoose.connect(config.db.database);
 var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
@@ -37,6 +60,10 @@ app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
+
+var http = require('http');
+var server = http.createServer(app)
+var socket = require('./socket')(server);
 
 // Headers
 app.use(function(req, res, next) {
@@ -77,5 +104,41 @@ if (app.get('env') === 'development') {
   });
 }
 
+app.on('error', onError);
+app.on('listening', onListening);
+
+app.listen(port);
+
+function onError(error) {
+  if (error.syscall !== 'listen') {
+    throw error;
+  }
+
+  var bind = typeof port === 'string'
+    ? 'Pipe ' + port
+    : 'Port ' + port;
+
+  // handle specific listen errors with friendly messages
+  switch (error.code) {
+    case 'EACCES':
+      console.error(bind + ' requires elevated privileges');
+      process.exit(1);
+      break;
+    case 'EADDRINUSE':
+      console.error(bind + ' is already in use');
+      process.exit(1);
+      break;
+    default:
+      throw error;
+  }
+}
+
+function onListening() {
+  var addr = app.address();
+  var bind = typeof addr === 'string'
+    ? 'pipe ' + addr
+    : 'port ' + addr.port;
+  debug('Listening on ' + bind);
+}
 
 module.exports = app;
