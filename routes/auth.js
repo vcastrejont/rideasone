@@ -12,7 +12,6 @@ var authController = require('../controllers/authController');
 */
 router.post('/google', authController.PostGoogleAuth);
 
-
 /**
 * @api {get} /auth/me My profile
 * @apiName GetMyProfile

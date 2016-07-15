@@ -216,27 +216,6 @@ router.put('/rides/:ride_id/leave', middleware.isAuthenticated, middleware.isPas
 router.get('/users', middleware.isAuthenticated, userController.list);
 
 /**
-* @api {post} /api/users Create user
-* @apiName CreateUser
-* @apiGroup Users
-* @apiParam {String}   provider_id            Provider unique id
-* @apiParam {String}   name                   User full name
-* @apiParam {String}   provider               Provider name (google, facebook, etc)
-* @apiParam {String}   [photo]                User url photo
-* @apiParam {String}   email                  User email adddres
-
-*
-* @apiSuccess {ObjectId}  id                   Mongo generated ID.
-* @apiSuccess {String}    name                 User full name
-* @apiSuccess {String}    provider             Provider name (google, facebook, etc)
-* @apiSuccess {String}    provider_id          Provider unique id
-* @apiSuccess {String}    photo                User url photo
-* @apiSuccess {String}    email                User email adddres
-* @apiSuccess {Date}      created_at           Document creation  date
-*/
-router.post('/users', userController.create);
-
-/**
 * @api {post} /api/chats/add Add message
 * @apiName add
 * @apiGroup Chats
