@@ -103,13 +103,14 @@ module.exports = {
    * eventController.create()
    */
   create: function (req, res) {
-      req.user.createEvent(req.body)
-       .then(function (event) {
-          res.json({ _id: event._id });
-        })
-        .catch(function (err) {
-          res.status(500).json({ message: err.message });
-        });
+    var newEvent = _.pick(req.body, ['name', 'description', 'address', 'location', 'place_id', 'place_name', 'datetime', 'tags']);
+    req.user.createEvent(newEvent)
+     .then(function (event) {
+        res.json({ _id: event._id });
+      })
+      .catch(function (err) {
+        res.status(500).json({ message: err.message });
+      });
   },
   /**
    * eventController.remove()
@@ -180,7 +181,7 @@ module.exports = {
     .then(function (event) {
       eventToEdit = event;  
       var car = {
-        driver: req.body.driverId,
+        driver: req.body.driver_id,
         seats: req.body.seats,
         comments: req.body.comments
       };
@@ -276,7 +277,7 @@ module.exports = {
           });
         }
       });
-		});
+    });
   },
 
   /**

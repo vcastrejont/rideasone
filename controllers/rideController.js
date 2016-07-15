@@ -13,30 +13,30 @@ var _ = require('lodash');
  */
 module.exports = {
   deleteRide: function (req, res) {
-	var transaction = new Transaction();
-	
-	Event.findOne({_id: id})
-	  .then(event => {
-		var rideId = req.params.ride_id;
-		var updatedRides = _.reject(event.rides, rideId);
-		transaction.update('Event', eventId, updatedRides);
-		transaction.remove('Ride', rideId);
-		return transaction.run();
-	  })
-	  .then(results => {
-		var numAffected = results.length;
+  var transaction = new Transaction();
+  
+  Event.findOne({_id: id})
+    .then(event => {
+    var rideId = req.params.ride_id;
+    var updatedRides = _.reject(event.rides, rideId);
+    transaction.update('Event', eventId, updatedRides);
+    transaction.remove('Ride', rideId);
+    return transaction.run();
+    })
+    .then(results => {
+    var numAffected = results.length;
         console.log(numAffected);
         return res.status(200).json({
           message: 'Successfully deleted',
           numAffected: numAffected
         });
       })
-	  .catch(err => {
-		console.log(err);
-		return res.status(500).json({
-		  message: 'Error updating event', error: err
-		});
-	  });
+    .catch(err => {
+    console.log(err);
+    return res.status(500).json({
+      message: 'Error updating event', error: err
+    });
+    });
   },
   
   joinRide: function (req, res) {
@@ -103,7 +103,7 @@ module.exports = {
     RideRequest.findOne({_id: req.params.request})
     .populate('ride')
     .then(request => {
-	  if(request.ride.driver != req.user._id) return res.status(403).json({ message: 'user is not the driver of this ride' });
+    if(request.ride.driver != req.user._id) return res.status(403).json({ message: 'user is not the driver of this ride' });
       var passenger = {
         user: request.passenger,
         place: request.place

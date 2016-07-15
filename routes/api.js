@@ -170,7 +170,7 @@ router.put('/rides/:ride_id/join', middleware.isAuthenticated, ridesController.j
  * @apiSuccess numAffected
  **/
 router.put('/ride-requests/:request_id/accept', middleware.isAuthenticated, ridesController.acceptRideRequest);
-router.put('/rides/:ride_id/add-passenger', middleware.isAuthenticated, ridesController.addPassenger);  
+router.put('/rides/:ride_id/add-passenger', middleware.isAuthenticated, middleware.isPassenger, ridesController.addPassenger);  
 
 /**
  * @api api/rides/:ride_id/leave cancel spot on event ride
