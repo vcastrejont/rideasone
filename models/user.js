@@ -115,6 +115,19 @@ UserSchema.methods.isPassenger = function (rideId) {
     });
 };
 
+UserSchema.methods.isDriver = function (rideId) {
+  var Ride = require('../models/ride');
+  return Ride.findOne({ _id: rideId, driver: this })
+    .then(ride => {
+      if (!ride) {
+        var error = new Error('User is not the driver on this ride');
+        error.status = 403;
+        throw error;
+      }
+      return ride;
+    });
+};
+
 UserSchema.methods.isOrganizer = function (eventId) {
   var Event = require('../models/event');
   return Event.findOne({ _id: eventId, organizer: this })

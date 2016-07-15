@@ -13,24 +13,32 @@ var _ = require('lodash');
  */
 module.exports = {
   deleteRide: function (req, res) {
-    var id = req.body.id;
-    var ride_id = req.body.carid;
-    Event.update({_id: id},
-      {'$pull': {'cars': {'_id': ride_id}}}, function (err, numAffected) {
-        if (err) {
-          console.log(err);
-          return res.status(500).json({
-            message: 'Error updating event', error: err
-          });
-        } else {
-          console.log(numAffected);
-          return res.status(200).json({
-            message: 'Successfully deleted',
-            numAffected: numAffected
-          });
-        }
-      });
+	var transaction = new Transaction();
+	
+	Event.findOne({_id: id})
+	  .then(event => {
+		var rideId = req.params.ride_id;
+		var updatedRides = _.reject(event.rides, rideId);
+		transaction.update('Event', eventId, updatedRides);
+		transaction.remove('Ride', rideId);
+		return transaction.run();
+	  })
+	  .then(results => {
+		var numAffected = results.length;
+        console.log(numAffected);
+        return res.status(200).json({
+          message: 'Successfully deleted',
+          numAffected: numAffected
+        });
+      })
+	  .catch(err => {
+		console.log(err);
+		return res.status(500).json({
+		  message: 'Error updating event', error: err
+		});
+	  });
   },
+  
   joinRide: function (req, res) {
     req.user.requestJoiningRide(req.params.ride_id)
       .then((ride) => {
@@ -73,7 +81,7 @@ module.exports = {
 
   },
   leaveRide: function (req, res) {
-    Ride.update({ _id: req.params.ride_id }, {'$pull': {'passengers': {'user_id': req.user}}})
+    req.ride.update({'$pull': {'passengers': {'user_id': req.user._id}}})
     .then(numAffected => {
       /*toDo: notify driver*/
       //mailerController.leaveCar(passenger.passenger_name, event.name, car[0].driver_email);
@@ -95,6 +103,7 @@ module.exports = {
     RideRequest.findOne({_id: req.params.request})
     .populate('ride')
     .then(request => {
+	  if(request.ride.driver != req.user._id) return res.status(403).json({ message: 'user is not the driver of this ride' });
       var passenger = {
         user: request.passenger,
         place: request.place

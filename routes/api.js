@@ -72,7 +72,6 @@ router.post('/events', middleware.isAuthenticated, eventsController.create);
   * @apiName GetEvent
   * @apiGroup Events
   * @apiDescription Display an event details
-  * @apiParam {String}  [id]                              Event id
   *
   * @apiSuccess {ObjectId}  id                            Mongo generated ID.
   * @apiSuccess {String}    name                          Event name
@@ -95,7 +94,6 @@ router.get('/events/:event_id', middleware.isAuthenticated, eventsController.get
   * @apiName GetUserEvents
   * @apiGroup Events
   * @apiDescription List all events from that user
-  * @apiParam {String}   user                             User id
   *
   * @apiSuccess {ObjectId}  id                            Mongo generated ID.
   * @apiSuccess {String}    name                          Event name
@@ -123,7 +121,6 @@ router.get('/users/:user_id/events', middleware.isAuthenticated, eventsControlle
  * @apiParam place
  * @apiParam datetime
  * @apiParam description
- * @apiParam {Boolean} returning
  * @apiSuccess numAffected
  **/
 
@@ -132,11 +129,11 @@ router.delete('/events/:event_id', middleware.isAuthenticated, middleware.isOrga
 
 // ----Rides--------
 /**
- * @api {put} /api/events/:event_id/add-ride event ride
+ * @api {put} /api/events/:event_id/add-ride Add event ride
  * @apiName AddEventRide
  * @apiGroup Rides 
  * @apiDescription Register a car for riding to and from the event
- * @apiParam driverId
+ * @apiParam driver_id
  * @apiParam seats
  * @apiParam comment
  * @apiParam {Boolean} going
@@ -144,14 +141,23 @@ router.delete('/events/:event_id', middleware.isAuthenticated, middleware.isOrga
  * @apiSuccess numAffected
  **/
 router.put('/events/:event_id/add-ride', middleware.isAuthenticated, eventsController.addRide);
-router.put('/events/:event_id/delete-ride', middleware.isAuthenticated, eventsController.deleteRide);
+
+/**
+ * @api {put} /api/events/:event_id/delete-ride Delete event ride
+ * @apiName AddEventRide
+ * @apiGroup Rides 
+ * @apiDescription Register a car for riding to and from the event
+ * @apiParam ride_id
+ * @apiSuccess numAffected
+ **/
+router.put('/events/:event_id/delete-ride', middleware.isAuthenticated, middleware.isDriver, ridesController.deleteRide);
 
 /**
  * @api {put} /api/rides/:ride_id/join request a spot for a ride
  * @apiName JoinEventRide
  * @apiGroup Rides
  * @apiDescription Register to a ride to or from the event
- * @apiParam {String} userId
+ * @apiParam {String} user_id
  * @apiSuccess numAffected
  **/
 router.put('/rides/:ride_id/join', middleware.isAuthenticated, ridesController.joinRide);
@@ -171,7 +177,6 @@ router.put('/rides/:ride_id/add-passenger', middleware.isAuthenticated, ridesCon
  * @apiName LeaveEventRide
  * @apiGroup Rides
  * @apiDescription Cancel your spot for a ride to or from an event
- * @apiParam {String} userId
  * @apiSuccess numAffected
  **/
 router.put('/rides/:ride_id/leave', middleware.isAuthenticated, middleware.isPassenger, ridesController.leaveRide);

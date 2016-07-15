@@ -222,28 +222,6 @@ module.exports = {
         if (err) return res.json(500, { message: 'Error', error: err });
     });
   },
-
-  /**
-   * eventController delete car()
-   */
-  deleteRide: function (req, res) {
-    var eventId = req.body.event_id;
-    var rideId = req.body.ride_id;
-    Event.update({_id: eventId}, {'$pull': {'cars': {'_id': car_id, driver: req.user._id}}})
-      .then(numAffected => {
-          return res.status(200).json({
-            message: 'Successfully deleted',
-            numAffected: numAffected
-          });
-      })
-      .catch(err => {  
-        console.log(err);
-        return res.status(500).json({
-          message: 'Error updating event', error: err
-        });
-      });
- 
-  },
   edit: function (req, res) {
     var updates = _.pick(req.body, ['name', 'place', 'description', 'datetime', 'tags']); 
     _.merge(req.event, updates);
