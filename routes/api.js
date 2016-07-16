@@ -1,11 +1,8 @@
 var express = require('express');
 var router = express.Router();
-// var settingsController = require('../controllers/settingController.js');
 var eventsController = require('../controllers/eventController.js');
-// var locationController = require('../controllers/locationController.js');
 var userController = require('../controllers/userController.js');
 var ridesController = require('../controllers/rideController.js');
-// var chatController = require('../controllers/chatController.js');
 
 var middleware = require('../middleware');
 
@@ -33,7 +30,7 @@ router.get('/', function (req, res) {
   * @apiSuccess {Date}      created_at              Document creation  date
   * @apiSuccess {Date}      updated_at              Last updated
   */
-router.get('/events', middleware.isAuthenticated, eventsController.list);
+router.get('/events', middleware.isAuthenticated, eventsController.getFuture);
 
   /**
   * @api {get} /api/events/past Past events
@@ -53,7 +50,7 @@ router.get('/events', middleware.isAuthenticated, eventsController.list);
   * @apiSuccess {Date}      created_at          Document creation  date
   * @apiSuccess {Date}      updated_at          Last updated
   */
-router.get('/events/past', middleware.isAuthenticated, eventsController.past);
+router.get('/events/past', middleware.isAuthenticated, eventsController.getPast);
 
   /**
   * @api {post} /api/events New event
@@ -71,11 +68,10 @@ router.get('/events/past', middleware.isAuthenticated, eventsController.past);
 router.post('/events', middleware.isAuthenticated, eventsController.create);
 
   /**
-  * @api {get} /api/events/:id Show an event
+  * @api {get} /api/events/:event_id Show an event
   * @apiName GetEvent
   * @apiGroup Events
   * @apiDescription Display an event details
-  * @apiParam {String}  [id]                              Event id
   *
   * @apiSuccess {ObjectId}  id                            Mongo generated ID.
   * @apiSuccess {String}    name                          Event name
@@ -91,14 +87,13 @@ router.post('/events', middleware.isAuthenticated, eventsController.create);
   * @apiSuccess {Date}      created_at                    Document creation  date
   * @apiSuccess {Date}      updated_at                    Last updated
   */
-router.get('/events/:id', middleware.isAuthenticated, eventsController.show);             // Show an event
+router.get('/events/:event_id', middleware.isAuthenticated, eventsController.getById);
 
   /**
-  * @api {get} /api/events/users/:user User events
+  * @api {get} /api/users/:user_id/events User events
   * @apiName GetUserEvents
   * @apiGroup Events
   * @apiDescription List all events from that user
-  * @apiParam {String}   user                             User id
   *
   * @apiSuccess {ObjectId}  id                            Mongo generated ID.
   * @apiSuccess {String}    name                          Event name
@@ -114,11 +109,8 @@ router.get('/events/:id', middleware.isAuthenticated, eventsController.show);   
   * @apiSuccess {Date}      created_at                    Document creation  date
   * @apiSuccess {Date}      updated_at                    Last updated
   */
-router.get('/users/:user/events', middleware.isAuthenticated, eventsController.user);    // List  by user
+router.get('/users/:user_id/events', middleware.isAuthenticated, eventsController.getByUser);
 
-// router.post('/events/carbyuser', eventsController.carbyuser); // Carpooling by user[no longer used]
-
-// router.put('/events/signup/:id', eventsController.signup);    // Event sign up [no longer used]
 
 /**
  * @api {put} /api/events/:event_id/ Edit event
@@ -129,59 +121,64 @@ router.get('/users/:user/events', middleware.isAuthenticated, eventsController.u
  * @apiParam place
  * @apiParam datetime
  * @apiParam description
- * @apiParam {Boolean} returning
  * @apiSuccess numAffected
  **/
 
-router.put('/events/:event', middleware.isAuthenticated, eventsController.edit);
+router.put('/events/:event_id', middleware.isAuthenticated, middleware.isOrganizer, eventsController.edit);
+router.delete('/events/:event_id', middleware.isAuthenticated, middleware.isOrganizer, eventsController.remove);
 
+// ----Rides--------
 /**
- * @api {put} /api/events/:event_id/add-ride event ride
+ * @api {put} /api/events/:event_id/add-ride Add event ride
  * @apiName AddEventRide
- * @apiGroup Events
+ * @apiGroup Rides 
  * @apiDescription Register a car for riding to and from the event
- * @apiParam driverId
  * @apiParam seats
  * @apiParam comment
  * @apiParam {Boolean} going
  * @apiParam {Boolean} returning
  * @apiSuccess numAffected
  **/
-router.put('/events/:event_id/add-ride', middleware.isAuthenticated, eventsController.addCar);       // Add a car
+router.put('/events/:event_id/add-ride', middleware.isAuthenticated, eventsController.addRide);
 
-router.put('/events/:event_id/delete-ride', middleware.isAuthenticated, eventsController.deleteCar); // Delete a car
-router.put('/events/:event_id/car-by-user', middleware.isAuthenticated, eventsController.carbyuser); // Car polling by user
-router.delete('/events/:event_id', middleware.isAuthenticated, middleware.isOrganizer, eventsController.remove);        // Delete an event
+/**
+ * @api {delete} /api/events/:event_id/rides/:ride_id Delete event ride
+ * @apiName AddEventRide
+ * @apiGroup Rides 
+ * @apiDescription Register a car for riding to and from the event
+ * @apiParam ride_id
+ * @apiSuccess numAffected
+ **/
+router.delete('/events/:event_id/rides/:ride_id', middleware.isAuthenticated, middleware.isDriver, ridesController.deleteRide);
 
 /**
  * @api {put} /api/rides/:ride_id/join request a spot for a ride
  * @apiName JoinEventRide
  * @apiGroup Rides
  * @apiDescription Register to a ride to or from the event
- * @apiParam {String} userId
+ * @apiParam {String} user_id
  * @apiSuccess numAffected
  **/
-router.put('/rides/:ride_id/join', middleware.isAuthenticated, ridesController.joinRide);     // Join a car
+router.put('/rides/:ride_id/join', middleware.isAuthenticated, ridesController.joinRide);
 
 /**
- * @api {put} /api/ride-request/:request/accept accept a ride request
+ * @api {put} /api/ride-request/:request_id/accept accept a ride request
  * @apiName AcceptEventRideRequest
  * @apiGroup Rides
  * @apiDescription Register to a ride to or from the event
  * @apiSuccess numAffected
  **/
-router.put('/ride-requests/:request/accept', middleware.isAuthenticated, ridesController.acceptRideRequest);
-router.put('/rides/:ride_id/add-passenger', middleware.isAuthenticated, ridesController.addExtra);   // Add extra passanger
+router.put('/ride-requests/:request_id/accept', middleware.isAuthenticated, ridesController.acceptRideRequest);
+router.put('/rides/:ride_id/add-passenger', middleware.isAuthenticated, middleware.isPassenger, ridesController.addPassenger);  
 
 /**
  * @api api/rides/:ride_id/leave cancel spot on event ride
  * @apiName LeaveEventRide
  * @apiGroup Rides
  * @apiDescription Cancel your spot for a ride to or from an event
- * @apiParam {String} userId
  * @apiSuccess numAffected
  **/
-router.put('/rides/:ride_id/leave', middleware.isAuthenticated, middleware.isPassenger, ridesController.leaveRide);   // Leave a car
+router.put('/rides/:ride_id/leave', middleware.isAuthenticated, middleware.isPassenger, ridesController.leaveRide);
 
   /**
   * @api {delete} /api/events/:event delete an event
@@ -216,27 +213,6 @@ router.put('/rides/:ride_id/leave', middleware.isAuthenticated, middleware.isPas
 * @apiSuccess {Date}      created_at             Document creation  date
 */
 router.get('/users', middleware.isAuthenticated, userController.list);
-
-/**
-* @api {post} /api/users Create user
-* @apiName CreateUser
-* @apiGroup Users
-* @apiParam {String}   provider_id            Provider unique id
-* @apiParam {String}   name                   User full name
-* @apiParam {String}   provider               Provider name (google, facebook, etc)
-* @apiParam {String}   [photo]                User url photo
-* @apiParam {String}   email                  User email adddres
-
-*
-* @apiSuccess {ObjectId}  id                   Mongo generated ID.
-* @apiSuccess {String}    name                 User full name
-* @apiSuccess {String}    provider             Provider name (google, facebook, etc)
-* @apiSuccess {String}    provider_id          Provider unique id
-* @apiSuccess {String}    photo                User url photo
-* @apiSuccess {String}    email                User email adddres
-* @apiSuccess {Date}      created_at           Document creation  date
-*/
-router.post('/users', userController.create);
 
 /**
 * @api {post} /api/chats/add Add message

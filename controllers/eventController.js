@@ -1,4 +1,6 @@
 var Event = require('../models/event.js');
+var User = require('../models/user.js');
+var Ride = require('../models/ride.js');
 var mailerController = require('../controllers/mailerController.js');
 var mongoose = require('mongoose');
 var Transaction = require('lx-mongoose-transaction')(mongoose);
@@ -13,7 +15,7 @@ module.exports = {
   /**
    * List all the events from yesterday to the end of the time.
    */
-  list: function (req, res) {
+  getFuture: function (req, res) {
     Event.getCurrentEvents()
       .then(function (events) {
         res.json(events);
@@ -25,7 +27,7 @@ module.exports = {
   /**
    * List all the events up to yesterday.
    */
-  past: function (req, res) {
+  getPast: function (req, res) {
     Event.getPastEvents()
       .then(function (events) {
         res.json(events);
@@ -35,10 +37,16 @@ module.exports = {
       });
   },
   /**
-   * eventController.byuser()
+   * eventController.getByUser()
    */
-  user: function (req, res) {
-    req.user.getEvents()
+  getByUser: function (req, res) {
+    // TODO: Once passport is implemented, get the user from req.user
+    var userId = req.params.user_id;
+
+    User.findById(userId)
+      .then(function (user) {
+        return user.getEvents();
+      })
       .then(function (events) {
         res.json(events);
       })
@@ -79,34 +87,34 @@ module.exports = {
     });
   },
   /**
-   * eventController.show()
+   * eventController.getById()
    */
-  show: function (req, res) {
-    var eventId = req.params.id;
+  getById: function (req, res) {
+    var eventId = req.params.event_id;
     Event.findById(eventId)
-      .then(function (event) {
-        return res.json(event);
-      })
-      .catch(function (err) {
-        res.status(500).json({ message: err.message });
-      });
+    .then(function (event) {
+      return res.json(event);
+    })
+    .catch(function (err) {
+      res.status(500).json({ message: err.message });
+    });
   },
   /**
-   * eventController.addEvent()
+   * eventController.create()
    */
   create: function (req, res) {
-    req.user.createEvent(req.body)
-      .then(function (event) {
+    var newEvent = _.pick(req.body, ['name', 'description', 'address', 'location', 'place_id', 'place_name', 'datetime', 'tags']);
+    req.user.createEvent(newEvent)
+     .then(function (event) {
         res.json({ _id: event._id });
       })
       .catch(function (err) {
         res.status(500).json({ message: err.message });
       });
   },
-
   /**
    * eventController.remove()
-   */
+  */
   remove: function (req, res) {
     req.event.remove()
       .then(function (event) {
@@ -119,7 +127,7 @@ module.exports = {
   /**
    * eventController.drivers()
    */
-  drivers: function (req, res) {
+  getDrivers: function (req, res) {
     var id = req.params.id;
     Event.aggregate([
       { $match: {
@@ -145,7 +153,7 @@ module.exports = {
     });
   },
   /**
-   * eventController.drivers()
+   * eventController.byDriver()
    */
   byDriver: function (req, res) {
     var driverId = req.params.id;
@@ -158,22 +166,22 @@ module.exports = {
       return res.json(events);
     });
   },
-
+  
   /**
-   * eventController.Add car()
+   * eventController.addRide()
    */
-  addCar: function (req, res) {
+  addRide: function (req, res) {
     var transaction = new Transaction();
     var eventToEdit;
     var ridesToPush = {
       going_rides: []
     };
 
-    Event.findOne({_id: req.params.event})
+    Event.findOne({_id: req.params.event_id})
     .then(function (event) {
-      eventToEdit = event;  
+			eventToEdit = event;
       var car = {
-        driver: req.body.driverId,
+				driver_id: req.user._id,
         seats: req.body.seats,
         comments: req.body.comments
       };
@@ -181,7 +189,7 @@ module.exports = {
       if (req.body.going === true){
         transaction.insert('Ride', car);
         return transaction.run()
-        .then((createdRide) => {
+        .then(createdRide => {
           eventToEdit.going_rides.push(createdRide[0]._id);
         });
       }
@@ -190,20 +198,19 @@ module.exports = {
       if (req.body.returning === true){
         transaction.insert('Ride', car);  
         return transaction.run()
-        .then((createdRide) => {
+        .then(createdRide => {
           eventToEdit.returning_rides.push(createdRide[0]._id);
         });
       }
     })
-    .then(function (){
-        transaction.update('Event', {'_id': req.params.event}, {
+    .then(() => {
+        transaction.update('Event', {'_id': req.params.event_id}, {
           going_rides: eventToEdit.going_rides, 
           returning_rides: eventToEdit.returning_rides
         });
         return transaction.run();
     })
     .then(function (updatedEvent) {
-      console.log(updatedEvent);
       var numAffected = updatedEvent.length;
       return res.status(200).json({
         message: 'Successfully added!',
@@ -215,35 +222,14 @@ module.exports = {
         if (err) return res.json(500, { message: 'Error', error: err });
     });
   },
-
-  /**
-   * eventController delete car()
-   */
-  deleteCar: function (req, res) {
-    var id = req.body.id;
-    var car_id = req.body.carid;
-    Event.update({_id: id},
-      {'$pull': {'cars': {'_id': car_id}}}, function (err, numAffected) {
-        if (err) {
-          console.log(err);
-          return res.status(500).json({
-            message: 'Error updating event', error: err
-          });
-        } else {
-          return res.status(200).json({
-            message: 'Successfully deleted',
-            numAffected: numAffected
-          });
-        }
-      });
-  },
   edit: function (req, res) {
-    var updates = _.pick(req.body, ['name', 'place', 'description', 'datetime', 'tags']);
-
-    Event.update({ _id: req.params.event_id }, {$set: updates})
-    .then(function (event) {
+    var updates = _.pick(req.body, ['name', 'place', 'description', 'datetime', 'tags']); 
+    _.merge(req.event, updates);
+    
+    req.event.save()
+    .then(event => {
       return res.status(200).json({
-        message: 'Successfully edited'
+        message: 'Successfully edited',
       });
     })
     .catch(err => {
@@ -290,43 +276,49 @@ module.exports = {
           });
         }
       });
-
-    /*
-    event.name =  req.body.name ? req.body.name : event.name;
-    event.save(function(err, event){
-      if(err)
-        return res.json(500, {  message: 'Error saving event.'});
-      return res.json(event);
-    });
-    */
     });
   },
 
-	messageDriver: function(req, res) {
-			var eventId = req.params.id;
-			var carId = req.params.carId;
-			if(!req.body.message) return res.json(400, { message: 'The message is required' });
+  /**
+   * eventController.remove()
+   */
+  remove: function(req, res) {
+    req.event.remove()
+      .then(event => {
+        return res.json(event);
+      })
+      .catch(error => {
+         return res.json(500, {
+            message: 'Error getting event.'
+          });
+       });
+  },
 
-			eventModel.findById(eventId, function(err, event) {
-					if(err) return res.json(500, { message: 'Error getting event.' });
+  messageDriver: function(req, res) {
+      var eventId = req.params.id;
+      var carId = req.params.carId;
+      if(!req.body.message) return res.json(400, { message: 'The message is required' });
 
-					var car = _.find(event.cars, function(car) {
-							return car['_id'] == carId;
-					});
+      eventModel.findById(eventId, function(err, event) {
+          if(err) return res.json(500, { message: 'Error getting event.' });
 
-					if(!car) return res.json(400, { message: 'Invalid car ID' });
+          var car = _.find(event.cars, function(car) {
+              return car['_id'] == carId;
+          });
 
-					mailerController.messageDriver({
-							driver_email: car.driver_email,
-							content: req.body.message,
-							user_email: req.user.email
-					}, function (err, response) {
-							if (err) return res.send(500, { message: 'Error sending message' });
+          if(!car) return res.json(400, { message: 'Invalid car ID' });
 
-							console.log("Mail sent to: " + car.driver_email);
-							res.sendStatus(200);
-					})
+          mailerController.messageDriver({
+              driver_email: car.driver_email,
+              content: req.body.message,
+              user_email: req.user.email
+          }, function (err, response) {
+              if (err) return res.send(500, { message: 'Error sending message' });
 
-			});
-	}
+              console.log("Mail sent to: " + car.driver_email);
+              res.sendStatus(200);
+          })
+
+      });
+  }
 };

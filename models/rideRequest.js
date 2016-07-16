@@ -5,7 +5,7 @@ var ObjectId = Schema.ObjectId;
 var RideRequestSchema = new Schema({
   passenger: { type: ObjectId, ref: 'User' },
 	place: { type: ObjectId, refL: 'Place'},
-  ride: { type: ObjectId, ref: 'Ride' },
+  ride_id: { type: ObjectId, ref: 'Ride' },
   created_at: { type: Date, default: Date.now }
 });
 
