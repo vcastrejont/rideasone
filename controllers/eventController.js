@@ -168,7 +168,7 @@ module.exports = {
   },
   
   /**
-   * eventController.Add car()
+   * eventController.addRide()
    */
   addRide: function (req, res) {
     var transaction = new Transaction();
@@ -177,11 +177,11 @@ module.exports = {
       going_rides: []
     };
 
-    Event.findOne({_id: req.params.event})
+    Event.findOne({_id: req.params.event_id})
     .then(function (event) {
-      eventToEdit = event;  
+			eventToEdit = event;
       var car = {
-        driver: req.body.driver_id,
+				driver_id: req.user._id,
         seats: req.body.seats,
         comments: req.body.comments
       };
@@ -189,7 +189,7 @@ module.exports = {
       if (req.body.going === true){
         transaction.insert('Ride', car);
         return transaction.run()
-        .then((createdRide) => {
+        .then(createdRide => {
           eventToEdit.going_rides.push(createdRide[0]._id);
         });
       }
@@ -198,20 +198,19 @@ module.exports = {
       if (req.body.returning === true){
         transaction.insert('Ride', car);  
         return transaction.run()
-        .then((createdRide) => {
+        .then(createdRide => {
           eventToEdit.returning_rides.push(createdRide[0]._id);
         });
       }
     })
-    .then(function (){
-        transaction.update('Event', {'_id': req.params.event}, {
+    .then(() => {
+        transaction.update('Event', {'_id': req.params.event_id}, {
           going_rides: eventToEdit.going_rides, 
           returning_rides: eventToEdit.returning_rides
         });
         return transaction.run();
     })
     .then(function (updatedEvent) {
-      console.log(updatedEvent);
       var numAffected = updatedEvent.length;
       return res.status(200).json({
         message: 'Successfully added!',
@@ -227,8 +226,8 @@ module.exports = {
     var updates = _.pick(req.body, ['name', 'place', 'description', 'datetime', 'tags']); 
     _.merge(req.event, updates);
     
-    event.save()
-    .then(function (event) {
+    req.event.save()
+    .then(event => {
       return res.status(200).json({
         message: 'Successfully edited',
       });

@@ -23,8 +23,7 @@ var EventSchema = new Schema({
  */
 EventSchema.statics.getCurrentEvents = function () {
   var twoHoursAgo = moment().subtract(2, 'hour').toDate();
-  console.log(twoHoursAgo);
-  return Event.find({ datetime: { $gte: ''} }).populate('place').sort('datetime');
+  return Event.find({ datetime: { $gte: twoHoursAgo} }).populate('Place').sort('datetime');
 };
 
 /**
@@ -34,7 +33,7 @@ EventSchema.statics.getCurrentEvents = function () {
  */
 EventSchema.statics.getPastEvents = function () {
   var twoHoursAgo = moment().subtract(1, 'hour').toDate();
-  return Event.find({ datetime: { $lt: twoHoursAgo } }).populate('place').sort('-datetime').limit(50);
+  return Event.find({ datetime: { $lt: twoHoursAgo } }).populate('Place').sort('-datetime').limit(50);
 };
 
 var Event = mongoose.model('Event', EventSchema);

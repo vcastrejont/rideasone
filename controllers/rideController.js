@@ -11,37 +11,43 @@ var _ = require('lodash');
  *
  * @description :: Server-side logic for managing events.
  */
+
 module.exports = {
   deleteRide: function (req, res) {
-  var transaction = new Transaction();
-  
-  Event.findOne({_id: id})
+    var transaction = new Transaction();
+    
+    Event.findOne({_id: req.params.event_id})
     .then(event => {
-    var rideId = req.params.ride_id;
-    var updatedRides = _.reject(event.rides, rideId);
-    transaction.update('Event', eventId, updatedRides);
-    transaction.remove('Ride', rideId);
-    return transaction.run();
+      var rideId = req.params.ride_id;
+      _.pullAt(event.going_rides, event.going_rides.indexOf(rideId));
+      _.pullAt(event.returning_rides, event.returning_rides.indexOf(rideId))
+      var updatedRides = {
+        going_rides: event.going_rides,
+        returning_rides: event.returning_rides
+      };
+      transaction.update('Event', event._id, updatedRides);
+      transaction.remove('Ride', rideId);
+      return transaction.run();
     })
     .then(results => {
     var numAffected = results.length;
-        console.log(numAffected);
-        return res.status(200).json({
-          message: 'Successfully deleted',
-          numAffected: numAffected
-        });
-      })
+      console.log(numAffected);
+      return res.status(200).json({
+      message: 'Successfully deleted',
+      numAffected: numAffected
+      });
+    })
     .catch(err => {
-    console.log(err);
-    return res.status(500).json({
+      console.log(err);
+      return res.status(500).json({
       message: 'Error updating event', error: err
-    });
+      });
     });
   },
   
   joinRide: function (req, res) {
     req.user.requestJoiningRide(req.params.ride_id)
-      .then((ride) => {
+      .then(ride => {
         return res.status(200).json({
           message: 'Successfully added!'
         });
@@ -100,17 +106,16 @@ module.exports = {
   },
   acceptRideRequest: function (req, res) {
     var transaction = new Transaction();
-    RideRequest.findOne({_id: req.params.request})
-    .populate('ride')
+    RideRequest.findOne({_id: req.params.request_id})
+    .populate('ride_id')
     .then(request => {
-    if(request.ride.driver != req.user._id) return res.status(403).json({ message: 'user is not the driver of this ride' });
       var passenger = {
         user: request.passenger,
         place: request.place
       };
-      var updatedPassengers = request.ride.passengers;
+      var updatedPassengers = request.ride_id.passengers;
       updatedPassengers.push(passenger);
-      transaction.update('Ride', request.ride, {passengers: updatedPassengers});
+      transaction.update('Ride', request.ride_id, {passengers: updatedPassengers});
       transaction.remove('RideRequest', request._id);
       return transaction.run();
     })

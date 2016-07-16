@@ -76,7 +76,7 @@ UserSchema.methods.createEvent = function (data) {
   var transaction = new Transaction();
 
 	return findOrCreatePlace(data, transaction)
-	.then((places) => {
+	.then(places => {
 		var event = {
 			place: places[0],
 			organizer: this,
@@ -95,7 +95,7 @@ UserSchema.methods.createEvent = function (data) {
 UserSchema.methods.requestJoiningRide = function (rideId) {
   var RideRequest = require('./rideRequest');
   var request = new RideRequest({
-    ride: rideId,
+    ride_id: rideId,
     passenger: this
   });
   // TODO: Create driver notification
@@ -104,8 +104,8 @@ UserSchema.methods.requestJoiningRide = function (rideId) {
 
 UserSchema.methods.isPassenger = function (rideId) {
   var Ride = require('../models/ride');
-  return Ride.findOne({ _id: rideId, 'passengers.user': this })
-    .then((ride) => {
+  return Ride.findOne({_id: rideId, 'passengers.user': this})
+    .then(ride => {
       if (!ride) {
         var error = new Error('User is not a passenger on this ride');
         error.status = 403;
@@ -117,7 +117,7 @@ UserSchema.methods.isPassenger = function (rideId) {
 
 UserSchema.methods.isDriver = function (rideId) {
   var Ride = require('../models/ride');
-  return Ride.findOne({ _id: rideId, driver: this })
+  return Ride.findOne({ _id: rideId, driver_id: this })
     .then(ride => {
       if (!ride) {
         var error = new Error('User is not the driver on this ride');

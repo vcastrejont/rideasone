@@ -133,7 +133,6 @@ router.delete('/events/:event_id', middleware.isAuthenticated, middleware.isOrga
  * @apiName AddEventRide
  * @apiGroup Rides 
  * @apiDescription Register a car for riding to and from the event
- * @apiParam driver_id
  * @apiParam seats
  * @apiParam comment
  * @apiParam {Boolean} going
@@ -143,14 +142,14 @@ router.delete('/events/:event_id', middleware.isAuthenticated, middleware.isOrga
 router.put('/events/:event_id/add-ride', middleware.isAuthenticated, eventsController.addRide);
 
 /**
- * @api {put} /api/events/:event_id/delete-ride Delete event ride
+ * @api {delete} /api/events/:event_id/rides/:ride_id Delete event ride
  * @apiName AddEventRide
  * @apiGroup Rides 
  * @apiDescription Register a car for riding to and from the event
  * @apiParam ride_id
  * @apiSuccess numAffected
  **/
-router.put('/events/:event_id/delete-ride', middleware.isAuthenticated, middleware.isDriver, ridesController.deleteRide);
+router.delete('/events/:event_id/rides/:ride_id', middleware.isAuthenticated, middleware.isDriver, ridesController.deleteRide);
 
 /**
  * @api {put} /api/rides/:ride_id/join request a spot for a ride
