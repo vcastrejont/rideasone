@@ -20,7 +20,8 @@ module.exports = {
   },
 
   FakeAuthForTesting: function (req, res, next) {
-    var token = jwt.sign({ id: user.id }, config.jwtSecret, {
+  console.log(req.body);
+    var token = jwt.sign({id: req.body.userId}, config.jwtSecret, {
       expiresIn: '36500 days', // 100 years
       issuer: config.issuer
     });
