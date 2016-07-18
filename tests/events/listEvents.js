@@ -1,7 +1,7 @@
 var supertest = require('supertest-as-promised');
 var port = process.env.PORT|| 3000;
 var req = supertest('http://localhost:'+ port +'/api');
-var assert = require('assert');
+var assert = require('chai').assert;
 var User = require('../../models/User');
 var token, testUser;
 
