@@ -5,7 +5,7 @@ var assert = require('chai').assert;
 var User = require('../../models/User');
 var Event = require('../../models/Event');
 var Place = require('../../models/Place');
-var token, testUser;
+var token, testUser, testEvent1, testEvent2, testPlace;
 
 describe('Event listing', function(){
   before(() => {
@@ -33,6 +33,7 @@ describe('Event listing', function(){
       .save();
     })
     .then(place => {
+      testPlace = place;
       return new Event({
         name: "feria del pollo", 
         description: "una feria de pollos", 
@@ -43,13 +44,34 @@ describe('Event listing', function(){
         category: "pollos", 
         datetime: new Date("2017-05-05T02:20:10Z"), 
         tags: ['feria', 'pollo']
+      })
+      .save();
+    })
+    .then(event => {
+       testEvent1 = event;
+       return new Event({
+         name: "feria del pollo Z", 
+         description: "una feria de pollos", 
+         address: "pollolandia", 
+         location: "pollornia", 
+         place: testPlace._id, 
+         organizer: testUser._id, 
+         category: "pollos", 
+         datetime: new Date("2017-05-05T02:20:10Z"), 
+         tags: ['feria', 'pollo']
        })
        .save();
      })
+     .then(event => {
+       testEvent2 = event;
+     });
   });
 
   after(() => {
-    return testUser.remove(); 
+    return testUser.remove()
+    .then(() => testEvent1.remove())
+    .then(() => testEvent2.remove())
+    .then(() => testPlace.remove()); 
   });
 
   it('lists all events', () => {
@@ -58,6 +80,7 @@ describe('Event listing', function(){
       .expect(200)
       .then(res => {
         assert.isArray(res.body);
+        assert.equal(res.body.length, 2);
       });
   });
 });
