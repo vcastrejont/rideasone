@@ -42,7 +42,6 @@ describe('Event listing', function(){
         location: "pollornia", 
         place: place._id, 
         organizer: testUser._id, 
-        category: "pollos", 
         datetime: new Date("2017-05-05T02:20:10Z"), 
         tags: ['feria', 'pollo']
       })
@@ -57,7 +56,6 @@ describe('Event listing', function(){
          location: "pollornia", 
          place: testPlace._id, 
          organizer: testUser._id, 
-         category: "pollos", 
          datetime: new Date("2017-05-05T02:20:10Z"), 
          tags: ['feria', 'pollo']
        })
@@ -82,6 +80,7 @@ describe('Event listing', function(){
       assert.lengthOf(events, 2);
     });
   });
+
   it('returns an array of past events', () => {
     var clock = sinon.useFakeTimers(new Date("2017-06-06T00:00:00Z").valueOf());
     return Event.getPastEvents()
@@ -91,4 +90,24 @@ describe('Event listing', function(){
       clock.restore();
     });
   })
+
+  it('returns a single event by ID', () => {
+    return req.get('/events/'+ testEvent1._id)
+    .set('Authorization', token)
+    .expect(200)
+    .then((res) => {
+      var event = res.body;
+      assert.equal(event._id, testEvent1._id);
+      assert.equal(Date(event.created_at), Date(testEvent1.created_at));
+      assert.equal(Date(event.datetime), Date(testEvent1.datetime));
+      assert.equal(event.name, 'feria del pollo');
+      assert.equal(event.description, 'una feria de pollos');
+      assert.lengthOf(event.going_rides, 0);
+      assert.lengthOf(event.returning_rides, 0);
+      assert.equal(event.organizer, testEvent1.organizer);
+      assert.equal(event.place, testEvent1.place);
+      assert.deepEqual(event.tags, ['feria', 'pollo']);
+    });
+  });
+
 });
