@@ -4,7 +4,7 @@ var ObjectId = Schema.ObjectId;
 
 var RideSchema = new Schema({
   place: { type: ObjectId, ref: 'Place' },
-  driver_id: { type: ObjectId, ref: 'User', required: true },
+  driver: { type: ObjectId, ref: 'User', required: true },
   seats: Number,
   comments: String,
   passengers: [{

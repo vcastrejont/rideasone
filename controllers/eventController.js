@@ -103,7 +103,7 @@ module.exports = {
    * eventController.create()
    */
   create: function (req, res) {
-    var newEvent = _.pick(req.body, ['name', 'description', 'address', 'location', 'place_id', 'place_name', 'datetime', 'tags']);
+    var newEvent = _.pick(req.body, ['name', 'description', 'address', 'location', 'google_places_id', 'place_name', 'datetime', 'tags']);
     req.user.createEvent(newEvent)
      .then(function (event) {
         res.json({ _id: event._id });

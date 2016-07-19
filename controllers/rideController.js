@@ -107,7 +107,7 @@ module.exports = {
   acceptRideRequest: function (req, res) {
     var transaction = new Transaction();
     RideRequest.findOne({_id: req.params.request_id})
-    .populate('ride_id')
+    .populate('ride')
     .then(request => {
       var passenger = {
         user: request.passenger,
