@@ -2,6 +2,7 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 var Transaction = require('lx-mongoose-transaction')(mongoose);
 var Place = require('./place');
+var Event = require('./event');
 
 var UserSchema = new Schema({
   name: String,
