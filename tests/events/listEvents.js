@@ -2,6 +2,7 @@ var supertest = require('supertest-as-promised');
 var port = process.env.PORT|| 3000;
 var req = supertest('http://localhost:'+ port +'/api');
 var assert = require('chai').assert;
+var sinon = require('sinon');
 var User = require('../../models/User');
 var Event = require('../../models/Event');
 var Place = require('../../models/Place');
@@ -74,13 +75,20 @@ describe('Event listing', function(){
     .then(() => testPlace.remove()); 
   });
 
-  it('lists all events', () => {
-    return req.get('/events')
-      .set('Authorization', token)
-      .expect(200)
-      .then(res => {
-        assert.isArray(res.body);
-        assert.equal(res.body.length, 2);
-      });
+  it('returns an array of future events', () => {
+    return Event.getCurrentEvents()
+    .then(events => {
+      assert.isArray(events);
+      assert.lengthOf(events, 2);
+    });
   });
+  it('returns an array of past events', () => {
+    var clock = sinon.useFakeTimers(new Date("2017-06-06T00:00:00Z").valueOf());
+    return Event.getPastEvents()
+    .then(events => {
+      assert.isArray(events);
+      assert.lengthOf(events, 2);
+      clock.restore();
+    });
+  })
 });

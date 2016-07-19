@@ -37,6 +37,7 @@
     "retry": ">=0.6.0",
     "semistandard": "~8.0.0",
     "serve-favicon": "~2.3.0",
+    "sinon": "^1.17.4",
     "socket.io": "^1.4.5",
     "supertest": "^1.2.0",
     "supertest-as-promised": "^3.2.0",

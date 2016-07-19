@@ -1,5 +1,6 @@
 var mongoose = require('mongoose');
 var config = require('../config/config');
+
 mongoose.Promise = require('bluebird');
 mongoose.connect(config.db.database);
 var db = mongoose.connection;
