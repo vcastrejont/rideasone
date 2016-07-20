@@ -7,6 +7,7 @@ var util = require('../util');
 var User = require('../../models/User');
 var Event = require('../../models/Event');
 var Place = require('../../models/Place');
+var Ride = require('../../models/Ride');
 var token, testUser, testEvent, testPlace;
 
 describe('Event editing', function(){
@@ -84,7 +85,32 @@ describe('Event editing', function(){
   });
 
   it('adds a ride to an event', () => {
-  
+    var updatedEvent;
+    var rideData = {
+      driver: testUser._id,
+      seats: 42,
+      comments: 'yolo',
+      going: true,
+      returning: true
+    };
+    return testEvent.addRide(rideData)
+    .then(updatedEvents => {
+      var event = updatedEvent = updatedEvents[0];
+      assert.lengthOf(event.going_rides, 1);
+      assert.lengthOf(event.returning_rides, 1);
+
+      return Ride.findOne({_id: event.going_rides[0]});
+    })
+    .then(ride => {
+        assert.equal(ride.seats, 42);
+        assert.equal(ride.driver_id, testUser._id.toString());
+
+        return Ride.findOne({_id: updatedEvent.returning_rides[0]});
+    })
+    .then(ride => {
+        assert.equal(ride.seats, 42);
+        assert.equal(ride.driver_id, testUser._id.toString());
+    });
   });
 
 });

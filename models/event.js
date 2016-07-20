@@ -4,6 +4,7 @@ var Schema = mongoose.Schema;
 var ObjectId = Schema.ObjectId;
 var Transaction = require('lx-mongoose-transaction')(mongoose);
 var Promise = require('bluebird');
+var Ride = require('./Ride');
 
 var EventSchema = new Schema({
   place: { type: ObjectId, ref: 'place' },
@@ -39,14 +40,14 @@ EventSchema.statics.getPastEvents = function () {
 };
 
 function createRide(ride, path, transaction) {
-  transaction.insert('Ride', car);
+  transaction.insert('Ride', ride);
   return transaction.run()
     .then(createdRides => {
-      this[path].push(createdRides[0]._id);
+      this[path].push({_id: createdRides[0]._id});
     });
 }
 
-EventSchema.statics.addRide = function (rideData) {
+EventSchema.methods.addRide = function (rideData) {
   var transaction = new Transaction();
 
   var ride= {
@@ -57,19 +58,19 @@ EventSchema.statics.addRide = function (rideData) {
 
   var promises = [];
   if(rideData.going === true){
-    promises.push(createRide(ride, 'going_rides', transaction)); 
+    promises.push(createRide.call(this, ride, 'going_rides', transaction)); 
   }
   if(rideData.returning === true){
-    promises.push(createRide(ride, 'returning_rides', transaction));
+    promises.push(createRide.call(this, ride, 'returning_rides', transaction));
   }
-  
+
   return Promise.all(promises)
-    .then(() => {
+    .then(createdRides => {
       transaction.update('Event', {'_id': this._id}, {
         going_rides: this.going_rides, 
         returning_rides: this.returning_rides
       });
-      return transaction.run();
+      return transaction.run()
     });
 
 };

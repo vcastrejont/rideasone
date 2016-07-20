@@ -171,6 +171,7 @@ module.exports = {
    */
   addRide: function (req, res) {
 
+    req.body.driver = req.user._id;
     Event.findOne({_id: req.params.event_id})
     .then(function (event) {
       return event.addRide(req.body);
