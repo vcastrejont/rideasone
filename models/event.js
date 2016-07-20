@@ -2,6 +2,8 @@ var mongoose = require('mongoose');
 var moment = require('moment');
 var Schema = mongoose.Schema;
 var ObjectId = Schema.ObjectId;
+var Transaction = require('lx-mongoose-transaction')(mongoose);
+var Promise = require('bluebird');
 
 var EventSchema = new Schema({
   place: { type: ObjectId, ref: 'place' },
@@ -35,6 +37,43 @@ EventSchema.statics.getPastEvents = function () {
   var twoHoursAgo = moment().subtract(1, 'hour').toDate();
   return Event.find({ datetime: { $lt: twoHoursAgo } }).populate('Place').sort('-datetime').limit(50);
 };
+
+function createRide(ride, path, transaction) {
+  transaction.insert('Ride', car);
+  return transaction.run()
+    .then(createdRides => {
+      this[path].push(createdRides[0]._id);
+    });
+}
+
+EventSchema.statics.addRide = function (rideData) {
+  var transaction = new Transaction();
+
+  var ride= {
+		driver_id: rideData.driver,
+    seats: rideData.seats,
+    comments: rideData.comments
+  };
+
+  var promises = [];
+  if(rideData.going === true){
+    promises.push(createRide(ride, 'going_rides', transaction)); 
+  }
+  if(rideData.returning === true){
+    promises.push(createRide(ride, 'returning_rides', transaction));
+  }
+  
+  return Promise.all(promises)
+    .then(() => {
+      transaction.update('Event', {'_id': this._id}, {
+        going_rides: this.going_rides, 
+        returning_rides: this.returning_rides
+      });
+      return transaction.run();
+    });
+
+};
+
 
 var Event = mongoose.model('Event', EventSchema);
 module.exports = Event;

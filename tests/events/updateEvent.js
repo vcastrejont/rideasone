@@ -83,4 +83,8 @@ describe('Event editing', function(){
     });
   });
 
+  it('adds a ride to an event', () => {
+  
+  });
+
 });
