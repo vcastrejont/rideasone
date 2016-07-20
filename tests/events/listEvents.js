@@ -92,7 +92,7 @@ describe('Event listing', function(){
     return req.get('/events/'+ testEvent1._id)
     .set('Authorization', token)
     .expect(200)
-    .then((res) => {
+    .then(res => {
       var event = res.body;
       assert.equal(event._id, testEvent1._id);
       assert.equal(Date(event.created_at), Date(testEvent1.created_at));

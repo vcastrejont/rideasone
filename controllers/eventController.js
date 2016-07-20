@@ -103,7 +103,7 @@ module.exports = {
    * eventController.create()
    */
   create: function (req, res) {
-    var newEvent = _.pick(req.body, ['name', 'description', 'address', 'location', 'place_id', 'place_name', 'datetime', 'tags']);
+    var newEvent = _.pick(req.body, ['name', 'description', 'address', 'location', 'google_places_id', 'place_name', 'datetime', 'tags']);
     req.user.createEvent(newEvent)
      .then(function (event) {
         res.json({ _id: event._id });
@@ -224,7 +224,7 @@ module.exports = {
   },
   edit: function (req, res) {
     var updates = _.pick(req.body, ['name', 'place', 'description', 'datetime', 'tags']); 
-    _.merge(req.event, updates);
+    _.assign(req.event, updates);
     
     req.event.save()
     .then(event => {
@@ -277,21 +277,6 @@ module.exports = {
         }
       });
     });
-  },
-
-  /**
-   * eventController.remove()
-   */
-  remove: function(req, res) {
-    req.event.remove()
-      .then(event => {
-        return res.json(event);
-      })
-      .catch(error => {
-         return res.json(500, {
-            message: 'Error getting event.'
-          });
-       });
   },
 
   messageDriver: function(req, res) {
