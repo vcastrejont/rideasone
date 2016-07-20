@@ -3,6 +3,7 @@ var port = process.env.PORT|| 3000;
 var req = supertest('http://localhost:'+ port +'/api');
 var assert = require('chai').assert;
 var sinon = require('sinon');
+var util = require('../util');
 var User = require('../../models/User');
 var Event = require('../../models/Event');
 var Place = require('../../models/Place');
@@ -18,14 +19,10 @@ describe('Event listing', function(){
     .save()
     .then(user => { 
       testUser = user;
-      return supertest('http://localhost:'+ port)
-        .post('/auth/fakeAuthForTesting')
-        .send({userId: testUser._id});
+      return util.getTokenForUser(user._id);
     })
-    .then(res => {
-      token = 'JWT '+ res.body.token;
-    })
-    .then(() => {
+    .then((_token) => {
+      token = _token
       return new Place({
         address: 'avenida Siempreviva #43', 
         place_name: "ferialandia", 
