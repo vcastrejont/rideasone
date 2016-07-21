@@ -31,6 +31,12 @@ app.config(function($stateProvider, $urlRouterProvider) {
     templateUrl: "app/templates/home.html",
     controller: homeCtrl
   },
+  setdefault = {
+    name: 'setdefault',
+    url: '^/setdefault',
+    templateUrl: "app/templates/setdefault.html",
+    controller: homeCtrl
+  },
   getaride = {
     name: 'getaride',
     url: '^/getaride',
@@ -39,7 +45,7 @@ app.config(function($stateProvider, $urlRouterProvider) {
   events = {
     name: 'events',
     url: '^/events',
-    templateUrl: "app/templates/home.html",
+    templateUrl: "app/templates/events.html",
     controller: eventsCtrl
   },
   eventShow = {
@@ -60,5 +66,7 @@ app.config(function($stateProvider, $urlRouterProvider) {
   .state(getaride)
   .state(events)
   .state(eventShow)
-  .state(eventsNew);
+  .state(eventsNew)
+  .state(setdefault);
+  
 });

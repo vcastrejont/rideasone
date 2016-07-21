@@ -1,221 +1,147 @@
-<div class="container box bg" id="events" >
-  <header class="row">
-    <div class="col-md-4">
-      <h1>Events</h1><a ui-sref="events">Go back</a>
-    </div>
-    <div class="col-md-4 alerts">
-      <p ng-repeat="alert in view.alerts" >{{alert.msg}}</p>
-    </div>
+<div class="panel left xs top" id="eventpanel" >
+  <a class="back" ui-sref="events"><i class="fa fa-reply" aria-hidden="true"></i></a>
 
-    <div class="col-md-4 text-right" ng-show="view.user.id == view.event.organizer_id" >
-      <a href="#" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> Edit  </a>
-      <a ng-click="view.deleteEvent()" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span> Delete</a>
-    </div>
-  </header>
-  <main class="row show">
-    <div class="row col-md-6">
-      <div class="col-sm-6">
-        <p><legend>Event name</legend>
-          {{view.event.name}}
-        </p>
-
-        <p><legend>Date</legend>
-          {{view.event.datetime | date:'shortDate'}} {{view.event.datetime | date:'shortTime'}}
-        </p>
-
-        <p><legend>Place</legend>
-          {{view.event.place}}
-        </p>
-        <p><legend>Address</legend>
-          {{view.event.address}}
-        </p>
+  <h2 class="bg">{{view.event.name}} at {{view.event.place}}</h2>
+  <p class="address"> {{view.event.address}}</p>
+  <p class="time">
+    {{view.event.date}}
+  </p>
+  <ul class="links">
+    <li><a href="#"><i class="fa fa-pencil"></i> Edit </a></li>
+    <li><a href="#"><i class="fa fa-share" aria-hidden="true"></i> Share</a></li>
+  </ul>
+  
+<hr>
+  <div id="availrides">
+    <h2>Available rides
+      <a href="#dashboard" class="btn  btn-info btn-xs">	Going	</a>
+  		<a class="btn btn-info btn-xs">	Return</a>
+    </h2>
+    
+    </ul>
+    <header>
+      <div class="dr">Driver</div>
+      <div class="st">Seats</div>
+      <div class="dp">Departure</div>
+    </header>
+    <div class="list">
+      <div class="row" ng-repeat="ride in view.event.cars" ng-click="view.showRide(ride)" >
+        <div class="dr"><img src="{{ride.driver_photo}}" class="profile xs">{{ride.driver_name}}</div>
+        <div class="st">{{ride.seats|| "-"}}</div>
+        <div class="dp">2:00pm</div>
       </div>
-      <div class="col-sm-6">
-        <p><legend>Status</legend>
-          <span class="label label-success" ng-show="view.event.signed.length">  You are signed </span>
-        </p>
-
-        <p><legend>Organizer</legend>
-          {{view.event.organizer}}
-        </p>
-        <p><legend>Avaiable  seats </legend>
-       {{view.event.avail}}
-        </p>
-      </div>
-
-    </div>
-    <div class="col-md-6">
-      <legend>Location</legend>
-      <div id="map"></div>
-    </div>
-    <div class="col-sm-12">
-      
-
-      <div >
-      <legend>Carpooling</legend>
-      <div class="tabs">
-         <div class="tab" ng-repeat="car in view.event.cars">
-             <input type="radio" id="tab-car{{$index+1}}" name="carpooling-tabs"  ng-checked="$index == 0">
-             <label for="tab-car{{$index+1}}">Car #{{$index+1}}
-               <span class="label label-primary" ng-if="car.driver_id==view.user.id">Driving</span>
-               <span class="label label-success" ng-if="view.isSigned(car)">Joined</span>
-             </label>
-             <div class="content">
-               <div class="row">
-                 <div class="col-sm-12">
-                   <p>
-                     <strong>Driver:</strong> <span ng-class="{'driving': car.driver_id == view.user.id }"> {{car.driver_name}}</span>
-                   </p>
-                   <p>
-                     <strong>Driver's comments:</strong>  {{car.comments}}
-                   </p>
-                   <div class="row">
-                     <div class="col-sm-12">
-                       <strong>Passengers:</strong>
-                       <ul>
-                         <li>
-                           <strong>Going:</strong>
-                           <span ng-repeat="p in car.passengers | onlyGoingPassengers" ng-class="{'sel': p.passenger_id == view.user.id }">
-                             {{p.passenger_name}}<span ng-hide="$last">, </span>
-                           </span>
-                         </li>
-
-                         <li>
-                           <strong>Back:</strong>
-                           <span ng-repeat="p in car.passengers | onlyBackPassengers" ng-class="{'sel': p.passenger_id == view.user.id }">
-                             {{p.passenger_name}}<span ng-hide="$last">, </span>
-                           </span>
-                         </li>
-                       </ul>
-                     </div>
-                   </div>
-                   <p>
-                     <strong>Available seats:</strong>
-                     <ul>
-                       <li>
-                         <strong>Going:</strong>{{car.seats-(view.goingRide.passengers.length)}}
-                       </li>
-
-                       <li>
-                         <strong>Back:</strong>{{car.seats-(view.backRide.passengers.length)}}
-                       </li>
-                     </ul>
-                   </p>
-                   <div class="row" ng-if="view.isSigned(car) ">
-                     <div class="col-sm-12">
-                       <strong>Extra passangers:</strong>
-
-                       <ul>
-                         <li>
-                           <strong>Going:</strong>
-                           <select ng-model="view.goingRide.extraPass">
-                             <option value="{{$index+1}}" ng-repeat="i in view.getNumber(car.seats-(view.goingRide.passengers.length)) track by $index">{{$index+1}}</option>
-                           </select>
-                         </li>
-
-                         <li>
-                           <strong>Back:</strong>
-                           <select ng-model="view.backRide.extraPass">
-                             <option value="{{$index+1}}" ng-repeat="i in view.getNumber(car.seats-(view.backRide.passengers.length)) track by $index">{{$index+1}}</option>
-                           </select>
-                         </li>
-                       </ul>
-
-                       <button ng-click="view.addExtra(car._id)" type="button" class="btn btn-primary btn-xsmall">Save</button>
-                     </div>
-                   </div>
-                   <div ng-if="car.driver_id == view.user.id" class="row text-center">
-                     <button class="btn btn-danger btn-xs" ng-click="view.deleteCar(car._id)">Remove my car</button>
-                   </div>
-
-                   <div class="row text-center" ng-hide="view.isSigned(car) || car.driver_id === view.user.id">
-                     <label for="going_check">Going</label>
-                     <input type="checkbox" name="going_check" ng-model="view.user.going">
-                     <label for="back_ride">Back</label>
-                     <input type="checkbox" name="back_check" ng-model="view.user.back">
-                   </div>
-
-                   <div ng-show="(car.driver_id !== view.user.id && car.passengers.length < car.seats && !view.isSigned(car) )" class="row text-center">
-                       <button class="btn btn-primary btn-xs" ng-click="messageDriver(car)" >Send a Message</button>
-                     <button class="btn btn-primary btn-xs btn-control" ng-click="view.joinCar(car._id)" ng-disabled="(!view.user.going && !view.user.back)">
-                       Join this ride
-                     </button>
-                   </div>
-                   <div class="row text-center"  ng-if="view.isSigned(car)">
-                     <button class="btn btn-danger btn-xs btn-control" ng-click="view.leaveCar(car._id)" >Leave this ride</button>
-                   </div>
-                  </div>
-                </div>
-
-             </div>
-         </div>
-         <div class="tab">
-           <input type="radio" id="tab-new" name="carpooling-tabs" >
-           <label for="tab-new" class="add"> Add new car <span class="glyphicon glyphicon-plus"></span></label>
-           <div class="content">
-             <form class="form-horizontal" >
-               <div class="form-group">
-               <label for="inputEmail3" class="col-sm-4 control-label">How many available seats your car has?</label>
-               <div class="col-sm-8">
-                 <select class="form-control"  ng-model="view.seats" >
-                   <option value="1">1 seat </option>
-                   <option value="2">2 seats</option>
-                   <option value="3">3 seats</option>
-                   <option value="4">4 seats</option>
-                   <option value="5">5 seats</option>
-                   <option value="6">6 seats</option>
-                 </select>
-               </div>
-             </div>
-             <div class="form-group">
-               <label for="new2" class="col-sm-4 control-label">Comments:</label>
-               <div class="col-sm-8">
-                 <textarea  rows="1" class="form-control" ng-model="view.comments" placeholder="Where do you live and when are you departing "></textarea>
-                </div>
-              </div>
-               <p class="text-center"><button type="button" class="btn btn-success"  ng-click="view.addCar()">Add car</button></p>
-            </form>
-           </div>
-         </div>
-        </div>
-
-
     </div>
 
-  </main>
-
-
-      </div><!-- -->
-    </div>
-
-
-
-
-  </main>
-
-  <div class="modal fade" id="sendMessageModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-
-      <div class="modal-body">
-          <div style="text-align: center">
-              <h4 style="font-size: 24px">Send message</h4>
-              <p><img src="{{ messageCar.driver_photo }}" style="border-radius: 25px" /> {{ messageCar.driver }}</p>
-          </div>
-        <form>
-          <div class="form-group">
-            <textarea rows="6" class="form-control" id="message" ng-model="message.text" placeholder="Write your message..."></textarea>
-          </div>
-        </form>
-
-        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-        <button type="button" class="btn btn-primary" ng-click="sendMessage()">Send</button>
-      </div>
-
-    </div>
+    <footer class="tc">
+      <a  class="btn btn-ride sm" ng-click="addcar=true" ><i class="fa fa-plus" aria-hidden="true"></i> Add my car</a>
+    </footer>
   </div>
+
+</div>
+
+<div id="ridedetails" class="panel top right xs tc" ng-show="view.ride">
+  <a class="close left" ng-click="view.showRide()"><i class="fa fa-times" aria-hidden="true"></i></a>
+  <img src="{{view.ride.driver_photo}}" class="profile xl" />
+  <h2>{{view.ride.driver_name}}</h2>
+  <p class="email">{{view.ride.driver_email}}</p>
+  <table class="">
+    <tr>
+      <td>Departure</td>
+      <td>7:00pm</td>
+    </tr>
+    <tr>
+      <td>Seatc available</td>
+      <td>4</td>
+    </tr>
+    <tr>
+      <td>Round trip</td>
+      <td>yes</td>
+    </tr>
+  </table>
+  <p>
+    This is not a cat friendly ride and I like to sing on the car
+  </p>
+  <a href="#" class="btn blue">Join this ride</a>
+  <p>
+    Estimated pick up time:<br />
+    <strong>6:52pm</strong>
+  </p>
+</div>
+
+<div id="addride" class="panel right xs top " ng-show="addcar">
+    <a  class="close left" ng-click="addcar = !addcar" ><i class="fa fa-times" aria-hidden="true"></i></a>
+  <h2 class="tc">Add my car</h2>
+  <form class="form-horizontal form-ride"  method="post">
+    <div class="form-group location">
+      <label class="control-label ">Select a departure location</label>
+        <input type="text" class="form-control " autofocus >
+        <a href="#"><i class="fa fa-map-marker" aria-hidden="true"></i></a>
+    </div>
+    <div class="row">
+      <div class="col-xs-6">
+        <div class="form-group ">
+          <label class="control-label">Departure time</label>
+          <input type="text" class="form-control timepicker" ng-model="event.starttime" >
+        </div>
+      </div>
+      <div class="col-xs-6">
+        <div class="form-group right">
+          <label class="control-label">Available seats</label>
+          <input type="text" class="form-control " >
+        </div>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="control-label">Comments</label>
+      <input type="text" class="form-control" ng-model="ride.comment"  >
+    </div>
+    <div class="form-group tc">
+      <label class="control-label">is this a round trip?</label>
+      <div class="onoffswitch ">
+          <input type="checkbox" class="onoffswitch-checkbox" id="rts" ng-model="roundtrip" >
+          <label class="onoffswitch-label" for="rts"></label>
+      </div>
+    </div>
+    <div class="roundtrip" ng-show="roundtrip">
+      <div class="form-group">
+        <label class="control-label">Select a departure location</label>
+          <input type="text" class="form-control " autofocus >
+      </div>
+      <div class="row">
+        <div class="col-xs-6">
+          <div class="form-group ">
+            <label class="control-label">Departure time</label>
+            <input type="text" class="form-control timepicker" ng-model="event.starttime" >
+          </div>
+        </div>
+        <div class="col-xs-6">
+          <div class="form-group right">
+            <label class="control-label">Available seats</label>
+            <input type="text" class="form-control " >
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <footer class="tc">
+      <button type="submit" class="btn btn-ride sm tc">Add ride</button>
+    </footer>
+    
+  </form>
 </div>
 
 
 
-</div>
+<script>
+  $(document).ready(function(){
+    $('#availrides .list').slimScroll({
+      position: 'right',
+      height: '150px',
+      railVisible: false,
+      alwaysVisible: true,
+      color: '#59BFDF',
+      distance: '0',
+      size: '5px'
+    });
+  });
+</script>
