@@ -3,7 +3,7 @@ var assert = require('chai').assert;
 var User = require('../../models/User');
 var Place = require('../../models/Place');
 var Event = require('../../models/Event');
-var token, testUser, testPlace, createdEven, createdEvent;
+var token, testUser, testPlace1, testPlace2, createdEvent;
 
 describe('Event creation', function(){
   before(() => {
@@ -23,14 +23,16 @@ describe('Event creation', function(){
       .save();
     })
     .then(place => {
-      testPlace = place;
+      testPlace1 = place;
     });
   });
 
   after(() => {
     return testUser.remove()
-    .then(() => testPlace.remove()) 
-    .then(() => Event.remove(createdEvent));
+    .then(() => testPlace1.remove()) 
+    .then(() => testPlace2.remove())
+    .then(() => Event.remove(createdEvent1))
+    .then(() => Event.remove(createdEvent2));
   });
 
   it('creates a new event with existing place', () => {
@@ -39,13 +41,13 @@ describe('Event creation', function(){
       description: 'una feria de pollos', 
       address: 'pollolandia', 
       location: { lat: 123, lon: 123 },
-      place: testPlace._id, 
+      place: testPlace1._id, 
       organizer: testUser._id, 
       datetime: new Date('2017-05-05T02:20:10Z'), 
       tags: ['feria', 'pollo']
     })
     .then(event => {
-      createdEvent = event;
+      createdEvent1 = event;
       assert.ok(event._id);
       assert.equal(Date(event.datetime), Date('2017-05-05T02:20:10Z'));
       assert.equal(event.name, 'feria del pollo Z');
@@ -53,7 +55,7 @@ describe('Event creation', function(){
       assert.lengthOf(event.going_rides, 0);
       assert.lengthOf(event.returning_rides, 0);
       assert.equal(event.organizer._id, testUser._id);
-      assert.equal(event.place.toString(), testPlace._id.toString());
+      assert.equal(event.place.toString(), testPlace1._id.toString());
       assert.equal(event.tags[0], 'feria');
       assert.equal(event.tags[1], 'pollo');
     });
@@ -70,7 +72,7 @@ describe('Event creation', function(){
       tags: ['feria', 'pollo']
     })
     .then(event => {
-      createdEvent = event;
+      createdEvent2 = event;
       assert.ok(event._id);
       assert.equal(Date(event.datetime), Date('2017-05-05T02:20:10Z'));
       assert.equal(event.name, 'feria del pollo Z');
@@ -83,6 +85,7 @@ describe('Event creation', function(){
 
       return Place.findOne({_id: event.place})
         .then(place => {
+          testPlace2 = place;
           assert.equal(place.address, 'pollolandia');
           assert.equal(place.location.lon, 123);
           assert.equal(place.location.lat, 345);
