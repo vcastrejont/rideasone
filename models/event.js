@@ -65,7 +65,7 @@ EventSchema.methods.addRide = function (rideData) {
   }
 
   return Promise.all(promises)
-    .then(createdRides => {
+    .then(() => {
       transaction.update('Event', {'_id': this._id}, {
         going_rides: this.going_rides, 
         returning_rides: this.returning_rides

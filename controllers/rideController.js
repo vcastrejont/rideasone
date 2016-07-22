@@ -6,43 +6,22 @@ var mongoose = require('mongoose');
 var Transaction = require('lx-mongoose-transaction')(mongoose);
 var _ = require('lodash');
 
-/**
- * eventController.js
- *
- * @description :: Server-side logic for managing events.
- */
-
 module.exports = {
   deleteRide: function (req, res) {
-    var transaction = new Transaction();
-    
-    Event.findOne({_id: req.params.event_id})
-    .then(event => {
-      var rideId = req.params.ride_id;
-      _.pullAt(event.going_rides, event.going_rides.indexOf(rideId));
-      _.pullAt(event.returning_rides, event.returning_rides.indexOf(rideId))
-      var updatedRides = {
-        going_rides: event.going_rides,
-        returning_rides: event.returning_rides
-      };
-      transaction.update('Event', event._id, updatedRides);
-      transaction.remove('Ride', rideId);
-      return transaction.run();
-    })
-    .then(results => {
-    var numAffected = results.length;
-      console.log(numAffected);
-      return res.status(200).json({
-      message: 'Successfully deleted',
-      numAffected: numAffected
+    req.ride.deleteEventRide(req.params.event)
+      .then(results => {
+        var numAffected = results.length;
+        return res.status(200).json({
+          message: 'Successfully deleted',
+          numAffected: numAffected
+        });
+      })
+      .catch(err => {
+        console.log(err);
+        return res.status(500).json({
+        message: 'Error updating event', error: err
+        });
       });
-    })
-    .catch(err => {
-      console.log(err);
-      return res.status(500).json({
-      message: 'Error updating event', error: err
-      });
-    });
   },
   
   joinRide: function (req, res) {
