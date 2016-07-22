@@ -4,6 +4,7 @@ var config = require('../config/config');
 
 module.exports = {
   PostGoogleAuth: function (req, res, next) {
+    console.log(req.body);
     passport.authenticate('google-id-token', function (err, user, info) {
       if (err) return res.status(401).json({ message: err.message });
       if (!user) return res.status(401).json(info);

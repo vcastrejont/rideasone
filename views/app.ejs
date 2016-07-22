@@ -6,6 +6,7 @@
         <title>RideAsOne</title>
         <meta name="description" content="Carpooling app for business">
         <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="google-signin-client_id"  content="764821343773-cjpf8lnubnnmjrupiu8oen4vsacgcq9n.apps.googleusercontent.com">
         <link rel="shortcut icon" sizes="16x16 24x24 32x32 48x48 64x64" type="image/png" href="assets/icons/favicon.png" />
         <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css" />
@@ -27,12 +28,13 @@
         <script src="/components/moment/min/moment-with-locales.min.js"></script>
         <script src="/components/jquery-slimscroll/jquery.slimscroll.min.js"></script>
         <script src="/components/jquery-timepicker-wvega/jquery.timepicker.js"></script> 
-        <script src="/components/satellizer/dist/satellizer.js"></script>
-      
+      <script src="/components/satellizer/dist/satellizer.js"></script>
+        <script src="https://apis.google.com/js/platform.js" async defer></script>
+        
         <script src="assets/js/material.min.js"></script>
         <script src="assets/js/jquery.easing.min.js"></script>
         <script src="assets/js/material-kit.js"></script>
-
+  
         <!-- Angular -->
         <script src="/app/app.js"></script>
         <script src="/app/filters/passengers.js"></script>
@@ -45,6 +47,7 @@
         <script src="/app/controllers/eventsNewCtrl.js"></script>
         <script src="/app/controllers/settingsCtrl.js"></script>
         <script src="/app/controllers/homeCtrl.js"></script>
+        <script src="/app/controllers/loginCtrl.js"></script>
         <!--Directives -->
         <script src="/app/directives/mapcanvas/mapcanvas.js"></script>
         <!--Factories -->

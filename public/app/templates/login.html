@@ -1,0 +1,21 @@
+<div id="home" class="panel center small text-center">
+  <h3>Welcome </h3>
+
+  <button class="btn  btn-ride" ng-click="authenticate('google')">
+    <span class="ion-social-googleplus"></span>Sign in with Google2
+  </button>
+   
+   <div class="g-signin2" data-onsuccess="onSignIn">as</div>
+   as
+   <script>
+   function onSignIn(googleUser) {
+    var profile = googleUser.getBasicProfile();
+    var id_token = googleUser.getAuthResponse().id_token;
+    console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
+    console.log('Name: ' + profile.getName());
+    console.log('Image URL: ' + profile.getImageUrl());
+    console.log('Email: ' + profile.getEmail());
+    console.log('idtoken: ' + id_token);
+  }
+</script>
+</div>

@@ -88,6 +88,8 @@ app.use(passport.session());
 //app.use('/', routes);
 
 app.get('/', function (req, res) {
+   console.log("query:"); 
+   console.log(req.query);
   	res.render('app');
 });
 app.use('/api', api);
