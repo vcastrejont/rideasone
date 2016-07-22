@@ -24,7 +24,6 @@ RideRequestSchema.methods.accept = function () {
     };
     
     this.ride.passengers.push(passenger);
-    console.log(passenger, this.ride.passengers);
     transaction.update('Ride', {_id: this.ride._id}, {passengers: this.ride.passengers});
     transaction.remove('RideRequest', this._id);
     return transaction.run();
