@@ -84,7 +84,7 @@ module.exports = {
     });
   },
   acceptRideRequest: function (req, res) {
-    RideRequest.findOne({_id: req.params.request_id})
+    RideRequest.findOne({_id: req.params.request_id, ride: req.params.ride_id})
     .populate('ride')
     .then(request => {
       return request.accept();
