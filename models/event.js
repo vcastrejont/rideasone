@@ -51,7 +51,7 @@ EventSchema.methods.addRide = function (rideData) {
   var transaction = new Transaction();
 
   var ride= {
-		driver_id: rideData.driver,
+		driver: rideData.driver,
     seats: rideData.seats,
     comments: rideData.comments
   };

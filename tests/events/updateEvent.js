@@ -103,13 +103,13 @@ describe('Event editing', function(){
     })
     .then(ride => {
         assert.equal(ride.seats, 42);
-        assert.equal(ride.driver_id, testUser._id.toString());
+        assert.equal(ride.driver, testUser._id.toString());
 
         return Ride.findOne({_id: updatedEvent.returning_rides[0]});
     })
     .then(ride => {
         assert.equal(ride.seats, 42);
-        assert.equal(ride.driver_id, testUser._id.toString());
+        assert.equal(ride.driver, testUser._id.toString());
     });
   });
 

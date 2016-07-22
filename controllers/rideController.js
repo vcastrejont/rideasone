@@ -84,19 +84,14 @@ module.exports = {
     });
   },
   acceptRideRequest: function (req, res) {
-    var transaction = new Transaction();
     RideRequest.findOne({_id: req.params.request_id})
-    .populate('ride_id')
+    .populate('ride')
     .then(request => {
-      var passenger = {
-        user: request.passenger,
-        place: request.place
-      };
-      var updatedPassengers = request.ride_id.passengers;
-      updatedPassengers.push(passenger);
-      transaction.update('Ride', request.ride_id, {passengers: updatedPassengers});
-      transaction.remove('RideRequest', request._id);
-      return transaction.run();
+      return req.user.isDriver(request.ride._id)
+      .return(request);
+    })
+    .then(request => {
+      return request.accept();
     })
     .then(results => {
       return res.status(200).json({
