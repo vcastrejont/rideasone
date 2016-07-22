@@ -59,7 +59,7 @@ function findOrCreatePlace(data, transaction){
 			},
 				address: data.address,
 				name: data.place,
-				place_name: data.place_name
+				google_places_id: data.google_places_id
     };
 		transaction.insert('Place', place);
 		return transaction.run();

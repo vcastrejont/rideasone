@@ -5,7 +5,7 @@ var ObjectId = Schema.ObjectId;
 
 var PlaceSchema = new Schema({
   name: String,
-  place_name: String,
+  google_places_id: String,
   address: String,
   location: {
     lat: { type: Number, required: true },

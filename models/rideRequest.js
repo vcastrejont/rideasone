@@ -5,7 +5,7 @@ var Transaction = require('lx-mongoose-transaction')(mongoose);
 
 var RideRequestSchema = new Schema({
   passenger: { type: ObjectId, ref: 'User' },
-	place: { type: ObjectId, ref: 'Place'},
+  place: { type: ObjectId, ref: 'Place'},
   ride: { type: ObjectId, ref: 'Ride' },
   created_at: { type: Date, default: Date.now }
 });
