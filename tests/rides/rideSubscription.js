@@ -64,7 +64,8 @@ describe('Ride subscription management', function(){
   });
 
   it('accepts a passenger into a ride', () => {
-    return req.put('/ride-requests/'+ testRideRequest._id +'/accept')
+	  console.log(testRide._id);
+    return req.put('/rides/'+ testRide._id +'/ride-requests/'+ testRideRequest._id +'/accept')
     .set('Authorization', token1)
     .expect(200)
     .then(res => RideRequest.find({_id: testRideRequest._id}))

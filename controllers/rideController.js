@@ -87,10 +87,6 @@ module.exports = {
     RideRequest.findOne({_id: req.params.request_id})
     .populate('ride')
     .then(request => {
-      return req.user.isDriver(request.ride._id)
-      .return(request);
-    })
-    .then(request => {
       return request.accept();
     })
     .then(results => {
