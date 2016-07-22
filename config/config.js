@@ -1,15 +1,16 @@
+var _ = require('lodash');
 var mongoUri = process.env.MONGODB_URI || 'mongodb://localhost/carpooling';
 
-module.exports = {
+var defaults = {
   db: {
     'secret': '^hr%ps}79TV2D&KJ',
     'database': mongoUri
   },
   mailer: {
     'service' : 'Mailgun',
-    'user'    : 'postmaster@sandbox2a6fe67649af4a019f16d6a46c7a60c1.mailgun.org',
-    'pass'    : '2fd912caedf6f773d61c777ab375f322',
-    'from'    : 'carpooling@nearsoft.com',
+    'user'  : 'postmaster@sandbox2a6fe67649af4a019f16d6a46c7a60c1.mailgun.org',
+    'pass'  : '2fd912caedf6f773d61c777ab375f322',
+    'from'  : 'carpooling@nearsoft.com',
     'default' : 'vcastrejon@nearsoft.com'
   },
   jwtSecret: process.env.JWT_SECRET || 'weShouldAddAKeyToEnvironmentVariablesToMakeThisShitSecure',
@@ -30,3 +31,13 @@ module.exports = {
     SERVER_API_KEY: 'AIzaSyDSUvQR9e1_gj8SGk7SIR0Pi9fthPnitLc' // TODO: Update with carpooling server api key
   }
 };
+
+var overrides = {
+  test: {
+    db: {
+      database: 'mongodb://localhost/carpooling-test'
+    }
+  }
+};
+
+module.exports = _.merge(defaults, overrides[process.env.NODE_ENV]);

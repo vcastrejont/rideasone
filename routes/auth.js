@@ -12,6 +12,10 @@ var authController = require('../controllers/authController');
 */
 router.post('/google', authController.PostGoogleAuth);
 
+if (process.env.NODE_ENV == 'test'){
+  router.post('/fakeAuthForTesting', authController.FakeAuthForTesting);
+}
+
 /**
 * @api {get} /auth/me My profile
 * @apiName GetMyProfile
