@@ -9,6 +9,7 @@ var UserSchema = new Schema({
   provider_id: {type: String, unique: true},
   photo: String,
   email: String,
+  fcm_tokens: [String],
   created_at: {type: Date, default: Date.now},
   default_place: {type: Schema.Types.ObjectId, ref: 'place'}
 });

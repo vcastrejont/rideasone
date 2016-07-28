@@ -229,6 +229,17 @@ router.get('/users', middleware.isAuthenticated, userController.list);
 */
 // router.post('/chats/add', chatController.addMessage);
 
+
+/**
+* @api {put} /api/users/:user_id/fcm-token add or change an active FCM token
+* @apiName fcmToken
+* @apiGroup Notifications
+* @apiDescription         if old is not defined, adds the FCM token, if not, replaces the old one with the active one 
+* @apiParam {String}      old                    Previous FCM token, to be removed
+* @apiParam {String}      active                 The FCM token to use for the requesting device
+*/
+router.put('/users/:user_id/fcm-token', middleware.isAuthenticated, userController.updateFcmToken)
+
 /**
 * @api {get} /api/chats/:rideid Get messages
 * @apiName get
