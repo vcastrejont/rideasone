@@ -12,7 +12,7 @@ angular.module('carPoolingApp').factory('mapFactory', function($rootScope) {
 	    return false;
     },
     success: function () {
-      console.log("factory success!");
+      //console.log("factory success!");
       $rootScope.$broadcast('mapFactory:success');	
     }
   };

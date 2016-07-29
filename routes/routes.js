@@ -10,7 +10,6 @@ var mailerController = require('../controllers/mailerController.js');
   
 router.get('/', function(req, res) {
 	// if (req.isAuthenticated()){
-    console.log(req); 
 		res.render('app.ejs');
 	// }else{
 	// 	res.render('landing.ejs');
