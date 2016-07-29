@@ -162,13 +162,13 @@ router.delete('/events/:event_id/rides/:ride_id', middleware.isAuthenticated, mi
 router.put('/rides/:ride_id/join', middleware.isAuthenticated, ridesController.joinRide);
 
 /**
- * @api {put} /api/ride-request/:request_id/accept accept a ride request
+ * @api {put} /api/rides/:ride_id/ride-request/:request_id/accept accept a ride request
  * @apiName AcceptEventRideRequest
  * @apiGroup Rides
  * @apiDescription Register to a ride to or from the event
  * @apiSuccess numAffected
  **/
-router.put('/ride-requests/:request_id/accept', middleware.isAuthenticated, ridesController.acceptRideRequest);
+router.put('/rides/:ride_id/ride-requests/:request_id/accept', middleware.isAuthenticated, middleware.isDriver, ridesController.acceptRideRequest);
 router.put('/rides/:ride_id/add-passenger', middleware.isAuthenticated, middleware.isPassenger, ridesController.addPassenger);  
 
 /**
