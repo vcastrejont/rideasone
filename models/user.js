@@ -73,6 +73,13 @@ function findOrCreatePlace(data, transaction){
  *
  * @returns A promise with signature (event: Event)
  */
+
+UserSchema.methods.updateFcmToken = function (data) {
+  this.fcm_tokens.pull(data.old);
+  this.fcm_tokens.push(data.active);
+  return this.save();
+};
+
 UserSchema.methods.createEvent = function (data) {
   var transaction = new Transaction();
 

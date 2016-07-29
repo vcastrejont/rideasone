@@ -238,7 +238,9 @@ router.get('/users', middleware.isAuthenticated, userController.list);
 * @apiParam {String}      old                    Previous FCM token, to be removed
 * @apiParam {String}      active                 The FCM token to use for the requesting device
 */
-router.put('/users/:user_id/fcm-token', middleware.isAuthenticated, userController.updateFcmToken)
+router.put('/users/:user_id/fcm-token', middleware.isAuthenticated, userController.updateFcmToken);
+
+//router.put('/users/:user_id/notifications', middleware.isAuthenticated, userController.getNotifications);
 
 /**
 * @api {get} /api/chats/:rideid Get messages

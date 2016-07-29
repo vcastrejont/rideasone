@@ -18,6 +18,7 @@ module.exports = {
           return res.json(500, {message: 'Error getting users'});
 		});
     },
+	
 	updateFcmToken: function (req, res) {
       req.user.updateFcmToken(req.body)
         .then(user => {
