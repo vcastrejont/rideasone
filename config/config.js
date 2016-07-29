@@ -28,7 +28,7 @@ var defaults = {
     secret: '5sAsJshpCHf_s4Tzk17_7nTK'
   },
   fcm: {
-    SERVER_API_KEY: 'AIzaSyDSUvQR9e1_gj8SGk7SIR0Pi9fthPnitLc' // TODO: Update with carpooling server api key
+	api_key: 'IzaSyCI7KqudvtYvEZAKNX-b3iHdu67_FbfvRc'
   }
 };
 

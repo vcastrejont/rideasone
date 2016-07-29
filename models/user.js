@@ -2,7 +2,7 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 var Transaction = require('lx-mongoose-transaction')(mongoose);
 var Place = require('./place');
-var Event = require('./event');
+var fcm = require('../lib/fcm');
 
 var UserSchema = new Schema({
   name: String,
@@ -103,13 +103,31 @@ UserSchema.methods.createEvent = function (data) {
 
 UserSchema.methods.requestJoiningRide = function (rideId) {
   var RideRequest = require('./rideRequest');
+  var Notification = require('./notification');
+
   var request = new RideRequest({
     ride: rideId,
     passenger: this,
     place: this.default_place
   });
-  // TODO: Create driver notification
-  return request.save();
+
+  return request.save()
+    .populate('ride')
+	.populate('driver')
+	.then(request => {
+      var notificationData = {
+	    recipient: {
+		  tokens: request.ride.driver.tokens,
+		  id: request.ride.driver._id,
+	    },
+	    message: this.name +' is requesting to join your ride',
+		subject: request._id,
+		type: 'ride request'
+	  };
+	  
+      return Notification.addNotification(notificationData);
+	})
+	.return(request);
 };
 
 UserSchema.methods.isPassenger = function (rideId) {

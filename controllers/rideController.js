@@ -67,11 +67,21 @@ module.exports = {
   },
   leaveRide: function (req, res) {
     req.ride.update({'$pull': {'passengers': {'user_id': req.user._id}}})
+    .populate('driver')
+	.then(ride => {
+      var notificationData = {
+	    recipient: {
+		  tokens: ride.driver.tokens,
+		  id: ride.driver._id,
+	    },
+	    message: this.name +' has cancelled a spot on your ride',
+		subject: ride._id,
+		type: 'ride cancellation'
+	  };
+	  
+      return Notification.addNotification(notificationData);
+	})
     .then(numAffected => {
-      /*toDo: notify driver*/
-      //mailerController.leaveCar(passenger.passenger_name, event.name, car[0].driver_email);
-      //ToDo: 404
-
       return res.status(200).json({
         message: 'Successfully removed',
         numAffected: numAffected
@@ -84,11 +94,30 @@ module.exports = {
     });
   },
   acceptRideRequest: function (req, res) {
+    var passenger;
+    var ride;
+	
     RideRequest.findOne({_id: req.params.request_id, ride: req.params.ride_id})
     .populate('ride')
+	.populate('passenger')
     .then(request => {
+      passenger = request.passenger;
+	  ride = request.ride;
       return request.accept();
     })
+	.then(results => {
+      var notificationData = {
+	    recipient: {
+		  tokens: passenger.tokens,
+		  id: passenger._id,
+	    },
+	    message: this.name +' has accepted to give you a ride',
+		subject: ride._id,
+		type: 'ride acceptance'
+	  };
+	  
+      return Notification.addNotification(notificationData);
+	})
     .then(results => {
       return res.status(200).json({
         message: 'successfully accepted ride',
