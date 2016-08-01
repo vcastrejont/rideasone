@@ -2,6 +2,7 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 var Transaction = require('lx-mongoose-transaction')(mongoose);
 var Place = require('./place');
+var Event = require('./event');
 
 var UserSchema = new Schema({
   name: String,
@@ -58,7 +59,7 @@ function findOrCreatePlace(data, transaction){
 			},
 				address: data.address,
 				name: data.place,
-				place_name: data.place_name
+				google_places_id: data.google_places_id
     };
 		transaction.insert('Place', place);
 		return transaction.run();
@@ -95,8 +96,9 @@ UserSchema.methods.createEvent = function (data) {
 UserSchema.methods.requestJoiningRide = function (rideId) {
   var RideRequest = require('./rideRequest');
   var request = new RideRequest({
-    ride_id: rideId,
-    passenger: this
+    ride: rideId,
+    passenger: this,
+    place: this.default_place
   });
   // TODO: Create driver notification
   return request.save();
@@ -117,7 +119,7 @@ UserSchema.methods.isPassenger = function (rideId) {
 
 UserSchema.methods.isDriver = function (rideId) {
   var Ride = require('../models/ride');
-  return Ride.findOne({ _id: rideId, driver_id: this })
+  return Ride.findOne({ _id: rideId, driver: this })
     .then(ride => {
       if (!ride) {
         var error = new Error('User is not the driver on this ride');

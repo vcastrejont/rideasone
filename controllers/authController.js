@@ -18,5 +18,16 @@ module.exports = {
 
   GetProfile: function (req, res) {
     res.json(req.user.profile);
+  },
+
+  FakeAuthForTesting: function (req, res, next) {
+  console.log(req.body);
+    var token = jwt.sign({id: req.body.userId}, config.jwtSecret, {
+      expiresIn: '36500 days', // 100 years
+      issuer: config.issuer
+    });
+    return res.json({ token: token });
   }
+  
 };
+

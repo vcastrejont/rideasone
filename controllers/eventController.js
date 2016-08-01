@@ -3,7 +3,6 @@ var User = require('../models/user.js');
 var Ride = require('../models/ride.js');
 var mailerController = require('../controllers/mailerController.js');
 var mongoose = require('mongoose');
-var Transaction = require('lx-mongoose-transaction')(mongoose);
 var _ = require('lodash');
 
 /**
@@ -103,7 +102,7 @@ module.exports = {
    * eventController.create()
    */
   create: function (req, res) {
-    var newEvent = _.pick(req.body, ['name', 'description', 'address', 'location', 'place_id', 'place_name', 'datetime', 'tags']);
+    var newEvent = _.pick(req.body, ['name', 'description', 'address', 'location', 'google_places_id', 'place_name', 'datetime', 'tags']);
     req.user.createEvent(newEvent)
      .then(function (event) {
         res.json({ _id: event._id });
@@ -171,47 +170,14 @@ module.exports = {
    * eventController.addRide()
    */
   addRide: function (req, res) {
-    var transaction = new Transaction();
-    var eventToEdit;
-    var ridesToPush = {
-      going_rides: []
-    };
 
+    req.body.driver = req.user._id;
     Event.findOne({_id: req.params.event_id})
     .then(function (event) {
-			eventToEdit = event;
-      var car = {
-				driver_id: req.user._id,
-        seats: req.body.seats,
-        comments: req.body.comments
-      };
-
-      if (req.body.going === true){
-        transaction.insert('Ride', car);
-        return transaction.run()
-        .then(createdRide => {
-          eventToEdit.going_rides.push(createdRide[0]._id);
-        });
-      }
+      return event.addRide(req.body);
     })
-    .then(() => {
-      if (req.body.returning === true){
-        transaction.insert('Ride', car);  
-        return transaction.run()
-        .then(createdRide => {
-          eventToEdit.returning_rides.push(createdRide[0]._id);
-        });
-      }
-    })
-    .then(() => {
-        transaction.update('Event', {'_id': req.params.event_id}, {
-          going_rides: eventToEdit.going_rides, 
-          returning_rides: eventToEdit.returning_rides
-        });
-        return transaction.run();
-    })
-    .then(function (updatedEvent) {
-      var numAffected = updatedEvent.length;
+    .then(function (updatedEvents) {
+      var numAffected = updatedEvents.length;
       return res.status(200).json({
         message: 'Successfully added!',
         numAffected: numAffected
@@ -224,7 +190,7 @@ module.exports = {
   },
   edit: function (req, res) {
     var updates = _.pick(req.body, ['name', 'place', 'description', 'datetime', 'tags']); 
-    _.merge(req.event, updates);
+    _.assign(req.event, updates);
     
     req.event.save()
     .then(event => {
@@ -277,21 +243,6 @@ module.exports = {
         }
       });
     });
-  },
-
-  /**
-   * eventController.remove()
-   */
-  remove: function(req, res) {
-    req.event.remove()
-      .then(event => {
-        return res.json(event);
-      })
-      .catch(error => {
-         return res.json(500, {
-            message: 'Error getting event.'
-          });
-       });
   },
 
   messageDriver: function(req, res) {
