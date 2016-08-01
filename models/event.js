@@ -4,7 +4,7 @@ var Schema = mongoose.Schema;
 var ObjectId = Schema.ObjectId;
 var Transaction = require('lx-mongoose-transaction')(mongoose);
 var Promise = require('bluebird');
-var Ride = require('./Ride');
+var Ride = require('./ride');
 
 var EventSchema = new Schema({
   place: { type: ObjectId, ref: 'place' },
