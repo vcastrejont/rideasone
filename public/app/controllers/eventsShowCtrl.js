@@ -1,14 +1,16 @@
 angular.module('carPoolingApp').controller('eventsShowCtrl', eventsShowCtrl);
 
-eventsShowCtrl.$inject = ['$scope', 'apiservice', '$state','$window'];
+eventsShowCtrl.$inject = ['$scope', 'apiservice', '$state','$window','mapFactory'];
 
-function eventsShowCtrl ($scope, apiservice,  $state, $window) {
+function eventsShowCtrl ($scope, apiservice,  $state, $window, mapFactory ) {
+  $scope.map = mapFactory.getApi();
   $scope.id = $state.params.id;
 
   $scope.messageCar = null;
   $scope.message = {
       text: ""
   };
+  
 
   $scope.messageDriver = function(car) {
       $scope.messageCar = car;
@@ -54,6 +56,15 @@ function eventsShowCtrl ($scope, apiservice,  $state, $window) {
       passengers: [],
       extraPass: 0
     },
+    ride:null,
+    showRide: function (ride) {
+      console.log(ride.location);
+      console.log($scope.view.event.location);
+      $scope.view.ride = ride;
+      var origin = ride.location[1]+","+ ride.location[0];
+      var destination = $scope.view.event.location[1]+","+$scope.view.event.location[0]; 
+      $scope.map.showRoute(origin, destination);
+    },
     isSigned: function (car) {
       var temp = _.findWhere(car.passengers, {passenger_id: $scope.view.user.id});
       return temp  ? true : false;
@@ -65,7 +76,21 @@ function eventsShowCtrl ($scope, apiservice,  $state, $window) {
       //Load data, Todo create a service for this
       var self = this;
       apiservice.getEvent($scope.id).then(function(response) {
+        console.log( response.data);
         self.event = response.data;
+        
+        $scope.map.addMarker({lat:self.event.location[1], lng:self.event.location[0], center:true});
+
+        var i;
+        for(i = 0; i < self.event.cars.length; i++) {
+          if( self.event.cars[i].location ){
+            $scope.map.addMarker({lat:self.event.cars[i].location[1], lng:self.event.cars[i].location[0]});
+          }
+        }
+        
+        self.event.date = moment(response.data.datetime).format('MMM. d, YYYY  H:mm a' );
+        self.event.dateString = moment(response.data.datetime).calendar() ;
+      
         self.event.avail = 0;
         self.event.signed = _.where(response.data.attendees, {user_id: self.user.id});
         _.each(response.data.cars, function(carpool, index) {
@@ -94,26 +119,26 @@ function eventsShowCtrl ($scope, apiservice,  $state, $window) {
       });
     },
     showMap:function(){
-      var myLatLng = {lat: this.event.location[1],lng: this.event.location[0]};
-      var options = {
-          center: new google.maps.LatLng(this.event.location[1], this.event.location[0]),
-          zoom: 17,
-          disableDefaultUI: false,
-          draggable: true
-      };
-      var mapCanvas = document.getElementById("map");
-      var map = new google.maps.Map(mapCanvas, options);
-      var infowindow = new google.maps.InfoWindow();
-      var marker = new google.maps.Marker({
-        position: myLatLng,
-        map: map,
-        title: ''
-      });
-
-      var infowindow = new google.maps.InfoWindow({
-        content: this.event.place
-      });
-      infowindow.open(map, marker);
+      // var myLatLng = {lat: this.event.location[1],lng: this.event.location[0]};
+      // var options = {
+      //     center: new google.maps.LatLng(this.event.location[1], this.event.location[0]),
+      //     zoom: 13,
+      //     disableDefaultUI: true,
+      //     draggable: true
+      // };
+      // var mapCanvas = document.getElementById("map");
+      // var map = new google.maps.Map(mapCanvas, options);
+      // var infowindow = new google.maps.InfoWindow();
+      // var marker = new google.maps.Marker({
+      //   position: myLatLng,
+      //   map: map,
+      //   title: ''
+      // });
+      // 
+      // var infowindow = new google.maps.InfoWindow({
+      //   content: this.event.place
+      // });
+      // infowindow.open(map, marker);
     },
     clearOptions:function(){
       this.seats = "";

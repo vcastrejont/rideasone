@@ -3,7 +3,9 @@ var app = angular.module('carPoolingApp', [
   'mapService',
   'ui.bootstrap',
   'ui.router',
-  'apiservice'
+  'apiservice',
+  'directive.g+signin',
+  'ngStorage'
 ]);
 
 app.run(['$rootScope', '$location', '$window',
@@ -14,7 +16,7 @@ app.run(['$rootScope', '$location', '$window',
         if (!$window.ga) {
           return;
         }
-        console.log($location.path());
+        //console.log($location.path());
         $window.ga('send', 'pageview', {
           page: $location.path()
         });
@@ -22,7 +24,19 @@ app.run(['$rootScope', '$location', '$window',
   }
 ]);
 
-app.config(function($stateProvider, $urlRouterProvider) {
+app.run(function($rootScope, $state, authservice, sessionservice) {
+  $rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams) {
+    if (toState.name!=='login'){
+      if (!sessionservice.check()) {
+        event.preventDefault();
+        $state.go('login');
+      }
+    }
+  });
+});
+
+
+app.config(function($stateProvider, $urlRouterProvider, $httpProvider) {
   $urlRouterProvider.otherwise('/');
   var home = {
     name: 'home',
@@ -39,7 +53,7 @@ app.config(function($stateProvider, $urlRouterProvider) {
   events = {
     name: 'events',
     url: '^/events',
-    templateUrl: "app/templates/home.html",
+    templateUrl: "app/templates/events.html",
     controller: eventsCtrl
   },
   eventShow = {
@@ -53,6 +67,12 @@ app.config(function($stateProvider, $urlRouterProvider) {
     url: '^/events/new',
     templateUrl: "app/templates/events.new.html",
     controller: eventsNewCtrl
+  },
+  login = {
+    name: 'login',
+    url: '^/login',
+    templateUrl: "app/templates/login.html",
+    controller: loginCtrl
   };
 
   $stateProvider
@@ -60,5 +80,26 @@ app.config(function($stateProvider, $urlRouterProvider) {
   .state(getaride)
   .state(events)
   .state(eventShow)
-  .state(eventsNew);
+  .state(eventsNew)
+  .state(login);
+  
+  $httpProvider.interceptors.push(['$q', '$location', '$localStorage', function ($q, $location, $localStorage) {
+     return {
+         'request': function (config) {
+             config.headers = config.headers || {};
+             if ($localStorage.token) {
+                 config.headers.Authorization = 'JWT ' + $localStorage.token;
+             }
+             return config;
+         },
+         'responseError': function (response) {
+             if (response.status === 401 || response.status === 403) {
+                 $location.path('/login');
+             }
+             return $q.reject(response);
+         }
+     };
+  }]);
+  
+  
 });
