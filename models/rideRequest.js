@@ -1,10 +1,11 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 var ObjectId = Schema.ObjectId;
+var Transaction = require('lx-mongoose-transaction')(mongoose);
 
 var RideRequestSchema = new Schema({
   passenger: { type: ObjectId, ref: 'User' },
-	place: { type: ObjectId, refL: 'Place'},
+  place: { type: ObjectId, ref: 'Place'},
   ride: { type: ObjectId, ref: 'Ride' },
   created_at: { type: Date, default: Date.now }
 });
@@ -14,20 +15,19 @@ var RideRequestSchema = new Schema({
  *
  * @return a Promise
  */
-RideRequestSchema.methods.accept = function (userId, text) {
-  return new Promise((resolve, reject) => {
-    var Ride = require('./ride');
-    return Ride.findById(this.ride)
-      .then(ride => {
-        ride.passengers.push(this.passenger);
-        return ride.save();
-      })
-      .then(() => {
-        return this.remove();
-      })
-      .then(resolve)
-      .catch(reject);
-  });
+RideRequestSchema.methods.accept = function () {
+    var transaction = new Transaction();
+
+    var passenger = {
+      user: this.passenger,
+      place: this.place
+    };
+    
+    this.ride.passengers.push(passenger);
+    transaction.update('Ride', {_id: this.ride._id}, {passengers: this.ride.passengers});
+    transaction.remove('RideRequest', this._id);
+    return transaction.run();
+
 };
 
 RideRequestSchema.methods.reject = function (userId) {

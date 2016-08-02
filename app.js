@@ -11,7 +11,7 @@ var api       = require('./routes/api');
 var passport  = require('passport');
 var session   = require('express-session');
 var MongoStore = require('connect-mongo')(session);
-var routes = require('./routes/routes');
+//var routes = require('./routes/routes');
 var _ = require('underscore');
 var debug = require('debug')('nspoolingcar:server');
 
@@ -78,14 +78,17 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(session({
     secret: "secret nscarpooling",
     store: new MongoStore({
-       mongooseConnection:  mongoose.connection})
+    mongooseConnection:  mongoose.connection})
   }));
 app.use(passport.initialize());
-app.use(passport.session());
 
 // Routes
 // ------------------------------------------------------
-app.use('/', routes);
+//app.use('/', routes);
+
+app.get('/', function (req, res) {
+  	res.render('app');
+});
 app.use('/api', api);
 app.use('/auth', require('./routes/auth'));
 

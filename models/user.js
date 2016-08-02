@@ -1,8 +1,8 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 var Transaction = require('lx-mongoose-transaction')(mongoose);
-var Event = require('./event');
 var Place = require('./place');
+var Event = require('./event');
 
 var UserSchema = new Schema({
   name: String,
@@ -35,7 +35,7 @@ UserSchema.methods.getEvents = function () {
 
   var today = moment().startOf('day').toDate();
   return Ride
-    .find({ driver: user })
+    .find({ driver: this })
     .then((rides) => {
       return Event
         .find({ datetime: { $gte: today } })
@@ -59,7 +59,7 @@ function findOrCreatePlace(data, transaction){
 			},
 				address: data.address,
 				name: data.place,
-				place_name: data.place_name
+				google_places_id: data.google_places_id
     };
 		transaction.insert('Place', place);
 		return transaction.run();
@@ -77,7 +77,7 @@ UserSchema.methods.createEvent = function (data) {
   var transaction = new Transaction();
 
 	return findOrCreatePlace(data, transaction)
-	.then((places) => {
+	.then(places => {
 		var event = {
 			place: places[0],
 			organizer: this,
@@ -97,10 +97,50 @@ UserSchema.methods.requestJoiningRide = function (rideId) {
   var RideRequest = require('./rideRequest');
   var request = new RideRequest({
     ride: rideId,
-    passenger: this
+    passenger: this,
+    place: this.default_place
   });
   // TODO: Create driver notification
   return request.save();
+};
+
+UserSchema.methods.isPassenger = function (rideId) {
+  var Ride = require('../models/ride');
+  return Ride.findOne({_id: rideId, 'passengers.user': this})
+    .then(ride => {
+      if (!ride) {
+        var error = new Error('User is not a passenger on this ride');
+        error.status = 403;
+        throw error;
+      }
+      return ride;
+    });
+};
+
+UserSchema.methods.isDriver = function (rideId) {
+  var Ride = require('../models/ride');
+  return Ride.findOne({ _id: rideId, driver: this })
+    .then(ride => {
+      if (!ride) {
+        var error = new Error('User is not the driver on this ride');
+        error.status = 403;
+        throw error;
+      }
+      return ride;
+    });
+};
+
+UserSchema.methods.isOrganizer = function (eventId) {
+  var Event = require('../models/event');
+  return Event.findOne({ _id: eventId, organizer: this })
+    .then((event) => {
+      if (!event) {
+        var error = new Error('User is not the organizer of this event');
+        error.status = 403;
+        throw error;
+      }
+      return event;
+    });
 };
 
 module.exports = mongoose.model('user', UserSchema);

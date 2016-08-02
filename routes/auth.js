@@ -1,6 +1,6 @@
 var express = require('express');
 var router = express.Router();
-var auth = require('../middleware/auth');
+var middleware = require('../middleware');
 var authController = require('../controllers/authController');
 
 /**
@@ -12,6 +12,9 @@ var authController = require('../controllers/authController');
 */
 router.post('/google', authController.PostGoogleAuth);
 
+if (process.env.NODE_ENV == 'test'){
+  router.post('/fakeAuthForTesting', authController.FakeAuthForTesting);
+}
 
 /**
 * @api {get} /auth/me My profile
@@ -23,6 +26,6 @@ router.post('/google', authController.PostGoogleAuth);
 * @apiSuccess {String}   photo  Picture url
 * @apiHeader (JWT token) {String} Authorization
 */
-router.get('/me', auth.hasToken, authController.GetProfile);
+router.get('/me', middleware.isAuthenticated, authController.GetProfile);
 
 module.exports = router;
