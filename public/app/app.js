@@ -24,8 +24,9 @@ app.run(['$rootScope', '$location', '$window',
   }
 ]);
 
-app.run(function($rootScope, $state, authservice, sessionservice) {
+app.run(function($rootScope, $state, authservice, sessionservice, $localStorage) {
   $rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams) {
+    $rootScope.user=sessionservice.user();
     if (toState.name!=='login'){
       if (!sessionservice.check()) {
         event.preventDefault();
