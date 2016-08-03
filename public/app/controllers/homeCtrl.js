@@ -3,9 +3,11 @@ angular.module('carPoolingApp').controller('homeCtrl', homeCtrl);
 homeCtrl.$inject = ['$rootScope','$scope', '$window', 'apiservice','mapFactory'];
 
 function homeCtrl ($rootScope, $scope, $window, apiservice, mapFactory ) {
-  $scope.api = mapFactory.getApi();
-  $scope.api.defaultLocation();
 
+  $scope.user=sessionservice.user();
+  $scope.api = mapFactory.getApi();
+  
+  
   apiservice.getEvents()
     .success(function(data) {
         $scope.nextEvents=data;

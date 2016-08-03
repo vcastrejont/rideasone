@@ -4,8 +4,8 @@ profileCtrl.$inject = ['$scope','apiservice','mapFactory' ];
 
 function profileCtrl ($scope, apiservice, mapFactory) {
 
+  $scope.user=sessionservice.user();
   $scope.api = mapFactory.getApi();
-  $scope.api.defaultLocation();
   
 
 }
