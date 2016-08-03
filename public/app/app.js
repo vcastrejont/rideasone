@@ -74,6 +74,18 @@ app.config(function($stateProvider, $urlRouterProvider, $httpProvider) {
     url: '^/login',
     templateUrl: "app/templates/login.html",
     controller: loginCtrl
+  },
+  logout = {
+    name: 'logout',
+    url: '^/logout',
+    templateUrl: "app/templates/login.html",
+    controller: logoutCtrl
+  },
+  profile = {
+    name: 'profile',
+    url: '^/profile',
+    templateUrl: "app/templates/profile.html",
+    controller: profileCtrl
   };
 
   $stateProvider
@@ -82,7 +94,9 @@ app.config(function($stateProvider, $urlRouterProvider, $httpProvider) {
   .state(events)
   .state(eventShow)
   .state(eventsNew)
-  .state(login);
+  .state(login)
+  .state(logout)
+  .state(profile);
   
   $httpProvider.interceptors.push(['$q', '$location', '$localStorage', function ($q, $location, $localStorage) {
      return {
