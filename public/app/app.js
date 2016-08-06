@@ -27,7 +27,7 @@ app.run(['$rootScope', '$location', '$window',
 app.run(function($rootScope, $state, authservice, sessionservice, $localStorage, mapFactory) {
   $rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams) {
     if (sessionservice.check()) {
-      $rootScope.api.defaultLocation();
+      $rootScope.user = sessionservice.user();
     }else{
       if (toState.name!=='login'){
         event.preventDefault();

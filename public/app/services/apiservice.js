@@ -21,7 +21,7 @@ function apiservice($http) {
 	};
 
 	service.createEvent = function(eventData) {
-		return $http.post("/api/events/new", eventData);
+		return $http.post("/api/events", eventData);
 	};
 
 	service.signupToEvent = function(eventId) {

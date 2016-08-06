@@ -78,6 +78,7 @@ angular.module('carPoolingApp').directive('mapcanvas', function(mapFactory) {
           placesAutocomplete: function(inputField) {
             var searchInput = document.getElementById(inputField);
             var autocomplete = new google.maps.places.Autocomplete(searchInput);
+            var address = '';
             autocomplete.bindTo('bounds', map);
             autocomplete.addListener('place_changed', fillInAddress);
 
@@ -121,7 +122,7 @@ angular.module('carPoolingApp').directive('mapcanvas', function(mapFactory) {
               marker.setPosition(place.geometry.location);
               marker.setVisible(true);
 
-              var address = '';
+              
               if (place.address_components) {
                 address = [
                   (place.address_components[0] && place.address_components[0].short_name || ''),
@@ -133,7 +134,7 @@ angular.module('carPoolingApp').directive('mapcanvas', function(mapFactory) {
               infowindow.setContent('<div><strong>' + place.name + '</strong><br>' + address);
               infowindow.open(map, marker);
             });
-
+            return address;
           }
 
         }); //setApi
