@@ -27,40 +27,19 @@
         <script src="/components/angular-bootstrap/ui-bootstrap-tpls.min.js"></script>
         <script src="/components/moment/min/moment-with-locales.min.js"></script>
         <script src="/components/jquery-slimscroll/jquery.slimscroll.min.js"></script>
-        <script src="/components/jquery-timepicker-wvega/jquery.timepicker.js"></script> 
-        <script src="/components/angular-directive.g-signin/google-plus-signin.js"></script> 
+        <script src="/components/jquery-timepicker-wvega/jquery.timepicker.js"></script>
+        <script src="/components/angular-directive.g-signin/google-plus-signin.js"></script>
         <script src="/components/ngstorage/ngStorage.min.js"></script>
-        
+
         <script src="assets/js/material.min.js"></script>
         <script src="assets/js/jquery.easing.min.js"></script>
         <script src="assets/js/material-kit.js"></script>
-  
-        <!-- Angular -->
-        <script src="/app/app.js"></script>
-        <script src="/app/filters/passengers.js"></script>
-        <script src="/app/services/apiservice.js"></script>
-        <script src="/app/services/gservice.js"></script>
-      
-        <script src="/app/services/authservice.js"></script>
-        <script src="/app/services/sessionservice.js"></script>
-        
-        <script src="/app/controllers/headerCtrl.js"></script>
-        <script src="/app/controllers/eventsCtrl.js"></script>
-        <script src="/app/controllers/eventsShowCtrl.js"></script>
-        <script src="/app/controllers/eventsNewCtrl.js"></script>
-        <script src="/app/controllers/settingsCtrl.js"></script>
-        <script src="/app/controllers/homeCtrl.js"></script>
-        <script src="/app/controllers/loginCtrl.js"></script>
-        <script src="/app/controllers/logoutCtrl.js"></script>
-        <script src="/app/controllers/profileCtrl.js"></script>
-        <!--Directives -->
-        <script src="/app/directives/mapcanvas/mapcanvas.js"></script>
-        <!--Factories -->
-        <script src="/app/factories/mapfactory.js"></script>
-          
-        
+
+        <!-- App script -->
+        <script src="/rideasone.js"></script>
+
     </head>
-    
+
     <body ng-app="carPoolingApp">
       <nav class="navbar navbar-fixed-top">
           <div class="container">
@@ -71,11 +50,11 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                   </button>
-                  
+
                   <a class="navbar-brand " href="#home">
                     <img class="logo" src="assets/img/logo.png" alt="">
                     Ride<span>as</span>one
-                  </a>  
+                  </a>
               </div>
 
               <div class="collapse navbar-collapse" id="navigation-main">
@@ -106,7 +85,7 @@
               </div>
           </div>
       </nav>
-      
+
       <section class="content">
         <mapcanvas id="map_canvas"></mapcanvas>
         <div ui-view></div>
