@@ -51,10 +51,10 @@ UserSchema.methods.getEvents = function () {
 
 /*ToDo: this probably goes somewhere else*/
 function findOrCreatePlace(data, transaction){
-  return Place.findOne({google_places_id: data.google_places_id})
+  return Place.find({google_places_id: data.google_places_id})
     .then(place =>{
-      if (!place){
-		transaction.insert('Place', place);
+      if (!place.length){
+		transaction.insert('Place', data);
 		return transaction.run();
       } else {
         return place
@@ -70,7 +70,7 @@ function findOrCreatePlace(data, transaction){
 UserSchema.methods.createEvent = function (data) {
   var transaction = new Transaction();
 
-	return findOrCreatePlace(data, transaction)
+	return findOrCreatePlace(data.place, transaction)
 	.then(places => {
 		var event = {
 			place: places[0]._id,

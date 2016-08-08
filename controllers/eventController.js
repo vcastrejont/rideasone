@@ -103,7 +103,7 @@ module.exports = {
    */
   create: function (req, res) {
     var newEvent = _.pick(req.body, ['name', 'description', 'address', 'place', 'datetime', 'tags']);
-    var newEvent.place = _.pick(newEvent.place, ['name', 'address', 'google_places_id', 'location']);
+    newEvent.place = _.pick(newEvent.place, ['name', 'address', 'google_places_id', 'location']);
 
     req.user.createEvent(newEvent)
      .then(function (event) {

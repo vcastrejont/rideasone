@@ -5,6 +5,7 @@ var ObjectId = Schema.ObjectId;
 var Transaction = require('lx-mongoose-transaction')(mongoose);
 var Promise = require('bluebird');
 var Ride = require('./ride');
+var _ = require('lodash');
 
 var EventSchema = new Schema({
   place: { type: ObjectId, ref: 'place' },
@@ -27,7 +28,7 @@ var EventSchema = new Schema({
  */
 EventSchema.statics.getCurrentEvents = function () {
   var twoHoursAgo = moment().subtract(2, 'hour').toDate();
-  return Event.find({ datetime: { $gte: twoHoursAgo} }).populate('Place').sort('datetime');
+  return Event.find({ starts_at: { $gte: twoHoursAgo} }).populate('Place').sort('datetime');
 };
 
 /**
@@ -37,7 +38,7 @@ EventSchema.statics.getCurrentEvents = function () {
  */
 EventSchema.statics.getPastEvents = function () {
   var twoHoursAgo = moment().subtract(1, 'hour').toDate();
-  return Event.find({ datetime: { $lt: twoHoursAgo } }).populate('Place').sort('-datetime').limit(50);
+  return Event.find({ starts_at: { $lt: twoHoursAgo } }).populate('Place').sort('-datetime').limit(50);
 };
 
 function createRide(ride, path, transaction) {
