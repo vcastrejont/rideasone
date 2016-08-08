@@ -11,7 +11,8 @@ var EventSchema = new Schema({
   organizer: { type: ObjectId, ref: 'user' },
   name: String,
   description: String,
-  datetime: Date,
+  starts_at: Date,
+  ends_at: Date,
   tags: Array,
   going_rides: [{ type: ObjectId, ref: 'ride' }],
   returning_rides: [{ type: ObjectId, ref: 'ride' }],
@@ -50,11 +51,7 @@ function createRide(ride, path, transaction) {
 EventSchema.methods.addRide = function (rideData) {
   var transaction = new Transaction();
 
-  var ride= {
-		driver: rideData.driver,
-    seats: rideData.seats,
-    comments: rideData.comments
-  };
+  var ride = _.omit(rideData, ['going', 'returning']);
 
   var promises = [];
   if(rideData.going === true){

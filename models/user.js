@@ -51,22 +51,16 @@ UserSchema.methods.getEvents = function () {
 
 /*ToDo: this probably goes somewhere else*/
 function findOrCreatePlace(data, transaction){
-  if (data.location && ! data.place){
-    var place = {
-			location: {
-				lat: data.location.lat,
-				lon: data.location.lon
-			},
-				address: data.address,
-				name: data.place,
-				google_places_id: data.google_places_id
-    };
+  return Place.findOne({google_places_id: data.google_places_id})
+    .then(place =>{
+      if (!place){
 		transaction.insert('Place', place);
 		return transaction.run();
-  } else {
-    return Place.find({_id: data.place});
-  }
-}
+      } else {
+        return place
+	  }
+  });
+};
 
 /**
  * Creates a new event and sets the user as the organizer.
@@ -79,11 +73,12 @@ UserSchema.methods.createEvent = function (data) {
 	return findOrCreatePlace(data, transaction)
 	.then(places => {
 		var event = {
-			place: places[0],
+			place: places[0]._id,
 			organizer: this,
 			name: data.name,
 			description: data.description,
-			datetime: data.datetime,
+			starts_at: data.starts_at,
+			ends_at: data.ends_at,
 			tags: data.tags
 		};
 		transaction.insert('Event', event);

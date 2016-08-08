@@ -102,7 +102,9 @@ module.exports = {
    * eventController.create()
    */
   create: function (req, res) {
-    var newEvent = _.pick(req.body, ['name', 'description', 'address', 'location', 'google_places_id', 'place_name', 'datetime', 'tags']);
+    var newEvent = _.pick(req.body, ['name', 'description', 'address', 'place', 'datetime', 'tags']);
+    var newEvent.place = _.pick(newEvent.place, ['name', 'address', 'google_places_id', 'location']);
+
     req.user.createEvent(newEvent)
      .then(function (event) {
         res.json({ _id: event._id });
@@ -170,11 +172,12 @@ module.exports = {
    * eventController.addRide()
    */
   addRide: function (req, res) {
+    var ride = _.pick(req.body, ['place', 'departure', 'seats', 'comments', 'going', 'returning']);
 
     req.body.driver = req.user._id;
     Event.findOne({_id: req.params.event_id})
     .then(function (event) {
-      return event.addRide(req.body);
+      return event.addRide(ride);
     })
     .then(function (updatedEvents) {
       var numAffected = updatedEvents.length;
