@@ -8,11 +8,11 @@ function eventsNewCtrl ($scope, apiservice, mapService, $state, mapFactory ) {
   };
   
   $scope.map = mapFactory.getApi();
-  $scope.place = $scope.map.placesAutocomplete('autocomplete');
+  $scope.map.placesAutocomplete('autocomplete');
   $scope.saveData = function() {
-    apiservice.createEvent($scope.event)
+    var eventData = $.extend($scope.event, mapFactory.getEventLocationData());
+    apiservice.createEvent(eventData)
       .success(function(res, status) {
-        if (res.ok)
           $scope.map.defaultLocation();
           $scope.apiSuccess = true;
           $state.go('events');
@@ -39,4 +39,4 @@ function eventsNewCtrl ($scope, apiservice, mapService, $state, mapFactory ) {
   };
 
   $scope.initTimepicker();
-};
+}
