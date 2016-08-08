@@ -7,6 +7,7 @@ var Promise = require('bluebird');
 var RideSchema = new Schema({
   place: { type: ObjectId, ref: 'Place' },
   driver: { type: ObjectId, ref: 'User', required: true },
+  departure: Date,
   seats: Number,
   comments: String,
   passengers: [{
