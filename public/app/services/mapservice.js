@@ -13,9 +13,7 @@ angular.module('mapService', []).service('mapService', function($q){
        
        this.bounds = new google.maps.LatLngBounds();
    };
-   
-  
-   
+
    this.addMarker = function(res) {
        if(this.marker) this.marker.setMap(null);
        this.marker = new google.maps.Marker({
