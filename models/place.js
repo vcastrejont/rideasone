@@ -7,10 +7,7 @@ var PlaceSchema = new Schema({
   name: String,
   google_places_id: String,
   address: String,
-  location: {
-    lat: { type: Number, required: true },
-    lon: { type: Number, required: true }
-  },
+  location: {type: [Number], required:true},
   created_at: {type: Date, default: Date.now},
   updated_at: {type: Date, default: Date.now}
 });

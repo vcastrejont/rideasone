@@ -18,7 +18,8 @@ describe('Event creation', function(){
       return new Place({
         address: 'avenida Siempreviva #43', 
         place_name: 'ferialandia', 
-        location: { lat: 123, lon: 123 }
+		google_places_id: 'testGooglePlaceId',
+        location: [123, 123 ]
       })
       .save();
     })
@@ -39,9 +40,7 @@ describe('Event creation', function(){
     return testUser.createEvent({
       name: 'feria del pollo Z', 
       description: 'una feria de pollos', 
-      address: 'pollolandia', 
-      location: { lat: 123, lon: 123 },
-      place: testPlace1._id, 
+      place: testPlace1, 
       organizer: testUser._id, 
       datetime: new Date('2017-05-05T02:20:10Z'), 
       tags: ['feria', 'pollo']
@@ -65,9 +64,13 @@ describe('Event creation', function(){
     return testUser.createEvent({
       name: 'feria del pollo Z', 
       description: 'una feria de pollos', 
-      address: 'pollolandia', 
-      location: { lat: 345, lon: 123 },
       organizer: testUser._id, 
+	  place: {
+		address: 'pollolandia', 
+        place_name: 'polloland', 
+		google_places_id: 'anotherTestGooglePlacesId',
+        location: [123, 456]
+	  },
       datetime: new Date('2017-05-05T02:20:10Z'), 
       tags: ['feria', 'pollo']
     })
@@ -87,8 +90,8 @@ describe('Event creation', function(){
         .then(place => {
           testPlace2 = place;
           assert.equal(place.address, 'pollolandia');
-          assert.equal(place.location.lon, 123);
-          assert.equal(place.location.lat, 345);
+          assert.equal(place.location[0], 123);
+          assert.equal(place.location[1], 456);
         });
     });
     

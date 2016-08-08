@@ -58,10 +58,9 @@ router.get('/events/past', middleware.isAuthenticated, eventsController.getPast)
   * @apiGroup Events
   * @apiParam {String}    name                     Event name
   * @apiParam {String}    description              Event full description
-  * @apiParam {String}    [address]                Full place address
-  * @apiParam {Object}    location                 Location: longitude and latitude.
-  * @apiParam {String}    google_places_id         Event venue name
-  * @apiParam {String}    place_id                 Event venue reference
+  * @apiParam {Object}    place                    Event venue reference
+  * @apiParam {Date}      starts_at
+  * @apiParam {Date}      ends_at 
   * @apiParam {Date}      [datetime]               Event date and time
   * @apiParam {String[]}  tags                     List of tags (Array of Strings)
   */
@@ -134,6 +133,7 @@ router.delete('/events/:event_id', middleware.isAuthenticated, middleware.isOrga
  * @apiGroup Rides 
  * @apiDescription Register a car for riding to and from the event
  * @apiParam seats
+ * @apiParam {Date}    departure
  * @apiParam comment
  * @apiParam {Boolean} going
  * @apiParam {Boolean} returning
