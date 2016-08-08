@@ -1,6 +1,5 @@
 var app = angular.module('carPoolingApp', [
   'geolocation',
-  'mapService',
   'ui.bootstrap',
   'ui.router',
   'apiservice',

@@ -1,8 +1,8 @@
 angular.module('carPoolingApp').controller('eventsNewCtrl', eventsNewCtrl);
 
-eventsNewCtrl.$inject = ['$scope', 'apiservice', 'mapService',  '$state','mapFactory' ];
+eventsNewCtrl.$inject = ['$scope', 'apiservice',  '$state','mapFactory' ];
 
-function eventsNewCtrl ($scope, apiservice, mapService, $state, mapFactory ) {
+function eventsNewCtrl ($scope, apiservice, $state, mapFactory ) {
   $scope.event = {
     date: new Date()
   };
