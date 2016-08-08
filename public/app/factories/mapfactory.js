@@ -1,54 +1,62 @@
 angular.module('carPoolingApp').factory('mapFactory', function($rootScope) {
-  var api = {}, 
-      currentEventLocation,
-      mapFactory;
-      
-  mapFactory =  {
-    
+  var api = {},
+    currentEventLocation,
+    mapFactory;
+
+  mapFactory = {
+
     api: {},
-    
+
     autocomplete: null,
-    
-    setApi: function (_api) {
-	    api = _api;
+
+    setApi: function(_api) {
+      api = _api;
       this.success();
     },
-    
-    getApi: function () {
+
+    getApi: function() {
       return api;
     },
-    
+
     setApiMeth: function(meth) {
-	    return false;
+      return false;
     },
-    
-    success: function () {
+
+    success: function() {
       //console.log("factory success!");
-      $rootScope.$broadcast('mapFactory:success');	
+      $rootScope.$broadcast('mapFactory:success');
     },
-    
-    setEventLocationData: function () {
+
+    setEventLocationData: function() {
       var place = mapFactory.autocomplete.getPlace();
 
       currentEventLocation = {
-        address : place.formatted_address,
+        address: place.formatted_address,
         google_places_id: place.google_places_id,
-        place_id : place.place_id,
-        location : {
+        place_id: place.place_id,
+        location: {
           lat: place.geometry.location.lat(),
           lon: place.geometry.location.lng()
         }
       };
     },
-    
-    getEventLocationData: function () {
+
+    getEventLocationData: function() {
       return currentEventLocation;
     },
-    
-    build: function (directionsService, directionsDisplay, map) {
+
+    build: function(directionsService, directionsDisplay, map) {
       return {
-        defaultLocation: function(zoom) {
-          zoom = zoom || 13;
+        defaultLocation: function() {
+          defaultPos = {
+            lat: 12.4650114,
+            lng:  -34.1544719
+          };
+          map.setCenter(defaultPos);
+          map.setZoom(3);
+        },
+        
+        currentLocation: function(zoom) {
           if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(function(position) {
               defaultPos = {
@@ -63,7 +71,7 @@ angular.module('carPoolingApp').factory('mapFactory', function($rootScope) {
             });
           }
         },
-
+        
         addMarker: function(pos) {
           var latLng = new google.maps.LatLng(pos.lat, pos.lng);
           var marker = new google.maps.Marker({
@@ -103,8 +111,8 @@ angular.module('carPoolingApp').factory('mapFactory', function($rootScope) {
 
         placesAutocomplete: function(inputField) {
           var searchInput = document.getElementById(inputField),
-              address = '';
-              
+            address = '';
+
           mapFactory.autocomplete = new google.maps.places.Autocomplete(searchInput);
 
           mapFactory.autocomplete.bindTo('bounds', map);
@@ -115,7 +123,7 @@ angular.module('carPoolingApp').factory('mapFactory', function($rootScope) {
             map: map,
             anchorPoint: new google.maps.Point(0, -29)
           });
-          
+
           mapFactory.autocomplete.addListener('place_changed', function() {
             infowindow.close();
             marker.setVisible(false);
@@ -142,7 +150,7 @@ angular.module('carPoolingApp').factory('mapFactory', function($rootScope) {
             marker.setPosition(place.geometry.location);
             marker.setVisible(true);
 
-            
+
             if (place.address_components) {
               address = [
                 (place.address_components[0] && place.address_components[0].short_name || ''),
@@ -158,6 +166,6 @@ angular.module('carPoolingApp').factory('mapFactory', function($rootScope) {
       };
     },
   };
-  
+
   return mapFactory;
 });
