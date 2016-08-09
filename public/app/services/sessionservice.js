@@ -8,7 +8,7 @@ function sessionservice($http, $localStorage) {
   return {
     set: function(token) {
       return $http.get('/auth/me', {headers: {'Authorization': 'JWT '+ token}}).then(function(user){
-        console.log(user);
+        console.log(user.data);
         $localStorage.name = user.data.name;
         $localStorage.email = user.data.email;
         $localStorage.photo = user.data.photo;
@@ -28,6 +28,13 @@ function sessionservice($http, $localStorage) {
     },
     clear:function(){
       $localStorage.$reset();
+    },
+    user:function(){
+      return {
+        name: $localStorage.name,
+        photo: $localStorage.photo,
+        email: $localStorage.email
+      }
     }
   };
 }

@@ -1,6 +1,5 @@
 var app = angular.module('carPoolingApp', [
   'geolocation',
-  'mapService',
   'ui.bootstrap',
   'ui.router',
   'apiservice',
@@ -24,10 +23,12 @@ app.run(['$rootScope', '$location', '$window',
   }
 ]);
 
-app.run(function($rootScope, $state, authservice, sessionservice) {
+app.run(function($rootScope, $state, authservice, sessionservice, $localStorage, mapFactory) {
   $rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams) {
-    if (toState.name!=='login'){
-      if (!sessionservice.check()) {
+    if (sessionservice.check()) {
+      $rootScope.user = sessionservice.user();
+    }else{
+      if (toState.name!=='login'){
         event.preventDefault();
         $state.go('login');
       }
@@ -73,6 +74,18 @@ app.config(function($stateProvider, $urlRouterProvider, $httpProvider) {
     url: '^/login',
     templateUrl: "app/templates/login.html",
     controller: loginCtrl
+  },
+  logout = {
+    name: 'logout',
+    url: '^/logout',
+    templateUrl: "app/templates/login.html",
+    controller: logoutCtrl
+  },
+  profile = {
+    name: 'profile',
+    url: '^/profile',
+    templateUrl: "app/templates/profile.html",
+    controller: profileCtrl
   };
 
   $stateProvider
@@ -81,7 +94,9 @@ app.config(function($stateProvider, $urlRouterProvider, $httpProvider) {
   .state(events)
   .state(eventShow)
   .state(eventsNew)
-  .state(login);
+  .state(login)
+  .state(logout)
+  .state(profile);
   
   $httpProvider.interceptors.push(['$q', '$location', '$localStorage', function ($q, $location, $localStorage) {
      return {

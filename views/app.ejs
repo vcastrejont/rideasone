@@ -40,9 +40,10 @@
         <script src="/app/filters/passengers.js"></script>
         <script src="/app/services/apiservice.js"></script>
         <script src="/app/services/gservice.js"></script>
-        <script src="/app/services/mapservice.js"></script>
+      
         <script src="/app/services/authservice.js"></script>
         <script src="/app/services/sessionservice.js"></script>
+        
         <script src="/app/controllers/headerCtrl.js"></script>
         <script src="/app/controllers/eventsCtrl.js"></script>
         <script src="/app/controllers/eventsShowCtrl.js"></script>
@@ -50,6 +51,8 @@
         <script src="/app/controllers/settingsCtrl.js"></script>
         <script src="/app/controllers/homeCtrl.js"></script>
         <script src="/app/controllers/loginCtrl.js"></script>
+        <script src="/app/controllers/logoutCtrl.js"></script>
+        <script src="/app/controllers/profileCtrl.js"></script>
         <!--Directives -->
         <script src="/app/directives/mapcanvas/mapcanvas.js"></script>
         <!--Factories -->
@@ -90,13 +93,13 @@
                       </ul>
                     </li>
                     <li class="dropdown">
-                      <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Victor Castrejon 
-                        <img src="" a class="profile">
+                      <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{user.name}}
+                        <img src="{{user.photo}}" a class="profile">
                         <span class="caret"></span>
                       </a>
                       <ul class="dropdown-menu">
-                        <li><a href="#" >Your profile</a></li>
-                        <li><a href="#">Logout</a></li>
+                        <li><a ui-sref="profile" >Your profile</a></li>
+                        <li><a ui-sref="logout">Logout</a></li>
                       </ul>
                     </li>
                   </ul>

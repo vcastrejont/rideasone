@@ -17,38 +17,78 @@ router.get('/', function (req, res) {
   * @apiGroup Events
   * @apiDescription Returns an array of all events with date greater than yesterday.
   *
-  * @apiSuccess {ObjectId}  id                      Mongo generated ID.
-  * @apiSuccess {String}    name                    Event name
-  * @apiSuccess {String}    description             Event full description
-  * @apiSuccess {Object}    place                   Information about the venue
-  * @apiSuccess {Object}    organizer               Organizer full name
-  * @apiSuccess {String}    category                Event category
-  * @apiSuccess {Date}      datetime                Event date and time
-  * @apiSuccess {String[]}  tags                    List of tags (Array of Strings)
-  * @apiSuccess {Object[]}  going_rides             Rides going to the event
-  * @apiSuccess {Object[]}  returning_rides         Rides going from the event
-  * @apiSuccess {Date}      created_at              Document creation  date
-  * @apiSuccess {Date}      updated_at              Last updated
-  */
+* @apiHeader  Authorization                                     JWT token.
+* @apiSuccess {ObjectId}  id                                    Mongo generated ID.
+* @apiSuccess {String}    name                                  Event name
+* @apiSuccess {String}    description                           Event full description
+* @apiSuccess {Object}    place                                 Venue (place object)
+* @apiSuccess {String}    place.name                            Venue name
+* @apiSuccess {String}    place.google_places_id                Venue place id
+* @apiSuccess {String}    place.address                         Venue address
+* @apiSuccess {String[]}  place.location                        Venue array location (lat, lng)
+* @apiSuccess {Object}    organizer                             Organizer full name
+* @apiSuccess {String}    category                              Event category
+* @apiSuccess {String[]}  tags                                  List of tags (Array of Strings)
+* @apiSuccess {Object[]}  going_rides                           Rides going to the event
+* @apiSuccess {String}    going_rides.place                     Ride departure location (Place object)
+* @apiSuccess {String}    going_rides.driver                    Ride driver (User object)
+* @apiSuccess {Date}      going_rides.departure                 Ride departure datetime
+* @apiSuccess {String}    going_rides.seats                     Ride number of available seats
+* @apiSuccess {String}    going_rides.comments                  Ride driver comments
+* @apiSuccess {Object[]}  going_rides.passengers                Ride passengers array
+* @apiSuccess {Object}    going_rides.passengers.user           Ride passenger user info (user object)
+* @apiSuccess {Object}    going_rides.passengers.place          Ride passenger departure location (place object)
+* @apiSuccess {Object[]}  returning_rides                       Rides going from the event
+* @apiSuccess {String}    returning_rides.place                     Ride driver destination location (Place object)
+* @apiSuccess {String}    returning_rides.driver                    Ride driver (User object)
+* @apiSuccess {Date}      returning_rides.departure                 Ride departure datetime
+* @apiSuccess {String}    returning_rides.seats                     Ride number of available seats
+* @apiSuccess {String}    returning_rides.comments                  Ride driver comments
+* @apiSuccess {Object[]}  returning_rides.passengers                Ride passengers array
+* @apiSuccess {Object}    returning_rides.passengers.user           Ride passenger user info (user object)
+* @apiSuccess {Object}    returning_rides.passengers.place          Ride passenger destination location (place object)
+* @apiSuccess {Date}      created_at                            Document creation  date
+* @apiSuccess {Date}      updated_at                            Last updated
+*/
 router.get('/events', middleware.isAuthenticated, eventsController.getFuture);
 
   /**
-  * @api {get} /api/events/past Past events
+  * @api {get} /api/events/past All past events
   * @apiName GetPastEvents
   * @apiGroup Events
   *
-  * @apiSuccess {ObjectId}  id                  Mongo generated ID.
-  * @apiSuccess {String}    name                Event name
-  * @apiSuccess {String}    description         Event full description
-  * @apiSuccess {Object}    place               Event venue  name
-  * @apiSuccess {Object}    organizer           Organizer full name
-  * @apiSuccess {String}    category            Event category
-  * @apiSuccess {Date}      datetime            Event date and time
-  * @apiSuccess {String[]}  tags                List of tags (Array of Strings)
-  * @apiSuccess {Object[]}  going_rides         Rides going to the event
-  * @apiSuccess {Object[]}  returning_rides     Rides going from the event
-  * @apiSuccess {Date}      created_at          Document creation  date
-  * @apiSuccess {Date}      updated_at          Last updated
+  * @apiHeader  Authorization                                     JWT token.
+  * @apiSuccess {ObjectId}  id                                    Mongo generated ID.
+  * @apiSuccess {String}    name                                  Event name
+  * @apiSuccess {String}    description                           Event full description
+  * @apiSuccess {Object}    place                                 Venue (place object)
+  * @apiSuccess {String}    place.name                            Venue name
+  * @apiSuccess {String}    place.google_places_id                Venue place id
+  * @apiSuccess {String}    place.address                         Venue address
+  * @apiSuccess {String[]}  place.location                        Venue array location (lat, lng)
+  * @apiSuccess {Object}    organizer                             Organizer full name
+  * @apiSuccess {String}    category                              Event category
+  * @apiSuccess {String[]}  tags                                  List of tags (Array of Strings)
+  * @apiSuccess {Object[]}  going_rides                           Rides going to the event
+  * @apiSuccess {String}    going_rides.place                     Ride departure location (Place object)
+  * @apiSuccess {String}    going_rides.driver                    Ride driver (User object)
+  * @apiSuccess {Date}      going_rides.departure                 Ride departure datetime
+  * @apiSuccess {String}    going_rides.seats                     Ride number of available seats
+  * @apiSuccess {String}    going_rides.comments                  Ride driver comments
+  * @apiSuccess {Object[]}  going_rides.passengers                Ride passengers array
+  * @apiSuccess {Object}    going_rides.passengers.user           Ride passenger user info (user object)
+  * @apiSuccess {Object}    going_rides.passengers.place          Ride passenger departure location (place object)
+  * @apiSuccess {Object[]}  returning_rides                       Rides going from the event
+  * @apiSuccess {String}    returning_rides.place                     Ride driver destination location (Place object)
+  * @apiSuccess {String}    returning_rides.driver                    Ride driver (User object)
+  * @apiSuccess {Date}      returning_rides.departure                 Ride departure datetime
+  * @apiSuccess {String}    returning_rides.seats                     Ride number of available seats
+  * @apiSuccess {String}    returning_rides.comments                  Ride driver comments
+  * @apiSuccess {Object[]}  returning_rides.passengers                Ride passengers array
+  * @apiSuccess {Object}    returning_rides.passengers.user           Ride passenger user info (user object)
+  * @apiSuccess {Object}    returning_rides.passengers.place          Ride passenger destination location (place object)
+  * @apiSuccess {Date}      created_at                            Document creation  date
+  * @apiSuccess {Date}      updated_at                            Last updated
   */
 router.get('/events/past', middleware.isAuthenticated, eventsController.getPast);
 
@@ -56,13 +96,16 @@ router.get('/events/past', middleware.isAuthenticated, eventsController.getPast)
   * @api {post} /api/events New event
   * @apiName CreateEvent
   * @apiGroup Events
+  * @apiHeader  Authorization                      JWT token.
   * @apiParam {String}    name                     Event name
   * @apiParam {String}    description              Event full description
-  * @apiParam {Object}    place                    Event venue reference
-  * @apiParam {Date}      starts_at
-  * @apiParam {Date}      ends_at 
-  * @apiParam {Date}      [datetime]               Event date and time
-  * @apiParam {String[]}  tags                     List of tags (Array of Strings)
+  * @apiParam {Object}    place                    Event venue
+  * @apiParam {String}    place.name               Event venue name
+  * @apiParam {String}    place.google_places_id   Event venue place id
+  * @apiParam {String}    place.address            Event venue address
+  * @apiParam {String[]}  place.location           Event venue array location (lat, lng)
+  * @apiParam {Date}      starts_at                Event start dame time
+  * @apiParam {Date}      [ends_at]                Event end dame time (optional)
   */
 router.post('/events', middleware.isAuthenticated, eventsController.create);
 
@@ -72,41 +115,79 @@ router.post('/events', middleware.isAuthenticated, eventsController.create);
   * @apiGroup Events
   * @apiDescription Display an event details
   *
-  * @apiSuccess {ObjectId}  id                            Mongo generated ID.
-  * @apiSuccess {String}    name                          Event name
-  * @apiSuccess {String}    description                   Event full description
-  * @apiSuccess {Object}    place                         Event venue  name
-  * @apiSuccess {Object}    organizer                     Organizer full name
-  * @apiSuccess {String}    category                      Event category
-  * @apiSuccess {Date}      datetime                      Event date and time
-  * @apiSuccess {String[]}  tags                          List of tags (Array of Strings)
-  * @apiSuccess {Object[]}  going_rides                   Rides going to the event
-  * @apiSuccess {Object[]}  returning_rides               Rides going from the event
-  * @apiSuccess {Date}      created_at                    Document creation  date
-  * @apiSuccess {Date}      created_at                    Document creation  date
-  * @apiSuccess {Date}      updated_at                    Last updated
+  * @apiHeader  Authorization                                     JWT token.
+  * @apiSuccess {ObjectId}  id                                    Mongo generated ID.
+  * @apiSuccess {String}    name                                  Event name
+  * @apiSuccess {String}    description                           Event full description
+  * @apiSuccess {Object}    place                                 Venue (place object)
+  * @apiSuccess {String}    place.name                            Venue name
+  * @apiSuccess {String}    place.google_places_id                Venue place id
+  * @apiSuccess {String}    place.address                         Venue address
+  * @apiSuccess {String[]}  place.location                        Venue array location (lat, lng)
+  * @apiSuccess {Object}    organizer                             Organizer full name
+  * @apiSuccess {String}    category                              Event category
+  * @apiSuccess {String[]}  tags                                  List of tags (Array of Strings)
+  * @apiSuccess {Object[]}  going_rides                           Rides going to the event
+  * @apiSuccess {String}    going_rides.place                     Ride departure location (Place object)
+  * @apiSuccess {String}    going_rides.driver                    Ride driver (User object)
+  * @apiSuccess {Date}      going_rides.departure                 Ride departure datetime
+  * @apiSuccess {String}    going_rides.seats                     Ride number of available seats
+  * @apiSuccess {String}    going_rides.comments                  Ride driver comments
+  * @apiSuccess {Object[]}  going_rides.passengers                Ride passengers array
+  * @apiSuccess {Object}    going_rides.passengers.user           Ride passenger user info (user object)
+  * @apiSuccess {Object}    going_rides.passengers.place          Ride passenger departure location (place object)
+  * @apiSuccess {Object[]}  returning_rides                       Rides going from the event
+  * @apiSuccess {String}    returning_rides.place                     Ride driver destination location (Place object)
+  * @apiSuccess {String}    returning_rides.driver                    Ride driver (User object)
+  * @apiSuccess {Date}      returning_rides.departure                 Ride departure datetime
+  * @apiSuccess {String}    returning_rides.seats                     Ride number of available seats
+  * @apiSuccess {String}    returning_rides.comments                  Ride driver comments
+  * @apiSuccess {Object[]}  returning_rides.passengers                Ride passengers array
+  * @apiSuccess {Object}    returning_rides.passengers.user           Ride passenger user info (user object)
+  * @apiSuccess {Object}    returning_rides.passengers.place          Ride passenger destination location (place object)
+  * @apiSuccess {Date}      created_at                            Document creation  date
+  * @apiSuccess {Date}      updated_at                            Last updated
   */
 router.get('/events/:event_id', middleware.isAuthenticated, eventsController.getById);
 
   /**
-  * @api {get} /api/users/:user_id/events User events
+  * @api {get} /api/users/:user_id/events All user events
   * @apiName GetUserEvents
   * @apiGroup Events
   * @apiDescription List all events from that user
   *
-  * @apiSuccess {ObjectId}  id                            Mongo generated ID.
-  * @apiSuccess {String}    name                          Event name
-  * @apiSuccess {String}    description                   Event full description
-  * @apiSuccess {Object}    place                         Event venue  name
-  * @apiSuccess {Object}    organizer                     Organizer full name
-  * @apiSuccess {String}    category                      Event category
-  * @apiSuccess {Date}      datetime                      Event date and time
-  * @apiSuccess {String[]}  tags                          List of tags (Array of Strings)
-  * @apiSuccess {Object[]}  going_rides                   Rides going to the event
-  * @apiSuccess {Object[]}  returning_rides               Rides going from the event
-  * @apiSuccess {Date}      created_at                    Document creation  date
-  * @apiSuccess {Date}      created_at                    Document creation  date
-  * @apiSuccess {Date}      updated_at                    Last updated
+  * @apiHeader  Authorization                                     JWT token.
+  * @apiSuccess {ObjectId}  id                                    Mongo generated ID.
+  * @apiSuccess {String}    name                                  Event name
+  * @apiSuccess {String}    description                           Event full description
+  * @apiSuccess {Object}    place                                 Venue (place object)
+  * @apiSuccess {String}    place.name                            Venue name
+  * @apiSuccess {String}    place.google_places_id                Venue place id
+  * @apiSuccess {String}    place.address                         Venue address
+  * @apiSuccess {String[]}  place.location                        Venue array location (lat, lng)
+  * @apiSuccess {Object}    organizer                             Organizer full name
+  * @apiSuccess {String}    category                              Event category
+  * @apiSuccess {String[]}  tags                                  List of tags (Array of Strings)
+  * @apiSuccess {Object[]}  going_rides                           Rides going to the event
+  * @apiSuccess {String}    going_rides.place                     Ride departure location (Place object)
+  * @apiSuccess {String}    going_rides.driver                    Ride driver (User object)
+  * @apiSuccess {Date}      going_rides.departure                 Ride departure datetime
+  * @apiSuccess {String}    going_rides.seats                     Ride number of available seats
+  * @apiSuccess {String}    going_rides.comments                  Ride driver comments
+  * @apiSuccess {Object[]}  going_rides.passengers                Ride passengers array
+  * @apiSuccess {Object}    going_rides.passengers.user           Ride passenger user info (user object)
+  * @apiSuccess {Object}    going_rides.passengers.place          Ride passenger departure location (place object)
+  * @apiSuccess {Object[]}  returning_rides                       Rides going from the event
+  * @apiSuccess {String}    returning_rides.place                     Ride driver destination location (Place object)
+  * @apiSuccess {String}    returning_rides.driver                    Ride driver (User object)
+  * @apiSuccess {Date}      returning_rides.departure                 Ride departure datetime
+  * @apiSuccess {String}    returning_rides.seats                     Ride number of available seats
+  * @apiSuccess {String}    returning_rides.comments                  Ride driver comments
+  * @apiSuccess {Object[]}  returning_rides.passengers                Ride passengers array
+  * @apiSuccess {Object}    returning_rides.passengers.user           Ride passenger user info (user object)
+  * @apiSuccess {Object}    returning_rides.passengers.place          Ride passenger destination location (place object)
+  * @apiSuccess {Date}      created_at                            Document creation  date
+  * @apiSuccess {Date}      updated_at                            Last updated
   */
 router.get('/users/:user_id/events', middleware.isAuthenticated, eventsController.getByUser);
 
@@ -116,11 +197,16 @@ router.get('/users/:user_id/events', middleware.isAuthenticated, eventsControlle
  * @apiName EditEvent
  * @apiGroup Events
  * @apiDescription Edit an event
- * @apiParam name
- * @apiParam place
- * @apiParam datetime
- * @apiParam description
- * @apiSuccess numAffected
+ * @apiHeader  Authorization                                     JWT token.
+ * @apiParam {String}    name                                  Event name
+ * @apiParam {String}    description                           Event full description
+ * @apiParam {Object}    place                                 Venue (place object)
+ * @apiParam {String}    place.name                            Venue name
+ * @apiParam {String}    place.google_places_id                Venue place id
+ * @apiParam {String}    place.address                         Venue address
+ * @apiParam {String[]}  place.location                        Venue array location (lat, lng)
+ * @apiParam {Object}    organizer                             Organizer full name
+ * @apiSuccess {String}  numAffected                           1 for success 
  **/
 
 router.put('/events/:event_id', middleware.isAuthenticated, middleware.isOrganizer, eventsController.edit);
@@ -181,7 +267,7 @@ router.put('/rides/:ride_id/add-passenger', middleware.isAuthenticated, middlewa
 router.put('/rides/:ride_id/leave', middleware.isAuthenticated, middleware.isPassenger, ridesController.leaveRide);
 
   /**
-  * @api {delete} /api/events/:event delete an event
+  * @api {delete} /api/events/:event Delete an event
   * @apiName DeleteEvent
   * @apiGroup Events
   * @apiDescription Remove a given Event by ID
