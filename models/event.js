@@ -74,5 +74,5 @@ EventSchema.methods.addRide = function (rideData) {
 };
 
 
-var Event = mongoose.model('Event', EventSchema);
+var Event = mongoose.model('event', EventSchema);
 module.exports = Event;

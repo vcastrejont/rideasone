@@ -7,11 +7,14 @@ var PlaceSchema = new Schema({
   name: String,
   google_places_id: String,
   address: String,
-  location: {type: [Number], required:true},
+  location: {
+    lat: {type: Number, required: true},
+    lon: {type: Number, required: true},
+  },
   created_at: {type: Date, default: Date.now},
   updated_at: {type: Date, default: Date.now}
 });
 
-var Place = mongoose.model('Place', PlaceSchema);
+var Place = mongoose.model('place', PlaceSchema);
 
 module.exports = Place;

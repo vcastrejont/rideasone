@@ -5,15 +5,15 @@ var Transaction = require('lx-mongoose-transaction')(mongoose);
 var Promise = require('bluebird');
 
 var RideSchema = new Schema({
-  place: { type: ObjectId, ref: 'Place' },
-  driver: { type: ObjectId, ref: 'User', required: true },
+  place: { type: ObjectId, ref: 'place' },
+  driver: { type: ObjectId, ref: 'user', required: true },
   departure: Date,
   seats: Number,
   comments: String,
   passengers: [{
     _id: false,
-    user: { type: ObjectId, ref: 'User' },
-    place: { type: ObjectId, ref: 'Place' }
+    user: { type: ObjectId, ref: 'user' },
+    place: { type: ObjectId, ref: 'place' }
   }],
   chat: [{ type: ObjectId, ref: 'message' }],
   created_at: { type: Date, default: Date.now },
@@ -58,4 +58,4 @@ RideSchema.methods.deleteEventRide = function(event) {
   });
 }
 
-module.exports = mongoose.model('Ride', RideSchema);
+module.exports = mongoose.model('ride', RideSchema);
