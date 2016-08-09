@@ -49,11 +49,11 @@ angular.module('carPoolingApp').factory('mapFactory', function($rootScope) {
       return {
         defaultLocation: function() {
           defaultPos = {
-            lat: 12.4650114,
-            lng:  -34.1544719
+            lat: 32.4650114,
+            lng:  -53.1544719
           };
           map.setCenter(defaultPos);
-          map.setZoom(3);
+          map.setZoom(4);
         },
         
         currentLocation: function(zoom) {
