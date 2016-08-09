@@ -5,7 +5,11 @@
   "engines": {
     "node": "6.3.0"
   },
+  "watch": {
+    "build": "public/app/**/*.js"
+  },
   "scripts": {
+    "watch": "npm-watch",
     "start": "NODE_ENV=development node --debug app.js",
     "postinstall": "bower install  && apidoc -i routes/ -o public/apidoc/",
     "apidoc": "apidoc -i routes/ -o public/apidoc/",
