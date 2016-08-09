@@ -229,7 +229,7 @@ router.put('/events/:event_id/add-ride', middleware.isAuthenticated, eventsContr
 
 /**
  * @api {delete} /api/events/:event_id/rides/:ride_id Delete event ride
- * @apiName AddEventRide
+ * @apiName DeleteEventRide
  * @apiGroup Rides 
  * @apiDescription Register a car for riding to and from the event
  * @apiParam ride_id
