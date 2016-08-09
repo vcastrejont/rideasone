@@ -1,12 +1,132 @@
+var app = angular.module('carPoolingApp', [
+  'geolocation',
+  'ui.bootstrap',
+  'ui.router',
+  'apiservice',
+  'directive.g+signin',
+  'ngStorage'
+]);
+
+app.run(['$rootScope', '$location', '$window',
+  function($rootScope, $location, $window) {
+
+    $rootScope.$on('$stateChangeSuccess',
+      function(event) {
+        if (!$window.ga) {
+          return;
+        }
+        //console.log($location.path());
+        $window.ga('send', 'pageview', {
+          page: $location.path()
+        });
+      });
+  }
+]);
+
+app.run(function($rootScope, $state, authservice, sessionservice, $localStorage, mapFactory) {
+  $rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams) {
+    if (sessionservice.check()) {
+      $rootScope.user = sessionservice.user();
+    }else{
+      if (toState.name!=='login'){
+        event.preventDefault();
+        $state.go('login');
+      }
+    }
+  });
+});
+
+
+app.config(function($stateProvider, $urlRouterProvider, $httpProvider) {
+  $urlRouterProvider.otherwise('/');
+  var home = {
+    name: 'home',
+    url: '^/',
+    templateUrl: "app/templates/index.html",
+    templateUrl: "app/templates/home.html",
+    controller: homeCtrl
+  },
+  getaride = {
+    name: 'getaride',
+    url: '^/getaride',
+    templateUrl: "app/templates/getaride.html"
+  },
+  events = {
+    name: 'events',
+    url: '^/events',
+    templateUrl: "app/templates/events.html",
+    controller: eventsCtrl
+  },
+  eventShow = {
+    name: 'eventshow',
+    url: '^/event/show/:id',
+    templateUrl: "app/templates/events.show.html",
+    controller: eventsShowCtrl
+  },
+  eventsNew = {
+    name: 'eventsnew',
+    url: '^/events/new',
+    templateUrl: "app/templates/events.new.html",
+    controller: eventsNewCtrl
+  },
+  login = {
+    name: 'login',
+    url: '^/login',
+    templateUrl: "app/templates/login.html",
+    controller: loginCtrl
+  },
+  logout = {
+    name: 'logout',
+    url: '^/logout',
+    templateUrl: "app/templates/login.html",
+    controller: logoutCtrl
+  },
+  profile = {
+    name: 'profile',
+    url: '^/profile',
+    templateUrl: "app/templates/profile.html",
+    controller: profileCtrl
+  };
+
+  $stateProvider
+  .state(home)
+  .state(getaride)
+  .state(events)
+  .state(eventShow)
+  .state(eventsNew)
+  .state(login)
+  .state(logout)
+  .state(profile);
+  
+  $httpProvider.interceptors.push(['$q', '$location', '$localStorage', function ($q, $location, $localStorage) {
+     return {
+         'request': function (config) {
+             config.headers = config.headers || {};
+             if ($localStorage.token) {
+                 config.headers.Authorization = 'JWT ' + $localStorage.token;
+             }
+             return config;
+         },
+         'responseError': function (response) {
+             if (response.status === 401 || response.status === 403) {
+                 $location.path('/login');
+             }
+             return $q.reject(response);
+         }
+     };
+  }]);
+  
+  
+});
+
 angular.module('carPoolingApp').controller('eventsCtrl', eventsCtrl);
 
-eventsCtrl.$inject = ['$scope', '$window', 'apiservice','mapFactory' ];
+eventsCtrl.$inject = ['$scope', '$window', 'apiservice','mapFactory'];
 
 function eventsCtrl ($scope, $window, apiservice, mapFactory) {
-
   $scope.api = mapFactory.getApi();
   $scope.api.defaultLocation();
-  
+
   apiservice.getEvents()
     .success(function(data) {
         $scope.nextEvents=data;
@@ -22,24 +142,30 @@ function eventsCtrl ($scope, $window, apiservice, mapFactory) {
         console.error('Error: ' + data);
     });
 }
+
 angular.module('carPoolingApp').controller('eventsNewCtrl', eventsNewCtrl);
 
-eventsNewCtrl.$inject = ['$scope', 'apiservice', 'mapService',  '$state','mapFactory' ];
+eventsNewCtrl.$inject = ['$scope', 'apiservice',  '$state','mapFactory' ];
 
-function eventsNewCtrl ($scope, apiservice, mapService, $state, mapFactory ) {
-  $scope.location = {};
+function eventsNewCtrl ($scope, apiservice, $state, mapFactory ) {
   $scope.event = {
     date: new Date()
   };
-  $scope.api = mapFactory.getApi();
-  $scope.api.defaultLocation();
   
-  $scope.displayDate= false;
-  
-
-  
-  $scope.api.placesAutocomplete('autocomplete');
-  
+  $scope.map = mapFactory.getApi();
+  $scope.map.placesAutocomplete('autocomplete');
+  $scope.saveData = function() {
+    var eventData = $.extend($scope.event, mapFactory.getEventLocationData());
+    apiservice.createEvent(eventData)
+      .success(function(res, status) {
+          $scope.map.defaultLocation();
+          $scope.apiSuccess = true;
+          $state.go('events');
+      })
+      .error(function(data) {
+        console.error('Error: ' + data);
+      });
+  };
   $scope.initTimepicker = function () {
     $(function () {
      $('.timepicker').timepicker({
@@ -58,8 +184,8 @@ function eventsNewCtrl ($scope, apiservice, mapService, $state, mapFactory ) {
   };
 
   $scope.initTimepicker();
-     
-};
+}
+
 angular.module('carPoolingApp').controller('eventsShowCtrl', eventsShowCtrl);
 
 eventsShowCtrl.$inject = ['$scope', 'apiservice', '$state','$window','mapFactory'];
@@ -330,24 +456,22 @@ function eventsShowCtrl ($scope, apiservice,  $state, $window, mapFactory ) {
   $scope.view.init();
 
 };
+
 angular.module('carPoolingApp').controller('headerCtrl', function headerCtrl($scope) {
   $scope.firstName= "Victor";
   $scope.lastName= "Castrejon";
 });
+
 angular.module('carPoolingApp').controller('homeCtrl', homeCtrl);
 
 homeCtrl.$inject = ['$rootScope','$scope', '$window', 'apiservice','mapFactory'];
 
 function homeCtrl ($rootScope, $scope, $window, apiservice, mapFactory ) {
 
+
   $scope.api = mapFactory.getApi();
   $scope.api.defaultLocation();
-  $rootScope.$on('mapFactory:success', function () {
-    console.log("yay!");
-    $scope.api = mapFactory.getApi();
-    console.log($scope.api);
-  });
-
+  
   apiservice.getEvents()
     .success(function(data) {
         $scope.nextEvents=data;
@@ -363,6 +487,7 @@ function homeCtrl ($rootScope, $scope, $window, apiservice, mapFactory ) {
         console.error('Error: ' + data);
     });
 }
+
 angular.module('carPoolingApp').controller('loginCtrl', loginCtrl);
 
 loginCtrl.$inject = ['$scope','authservice','sessionservice','$state'];
@@ -388,6 +513,17 @@ loginCtrl.$inject = ['$scope','authservice','sessionservice','$state'];
       console.log('Not signed into Google Plus.');
     });
 };
+
+angular.module('carPoolingApp').controller('logoutCtrl', logoutCtrl);
+
+logoutCtrl.$inject = ['$scope','authservice','sessionservice','$state'];
+
+function logoutCtrl ($scope, authservice, sessionservice, $state) {
+  sessionservice.clear();
+  $state.go('login');
+
+};
+
 var myRoutesCtrl = angular.module('myRoutesCtrl',  ['geolocation', 'gservice']);
 myRoutesCtrl.controller('myRoutesCtrl', function($scope, $http, $rootScope, geolocation, gservice) {
   
@@ -402,6 +538,18 @@ myRoutesCtrl.controller('myRoutesCtrl', function($scope, $http, $rootScope, geol
     // gservice.refresh($scope.latitude, $scope.longitude);
   });
 });
+
+angular.module('carPoolingApp').controller('profileCtrl', profileCtrl);
+
+profileCtrl.$inject = ['$scope','apiservice','mapFactory' ];
+
+function profileCtrl ($scope, apiservice, mapFactory) {
+
+
+  
+
+}
+
 angular.module('carPoolingApp').controller('setDefaultCtrl', setDefaultCtrl);
 
 setDefaultCtrl.$inject = ['$scope', '$window', 'apiservice'];
@@ -431,89 +579,239 @@ function homeCtrl ($scope, $window, apiservice) {
         console.error('Error: ' + data);
     });
 }
+
 angular.module('carPoolingApp').controller('settingsCtrl', settingsCtrl);
 
 settingsCtrl.$inject = ['$scope', 'apiservice'];
 
-function settingsCtrl ($scope, apiservice) {
+function settingsCtrl($scope, apiservice) {
 
   $scope.settings = {};
 
-    apiservice.getSettings()
-        .success(function(data) {
-            $scope.settings = data;
-        })
-        .error(function(data) {
-            console.error('Error: ' + data);
-        });
+  apiservice.getSettings()
+    .success(function(data) {
+      $scope.settings = data;
+    })
+    .error(function(data) {
+      console.error('Error: ' + data);
+    });
 
 
-      $scope.saveData = function() {
-        apiservice.saveSettings($scope.settings)
-        .success(function(res, status) {
-          if(res.ok)
-             $scope.apiSuccess = true;
-        })
-        .error(function(data) {
-            console.error('Error: ' + data);
-        });
-      };
+  $scope.saveData = function() {
+    apiservice.saveSettings($scope.settings)
+      .success(function(res, status) {
+        if (res.ok)
+          $scope.apiSuccess = true;
+      })
+      .error(function(data) {
+        console.error('Error: ' + data);
+      });
+  };
 }
+
 angular
-.module('map')
-.directive('raoMap', function (MapFactory) {
+.module('carPoolingApp')
+.directive('mapcanvas', mapcanvas);
+
+mapcanvas.$inject = ['mapFactory'];
+
+function mapcanvas(mapFactory) {
   return {
-    templateUrl: 'app/directives/map/map.tpl.html'
-    link: function ($scope, $element, $atr, $ctrl) {
-      $scope.on('raoMap:loadConfiguration', loadConfiguration );
-      var mapCanvas,
-          map;
-      function loadConfiguration(e, data) {
-        mapCanvas = document.getElementById("map");
-        map = new google.maps.Map(mapCanvas, data);
-      }
-      
-    },
-    controller: function () {
-      
-    }
-  }
-})
-.factory('MapFactory',function ($rootScope) {
-  //you will build you map configuration here
-  //send events to raoMap directive that a new configuration has been taken place
+    restrict: 'E',
+    replace: true,
+    template: '<div></div>',
+    link: function(scope, element, attrs) {
+        var myOptions = {
+          zoom: 13,
+          center: new google.maps.LatLng(46.87916, -3.32910),
+          disableDefaultUI: true,
+          draggable: true,
+          mapTypeId: google.maps.MapTypeId.ROADMAP
+        }, 
+          directionsService = new google.maps.DirectionsService(), 
+          directionsDisplay = new google.maps.DirectionsRenderer(),
+          map = new google.maps.Map(document.getElementById(attrs.id), myOptions),
+          config;
+        
+        directionsDisplay.setMap(map);
+        config = mapFactory.build(directionsService, directionsDisplay, map);
+        mapFactory.setApi(config);
+      } // link
+  }; // return
+}
 
-  function configuration(config) {
-    var configuration = {
-      center : new google.maps.LatLng(config.lat, config.long) || new google.maps.LatLng(29.0821369,-110.9572747);
-      zoom : config.zoom || 13;
-      disableDefaultUI : config.disableDefaultUI || false;
-      draggable : config.draggable || false; 
-    };
-
-    $rootScope.broadcast('raoMap:loadConfiguration', configuration);
-  }
-  return { };
-});
 angular.module('carPoolingApp').factory('mapFactory', function($rootScope) {
-  return {
+  var api = {},
+    currentEventLocation,
+    mapFactory;
+
+  mapFactory = {
+
     api: {},
-    setApi: function (api) {
-	    this.api = api;
+
+    autocomplete: null,
+
+    setApi: function(_api) {
+      api = _api;
       this.success();
     },
-    getApi: function () {
-      return this.api;
+
+    getApi: function() {
+      return api;
     },
+
     setApiMeth: function(meth) {
-	    return false;
+      return false;
     },
-    success: function () {
+
+    success: function() {
       //console.log("factory success!");
-      $rootScope.$broadcast('mapFactory:success');	
-    }
+      $rootScope.$broadcast('mapFactory:success');
+    },
+
+    setEventLocationData: function() {
+      var place = mapFactory.autocomplete.getPlace();
+
+      currentEventLocation = {
+        address: place.formatted_address,
+        google_places_id: place.google_places_id,
+        place_id: place.place_id,
+        location: {
+          lat: place.geometry.location.lat(),
+          lon: place.geometry.location.lng()
+        }
+      };
+    },
+
+    getEventLocationData: function() {
+      return currentEventLocation;
+    },
+
+    build: function(directionsService, directionsDisplay, map) {
+      return {
+        defaultLocation: function() {
+          defaultPos = {
+            lat: 32.4650114,
+            lng:  -53.1544719
+          };
+          map.setCenter(defaultPos);
+          map.setZoom(4);
+        },
+        
+        currentLocation: function(zoom) {
+          if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(function(position) {
+              defaultPos = {
+                lat: position.coords.latitude,
+                lng: position.coords.longitude
+              };
+              map.setCenter(defaultPos);
+              map.setZoom(zoom);
+              console.log("Auto geolocation success");
+            }, function() {
+              console.log("Auto geolocation failed");
+            });
+          }
+        },
+        
+        addMarker: function(pos) {
+          var latLng = new google.maps.LatLng(pos.lat, pos.lng);
+          var marker = new google.maps.Marker({
+            position: latLng,
+            map: map,
+            title: "Hello World!"
+          });
+
+          if (typeof pos.zoom !== 'undefined') {
+            map.setZoom(map.zoom);
+          }
+          if (pos.center === true) {
+            map.setCenter(latLng);
+          }
+        },
+
+        showRoute: function(origin, destination) {
+          directionsService.route({
+            origin: origin,
+            destination: destination,
+            travelMode: google.maps.TravelMode.DRIVING
+          }, function(response, status) {
+            if (status == google.maps.DirectionsStatus.OK) {
+              directionsDisplay.setOptions({
+                preserveViewport: true,
+                draggable: true,
+                hideRouteList: true,
+                suppressMarkers: true
+              });
+              directionsDisplay.setDirections(response);
+              //polylineOptions:{strokeColor:"#2EBFD9",strokeWeight:2}
+            } else {
+              window.alert('Directions request failed due to ' + status);
+            }
+          });
+        },
+
+        placesAutocomplete: function(inputField) {
+          var searchInput = document.getElementById(inputField),
+            address = '';
+
+          mapFactory.autocomplete = new google.maps.places.Autocomplete(searchInput);
+
+          mapFactory.autocomplete.bindTo('bounds', map);
+          mapFactory.autocomplete.addListener('place_changed', mapFactory.setEventLocationData);
+
+          var infowindow = new google.maps.InfoWindow();
+          var marker = new google.maps.Marker({
+            map: map,
+            anchorPoint: new google.maps.Point(0, -29)
+          });
+
+          mapFactory.autocomplete.addListener('place_changed', function() {
+            infowindow.close();
+            marker.setVisible(false);
+            var place = mapFactory.autocomplete.getPlace();
+            if (!place.geometry) {
+              window.alert("Autocomplete's returned place contains no geometry");
+              return;
+            }
+
+
+            if (place.geometry.viewport) {
+              map.fitBounds(place.geometry.viewport);
+            } else {
+              map.setCenter(place.geometry.location);
+              map.setZoom(17);
+            }
+            marker.setIcon( /** @type {google.maps.Icon} */ ({
+              url: place.icon,
+              size: new google.maps.Size(71, 71),
+              origin: new google.maps.Point(0, 0),
+              anchor: new google.maps.Point(17, 34),
+              scaledSize: new google.maps.Size(35, 35)
+            }));
+            marker.setPosition(place.geometry.location);
+            marker.setVisible(true);
+
+
+            if (place.address_components) {
+              address = [
+                (place.address_components[0] && place.address_components[0].short_name || ''),
+                (place.address_components[1] && place.address_components[1].short_name || ''),
+                (place.address_components[2] && place.address_components[2].short_name || '')
+              ].join(' ');
+            }
+            infowindow.setContent('<div><strong>' + place.name + '</strong><br>' + address);
+            infowindow.open(map, marker);
+          });
+          return address;
+        }
+      };
+    },
   };
-})
+
+  return mapFactory;
+});
+
 angular.module('carPoolingApp')
 
 .filter("onlyGoingPassengers", function() {
@@ -542,6 +840,7 @@ angular.module('carPoolingApp')
     return filtered;
   }
 });
+
 angular.module('apiservice', [])
 .factory('apiservice', ['$http', apiservice]);
 
@@ -565,7 +864,7 @@ function apiservice($http) {
 	};
 
 	service.createEvent = function(eventData) {
-		return $http.post("/api/events/new", eventData);
+		return $http.post("/api/events", eventData);
 	};
 
 	service.signupToEvent = function(eventId) {
@@ -610,6 +909,7 @@ function apiservice($http) {
 
 	return service;
 }
+
 angular
 .module('carPoolingApp')
 .service('authservice', authservice);
@@ -624,6 +924,7 @@ function authservice($http) {
     
   };
 }
+
 angular.module('gservice', [])
     .factory('gservice', function($rootScope, $http){
 
@@ -812,39 +1113,7 @@ angular.module('gservice', [])
 
         return googleMapService;
     });
-angular.module('mapService', []).service('mapService', function($q){
-   this.init = function(mapCanvas, searchInput) {
-       var options = {
-           center: new google.maps.LatLng(29.0729673, -110.95591),
-           zoom: 13,
-           disableDefaultUI: true,
-           draggable: true   
-       };
-       this.map = new google.maps.Map(mapCanvas, options);
-       this.autocomplete = new google.maps.places.Autocomplete(searchInput);
-       this.map .controls[google.maps.ControlPosition.TOP_LEFT].push(searchInput);
-       this.autocomplete.bindTo('bounds', this.map);
-       
-       this.bounds = new google.maps.LatLngBounds();
-   };
-   
-  
-   
-   this.addMarker = function(res) {
-       if(this.marker) this.marker.setMap(null);
-       this.marker = new google.maps.Marker({
-           map: this.map,
-           draggable: true,
-           position: res.geometry.location,
-           animation: google.maps.Animation.DROP
-       });
-       
-       this.map.setCenter(res.geometry.location);
-       this.map.setZoom(15);
-       return this.marker;
-   };
- 
-});
+
 angular
 .module('carPoolingApp')
 .service('sessionservice', sessionservice);
@@ -855,7 +1124,7 @@ function sessionservice($http, $localStorage) {
   return {
     set: function(token) {
       return $http.get('/auth/me', {headers: {'Authorization': 'JWT '+ token}}).then(function(user){
-        console.log(user);
+        console.log(user.data);
         $localStorage.name = user.data.name;
         $localStorage.email = user.data.email;
         $localStorage.photo = user.data.photo;
@@ -875,6 +1144,13 @@ function sessionservice($http, $localStorage) {
     },
     clear:function(){
       $localStorage.$reset();
+    },
+    user:function(){
+      return {
+        name: $localStorage.name,
+        photo: $localStorage.photo,
+        email: $localStorage.email
+      }
     }
   };
 }

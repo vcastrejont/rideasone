@@ -14,7 +14,7 @@
     "postinstall": "bower install  && apidoc -i routes/ -o public/apidoc/",
     "apidoc": "apidoc -i routes/ -o public/apidoc/",
     "test": "NODE_ENV=test mocha --require=tests/bootstrap.js tests/**",
-    "build": "concat-cli -f public/app/**/*.js -o 'public/rideasone.js'"
+    "build": "grunt compile-js"
   },
   "dependencies": {
     "apidoc": "^0.16.1",
@@ -52,5 +52,9 @@
     "supertest": "^1.2.0",
     "supertest-as-promised": "^3.2.0",
     "underscore": "^1.8.3"
+  },
+  "devDependencies": {
+    "grunt": "^1.0.1",
+    "grunt-contrib-concat": "^1.0.1"
   }
 }
