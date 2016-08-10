@@ -1,21 +1,26 @@
 angular.module('carPoolingApp').controller('eventsNewCtrl', eventsNewCtrl);
 
-eventsNewCtrl.$inject = ['$scope', 'apiservice', 'mapService',  '$state','mapFactory' ];
+eventsNewCtrl.$inject = ['$scope', 'apiservice',  '$state','mapFactory' ];
 
-function eventsNewCtrl ($scope, apiservice, mapService, $state, mapFactory ) {
-  $scope.location = {};
+function eventsNewCtrl ($scope, apiservice, $state, mapFactory ) {
   $scope.event = {
     date: new Date()
   };
-  $scope.api = mapFactory.getApi();
-  $scope.api.defaultLocation();
   
-  $scope.displayDate= false;
-  
-
-  
-  $scope.api.placesAutocomplete('autocomplete');
-  
+  $scope.map = mapFactory.getApi();
+  $scope.map.placesAutocomplete('autocomplete');
+  $scope.saveData = function() {
+    var eventData = $.extend($scope.event, mapFactory.getEventLocationData());
+    apiservice.createEvent(eventData)
+      .success(function(res, status) {
+          $scope.map.defaultLocation();
+          $scope.apiSuccess = true;
+          $state.go('events');
+      })
+      .error(function(data) {
+        console.error('Error: ' + data);
+      });
+  };
   $scope.initTimepicker = function () {
     $(function () {
      $('.timepicker').timepicker({
@@ -34,5 +39,4 @@ function eventsNewCtrl ($scope, apiservice, mapService, $state, mapFactory ) {
   };
 
   $scope.initTimepicker();
-     
-};
+}

@@ -1,12 +1,11 @@
 angular.module('carPoolingApp').controller('eventsCtrl', eventsCtrl);
 
-eventsCtrl.$inject = ['$scope', '$window', 'apiservice','mapFactory' ];
+eventsCtrl.$inject = ['$scope', '$window', 'apiservice','mapFactory'];
 
 function eventsCtrl ($scope, $window, apiservice, mapFactory) {
-
   $scope.api = mapFactory.getApi();
   $scope.api.defaultLocation();
-  
+
   apiservice.getEvents()
     .success(function(data) {
         $scope.nextEvents=data;
