@@ -42,7 +42,7 @@ describe('Event creation', function(){
       description: 'una feria de pollos', 
       place: testPlace1, 
       organizer: testUser._id, 
-      datetime: new Date('2017-05-05T02:20:10Z'), 
+      starts_at: new Date('2017-05-05T02:20:10Z'), 
       tags: ['feria', 'pollo']
     })
     .then(event => {
@@ -71,7 +71,7 @@ describe('Event creation', function(){
 		google_places_id: 'anotherTestGooglePlacesId',
         location: [123, 456]
 	  },
-      datetime: new Date('2017-05-05T02:20:10Z'), 
+      starts_at: new Date('2017-05-05T02:20:10Z'), 
       tags: ['feria', 'pollo']
     })
     .then(event => {

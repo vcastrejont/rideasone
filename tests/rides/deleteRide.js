@@ -38,7 +38,7 @@ describe('Ride removal', function(){
         location: [123, 123], 
         place: place._id, 
         organizer: testUser._id, 
-        datetime: new Date("2017-05-05T02:20:10Z"), 
+        starts_at: new Date("2017-05-05T02:20:10Z"), 
         tags: ['feria', 'pollo']
       })
       .save();
