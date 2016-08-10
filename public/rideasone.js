@@ -148,19 +148,33 @@ angular.module('carPoolingApp').controller('eventsNewCtrl', eventsNewCtrl);
 eventsNewCtrl.$inject = ['$scope', 'apiservice',  '$state','mapFactory' ];
 
 function eventsNewCtrl ($scope, apiservice, $state, mapFactory ) {
-  $scope.event = {
-    date: new Date()
-  };
-  
+
   $scope.map = mapFactory.getApi();
+  $scope.map.currentLocation();
   $scope.map.placesAutocomplete('autocomplete');
+  
+  
   $scope.saveData = function() {
     var eventData = $.extend($scope.event, mapFactory.getEventLocationData());
-    apiservice.createEvent(eventData)
+    console.log(eventData);
+    var newEvent={
+      "name": eventData.name,
+      "description": eventData.description,
+      "place": {
+          "name": eventData.place_name,
+          "google_places_id": eventData.place_id,
+          "address": eventData.address,
+          "location": [29.099634,-110.951714]
+      },
+      "starts_at": eventData.datetime,
+      "ends_at":""
+    };
+    console.log(newEvent);
+    apiservice.createEvent(newEvent)
       .success(function(res, status) {
-          $scope.map.defaultLocation();
+          //$scope.map.defaultLocation();
           $scope.apiSuccess = true;
-          $state.go('events');
+          //$state.go('events');
       })
       .error(function(data) {
         console.error('Error: ' + data);
@@ -469,8 +483,8 @@ homeCtrl.$inject = ['$rootScope','$scope', '$window', 'apiservice','mapFactory']
 function homeCtrl ($rootScope, $scope, $window, apiservice, mapFactory ) {
 
 
-  $scope.api = mapFactory.getApi();
-  $scope.api.defaultLocation();
+  $scope.map = mapFactory.getApi();
+  $scope.map.defaultLocation();
   
   apiservice.getEvents()
     .success(function(data) {
@@ -639,8 +653,9 @@ angular.module('carPoolingApp').factory('mapFactory', function($rootScope) {
 
     setEventLocationData: function() {
       var place = mapFactory.autocomplete.getPlace();
-
+      
       currentEventLocation = {
+        place_name: place.name,
         address: place.formatted_address,
         google_places_id: place.google_places_id,
         place_id: place.place_id,
@@ -652,21 +667,24 @@ angular.module('carPoolingApp').factory('mapFactory', function($rootScope) {
     },
 
     getEventLocationData: function() {
+      console.log(currentEventLocation);
       return currentEventLocation;
     },
 
     build: function(directionsService, directionsDisplay, map) {
       return {
-        defaultLocation: function() {
-          defaultPos = {
-            lat: 32.4650114,
-            lng:  -53.1544719
-          };
-          map.setCenter(defaultPos);
-          map.setZoom(4);
-        },
         
+        defaultLocation: function() {
+           defaultPos = {
+             lat: 32.4650114,
+             lng:  -53.1544719
+           };
+           map.setCenter(defaultPos);
+           map.setZoom(4);
+         },
+
         currentLocation: function(zoom) {
+          zoom = zoom || 13;
           if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(function(position) {
               defaultPos = {

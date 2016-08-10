@@ -29,8 +29,9 @@ angular.module('carPoolingApp').factory('mapFactory', function($rootScope) {
 
     setEventLocationData: function() {
       var place = mapFactory.autocomplete.getPlace();
-
+      
       currentEventLocation = {
+        place_name: place.name,
         address: place.formatted_address,
         google_places_id: place.google_places_id,
         place_id: place.place_id,
@@ -42,21 +43,24 @@ angular.module('carPoolingApp').factory('mapFactory', function($rootScope) {
     },
 
     getEventLocationData: function() {
+      console.log(currentEventLocation);
       return currentEventLocation;
     },
 
     build: function(directionsService, directionsDisplay, map) {
       return {
-        defaultLocation: function() {
-          defaultPos = {
-            lat: 32.4650114,
-            lng:  -53.1544719
-          };
-          map.setCenter(defaultPos);
-          map.setZoom(4);
-        },
         
+        defaultLocation: function() {
+           defaultPos = {
+             lat: 32.4650114,
+             lng:  -53.1544719
+           };
+           map.setCenter(defaultPos);
+           map.setZoom(4);
+         },
+
         currentLocation: function(zoom) {
+          zoom = zoom || 13;
           if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(function(position) {
               defaultPos = {
