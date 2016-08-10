@@ -28,7 +28,7 @@ describe('Event removal', function(){
         address: "pollolandia", 
         location: "pollornia", 
         organizer: testUser._id, 
-        datetime: new Date("2017-05-05T02:20:10Z"), 
+        starts_at: new Date("2017-05-05T02:20:10Z"), 
         tags: ['feria', 'pollo']
       })
       .save();
