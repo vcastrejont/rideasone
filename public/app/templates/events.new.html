@@ -7,21 +7,29 @@
         <input type="text" class="form-control" ng-model="event.name" placeholder="Add a name" autofocus required>
       </div>
       <div class="row">
-        <div class="col-xs-4">
+        <div class="col-xs-6">
           <div class="form-group left">
-            <label class="control-label left">When?</label>
+            <label class="control-label left">Start date</label>
              <input type="text" class="form-control" id="event_date" uib-datepicker-popup="dd-MMMM-yyyy" ng-model="event.datetime" is-open="displayDate"  datepicker-options="dateOptions" ng-click="displayDate=!displayDate"  /required>
           </div>
         </div>
-        <div class="col-xs-4">
+        <div class="col-xs-6">
           <div class="form-group ">
             <label class="control-label">Start time</label>
             
             <input type="text" class="form-control timepicker" ng-model="event.starttime" required>
           </div>
         </div>
-        <div class="col-xs-4">
-          <div class="form-group right">
+      </div>
+      <div class="row">
+        <div class="col-xs-6">
+          <div class="form-group left">
+            <label class="control-label left">End date</label>
+             <input type="text" class="form-control" id="event_date" uib-datepicker-popup="dd-MMMM-yyyy" ng-model="event.enddate" is-open="displayDate2"  datepicker-options="dateOptions" ng-click="displayDate2=!displayDate2"  /required>
+          </div>
+        </div>
+        <div class="col-xs-6">
+          <div class="form-group ">
             <label class="control-label">End time</label>
             <input type="text" class="form-control timepicker" ng-model="event.endtime">
           </div>
