@@ -26,7 +26,7 @@ describe('Event removal', function(){
         name: "feria del pollo Z", 
         description: "una feria de pollos", 
         address: "pollolandia", 
-        location: "pollornia", 
+        location: {lat: 123, lon: 123}, 
         organizer: testUser._id, 
         starts_at: new Date("2017-05-05T02:20:10Z"), 
         tags: ['feria', 'pollo']
