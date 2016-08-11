@@ -36,7 +36,7 @@ UserSchema.methods.getEvents = function () {
   var today = moment().startOf('day').toDate();
   return Ride
     .find({ driver: this })
-    .then((rides) => {
+    .then(rides => {
       return Event
         .find({ datetime: { $gte: today } })
         .or([

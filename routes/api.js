@@ -14,6 +14,7 @@ router.get('/', function (req, res) {
   /**
   * @api {get} /api/events All future events
   * @apiName GetFutureEvents
+  * @apiVersion 0.2.0
   * @apiGroup Events
   * @apiDescription Returns an array of all events with date greater than yesterday.
   *
@@ -114,12 +115,13 @@ router.get('/events', middleware.isAuthenticated, eventsController.getFuture);
 router.get('/events/past', middleware.isAuthenticated, eventsController.getPast);
 
   /**
-  * @api {post} /api/events New event
+  * @api {post} /api/events Add new event
   * @apiName CreateEvent
+  * @apiVersion 0.2.0
   * @apiGroup Events
   * @apiHeader  Authorization                      JWT token.
   * @apiParam {String}    name                     Event name
-  * @apiParam {String}    description              Event full description
+  * @apiParam {String}    [description]              Event full description
   * @apiParam {Object}    place                    Event venue
   * @apiParam {String}    place.name               Event venue name
   * @apiParam {String}    place.google_places_id   Event venue place id
@@ -182,8 +184,9 @@ router.post('/events', middleware.isAuthenticated, eventsController.create);
 router.get('/events/:event_id', middleware.isAuthenticated, eventsController.getById);
 
   /**
-  * @api {get} /api/users/:user_id/events All user events
+  * @api {get} /api/users/:user_id/events All events for user
   * @apiName GetUserEvents
+  * @apiVersion 0.2.0
   * @apiGroup Events
   * @apiDescription List all events from that user
   *
@@ -227,6 +230,7 @@ router.get('/users/:user_id/events', middleware.isAuthenticated, eventsControlle
  * @api {put} /api/events/:event_id/ Edit event
  * @apiName EditEvent
  * @apiGroup Events
+ * @apiVersion 0.2.0
  * @apiDescription Edit an event
  * @apiHeader  Authorization                                     JWT token.
  * @apiParam {String}    name                                  Event name
@@ -245,33 +249,39 @@ router.delete('/events/:event_id', middleware.isAuthenticated, middleware.isOrga
 
 // ----Rides--------
 /**
- * @api {put} /api/events/:event_id/add-ride Add event ride
+ * @api {post} /api/events/:event_id/add-ride Add a ride 
  * @apiName AddEventRide
+ * @apiVersion 0.2.0
  * @apiGroup Rides 
  * @apiDescription Register a car for riding to and from the event
- * @apiParam seats
- * @apiParam {Date}    departure
- * @apiParam comment
- * @apiParam {Boolean} going
- * @apiParam {Boolean} returning
- * @apiSuccess numAffected
+ * @apiHeader  Authorization                JWT token.
+ * @apiParam {String}   seats               Number of available seats
+ * @apiParam {Date}     departure           Departure datetime
+ * @apiParam {String}   comment             Driver comments
+ * @apiParam {Boolean}  going               if is Going ride
+ * @apiParam {Boolean}  returning           if is Returning ride
+ * @apiSuccess {String} numAffected         1 for success
  **/
-router.put('/events/:event_id/add-ride', middleware.isAuthenticated, eventsController.addRide);
+router.post('/events/:event_id/add-ride', middleware.isAuthenticated, eventsController.addRide);
 
 /**
- * @api {delete} /api/events/:event_id/rides/:ride_id Delete event ride
+ * @api {delete} /api/events/:event_id/rides/:ride_id Delete a ride
  * @apiName DeleteEventRide
+ * @apiVersion 0.2.0
  * @apiGroup Rides 
  * @apiDescription Register a car for riding to and from the event
- * @apiParam ride_id
- * @apiSuccess numAffected
+ * @apiHeader   Authorization                JWT token.
+ * @apiParam    {String}                     ride_id
+ * @apiSuccess  numAffected                  1 for success
  **/
 router.delete('/events/:event_id/rides/:ride_id', middleware.isAuthenticated, middleware.isDriver, ridesController.deleteRide);
 
 /**
- * @api {put} /api/rides/:ride_id/join request a spot for a ride
+ * @api {put} /api/rides/:ride_id/join Request joining a ride
  * @apiName JoinEventRide
  * @apiGroup Rides
+ * @apiVersion 0.2.0
+ * @apiHeader   Authorization                JWT token.
  * @apiDescription Register to a ride to or from the event
  * @apiParam {String} user_id
  * @apiSuccess numAffected
@@ -279,20 +289,24 @@ router.delete('/events/:event_id/rides/:ride_id', middleware.isAuthenticated, mi
 router.put('/rides/:ride_id/join', middleware.isAuthenticated, ridesController.joinRide);
 
 /**
- * @api {put} /api/rides/:ride_id/ride-request/:request_id/accept accept a ride request
+ * @api {put} /api/rides/:ride_id/ride-request/:request_id/accept Accept ride request
  * @apiName AcceptEventRideRequest
  * @apiGroup Rides
+ * @apiVersion 0.2.0
  * @apiDescription Register to a ride to or from the event
+ * @apiHeader   Authorization                JWT token.
  * @apiSuccess numAffected
  **/
 router.put('/rides/:ride_id/ride-requests/:request_id/accept', middleware.isAuthenticated, middleware.isDriver, ridesController.acceptRideRequest);
 router.put('/rides/:ride_id/add-passenger', middleware.isAuthenticated, middleware.isPassenger, ridesController.addPassenger);  
 
 /**
- * @api api/rides/:ride_id/leave cancel spot on event ride
+ * @api {put} api/rides/:ride_id/leave Cancel ride request
  * @apiName LeaveEventRide
  * @apiGroup Rides
+ * @apiVersion 0.2.0
  * @apiDescription Cancel your spot for a ride to or from an event
+ * @apiHeader   Authorization                JWT token.
  * @apiSuccess numAffected
  **/
 router.put('/rides/:ride_id/leave', middleware.isAuthenticated, middleware.isPassenger, ridesController.leaveRide);
@@ -300,7 +314,9 @@ router.put('/rides/:ride_id/leave', middleware.isAuthenticated, middleware.isPas
   /**
   * @api {delete} /api/events/:event Delete an event
   * @apiName DeleteEvent
+  * @apiVersion 0.2.0
   * @apiGroup Events
+  * @apiHeader   Authorization                JWT token.
   * @apiDescription Remove a given Event by ID
   */
 
@@ -320,7 +336,9 @@ router.put('/rides/:ride_id/leave', middleware.isAuthenticated, middleware.isPas
 * @api {get} /api/users Users list
 * @apiName GetUsers
 * @apiGroup Users
-*
+* @apiVersion 0.2.0
+* @apiDescription List all the users
+* @apiHeader  Authorization                JWT token.
 * @apiSuccess {ObjectId}  id                     Mongo generated ID.
 * @apiSuccess {String}    name                   User full name
 * @apiSuccess {String}    provider               Provider name (google, facebook, etc)

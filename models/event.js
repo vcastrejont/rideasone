@@ -12,7 +12,7 @@ var EventSchema = new Schema({
   organizer: { type: ObjectId, ref: 'user' },
   name: String,
   description: String,
-  starts_at: Date,
+  starts_at: {type: Date, required: true},
   ends_at: Date,
   tags: Array,
   going_rides: [{ type: ObjectId, ref: 'ride' }],

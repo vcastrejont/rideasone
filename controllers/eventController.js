@@ -118,7 +118,7 @@ module.exports = {
    * eventController.create()
    */
   create: function (req, res) {
-    var newEvent = _.pick(req.body, ['name', 'description', 'address', 'place', 'datetime', 'tags']);
+    var newEvent = _.pick(req.body, ['name', 'description', 'address', 'place', 'starts_at', 'ends_at', 'tags']);
     newEvent.place = _.pick(newEvent.place, ['name', 'address', 'google_places_id', 'location']);
 
     req.user.createEvent(newEvent)
@@ -208,7 +208,7 @@ module.exports = {
     });
   },
   edit: function (req, res) {
-    var updates = _.pick(req.body, ['name', 'place', 'description', 'datetime', 'tags']); 
+    var updates = _.pick(req.body, ['name', 'place', 'description', 'starts_at', 'ends_at', 'tags']); 
     _.assign(req.event, updates);
     
     req.event.save()
