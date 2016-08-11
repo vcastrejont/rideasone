@@ -92,19 +92,19 @@ module.exports = {
   getById: function (req, res) {
     var eventId = req.params.event_id;
     Event.findById(eventId)
-    .populate('organizer')
+    .populate('organizer', '_id name photo')
     .populate('place')
     .populate({
       path: 'going_rides', 
       populate: {
         path: 'driver passengers',
         populate: {
-          path: 'user place'
+          path: 'user place',
+          select: '_id name photo'
         }
       }
     })
     .then(function (event) {
-      console.log(event);
       if (event)
           return res.json(event);
       else

@@ -28,7 +28,20 @@ var EventSchema = new Schema({
  */
 EventSchema.statics.getCurrentEvents = function () {
   var twoHoursAgo = moment().subtract(2, 'hour').toDate();
-  return Event.find({ starts_at: { $gte: twoHoursAgo} }).populate('Place').sort('datetime');
+  return Event.find({ starts_at: { $gte: twoHoursAgo} })
+    .populate('place')
+    .populate('organizer', '_id name photo')
+    .populate({
+      path: 'going_rides', 
+      populate: {
+        path: 'driver passengers',
+        populate: {
+          path: 'user place',
+          select: '_id name photo'
+        }
+      }
+	})
+    .sort('datetime');
 };
 
 /**
@@ -38,7 +51,20 @@ EventSchema.statics.getCurrentEvents = function () {
  */
 EventSchema.statics.getPastEvents = function () {
   var twoHoursAgo = moment().subtract(1, 'hour').toDate();
-  return Event.find({ starts_at: { $lt: twoHoursAgo } }).populate('Place').sort('-datetime').limit(50);
+  return Event.find({ starts_at: { $lt: twoHoursAgo } })
+    .populate('place')
+	.populate('organizer')
+	.populate({
+	  path: 'going_rides', 
+      populate: {
+        path: 'driver passengers',
+        populate: {
+          path: 'user place',
+          select: '_id name email'
+        }
+      }
+	})
+	.sort('-datetime').limit(50);
 };
 
 function createRide(ride, path, transaction) {

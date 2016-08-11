@@ -44,7 +44,18 @@ UserSchema.methods.getEvents = function () {
           { going_rides: { $in: rides } },
           { returning_rides: { $in: rides } }
         ])
+        .populate('organizer', '_id name photo')
         .populate('place')
+        .populate({
+          path: 'going_rides', 
+          populate: {
+            path: 'driver passengers',
+            populate: {
+              path: 'user place',
+              select: '_id name photo'
+            }
+          }
+        })
         .sort('datetime');
     });
 };
@@ -54,11 +65,11 @@ function findOrCreatePlace(data, transaction){
   return Place.find({google_places_id: data.google_places_id})
     .then(place =>{
       if (!place.length){
-		transaction.insert('Place', data);
-		return transaction.run();
+    transaction.insert('Place', data);
+    return transaction.run();
       } else {
         return place
-	  }
+    }
   });
 };
 
@@ -70,21 +81,21 @@ function findOrCreatePlace(data, transaction){
 UserSchema.methods.createEvent = function (data) {
   var transaction = new Transaction();
 
-	return findOrCreatePlace(data.place, transaction)
-	.then(places => {
-		var event = {
-			place: places[0]._id,
-			organizer: this,
-			name: data.name,
-			description: data.description,
-			starts_at: data.starts_at,
-			ends_at: data.ends_at,
-			tags: data.tags
-		};
-		transaction.insert('Event', event);
-		return transaction.run()
-		.then(ev => ev[0]._doc); 
-	});
+  return findOrCreatePlace(data.place, transaction)
+  .then(places => {
+    var event = {
+      place: places[0]._id,
+      organizer: this,
+      name: data.name,
+      description: data.description,
+      starts_at: data.starts_at,
+      ends_at: data.ends_at,
+      tags: data.tags
+    };
+    transaction.insert('Event', event);
+    return transaction.run()
+    .then(ev => ev[0]._doc); 
+  });
 
 };
 
