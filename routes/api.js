@@ -55,8 +55,8 @@ router.get('/', function (req, res) {
 * @apiSuccess {String}    returning_rides.comments                  Ride driver comments
 * @apiSuccess {Object[]}  returning_rides.passengers                Ride passengers array
 * @apiSuccess {Object}    returning_rides.passengers.user           Ride passenger user info (user object)
-* @apiSuccess {String}    returning_rides.user.name
-* @apiSuccess {String}    returning_rides.user.photo
+* @apiSuccess {String}    returning_rides.passengers.user.name
+* @apiSuccess {String}    returning_rides.passengers.user.photo
 * @apiSuccess {Object}    returning_rides.passengers.place          Ride passenger destination location (place object)
 * @apiSuccess {Date}      created_at                            Document creation  date
 * @apiSuccess {Date}      updated_at                            Last updated
@@ -105,8 +105,8 @@ router.get('/events', middleware.isAuthenticated, eventsController.getFuture);
 * @apiSuccess {String}    returning_rides.comments                  Ride driver comments
 * @apiSuccess {Object[]}  returning_rides.passengers                Ride passengers array
 * @apiSuccess {Object}    returning_rides.passengers.user           Ride passenger user info (user object)
-* @apiSuccess {String}    returning_rides.user.name
-* @apiSuccess {String}    returning_rides.user.photo
+* @apiSuccess {String}    returning_rides.passengers.user.name
+* @apiSuccess {String}    returning_rides.passengers.user.photo
 * @apiSuccess {Object}    returning_rides.passengers.place          Ride passenger destination location (place object)
 * @apiSuccess {Date}      created_at                            Document creation  date
 * @apiSuccess {Date}      updated_at                            Last updated
@@ -175,8 +175,8 @@ router.post('/events', middleware.isAuthenticated, eventsController.create);
 * @apiSuccess {String}    returning_rides.comments                  Ride driver comments
 * @apiSuccess {Object[]}  returning_rides.passengers                Ride passengers array
 * @apiSuccess {Object}    returning_rides.passengers.user           Ride passenger user info (user object)
-* @apiSuccess {String}    returning_rides.user.name
-* @apiSuccess {String}    returning_rides.user.photo
+* @apiSuccess {String}    returning_rides.passengers.user.name
+* @apiSuccess {String}    returning_rides.passengers.user.photo
 * @apiSuccess {Object}    returning_rides.passengers.place          Ride passenger destination location (place object)
 * @apiSuccess {Date}      created_at                            Document creation  date
 * @apiSuccess {Date}      updated_at                            Last updated

@@ -4,9 +4,9 @@ var ObjectId = Schema.ObjectId;
 var Transaction = require('lx-mongoose-transaction')(mongoose);
 
 var RideRequestSchema = new Schema({
-  passenger: { type: ObjectId, ref: 'User' },
-  place: { type: ObjectId, ref: 'Place'},
-  ride: { type: ObjectId, ref: 'Ride' },
+  passenger: { type: ObjectId, ref: 'user' },
+  place: { type: ObjectId, ref: 'place'},
+  ride: { type: ObjectId, ref: 'ride' },
   created_at: { type: Date, default: Date.now }
 });
 
@@ -24,8 +24,8 @@ RideRequestSchema.methods.accept = function () {
     };
     
     this.ride.passengers.push(passenger);
-    transaction.update('Ride', {_id: this.ride._id}, {passengers: this.ride.passengers});
-    transaction.remove('RideRequest', this._id);
+    transaction.update('ride', {_id: this.ride._id}, {passengers: this.ride.passengers});
+    transaction.remove('rideRequest', this._id);
     return transaction.run();
 
 };
@@ -34,4 +34,4 @@ RideRequestSchema.methods.reject = function (userId) {
   return this.remove();
 };
 
-module.exports = mongoose.model('RideRequest', RideRequestSchema);
+module.exports = mongoose.model('rideRequest', RideRequestSchema);
