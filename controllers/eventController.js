@@ -1,7 +1,8 @@
-var Event = require('../models/event.js');
-var User = require('../models/user.js');
-var Ride = require('../models/ride.js');
-var mailerController = require('../controllers/mailerController.js');
+var Event = require('../models/event');
+var Place = require('../models/place');
+var User = require('../models/user');
+var Ride = require('../models/ride');
+var mailerController = require('../controllers/mailerController');
 var mongoose = require('mongoose');
 var _ = require('lodash');
 
@@ -91,12 +92,27 @@ module.exports = {
   getById: function (req, res) {
     var eventId = req.params.event_id;
     Event.findById(eventId)
-    .then(function (event) {
-      return res.json(event);
+    .populate('organizer', '_id name photo')
+    .populate('place')
+    .populate({
+      path: 'going_rides', 
+      populate: {
+        path: 'driver passengers',
+        populate: {
+          path: 'user place',
+          select: '_id name photo'
+        }
+      }
     })
-    .catch(function (err) {
-      res.status(500).json({ message: err.message });
-    });
+    .then(function (event) {
+      if (event)
+          return res.json(event);
+      else
+          return res.send(404);
+      })
+      .catch(function (err) {
+        res.status(500).json({ message: err.message });
+      });
   },
   /**
    * eventController.create()

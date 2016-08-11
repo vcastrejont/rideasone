@@ -59,7 +59,7 @@ describe('Ride subscription management', function(){
     return testUser2.requestJoiningRide(testRide._id)
     .then(request => {
       testRideRequest = request;
-      assert.equal(request.passenger, testUser2._id);
+      assert.equal(request.passenger._id, testUser2._id);
     });
   });
 

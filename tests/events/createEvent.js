@@ -19,7 +19,7 @@ describe('Event creation', function(){
         address: 'avenida Siempreviva #43', 
         place_name: 'ferialandia', 
 		google_places_id: 'testGooglePlaceId',
-        location: [123, 123 ]
+        location: {lat: 123, lon: 123}
       })
       .save();
     })
@@ -48,7 +48,7 @@ describe('Event creation', function(){
     .then(event => {
       createdEvent1 = event;
       assert.ok(event._id);
-      assert.equal(Date(event.datetime), Date('2017-05-05T02:20:10Z'));
+      assert.equal(Date(event.starts_at), Date('2017-05-05T02:20:10Z'));
       assert.equal(event.name, 'feria del pollo Z');
       assert.equal(event.description, 'una feria de pollos');
       assert.lengthOf(event.going_rides, 0);
@@ -69,7 +69,7 @@ describe('Event creation', function(){
 		address: 'pollolandia', 
         place_name: 'polloland', 
 		google_places_id: 'anotherTestGooglePlacesId',
-        location: [123, 456]
+        location: {lat: 123, lon: 456}
 	  },
       starts_at: new Date('2017-05-05T02:20:10Z'), 
       tags: ['feria', 'pollo']
@@ -77,7 +77,7 @@ describe('Event creation', function(){
     .then(event => {
       createdEvent2 = event;
       assert.ok(event._id);
-      assert.equal(Date(event.datetime), Date('2017-05-05T02:20:10Z'));
+      assert.equal(Date(event.starts_at), Date('2017-05-05T02:20:10Z'));
       assert.equal(event.name, 'feria del pollo Z');
       assert.equal(event.description, 'una feria de pollos');
       assert.lengthOf(event.going_rides, 0);
@@ -90,8 +90,8 @@ describe('Event creation', function(){
         .then(place => {
           testPlace2 = place;
           assert.equal(place.address, 'pollolandia');
-          assert.equal(place.location[0], 123);
-          assert.equal(place.location[1], 456);
+          assert.equal(place.location.lat, 123);
+          assert.equal(place.location.lon, 456);
         });
     });
     
