@@ -65,7 +65,7 @@ function findOrCreatePlace(data, transaction){
   return Place.find({google_places_id: data.google_places_id})
     .then(place =>{
       if (!place.length){
-    transaction.insert('Place', data);
+    transaction.insert('place', data);
     return transaction.run();
       } else {
         return place
@@ -92,7 +92,7 @@ UserSchema.methods.createEvent = function (data) {
       ends_at: data.ends_at,
       tags: data.tags
     };
-    transaction.insert('Event', event);
+    transaction.insert('event', event);
     return transaction.run()
     .then(ev => ev[0]._doc); 
   });

@@ -68,7 +68,7 @@ EventSchema.statics.getPastEvents = function () {
 };
 
 function createRide(ride, path, transaction) {
-  transaction.insert('Ride', ride);
+  transaction.insert('ride', ride);
   return transaction.run()
     .then(createdRides => {
       this[path].push({_id: createdRides[0]._id});
@@ -90,7 +90,7 @@ EventSchema.methods.addRide = function (rideData) {
 
   return Promise.all(promises)
     .then(() => {
-      transaction.update('Event', {'_id': this._id}, {
+      transaction.update('event', {'_id': this._id}, {
         going_rides: this.going_rides, 
         returning_rides: this.returning_rides
       });

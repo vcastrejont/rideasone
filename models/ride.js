@@ -52,8 +52,8 @@ RideSchema.methods.deleteEventRide = function(event) {
       returning_rides: event.returning_rides
     };
 
-    transaction.update('Event', event._id, updatedRides);
-    transaction.remove('Ride', this._id);
+    transaction.update('event', event._id, updatedRides);
+    transaction.remove('ride', this._id);
     return transaction.run();
   });
 }

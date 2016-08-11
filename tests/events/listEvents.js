@@ -26,7 +26,7 @@ describe('Event listing', function(){
       return new Place({
         address: 'avenida Siempreviva #43', 
         place_name: "ferialandia", 
-        location: [123, 123]
+        location: {lat: 123, lon: 123}
       })
       .save();
     })
@@ -92,13 +92,18 @@ describe('Event listing', function(){
       var event = res.body;
       assert.equal(event._id, testEvent1._id);
       assert.equal(Date(event.created_at), Date(testEvent1.created_at));
-      assert.equal(Date(event.datetime), Date(testEvent1.datetime));
+      assert.equal(Date(event.starts_at), Date(testEvent1.starts_at));
       assert.equal(event.name, 'feria del pollo');
       assert.equal(event.description, 'una feria de pollos');
       assert.lengthOf(event.going_rides, 0);
       assert.lengthOf(event.returning_rides, 0);
-      assert.equal(event.organizer, testEvent1.organizer);
-      assert.equal(event.place, testEvent1.place);
+      assert.equal(event.organizer._id, testEvent1.organizer);
+      assert.equal(event.place._id, testPlace._id);
+      assert.equal(event.place.location.lat, testPlace.location.lat);
+      assert.equal(event.place.location.lon, testPlace.location.lon);
+      assert.equal(event.place.address, testPlace.address);
+      assert.equal(event.place.name, testPlace.name);
+      assert.equal(event.place.google_places_id, testPlace.google_places_id);
       assert.deepEqual(event.tags, ['feria', 'pollo']);
     });
   });
