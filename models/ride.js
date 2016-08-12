@@ -9,7 +9,7 @@ var RideSchema = new Schema({
   driver: { type: ObjectId, ref: 'user', required: true },
   departure: Date,
   seats: Number,
-  comments: String,
+  comment: String,
   passengers: [{
     _id: false,
     user: { type: ObjectId, ref: 'user' },
