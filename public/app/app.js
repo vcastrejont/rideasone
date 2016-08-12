@@ -4,7 +4,8 @@ var app = angular.module('carPoolingApp', [
   'ui.router',
   'apiservice',
   'directive.g+signin',
-  'ngStorage'
+  'ngStorage',
+  'ui.timepicker'
 ]);
 
 app.run(['$rootScope', '$location', '$window',

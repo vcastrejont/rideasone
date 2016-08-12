@@ -4,7 +4,8 @@ var app = angular.module('carPoolingApp', [
   'ui.router',
   'apiservice',
   'directive.g+signin',
-  'ngStorage'
+  'ngStorage',
+  'ui.timepicker'
 ]);
 
 app.run(['$rootScope', '$location', '$window',
@@ -153,10 +154,40 @@ function eventsNewCtrl ($scope, apiservice, $state, mapFactory ) {
   $scope.map.currentLocation();
   $scope.map.placesAutocomplete('autocomplete');
   
+  $scope.setDate = function() {
+    //console.log("setDate");
+    $scope.event.endDate =  $scope.event.endDate || $scope.event.startDate;
+  };
+  $scope.$watch('event.name', function(newvalue,oldvalue) {
+    // console.log(newvalue);
+    // $scope.event.endDate =  $scope.event.endDate || newvalue;
+  //  console.log(newvalue);
+  });
+  
+  $scope.setTime = function() {
+    //var temp = moment($scope.event.startTime);
+    //console.log(temp);
+    //$scope.event.endTime= temp;
+  };
+  
+  $scope.$watch('event.starttime', function(newvalue,oldvalue) {
+      //console.log(newvalue);
+  });
+  
+  $scope.timePickerOptions = {
+    step: 30,
+    timeFormat: 'g:ia',
+    'minTime': '2:00pm',
+    'maxTime': '11:30pm',
+    'showDuration': true
+  };
+
   
   $scope.saveData = function() {
+    console.log($scope.event);
     var eventData = $.extend($scope.event, mapFactory.getEventLocationData());
-    console.log(eventData);
+    $scope.map.clearMarks();
+    // console.log(eventData);
     var newEvent={
       "name": eventData.name,
       "description": eventData.description,
@@ -169,35 +200,20 @@ function eventsNewCtrl ($scope, apiservice, $state, mapFactory ) {
       "starts_at": eventData.datetime,
       "ends_at":""
     };
-    console.log(newEvent);
+    // console.log(newEvent);
     apiservice.createEvent(newEvent)
       .success(function(res, status) {
-          //$scope.map.defaultLocation();
+          $scope.map.currentLocation();
           $scope.apiSuccess = true;
-          //$state.go('events');
+          $state.go('events');
       })
       .error(function(data) {
         console.error('Error: ' + data);
       });
   };
-  $scope.initTimepicker = function () {
-    $(function () {
-     $('.timepicker').timepicker({
-       timeFormat: 'h:mm p',
-       interval: 60,
-       minTime: '1',
-       maxTime: '11:00pm',
-       defaultTime: '11',
-       startTime: '12:00',
-       dynamic: false,
-       dropdown: true,
-       scrollbar: true
-     });
-    });
 
-  };
 
-  $scope.initTimepicker();
+
 }
 
 angular.module('carPoolingApp').controller('eventsShowCtrl', eventsShowCtrl);
@@ -625,6 +641,7 @@ function mapcanvas(mapFactory) {
 angular.module('carPoolingApp').factory('mapFactory', function($rootScope) {
   var api = {},
     currentEventLocation,
+    marker,
     mapFactory;
 
   mapFactory = {
@@ -647,7 +664,6 @@ angular.module('carPoolingApp').factory('mapFactory', function($rootScope) {
     },
 
     success: function() {
-      //console.log("factory success!");
       $rootScope.$broadcast('mapFactory:success');
     },
 
@@ -667,7 +683,6 @@ angular.module('carPoolingApp').factory('mapFactory', function($rootScope) {
     },
 
     getEventLocationData: function() {
-      console.log(currentEventLocation);
       return currentEventLocation;
     },
 
@@ -698,6 +713,14 @@ angular.module('carPoolingApp').factory('mapFactory', function($rootScope) {
               console.log("Auto geolocation failed");
             });
           }
+        },
+        
+        clearMarks: function(){
+          marker.setMap(null);
+          // for (var i = 0; i < markersArray.length; i++ ) {
+          //   markersArray[i].setMap(null);
+          // }
+          // markersArray.length = 0;
         },
         
         addMarker: function(pos) {
@@ -747,7 +770,7 @@ angular.module('carPoolingApp').factory('mapFactory', function($rootScope) {
           mapFactory.autocomplete.addListener('place_changed', mapFactory.setEventLocationData);
 
           var infowindow = new google.maps.InfoWindow();
-          var marker = new google.maps.Marker({
+          marker = new google.maps.Marker({
             map: map,
             anchorPoint: new google.maps.Point(0, -29)
           });
@@ -756,6 +779,7 @@ angular.module('carPoolingApp').factory('mapFactory', function($rootScope) {
             infowindow.close();
             marker.setVisible(false);
             var place = mapFactory.autocomplete.getPlace();
+            //console.log(place);
             if (!place.geometry) {
               window.alert("Autocomplete's returned place contains no geometry");
               return;
@@ -764,10 +788,12 @@ angular.module('carPoolingApp').factory('mapFactory', function($rootScope) {
 
             if (place.geometry.viewport) {
               map.fitBounds(place.geometry.viewport);
+              
             } else {
               map.setCenter(place.geometry.location);
-              map.setZoom(17);
+              //map.setZoom(15);
             }
+            map.setZoom(15);
             marker.setIcon( /** @type {google.maps.Icon} */ ({
               url: place.icon,
               size: new google.maps.Size(71, 71),

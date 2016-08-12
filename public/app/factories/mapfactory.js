@@ -1,6 +1,7 @@
 angular.module('carPoolingApp').factory('mapFactory', function($rootScope) {
   var api = {},
     currentEventLocation,
+    marker,
     mapFactory;
 
   mapFactory = {
@@ -23,7 +24,6 @@ angular.module('carPoolingApp').factory('mapFactory', function($rootScope) {
     },
 
     success: function() {
-      //console.log("factory success!");
       $rootScope.$broadcast('mapFactory:success');
     },
 
@@ -43,7 +43,6 @@ angular.module('carPoolingApp').factory('mapFactory', function($rootScope) {
     },
 
     getEventLocationData: function() {
-      console.log(currentEventLocation);
       return currentEventLocation;
     },
 
@@ -74,6 +73,14 @@ angular.module('carPoolingApp').factory('mapFactory', function($rootScope) {
               console.log("Auto geolocation failed");
             });
           }
+        },
+        
+        clearMarks: function(){
+          marker.setMap(null);
+          // for (var i = 0; i < markersArray.length; i++ ) {
+          //   markersArray[i].setMap(null);
+          // }
+          // markersArray.length = 0;
         },
         
         addMarker: function(pos) {
@@ -123,7 +130,7 @@ angular.module('carPoolingApp').factory('mapFactory', function($rootScope) {
           mapFactory.autocomplete.addListener('place_changed', mapFactory.setEventLocationData);
 
           var infowindow = new google.maps.InfoWindow();
-          var marker = new google.maps.Marker({
+          marker = new google.maps.Marker({
             map: map,
             anchorPoint: new google.maps.Point(0, -29)
           });
@@ -132,6 +139,7 @@ angular.module('carPoolingApp').factory('mapFactory', function($rootScope) {
             infowindow.close();
             marker.setVisible(false);
             var place = mapFactory.autocomplete.getPlace();
+            //console.log(place);
             if (!place.geometry) {
               window.alert("Autocomplete's returned place contains no geometry");
               return;
@@ -140,10 +148,12 @@ angular.module('carPoolingApp').factory('mapFactory', function($rootScope) {
 
             if (place.geometry.viewport) {
               map.fitBounds(place.geometry.viewport);
+              
             } else {
               map.setCenter(place.geometry.location);
-              map.setZoom(17);
+              //map.setZoom(15);
             }
+            map.setZoom(15);
             marker.setIcon( /** @type {google.maps.Icon} */ ({
               url: place.icon,
               size: new google.maps.Size(71, 71),

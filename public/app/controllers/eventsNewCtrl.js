@@ -8,10 +8,40 @@ function eventsNewCtrl ($scope, apiservice, $state, mapFactory ) {
   $scope.map.currentLocation();
   $scope.map.placesAutocomplete('autocomplete');
   
+  $scope.setDate = function() {
+    //console.log("setDate");
+    $scope.event.endDate =  $scope.event.endDate || $scope.event.startDate;
+  };
+  $scope.$watch('event.name', function(newvalue,oldvalue) {
+    // console.log(newvalue);
+    // $scope.event.endDate =  $scope.event.endDate || newvalue;
+  //  console.log(newvalue);
+  });
+  
+  $scope.setTime = function() {
+    //var temp = moment($scope.event.startTime);
+    //console.log(temp);
+    //$scope.event.endTime= temp;
+  };
+  
+  $scope.$watch('event.starttime', function(newvalue,oldvalue) {
+      //console.log(newvalue);
+  });
+  
+  $scope.timePickerOptions = {
+    step: 30,
+    timeFormat: 'g:ia',
+    'minTime': '2:00pm',
+    'maxTime': '11:30pm',
+    'showDuration': true
+  };
+
   
   $scope.saveData = function() {
+    console.log($scope.event);
     var eventData = $.extend($scope.event, mapFactory.getEventLocationData());
-    console.log(eventData);
+    $scope.map.clearMarks();
+    // console.log(eventData);
     var newEvent={
       "name": eventData.name,
       "description": eventData.description,
@@ -24,33 +54,18 @@ function eventsNewCtrl ($scope, apiservice, $state, mapFactory ) {
       "starts_at": eventData.datetime,
       "ends_at":""
     };
-    console.log(newEvent);
+    // console.log(newEvent);
     apiservice.createEvent(newEvent)
       .success(function(res, status) {
-          //$scope.map.defaultLocation();
+          $scope.map.currentLocation();
           $scope.apiSuccess = true;
-          //$state.go('events');
+          $state.go('events');
       })
       .error(function(data) {
         console.error('Error: ' + data);
       });
   };
-  $scope.initTimepicker = function () {
-    $(function () {
-     $('.timepicker').timepicker({
-       timeFormat: 'h:mm p',
-       interval: 60,
-       minTime: '1',
-       maxTime: '11:00pm',
-       defaultTime: '11',
-       startTime: '12:00',
-       dynamic: false,
-       dropdown: true,
-       scrollbar: true
-     });
-    });
 
-  };
 
-  $scope.initTimepicker();
+
 }
