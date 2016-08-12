@@ -190,7 +190,7 @@ module.exports = {
   addRide: function (req, res) {
     var ride = _.pick(req.body, ['place', 'departure', 'seats', 'comments', 'going', 'returning']);
 
-    req.body.driver = req.user._id;
+    ride.driver = req.user._id;
     Event.findOne({_id: req.params.event_id})
     .then(function (event) {
       return event.addRide(ride);
