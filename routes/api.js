@@ -262,7 +262,7 @@ router.delete('/events/:event_id', middleware.isAuthenticated, middleware.isOrga
  * @apiParam {Boolean}  returning           if is Returning ride
  * @apiSuccess {String} numAffected         1 for success
  **/
-router.post('/events/:event_id/add-ride', middleware.isAuthenticated, eventsController.addRide);
+router.post('/events/:event_id/ride', middleware.isAuthenticated, eventsController.addRide);
 
 /**
  * @api {delete} /api/events/:event_id/rides/:ride_id Delete a ride
