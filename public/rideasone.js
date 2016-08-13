@@ -155,35 +155,28 @@ function eventsNewCtrl ($scope, apiservice, $state, mapFactory ) {
   $scope.map.placesAutocomplete('autocomplete');
   
   $scope.setDate = function() {
-    //console.log("setDate");
     $scope.event.endDate =  $scope.event.endDate || $scope.event.startDate;
   };
-  $scope.$watch('event.name', function(newvalue,oldvalue) {
-    // console.log(newvalue);
-    // $scope.event.endDate =  $scope.event.endDate || newvalue;
-  //  console.log(newvalue);
-  });
   
   $scope.setTime = function() {
-    //var temp = moment($scope.event.startTime);
-    //console.log(temp);
-    //$scope.event.endTime= temp;
+    $scope.event.endTime=  moment($scope.event.startTime).add(1, 'hours');
   };
-  
-  $scope.$watch('event.starttime', function(newvalue,oldvalue) {
-      //console.log(newvalue);
-  });
+
   
   $scope.timePickerOptions = {
     step: 30,
     timeFormat: 'g:ia',
-    'minTime': '2:00pm',
-    'maxTime': '11:30pm',
-    'showDuration': true
+    'minTime': '8:00am',
+    'maxTime': '7:30am'
   };
 
   
   $scope.saveData = function() {
+    console.log( moment($scope.event.startDate).format('MMMM Do YYYY'));
+    //$scope.event.starts_at = moment( );
+      
+      
+               
     console.log($scope.event);
     var eventData = $.extend($scope.event, mapFactory.getEventLocationData());
     $scope.map.clearMarks();
