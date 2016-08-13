@@ -249,7 +249,7 @@ router.delete('/events/:event_id', middleware.isAuthenticated, middleware.isOrga
 
 // ----Rides--------
 /**
- * @api {post} /api/events/:event_id/add-ride Add a ride 
+ * @api {post} /api/events/:event_id/ride Add a ride 
  * @apiName AddEventRide
  * @apiVersion 0.2.0
  * @apiGroup Rides 
