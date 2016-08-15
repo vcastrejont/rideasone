@@ -41,7 +41,7 @@ EventSchema.statics.getCurrentEvents = function () {
         }
       }
 	})
-    .sort('datetime');
+    .sort('starts_at');
 };
 
 /**
@@ -64,7 +64,7 @@ EventSchema.statics.getPastEvents = function () {
         }
       }
 	})
-	.sort('-datetime').limit(50);
+	.sort('-starts_at').limit(50);
 };
 
 function createRide(ride, path, transaction) {
