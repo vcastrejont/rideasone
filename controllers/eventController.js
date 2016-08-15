@@ -5,6 +5,7 @@ var Ride = require('../models/ride');
 var mailerController = require('../controllers/mailerController');
 var mongoose = require('mongoose');
 var _ = require('lodash');
+var error = require('../lib/error');
 
 /**
  * eventController.js
@@ -89,7 +90,7 @@ module.exports = {
   /**
    * eventController.getById()
    */
-  getById: function (req, res) {
+  getById: function (req, res, next) {
     var eventId = req.params.event_id;
     Event.findById(eventId)
     .populate('organizer', '_id name photo')
@@ -105,29 +106,28 @@ module.exports = {
       }
     })
     .then(function (event) {
-      if (event)
-          return res.json(event);
+      if (event && !_.isEmpty(event))
+        return res.json(event);
       else
-          return res.send(404);
+        throw new HttpError(404, 'event not found', res); 
       })
-      .catch(function (err) {
-        res.status(500).json({ message: err.message });
-      });
+      .catch(err => { next(err);});
   },
   /**
    * eventController.create()
    */
-  create: function (req, res) {
+  create: function (req, res, next) {
     var newEvent = _.pick(req.body, ['name', 'description', 'address', 'place', 'starts_at', 'ends_at', 'tags']);
     newEvent.place = _.pick(newEvent.place, ['name', 'address', 'google_places_id', 'location']);
 
     req.user.createEvent(newEvent)
-     .then(function (event) {
-        res.json({ _id: event._id });
-      })
-      .catch(function (err) {
-        res.status(500).json({ message: err.message });
-      });
+    .then(event => {
+       res.json({ _id: event._id });
+     })
+     .catch(err => {
+       /* transaction only throws one error, but for some reason the error is an array */
+       next(error.toHttp(err[0]));
+     });
   },
   /**
    * eventController.remove()
@@ -188,7 +188,7 @@ module.exports = {
    * eventController.addRide()
    */
   addRide: function (req, res) {
-    var ride = _.pick(req.body, ['place', 'departure', 'seats', 'comments', 'going', 'returning']);
+    var ride = _.pick(req.body, ['place', 'departure', 'seats', 'comments', 'going', 'returning', 'driver']);
 
     ride.driver = req.user._id;
     Event.findOne({_id: req.params.event_id})
