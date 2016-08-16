@@ -16,31 +16,27 @@ module.exports = {
   /**
    * List all the events from yesterday to the end of the time.
    */
-  getFuture: function (req, res) {
+  getFuture: function (req, res, next) {
     Event.getCurrentEvents()
       .then(function (events) {
         res.json(events);
       })
-      .catch(function (err) {
-        res.status(500).json({ message: err.message });
-      });
+      .catch(err => next);
   },
   /**
    * List all the events up to yesterday.
    */
-  getPast: function (req, res) {
+  getPast: function (req, res, next) {
     Event.getPastEvents()
       .then(function (events) {
         res.json(events);
       })
-      .catch(function (err) {
-        res.status(500).json({ message: err.message });
-      });
+      .catch(err => next);
   },
   /**
    * eventController.getByUser()
    */
-  getByUser: function (req, res) {
+  getByUser: function (req, res, next) {
     // TODO: Once passport is implemented, get the user from req.user
     var userId = req.params.user_id;
 
@@ -51,9 +47,7 @@ module.exports = {
       .then(function (events) {
         res.json(events);
       })
-      .catch(function (err) {
-        res.status(500).json({ message: err.message });
-      });
+      .catch(err => next);
   },
   /**
   * eventController.carbyuser()
@@ -111,7 +105,7 @@ module.exports = {
       else
         throw new HttpError(404, 'event not found', res); 
       })
-      .catch(err => { next(err);});
+      .catch(err => next);
   },
   /**
    * eventController.create()
@@ -124,22 +118,17 @@ module.exports = {
     .then(event => {
        res.json({ _id: event._id });
      })
-     .catch(err => {
-       /* transaction only throws one error, but for some reason the error is an array */
-       next(error.toHttp(err[0]));
-     });
+     .catch(err => next);
   },
   /**
    * eventController.remove()
   */
-  remove: function (req, res) {
+  remove: function (req, res, next) {
     req.event.remove()
       .then(function (event) {
         return res.json(event);
       })
-      .catch(function (err) {
-        res.status(500).json({ message: err.message });
-      });
+      .catch(err => next);
   },
   /**
    * eventController.drivers()
@@ -187,13 +176,14 @@ module.exports = {
   /**
    * eventController.addRide()
    */
-  addRide: function (req, res) {
+  addRide: function (req, res, next) {
     var ride = _.pick(req.body, ['place', 'departure', 'seats', 'comments', 'going', 'returning', 'driver']);
 
     ride.driver = req.user._id;
     Event.findOne({_id: req.params.event_id})
     .then(function (event) {
-      return event.addRide(ride);
+      if(!event) throw error.http(404);
+      return event.addRide(ride, "the event doesn't exist");
     })
     .then(function (updatedEvents) {
       var numAffected = updatedEvents.length;
@@ -202,12 +192,9 @@ module.exports = {
         numAffected: numAffected
       });
     })
-    .catch(function(err){
-        console.log(err);
-        if (err) return res.json(500, { message: 'Error', error: err });
-    });
+    .catch(err => next);
   },
-  edit: function (req, res) {
+  edit: function (req, res, next) {
     var updates = _.pick(req.body, ['name', 'place', 'description', 'starts_at', 'ends_at', 'tags']); 
     _.assign(req.event, updates);
     
@@ -217,12 +204,7 @@ module.exports = {
         message: 'Successfully edited',
       });
     })
-    .catch(err => {
-      return res.status(500).json({
-        message: 'Error editing event',
-        error: err
-      });
-    });
+    .catch(err => next);
   },
 
   /**

@@ -3,6 +3,7 @@ var Schema = mongoose.Schema;
 var ObjectId = Schema.ObjectId;
 var Transaction = require('lx-mongoose-transaction')(mongoose);
 var Promise = require('bluebird');
+var error = require('../lib/error');
 
 var RideSchema = new Schema({
   place: { type: ObjectId, ref: 'place' },
@@ -43,6 +44,7 @@ RideSchema.methods.deleteEventRide = function(event) {
  
   return Event.findOne({_id: event._id})
   .then(event => {
+    if(!event) throw error.http(404, "the event doesn't exist"); 
     var promises = [];
     event.going_rides.pull({_id: this._id});
     event.returning_rides.pull({_id: this._id});
@@ -55,7 +57,8 @@ RideSchema.methods.deleteEventRide = function(event) {
     transaction.update('event', event._id, updatedRides);
     transaction.remove('ride', this._id);
     return transaction.run();
-  });
+  })
+  .catch(err => {throw new Error(err.toHttp(err))});
 }
 
 module.exports = mongoose.model('ride', RideSchema);

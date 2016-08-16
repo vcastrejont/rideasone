@@ -52,7 +52,7 @@ EventSchema.statics.getCurrentEvents = function () {
 EventSchema.statics.getPastEvents = function () {
   var twoHoursAgo = moment().subtract(1, 'hour').toDate();
   return Event.find({ starts_at: { $lt: twoHoursAgo } })
-    .populate('place')
+  .populate('place')
 	.populate('organizer')
 	.populate({
 	  path: 'going_rides', 
@@ -72,7 +72,8 @@ function createRide(ride, path, transaction) {
   return transaction.run()
     .then(createdRides => {
       this[path].push({_id: createdRides[0]._id});
-    });
+    })
+    .catch(err => {throw new Error(error.toHttp(err))});
 }
 
 EventSchema.methods.addRide = function (rideData) {
@@ -95,6 +96,7 @@ EventSchema.methods.addRide = function (rideData) {
         returning_rides: this.returning_rides
       });
       return transaction.run()
+      .catch(err => {throw new Error(error.toHttp(err))});
     });
 
 };
