@@ -84,6 +84,7 @@ angular.module('carPoolingApp').factory('mapFactory', function($rootScope) {
         },
         
         addMarker: function(pos) {
+          console.log(pos);
           var latLng = new google.maps.LatLng(pos.lat, pos.lng);
           var marker = new google.maps.Marker({
             position: latLng,

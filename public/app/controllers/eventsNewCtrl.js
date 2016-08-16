@@ -26,15 +26,21 @@ function eventsNewCtrl ($scope, apiservice, $state, mapFactory ) {
 
   
   $scope.saveData = function() {
-    console.log( moment($scope.event.startDate).format('MMMM Do YYYY'));
+    var starts_date = moment($scope.event.startDate).format('YYYY-MM-DD');
+    var starts_time = moment($scope.event.startTime).format('HH:mm');
+    var starts_at = moment(starts_date+" "+starts_time, "YYYY-MM-DD HH:mm").utc().format();
+    var ends_date = moment($scope.event.endDate).format('YYYY-MM-DD');
+    var ends_time = moment($scope.event.endTime).format('HH:mm');
+    var ends_at = moment(ends_date+" "+ends_time, "YYYY-MM-DD HH:mm").utc().format();
+    
+    //console.log(starts_at);
     //$scope.event.starts_at = moment( );
       
-      
                
-    console.log($scope.event);
+  //  console.log($scope.event);
     var eventData = $.extend($scope.event, mapFactory.getEventLocationData());
     $scope.map.clearMarks();
-    // console.log(eventData);
+     
     var newEvent={
       "name": eventData.name,
       "description": eventData.description,
@@ -42,11 +48,15 @@ function eventsNewCtrl ($scope, apiservice, $state, mapFactory ) {
           "name": eventData.place_name,
           "google_places_id": eventData.place_id,
           "address": eventData.address,
-          "location": [29.099634,-110.951714]
+          "location": {
+            "lat": eventData.location.lat,
+            "lon": eventData.location.lon
+          }
       },
-      "starts_at": eventData.datetime,
-      "ends_at":""
+      "starts_at": starts_at,
+      "ends_at": ends_at
     };
+    console.log(newEvent);
     // console.log(newEvent);
     apiservice.createEvent(newEvent)
       .success(function(res, status) {

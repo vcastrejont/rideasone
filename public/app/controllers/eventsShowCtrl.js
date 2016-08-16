@@ -6,139 +6,37 @@ function eventsShowCtrl ($scope, apiservice,  $state, $window, mapFactory ) {
   $scope.map = mapFactory.getApi();
   $scope.id = $state.params.id;
 
-  $scope.messageCar = null;
-  $scope.message = {
-      text: ""
-  };
-  
-
   $scope.messageDriver = function(car) {
       $scope.messageCar = car;
-
       $('#sendMessageModal').modal("show");
   };
 
-  $scope.sendMessage = function() {
-      if(!$scope.message.text) return;
-
-      apiservice.sendMessage({
-          eventId: $state.params.id,
-          carId: $scope.messageCar["_id"],
-          message: $scope.message.text
-      })
-      .success(function(data) {
-          $('#sendMessageModal').modal("hide");
-          alert("Message sent!");
-      })
-      .error(function(error) {
-          console.error(error);
-      });
-  };
-
   $scope.view= {
-    alerts:[],
-    signed:false,
-    seats: "",
-    driver:"",
-    signmeup: true,
-    option:1,
-    user:{
-      id: $window.user_id,
-      name: $window.user_name,
-      going: true,
-      back: true
-    },
-    goingRide: {
-      passengers: [],
-      extraPass: 0
-    },
-    backRide: {
-      passengers: [],
-      extraPass: 0
-    },
-    ride:null,
     showRide: function (ride) {
-      console.log(ride.location);
+      //console.log(ride.location);
       console.log($scope.view.event.location);
       $scope.view.ride = ride;
       var origin = ride.location[1]+","+ ride.location[0];
       var destination = $scope.view.event.location[1]+","+$scope.view.event.location[0]; 
       $scope.map.showRoute(origin, destination);
     },
-    isSigned: function (car) {
-      var temp = _.findWhere(car.passengers, {passenger_id: $scope.view.user.id});
-      return temp  ? true : false;
-    },
-    getNumber: function(num) {
-      return new Array(num);
-    },
     init:function(){
-      //Load data, Todo create a service for this
       var self = this;
       apiservice.getEvent($scope.id).then(function(response) {
-        console.log( response.data);
         self.event = response.data;
-        
-        $scope.map.addMarker({lat:self.event.location[1], lng:self.event.location[0], center:true});
-
-        var i;
-        for(i = 0; i < self.event.cars.length; i++) {
-          if( self.event.cars[i].location ){
-            $scope.map.addMarker({lat:self.event.cars[i].location[1], lng:self.event.cars[i].location[0]});
-          }
-        }
-        
-        self.event.date = moment(response.data.datetime).format('MMM. d, YYYY  H:mm a' );
-        self.event.dateString = moment(response.data.datetime).calendar() ;
-      
-        self.event.avail = 0;
-        self.event.signed = _.where(response.data.attendees, {user_id: self.user.id});
-        _.each(response.data.cars, function(carpool, index) {
-          var avail = carpool.seats -  carpool.passengers.length;
-          self.event.avail += avail;
-
-          self.goingRide.passengers = [];
-          self.backRide.passengers = [];
-
-          self.goingRide.extraPass = 0;
-          self.backRide.extraPass = 0;
-
-          angular.forEach(carpool.passengers, function(p) {
-            if(p.going) {
-              self.goingRide.passengers.push(p);
-            }
-
-            if(p.back){
-              self.backRide.passengers.push(p);
-            }
-          });
-        });
-        self.showMap();
+        console.log(self.event);
+        $scope.map.addMarker({lat:self.event.place.location.lat, lng:self.event.place.location.lon, center:true});
+        // var i;
+        // for(i = 0; i < self.event.cars.length; i++) {
+        //   if( self.event.cars[i].location ){
+        //     $scope.map.addMarker({lat:self.event.cars[i].location[1], lng:self.event.cars[i].location[0]});
+        //   }
+        // }
+        // self.event.date = moment(response.data.datetime).format('MMM. d, YYYY  H:mm a' );
+        // self.event.dateString = moment(response.data.datetime).calendar() ;
       }, function(response) {
         console.error('Error: ' + response.data);
       });
-    },
-    showMap:function(){
-      // var myLatLng = {lat: this.event.location[1],lng: this.event.location[0]};
-      // var options = {
-      //     center: new google.maps.LatLng(this.event.location[1], this.event.location[0]),
-      //     zoom: 13,
-      //     disableDefaultUI: true,
-      //     draggable: true
-      // };
-      // var mapCanvas = document.getElementById("map");
-      // var map = new google.maps.Map(mapCanvas, options);
-      // var infowindow = new google.maps.InfoWindow();
-      // var marker = new google.maps.Marker({
-      //   position: myLatLng,
-      //   map: map,
-      //   title: ''
-      // });
-      // 
-      // var infowindow = new google.maps.InfoWindow({
-      //   content: this.event.place
-      // });
-      // infowindow.open(map, marker);
     },
     clearOptions:function(){
       this.seats = "";
@@ -151,21 +49,7 @@ function eventsShowCtrl ($scope, apiservice,  $state, $window, mapFactory ) {
         console.error('Error: ' + response);
       });
     },
-    signMe:function(){
-      var self = this;
-      this.signed = true;
-      apiservice.signupToEvent($scope.id).then(function(response) {
-          self.alerts.push({msg: response.data.message});
-          setTimeout(function () {
-            $scope.$apply(function()  {  self.closeAlert(); });
-            $scope.view.init();
-          }, 1000);
-              $scope.view.init();
-            //console.log(response);
-        }, function(response) {
-            console.error('Error: ' + response);
-      });
-    },
+    
     addCar:function(){
       var self = this;
       var eventData = {

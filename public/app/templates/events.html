@@ -25,8 +25,8 @@
             <p class="location">at {{event.place.name}} </p>
           </div>
           <div class="col-xs-5 right">
-            <p class="time">From {{event.datetime | date:'h a'}} to 8pm  </p>
-            <p class="cars">{{event.cars.length}} cars / 7 seats available</p>
+            <p class="time">From {{event.starts_at | date:'h a'}} to  {{event.ends_at | date:'h a'}}  </p>
+            <p class="cars">{{event.cars.length}} cars /  seats available</p>
           </div>
         </div>
       
