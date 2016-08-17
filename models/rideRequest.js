@@ -26,7 +26,8 @@ RideRequestSchema.methods.accept = function () {
     this.ride.passengers.push(passenger);
     transaction.update('ride', {_id: this.ride._id}, {passengers: this.ride.passengers});
     transaction.remove('rideRequest', this._id);
-    return transaction.run();
+    return transaction.run()
+      .catch(err => {throw new Error(error.toHttp(err));});
 
 };
 
