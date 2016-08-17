@@ -177,7 +177,7 @@ module.exports = {
    * eventController.addRide()
    */
   addRide: function (req, res, next) {
-    var ride = _.pick(req.body, ['place', 'departure', 'seats', 'comments', 'going', 'returning', 'driver']);
+    var ride = _.pick(req.body, ['place', 'departure', 'seats', 'comment', 'going', 'returning', 'driver']);
 
     ride.driver = req.user._id;
     Event.findOne({_id: req.params.event_id})
