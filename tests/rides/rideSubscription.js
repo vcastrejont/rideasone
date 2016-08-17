@@ -7,7 +7,8 @@ var util = require('../util');
 var User = require('../../models/User');
 var Ride = require('../../models/Ride');
 var RideRequest = require('../../models/RideRequest');
-var token1, token2, testUser1, testUser2, testRide, testRideRequest;
+var Place = require('../../models/Place');
+var token1, token2, testUser1, testUser2, testRide, testRideRequest, testPlace;
 
 describe('Ride subscription management', function(){
   before(() => {
@@ -36,10 +37,19 @@ describe('Ride subscription management', function(){
     })
     .then(token => {
       token2 = token;
+      return new Place({
+        google_places_id: 'asdfasdf',
+        address: 'aaaaaaaaaaaa',
+        location: {lat: 5, lon: 8}
+      })
+    })
+    .then(place => {
+      testPlace = place;
       return new Ride({
         seats: 4,
-        comments: 'join me',
-        driver: testUser1._id
+        comment: 'join me',
+        driver: testUser1._id,
+        place: testPlace._id
       })
       .save();
     })
@@ -56,7 +66,7 @@ describe('Ride subscription management', function(){
   });
 
   it('creates a ride request', () => {
-    return testUser2.requestJoiningRide(testRide._id)
+    return testUser2.requestJoiningRide(testRide._id, testPlace)
     .then(request => {
       testRideRequest = request;
       assert.equal(request.passenger._id, testUser2._id);
