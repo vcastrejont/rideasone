@@ -91,6 +91,12 @@ describe('Event editing', function(){
       seats: 42,
       comments: 'yolo',
       going: true,
+      place: {
+        google_places_id: 'asdfasdf',
+        seats: 4,
+        address: 'aaaaaaaaaaa',
+        location: {lat: 8, lon: 5}
+      },
       returning: true
     };
     return testEvent.addRide(rideData)

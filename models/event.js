@@ -6,7 +6,8 @@ var Transaction = require('lx-mongoose-transaction')(mongoose);
 var Promise = require('bluebird');
 var Ride = require('./ride');
 var _ = require('lodash');
-var util = require('util');
+var util = require('../lib/util');
+var error = require('../lib/error');
 
 var EventSchema = new Schema({
   place: { type: ObjectId, ref: 'place' },
