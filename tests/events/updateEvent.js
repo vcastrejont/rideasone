@@ -93,7 +93,6 @@ describe('Event editing', function(){
       going: true,
       place: {
         google_places_id: 'asdfasdf',
-        seats: 4,
         address: 'aaaaaaaaaaa',
         location: {lat: 8, lon: 5}
       },

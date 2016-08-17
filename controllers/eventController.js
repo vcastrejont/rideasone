@@ -177,13 +177,14 @@ module.exports = {
    * eventController.addRide()
    */
   addRide: function (req, res, next) {
-    var ride = _.pick(req.body, ['place', 'departure', 'seats', 'comment', 'going', 'returning', 'driver']);
+    var ride = _.pick(req.body, ['place', 'departure', 'seats', 'comment', 'going', 'returning']);
 
     ride.driver = req.user._id;
+    ride.place = req.user
     Event.findOne({_id: req.params.event_id})
     .then(function (event) {
-      if(!event) throw error.http(404);
-      return event.addRide(ride, "the event doesn't exist");
+      if(!event) throw error.http(404, "the event doesn't exist");
+      return event.addRide(ride);
     })
     .then(function (updatedEvents) {
       var numAffected = updatedEvents.length;

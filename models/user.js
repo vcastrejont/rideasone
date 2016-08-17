@@ -89,15 +89,20 @@ UserSchema.methods.createEvent = function (data) {
 
 };
 
-UserSchema.methods.requestJoiningRide = function (rideId) {
+UserSchema.methods.requestJoiningRide = function (rideId, place) {
   var RideRequest = require('./rideRequest');
-  var request = new RideRequest({
-    ride: rideId,
-    passenger: this,
-    place: this.default_place
-  });
-  // TODO: Create driver notification
-  return request.save()
+  var transaction = new Transaction();
+
+  return util.findOrCreatePlace(place, transaction)
+    .then(places => {
+      var request = new RideRequest({
+        ride: rideId,
+        passenger: this,
+        place: places[0]._id
+      });
+      // TODO: Create driver notification
+      return request.save()
+    })
     .catch(err => {throw new Error(error.toHttp(err))});
 };
 
