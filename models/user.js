@@ -2,7 +2,8 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 var Transaction = require('lx-mongoose-transaction')(mongoose);
 var Place = require('./place');
-var fcm = require('../lib/fcm');
+var Event = require('./event');
+var error = require('../lib/error');
 
 var UserSchema = new Schema({
   name: String,
@@ -37,7 +38,7 @@ UserSchema.methods.getEvents = function () {
   var today = moment().startOf('day').toDate();
   return Ride
     .find({ driver: this })
-    .then((rides) => {
+    .then(rides => {
       return Event
         .find({ datetime: { $gte: today } })
         .or([
@@ -45,29 +46,35 @@ UserSchema.methods.getEvents = function () {
           { going_rides: { $in: rides } },
           { returning_rides: { $in: rides } }
         ])
+        .populate('organizer', '_id name photo')
         .populate('place')
+        .populate({
+          path: 'going_rides', 
+          populate: {
+            path: 'driver passengers',
+            populate: {
+              path: 'user place',
+              select: '_id name photo'
+            }
+          }
+        })
         .sort('datetime');
     });
 };
 
 /*ToDo: this probably goes somewhere else*/
 function findOrCreatePlace(data, transaction){
-  if (data.location && ! data.place){
-    var place = {
-			location: {
-				lat: data.location.lat,
-				lon: data.location.lon
-			},
-				address: data.address,
-				name: data.place,
-				google_places_id: data.google_places_id
-    };
-		transaction.insert('Place', place);
-		return transaction.run();
-  } else {
-    return Place.find({_id: data.place});
-  }
-}
+  return Place.find({google_places_id: data.google_places_id})
+    .then(place =>{
+      if (!place.length){
+        transaction.insert('place', data);
+        return transaction.run();
+      } else {
+        return place;
+      }
+    })
+    .catch(err => { throw new Error(error.toHttp(err))});
+};
 
 /**
  * Creates a new event and sets the user as the organizer.
@@ -84,20 +91,22 @@ UserSchema.methods.updateFcmToken = function (data) {
 UserSchema.methods.createEvent = function (data) {
   var transaction = new Transaction();
 
-	return findOrCreatePlace(data, transaction)
-	.then(places => {
-		var event = {
-			place: places[0],
-			organizer: this,
-			name: data.name,
-			description: data.description,
-			datetime: data.datetime,
-			tags: data.tags
-		};
-		transaction.insert('Event', event);
-		return transaction.run()
-		.then(ev => ev[0]._doc); 
-	});
+  return findOrCreatePlace(data.place, transaction)
+  .then(places => {
+    var event = {
+      place: places[0]._id,
+      organizer: this,
+      name: data.name,
+      description: data.description,
+      starts_at: data.starts_at,
+      ends_at: data.ends_at,
+      tags: data.tags
+    };
+    transaction.insert('event', event);
+    return transaction.run()
+  })
+  .then(ev => ev[0]._doc)
+  .catch(err => {throw new Error(error.toHttp(err))});
 
 };
 
@@ -112,7 +121,7 @@ UserSchema.methods.requestJoiningRide = function (rideId) {
   });
 
   return request.save()
-    .populate('ride')
+  .populate('ride')
 	.populate('driver')
 	.then(request => {
       var notificationData = {
@@ -135,9 +144,7 @@ UserSchema.methods.isPassenger = function (rideId) {
   return Ride.findOne({_id: rideId, 'passengers.user': this})
     .then(ride => {
       if (!ride) {
-        var error = new Error('User is not a passenger on this ride');
-        error.status = 403;
-        throw error;
+        throw new Error(error.http(403, 'user is not a passenger of this ride'));
       }
       return ride;
     });
@@ -148,9 +155,7 @@ UserSchema.methods.isDriver = function (rideId) {
   return Ride.findOne({ _id: rideId, driver: this })
     .then(ride => {
       if (!ride) {
-        var error = new Error('User is not the driver on this ride');
-        error.status = 403;
-        throw error;
+        throw new Error(error.http(403, 'user is not the driver of this ride'));
       }
       return ride;
     });
@@ -158,12 +163,10 @@ UserSchema.methods.isDriver = function (rideId) {
 
 UserSchema.methods.isOrganizer = function (eventId) {
   var Event = require('../models/event');
-  return Event.findOne({ _id: eventId, organizer: this })
+  return Event.findOne({ _id: eventId,} )
     .then((event) => {
       if (!event) {
-        var error = new Error('User is not the organizer of this event');
-        error.status = 403;
-        throw error;
+        throw new Error(error.http(403, 'user is not the organizer of this event'));
       }
       return event;
     });

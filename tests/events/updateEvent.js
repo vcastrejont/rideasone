@@ -27,7 +27,7 @@ describe('Event editing', function(){
       return new Place({
         address: 'avenida Siempreviva #43', 
         place_name: "ferialandia", 
-        location: { lat: 123, lon: 123 }
+        location: {lat: 123, lon: 123} 
       })
       .save();
     })
@@ -37,10 +37,10 @@ describe('Event editing', function(){
         name: "feria del pollo", 
         description: "una feria de pollos", 
         address: "pollolandia", 
-        location: "pollornia", 
+        location: {lat: 123, lon: 456}, 
         place: place._id, 
         organizer: testUser._id, 
-        datetime: new Date("2017-05-05T02:20:10Z"), 
+        starts_at: new Date("2017-05-05T02:20:10Z"), 
         tags: ['feria', 'pollo']
       })
       .save();

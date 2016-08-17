@@ -1,9 +1,11 @@
-var Event = require('../models/event.js');
-var User = require('../models/user.js');
-var Ride = require('../models/ride.js');
-var mailerController = require('../controllers/mailerController.js');
+var Event = require('../models/event');
+var Place = require('../models/place');
+var User = require('../models/user');
+var Ride = require('../models/ride');
+var mailerController = require('../controllers/mailerController');
 var mongoose = require('mongoose');
 var _ = require('lodash');
+var error = require('../lib/error');
 
 /**
  * eventController.js
@@ -14,31 +16,27 @@ module.exports = {
   /**
    * List all the events from yesterday to the end of the time.
    */
-  getFuture: function (req, res) {
+  getFuture: function (req, res, next) {
     Event.getCurrentEvents()
       .then(function (events) {
         res.json(events);
       })
-      .catch(function (err) {
-        res.status(500).json({ message: err.message });
-      });
+      .catch(err => next);
   },
   /**
    * List all the events up to yesterday.
    */
-  getPast: function (req, res) {
+  getPast: function (req, res, next) {
     Event.getPastEvents()
       .then(function (events) {
         res.json(events);
       })
-      .catch(function (err) {
-        res.status(500).json({ message: err.message });
-      });
+      .catch(err => next);
   },
   /**
    * eventController.getByUser()
    */
-  getByUser: function (req, res) {
+  getByUser: function (req, res, next) {
     // TODO: Once passport is implemented, get the user from req.user
     var userId = req.params.user_id;
 
@@ -49,9 +47,7 @@ module.exports = {
       .then(function (events) {
         res.json(events);
       })
-      .catch(function (err) {
-        res.status(500).json({ message: err.message });
-      });
+      .catch(err => next);
   },
   /**
   * eventController.carbyuser()
@@ -88,40 +84,51 @@ module.exports = {
   /**
    * eventController.getById()
    */
-  getById: function (req, res) {
+  getById: function (req, res, next) {
     var eventId = req.params.event_id;
     Event.findById(eventId)
-    .then(function (event) {
-      return res.json(event);
+    .populate('organizer', '_id name photo')
+    .populate('place')
+    .populate({
+      path: 'going_rides', 
+      populate: {
+        path: 'driver passengers',
+        populate: {
+          path: 'user place',
+          select: '_id name photo'
+        }
+      }
     })
-    .catch(function (err) {
-      res.status(500).json({ message: err.message });
-    });
+    .then(function (event) {
+      if (event && !_.isEmpty(event))
+        return res.json(event);
+      else
+        throw new HttpError(404, 'event not found', res); 
+      })
+      .catch(err => next);
   },
   /**
    * eventController.create()
    */
-  create: function (req, res) {
-    var newEvent = _.pick(req.body, ['name', 'description', 'address', 'location', 'google_places_id', 'place_name', 'datetime', 'tags']);
+  create: function (req, res, next) {
+    var newEvent = _.pick(req.body, ['name', 'description', 'address', 'place', 'starts_at', 'ends_at', 'tags']);
+    newEvent.place = _.pick(newEvent.place, ['name', 'address', 'google_places_id', 'location']);
+
     req.user.createEvent(newEvent)
-     .then(function (event) {
-        res.json({ _id: event._id });
-      })
-      .catch(function (err) {
-        res.status(500).json({ message: err.message });
-      });
+    .then(event => {
+       res.json({ _id: event._id });
+     })
+     .catch(err => next);
   },
   /**
    * eventController.remove()
   */
-  remove: function (req, res) {
+  remove: function (req, res, next) {
     req.event.remove()
       .then(function (event) {
         return res.json(event);
       })
-      .catch(function (err) {
-        res.status(500).json({ message: err.message });
-      });
+      .catch(err => next);
   },
   /**
    * eventController.drivers()
@@ -169,12 +176,14 @@ module.exports = {
   /**
    * eventController.addRide()
    */
-  addRide: function (req, res) {
+  addRide: function (req, res, next) {
+    var ride = _.pick(req.body, ['place', 'departure', 'seats', 'comments', 'going', 'returning', 'driver']);
 
-    req.body.driver = req.user._id;
+    ride.driver = req.user._id;
     Event.findOne({_id: req.params.event_id})
     .then(function (event) {
-      return event.addRide(req.body);
+      if(!event) throw error.http(404);
+      return event.addRide(ride, "the event doesn't exist");
     })
     .then(function (updatedEvents) {
       var numAffected = updatedEvents.length;
@@ -183,13 +192,10 @@ module.exports = {
         numAffected: numAffected
       });
     })
-    .catch(function(err){
-        console.log(err);
-        if (err) return res.json(500, { message: 'Error', error: err });
-    });
+    .catch(err => next);
   },
-  edit: function (req, res) {
-    var updates = _.pick(req.body, ['name', 'place', 'description', 'datetime', 'tags']); 
+  edit: function (req, res, next) {
+    var updates = _.pick(req.body, ['name', 'place', 'description', 'starts_at', 'ends_at', 'tags']); 
     _.assign(req.event, updates);
     
     req.event.save()
@@ -198,12 +204,7 @@ module.exports = {
         message: 'Successfully edited',
       });
     })
-    .catch(err => {
-      return res.status(500).json({
-        message: 'Error editing event',
-        error: err
-      });
-    });
+    .catch(err => next);
   },
 
   /**

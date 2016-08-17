@@ -3,16 +3,18 @@ var Schema = mongoose.Schema;
 var ObjectId = Schema.ObjectId;
 var Transaction = require('lx-mongoose-transaction')(mongoose);
 var Promise = require('bluebird');
+var error = require('../lib/error');
 
 var RideSchema = new Schema({
-  place: { type: ObjectId, ref: 'Place' },
-  driver: { type: ObjectId, ref: 'User', required: true },
+  place: { type: ObjectId, ref: 'place' },
+  driver: { type: ObjectId, ref: 'user', required: true },
+  departure: Date,
   seats: Number,
-  comments: String,
+  comment: String,
   passengers: [{
     _id: false,
-    user: { type: ObjectId, ref: 'User' },
-    place: { type: ObjectId, ref: 'Place' }
+    user: { type: ObjectId, ref: 'user' },
+    place: { type: ObjectId, ref: 'place' }
   }],
   chat: [{ type: ObjectId, ref: 'message' }],
   created_at: { type: Date, default: Date.now },
@@ -42,6 +44,7 @@ RideSchema.methods.deleteEventRide = function(event) {
  
   return Event.findOne({_id: event._id})
   .then(event => {
+    if(!event) throw error.http(404, "the event doesn't exist"); 
     var promises = [];
     event.going_rides.pull({_id: this._id});
     event.returning_rides.pull({_id: this._id});
@@ -51,10 +54,11 @@ RideSchema.methods.deleteEventRide = function(event) {
       returning_rides: event.returning_rides
     };
 
-    transaction.update('Event', event._id, updatedRides);
-    transaction.remove('Ride', this._id);
+    transaction.update('event', event._id, updatedRides);
+    transaction.remove('ride', this._id);
     return transaction.run();
-  });
+  })
+  .catch(err => {throw new Error(err.toHttp(err))});
 }
 
-module.exports = mongoose.model('Ride', RideSchema);
+module.exports = mongoose.model('ride', RideSchema);

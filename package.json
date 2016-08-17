@@ -2,13 +2,23 @@
   "name": "nspoolingcar",
   "version": "0.0.1",
   "private": true,
+  "engines": {
+    "node": "6.3.0"
+  },
+  "watch": {
+    "build": "public/app/**/*.js"
+  },
   "scripts": {
+    "watch": "npm-watch",
     "start": "NODE_ENV=development node --debug app.js",
     "postinstall": "bower install",
     "test": "NODE_ENV=test mocha --require=tests/bootstrap.js tests/**",
-    "apidoc": "apidoc -e node_modules -i . -o public/apidoc"
+    "postinstall": "bower install  && apidoc -i routes/ -o public/apidoc/",
+    "apidoc": "apidoc -i routes/ -o public/apidoc/",
+    "build": "grunt compile-js"
   },
   "dependencies": {
+    "apidoc": "^0.16.1",
     "bcrypt-nodejs": "latest",
     "bluebird": "^3.4.1",
     "body-parser": "^1.15.0",
@@ -44,5 +54,9 @@
     "supertest": "^1.2.0",
     "supertest-as-promised": "^3.2.0",
     "underscore": "^1.8.3"
+  },
+  "devDependencies": {
+    "grunt": "^1.0.1",
+    "grunt-contrib-concat": "^1.0.1"
   }
 }

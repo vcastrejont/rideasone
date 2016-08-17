@@ -3,6 +3,6 @@
   "version": "0.1.0",
   "description": "Api for carpooling events",
   "title": "Carpooling api doc",
-  "sampleUrl2": "https://nstesting.herokuapp.com",
-  "sampleUrl": "http://localhost:3000"
+  "sampleUrl": "https://www.rideas.one",
+  "sampleUrl2": "http://localhost:3000"
 }

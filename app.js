@@ -11,7 +11,7 @@ var api       = require('./routes/api');
 var passport  = require('passport');
 var session   = require('express-session');
 var MongoStore = require('connect-mongo')(session);
-var routes = require('./routes/routes');
+//var routes = require('./routes/routes');
 var _ = require('underscore');
 var debug = require('debug')('nspoolingcar:server');
 
@@ -78,13 +78,17 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(session({
     secret: "secret nscarpooling",
     store: new MongoStore({
-       mongooseConnection:  mongoose.connection})
+    mongooseConnection:  mongoose.connection})
   }));
 app.use(passport.initialize());
 
 // Routes
 // ------------------------------------------------------
-app.use('/', routes);
+//app.use('/', routes);
+
+app.get('/', function (req, res) {
+  	res.render('app');
+});
 app.use('/api', api);
 app.use('/auth', require('./routes/auth'));
 
@@ -93,9 +97,13 @@ app.use('/auth', require('./routes/auth'));
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   var err = new Error('Not Found');
-  err.status = 404;
-  next(err);
+  res.status(404).send('Not Found')
 });
+
+app.use(function(err, req, res, next){
+  res.status(err.code || 500).send(err);
+});
+
 if (app.get('env') === 'development') {
   app.use(function(err, req, res, next) {
     res.send(err);

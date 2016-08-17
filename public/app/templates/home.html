@@ -1,45 +1,6 @@
 
-<div class="container box bg" id="dashboard" >
-  <header class="row">
-    <div class="col-md-6">
-      <h1>Events</h1>
-    </div>
-    <div class="col-md-6 text-right">
-        <input type="text" class="form-control search in" placeholder="Search" ng-model="filters.search">
+<div id="home" class="panel center small text-center">
+  <h3>Welcome back {{user.name}}!</h3>
 
-      <a ui-sref="eventsnew"  class="btn btn-primary in "><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Create event</a>
-    </div>
-  </header>
-  <main class="row">
-    <div class="col-sm-8 ">
-      <div class="card">
-        <h2>Next events </h2>
-      
-        <ul class="trips">
-          <li ng-repeat="event in nextEvents">
-            <p class="title"><a ui-sref="eventshow({ id: event._id})">{{event.name}}</a></p>
-            <p> <strong>{{event.datetime | date:'medium'}} at {{event.place}} </strong>  </p>
-            <p>Organizer: {{event.organizer}}  </p>
-            <p>Cars: {{event.cars.length}} </p>
-          </li>
-        </ul>
-      </div>
-    </div>
-    <div class="col-sm-4 ">
-      <div class="card">
-        <h2>Past events</h2>
-        <ul class="trips">
-          <li ng-repeat="event in pastEvents">
-            <a ui-sref="eventshow({ id: event._id})">{{event.name}}</a>
-            {{event.datetime |  date:'longDate'}}
-            <br />  at {{event.place}}
-            <br /> by <strong> {{event.organizer}}</strong> 
-          </li>
-        </ul>
-      </div>
-    </div>
-    
-  </main>
-  <footer>&nbsp;</footer>
-
+   
 </div>
