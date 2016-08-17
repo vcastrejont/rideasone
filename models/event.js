@@ -6,6 +6,7 @@ var Transaction = require('lx-mongoose-transaction')(mongoose);
 var Promise = require('bluebird');
 var Ride = require('./ride');
 var _ = require('lodash');
+var util = require('util');
 
 var EventSchema = new Schema({
   place: { type: ObjectId, ref: 'place' },
@@ -68,8 +69,12 @@ EventSchema.statics.getPastEvents = function () {
 };
 
 function createRide(ride, path, transaction) {
-  transaction.insert('ride', ride);
-  return transaction.run()
+  return util.findOrCreatePlace(ride.place, transaction)
+    .then(places => {
+      ride.place = places[0]._id;
+      transaction.insert('ride', ride);
+      return transaction.run()
+    })
     .then(createdRides => {
       this[path].push({_id: createdRides[0]._id});
     })

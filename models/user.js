@@ -4,6 +4,7 @@ var Transaction = require('lx-mongoose-transaction')(mongoose);
 var Place = require('./place');
 var Event = require('./event');
 var error = require('../lib/error');
+var util = require('../lib/util');
 
 var UserSchema = new Schema({
   name: String,
@@ -61,20 +62,6 @@ UserSchema.methods.getEvents = function () {
     });
 };
 
-/*ToDo: this probably goes somewhere else*/
-function findOrCreatePlace(data, transaction){
-  return Place.find({google_places_id: data.google_places_id})
-    .then(place =>{
-      if (!place.length){
-        transaction.insert('place', data);
-        return transaction.run();
-      } else {
-        return place;
-      }
-    })
-    .catch(err => { throw new Error(error.toHttp(err))});
-};
-
 /**
  * Creates a new event and sets the user as the organizer.
  *
@@ -83,7 +70,7 @@ function findOrCreatePlace(data, transaction){
 UserSchema.methods.createEvent = function (data) {
   var transaction = new Transaction();
 
-  return findOrCreatePlace(data.place, transaction)
+  return util.findOrCreatePlace(data.place, transaction)
   .then(places => {
     var event = {
       place: places[0]._id,
