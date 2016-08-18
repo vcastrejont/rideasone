@@ -260,6 +260,7 @@ router.delete('/events/:event_id', middleware.isAuthenticated, middleware.isOrga
  * @apiParam {String}   comment             Driver comments
  * @apiParam {Boolean}  going               if is Going ride
  * @apiParam {Boolean}  returning           if is Returning ride
+ * @apiParam {Object}   place               the departure or destination place, other than the venue
  * @apiSuccess {String} numAffected         1 for success
  **/
 router.post('/events/:event_id/ride', middleware.isAuthenticated, eventsController.addRide);
@@ -283,7 +284,7 @@ router.delete('/events/:event_id/rides/:ride_id', middleware.isAuthenticated, mi
  * @apiVersion 0.2.0
  * @apiHeader   Authorization                JWT token.
  * @apiDescription Register to a ride to or from the event
- * @apiParam {String} user_id
+ * @apiParam {object} place 
  * @apiSuccess numAffected
  **/
 router.put('/rides/:ride_id/join', middleware.isAuthenticated, ridesController.joinRide);
