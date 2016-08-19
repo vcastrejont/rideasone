@@ -32,14 +32,16 @@ EventSchema.statics.getCurrentEvents = function () {
   var twoHoursAgo = moment().subtract(2, 'hour').toDate();
   return Event.find({ starts_at: { $gte: twoHoursAgo} })
     .populate('place')
-    .populate('organizer', '_id name photo')
+    //ToDo: only passengers and organizers should see emails
+    .populate('organizer', '_id name photo email')
     .populate({
       path: 'going_rides', 
       populate: {
-        path: 'driver passengers',
+        path: 'driver passengers.user passengers.place place',
+        select: '_id name photo email location address google_places_id',
         populate: {
           path: 'user place',
-          select: '_id name photo'
+          select: '_id name photo email'
         }
       }
 	})
@@ -55,16 +57,18 @@ EventSchema.statics.getPastEvents = function () {
   var twoHoursAgo = moment().subtract(1, 'hour').toDate();
   return Event.find({ starts_at: { $lt: twoHoursAgo } })
   .populate('place')
-	.populate('organizer')
-	.populate({
-	  path: 'going_rides', 
+  //ToDo: only passengers and organizers should see emails
+  .populate('organizer', '_id name photo email')
+  .populate({
+    path: 'going_rides', 
+    populate: {
+      path: 'driver passengers.user passengers.place place',
+      select: '_id name photo email location address google_places_id',
       populate: {
-        path: 'driver passengers',
-        populate: {
-          path: 'user place',
-          select: '_id name email'
-        }
+        path: 'user place',
+        select: '_id name photo email'
       }
+    }
 	})
 	.sort('-starts_at').limit(50);
 };
