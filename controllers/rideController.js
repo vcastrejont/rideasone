@@ -16,7 +16,7 @@ module.exports = {
           message: 'Successfully deleted',
         });
       })
-      .catch(err => next);
+      .catch(next);
   },
   
   joinRide: function (req, res, next) {
@@ -26,7 +26,22 @@ module.exports = {
           message: 'Successfully added!'
         });
       })
-      .catch(err => next);
+      .catch(next);
+  },
+  getByUser: function (req, res, next) {
+    var userId = req.user._id;
+    return Ride.find({departure: {$gt: new Date().toUTCString()}, $or: [{driver: userId}, {passengers:{$elemMatch: {user: userId}}}]})
+      .populate('driver', 'name photo email _id')
+      .populate('place')
+      .populate({
+        path: 'passengers.user passengers.place',
+        select: 'name email photo _id location address google_places_id'
+      })
+      .sort('departure')
+      .then(rides => {
+        return res.status(200).json(rides)
+      })
+      .catch(next);
   },
   addPassenger: function (req, res) {
     var event_id = req.body.event_id;
@@ -64,7 +79,7 @@ module.exports = {
         message: 'Successfully removed',
       });
     })
-    .catch(err => next);
+    .catch(next);
   },
   acceptRideRequest: function (req, res, next) {
     RideRequest.findOne({_id: req.params.request_id, ride: req.params.ride_id})
@@ -77,7 +92,7 @@ module.exports = {
         message: 'successfully accepted ride',
       });
     })
-    .catch(err => next);
+    .catch(next);
     
   }
 };

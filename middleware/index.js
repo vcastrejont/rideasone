@@ -5,8 +5,16 @@ module.exports = {
   isAuthenticated: passport.authenticate('jwt', { session: false }),
   isPassenger: isPassenger,
   isOrganizer: isOrganizer,
-	isDriver: isDriver
+	isDriver: isDriver,
+  isOwn: isOwn
 };
+
+function isOwn(req, res, next) {
+  if(req.params.user_id !== req.user._id.toString()){
+    next(new Error('this view does not belong to the user')); 
+  }
+  next();
+}
 
 function isPassenger (req, res, next) {
   var rideId = req.body.ride_id || req.params.ride_id;
