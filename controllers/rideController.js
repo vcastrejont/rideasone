@@ -83,6 +83,7 @@ module.exports = {
   acceptRideRequest: function (req, res) {
     var passenger;
     var ride;
+  },
 	
   acceptRideRequest: function (req, res, next) {
     RideRequest.findOne({_id: req.params.request_id, ride: req.params.ride_id})

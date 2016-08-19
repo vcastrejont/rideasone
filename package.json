@@ -11,9 +11,8 @@
   "scripts": {
     "watch": "npm-watch",
     "start": "NODE_ENV=development node --debug app.js",
-    "postinstall": "bower install",
-    "test": "NODE_ENV=test mocha --require=tests/bootstrap.js tests/**",
     "postinstall": "bower install  && apidoc -i routes/ -o public/apidoc/",
+    "test": "NODE_ENV=test mocha --require=tests/bootstrap.js tests/**",
     "apidoc": "apidoc -i routes/ -o public/apidoc/",
     "build": "grunt compile-js"
   },
@@ -33,6 +32,7 @@
     "express": "~4.13.1",
     "express-session": "^1.13.0",
     "fcm-push-notif": "^1.1.1",
+    "firebase": "^3.3.0",
     "jsonwebtoken": "~7.1.3",
     "less-middleware": "^2.1.0",
     "lodash": "^4.8.2",

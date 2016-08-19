@@ -86,9 +86,11 @@ EventSchema.methods.addRide = function (rideData) {
   var transaction = new Transaction();
 
   var ride = {
-	driver: rideData.driver,
+    driver: rideData.driver,
     seats: rideData.seats,
-    comments: rideData.comments
+    comments: rideData.comments,
+    place: rideData.place,
+    departure: rudeData.departure
   };
 
   var promises = [];
