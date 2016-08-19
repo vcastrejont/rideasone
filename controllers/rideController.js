@@ -61,9 +61,9 @@ module.exports = {
     .populate('driver')
 	.then(ride => {
       var notificationData = {
-	    recipient: {
-		  tokens: ride.driver.tokens,
-		  id: ride.driver._id,
+	      recipient: {
+		    tokens: ride.driver.tokens,
+		    id: ride.driver._id,
 	    },
 	    message: this.name +' has cancelled a spot on your ride',
 		subject: ride._id,

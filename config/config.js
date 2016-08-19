@@ -29,6 +29,9 @@ var defaults = {
   },
   fcm: {
 	api_key: 'IzaSyCI7KqudvtYvEZAKNX-b3iHdu67_FbfvRc'
+  },
+  firebase: {
+    databseURL: ""
   }
 };
 
