@@ -180,17 +180,15 @@ module.exports = {
     var ride = _.pick(req.body, ['place', 'departure', 'seats', 'comment', 'going', 'returning']);
 
     ride.driver = req.user._id;
-    ride.place = req.user
+    ride.place = req.body.place || req.user.default_place;
     Event.findOne({_id: req.params.event_id})
     .then(function (event) {
       if(!event) throw error.http(404, "the event doesn't exist");
       return event.addRide(ride);
     })
-    .then(function (updatedEvents) {
-      var numAffected = updatedEvents.length;
+    .then(function () {
       return res.status(200).json({
         message: 'Successfully added!',
-        numAffected: numAffected
       });
     })
     .catch(err => next);
