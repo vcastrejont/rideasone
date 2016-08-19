@@ -30,13 +30,14 @@ module.exports = {
   },
   getByUser: function (req, res, next) {
     var userId = req.user._id;
-    return Ride.find({$or: [{driver: userId}, {passengers:{$elemMatch: {user: userId}}}]})
+    return Ride.find({departure: {$gt: new Date().toUTCString()}, $or: [{driver: userId}, {passengers:{$elemMatch: {user: userId}}}]})
       .populate('driver', 'name photo email _id')
       .populate('place')
       .populate({
         path: 'passengers.user passengers.place',
         select: 'name email photo _id location address google_places_id'
       })
+      .sort('departure')
       .then(rides => {
         return res.status(200).json(rides)
       })
