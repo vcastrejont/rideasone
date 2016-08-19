@@ -36,7 +36,8 @@ EventSchema.statics.getCurrentEvents = function () {
     .populate({
       path: 'going_rides', 
       populate: {
-        path: 'driver passengers',
+        path: 'driver passengers._',
+        select: '_id name photo',
         populate: {
           path: 'user place',
           select: '_id name photo'
@@ -55,14 +56,15 @@ EventSchema.statics.getPastEvents = function () {
   var twoHoursAgo = moment().subtract(1, 'hour').toDate();
   return Event.find({ starts_at: { $lt: twoHoursAgo } })
   .populate('place')
-	.populate('organizer')
+  .populate('organizer', '_id name photo')
 	.populate({
 	  path: 'going_rides', 
       populate: {
-        path: 'driver passengers',
+        path: 'driver passengers._',
+        select: '_id name photo',
         populate: {
           path: 'user place',
-          select: '_id name email'
+          select: '_id name photo'
         }
       }
 	})

@@ -21,7 +21,7 @@ module.exports = {
       .then(function (events) {
         res.json(events);
       })
-      .catch(err => next);
+      .catch(err => {console.log(err); next()});
   },
   /**
    * List all the events up to yesterday.
