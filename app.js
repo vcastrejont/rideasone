@@ -105,12 +105,6 @@ app.use(function(err, req, res, next){
   res.status(err.code || 500).send(err.message);
 });
 
-if (app.get('env') === 'development') {
-  app.use(function(err, req, res, next) {
-    res.send(err);
-  });
-}
-
 app.on('error', onError);
 app.on('listening', onListening);
 
