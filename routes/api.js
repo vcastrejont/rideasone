@@ -11,7 +11,7 @@ router.get('/', function (req, res) {
 });
 
 // ----Events --------
-  /*
+  /**
   * @api {get} /api/events All future events
   * @apiName GetFutureEvents
   * @apiVersion 0.2.0
@@ -63,7 +63,7 @@ router.get('/', function (req, res) {
 */
 router.get('/events', middleware.isAuthenticated, eventsController.getFuture);
 
-/*
+/**
   * @api {get} /api/events/past All past events
   * @apiName GetPastEvents
   * @apiGroup Events
@@ -114,7 +114,7 @@ router.get('/events', middleware.isAuthenticated, eventsController.getFuture);
 
 router.get('/events/past', middleware.isAuthenticated, eventsController.getPast);
 
-  /*
+/**
   * @api {post} /api/events Add new event
   * @apiName CreateEvent
   * @apiVersion 0.2.0
@@ -132,7 +132,7 @@ router.get('/events/past', middleware.isAuthenticated, eventsController.getPast)
 */
 router.post('/events', middleware.isAuthenticated, eventsController.create);
 
-/*
+/**
   * @api {get} /api/events/:event_id Show an event
   * @apiName GetEvent
   * @apiGroup Events
@@ -183,7 +183,7 @@ router.post('/events', middleware.isAuthenticated, eventsController.create);
 */
 router.get('/events/:event_id', middleware.isAuthenticated, eventsController.getById);
 
-/*
+/**
   * @api {get} /api/users/:user_id/events All events for user
   * @apiName GetUserEvents
   * @apiVersion 0.2.0
@@ -235,7 +235,7 @@ router.get('/events/:event_id', middleware.isAuthenticated, eventsController.get
 router.get('/users/:user_id/events', middleware.isAuthenticated, eventsController.getByUser);
 
 
-/*
+/**
   * @api {put} /api/events/:event_id/ Edit event
   * @apiName EditEvent
   * @apiGroup Events
@@ -257,7 +257,7 @@ router.put('/events/:event_id', middleware.isAuthenticated, middleware.isOrganiz
 router.delete('/events/:event_id', middleware.isAuthenticated, middleware.isOrganizer, eventsController.remove);
 
 // ----Rides--------
-/*
+/**
   * @api {post} /api/events/:event_id/ride Add a ride 
   * @apiName AddEventRide
   * @apiVersion 0.2.0
@@ -273,7 +273,7 @@ router.delete('/events/:event_id', middleware.isAuthenticated, middleware.isOrga
 */
 router.post('/events/:event_id/ride', middleware.isAuthenticated, eventsController.addRide);
 
-/*
+/**
   * @api {get} /api/users/:user_id/rides Get user rides
   * @apiName getUserRides
   * @apiVersion 0.2.0
@@ -300,7 +300,7 @@ router.post('/events/:event_id/ride', middleware.isAuthenticated, eventsControll
 */
 router.get('/users/:user_id/rides', middleware.isAuthenticated, middleware.isOwn, ridesController.getByUser);
 
-/*
+/**
   * @api {delete} /api/events/:event_id/rides/:ride_id Delete a ride
   * @apiName DeleteEventRide
   * @apiVersion 0.2.0
@@ -311,7 +311,7 @@ router.get('/users/:user_id/rides', middleware.isAuthenticated, middleware.isOwn
 */
 router.delete('/events/:event_id/rides/:ride_id', middleware.isAuthenticated, middleware.isDriver, ridesController.deleteRide);
 
-/*
+/**
   * @api {put} /api/rides/:ride_id/join Request joining a ride
   * @apiName JoinEventRide
   * @apiGroup Rides
@@ -323,7 +323,7 @@ router.delete('/events/:event_id/rides/:ride_id', middleware.isAuthenticated, mi
 */
 router.put('/rides/:ride_id/join', middleware.isAuthenticated, ridesController.joinRide);
 
-/*
+/**
   * @api {put} /api/rides/:ride_id/ride-request/:request_id/accept Accept ride request
   * @apiName AcceptEventRideRequest
   * @apiGroup Rides
@@ -335,7 +335,7 @@ router.put('/rides/:ride_id/join', middleware.isAuthenticated, ridesController.j
 router.put('/rides/:ride_id/ride-requests/:request_id/accept', middleware.isAuthenticated, middleware.isDriver, ridesController.acceptRideRequest);
 router.put('/rides/:ride_id/add-passenger', middleware.isAuthenticated, middleware.isPassenger, ridesController.addPassenger);  
 
-/*
+/**
   * @api {put} api/rides/:ride_id/leave Cancel ride request
   * @apiName LeaveEventRide
   * @apiGroup Rides
@@ -346,7 +346,7 @@ router.put('/rides/:ride_id/add-passenger', middleware.isAuthenticated, middlewa
 */
 router.put('/rides/:ride_id/leave', middleware.isAuthenticated, middleware.isPassenger, ridesController.leaveRide);
 
-  /*
+/**
   * @api {delete} /api/events/:event Delete an event
   * @apiName DeleteEvent
   * @apiVersion 0.2.0
@@ -367,7 +367,7 @@ router.put('/rides/:ride_id/leave', middleware.isAuthenticated, middleware.isPas
 // router.post('/settings', settingsController.update);
 
 // ----Users --------
-/*
+/**
   * @api {get} /api/users Users list
   * @apiName GetUsers
   * @apiGroup Users
