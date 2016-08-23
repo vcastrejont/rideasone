@@ -38,6 +38,46 @@ RideSchema.methods.postMessage = function (userId, text) {
   });
 };
 
+function appendEvent(ride){
+  var Event = require('./event');
+  var query = {$or:[
+   {going_rides: ride._id}, 
+   {returning_rides: ride._id}
+  ]};
+
+  var promise = Event.findOne(query)
+    .then(event => {ride._doc.event = event._id;});
+
+  return promise;
+}
+
+RideSchema.statics.getUserRides = function (userId) {
+  var query = {
+    departure: {$gt: new Date().toUTCString()},
+    $or: [
+      {driver: userId},
+      {passengers: {$elemMatch: {$elemMatch: {user: userId}}}}
+    ]
+  };
+
+  return Ride.find(query)
+    .populate('driver', 'name photo email _id')
+    .populate('place')
+    .populate({
+      path: 'passengers.user passengers.place',
+      select: 'name email photo _id location address google_places_id'
+    })
+    .sort('departure')
+    .then(rides => {
+      var promises = [];
+
+      rides.forEach((ride, i) => {
+        promises.push(appendEvent(ride));
+      });
+      return Promise.all(promises).return(rides);
+    });
+
+}
 RideSchema.methods.deleteEventRide = function(event) {
   var Event = require('./event');
   var transaction = new Transaction();
@@ -61,4 +101,4 @@ RideSchema.methods.deleteEventRide = function(event) {
   .catch(err => {throw new Error(err.toHttp(err))});
 }
 
-module.exports = mongoose.model('ride', RideSchema);
+var Ride = module.exports = mongoose.model('ride', RideSchema);

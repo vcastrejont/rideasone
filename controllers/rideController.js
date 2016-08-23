@@ -1,6 +1,7 @@
 var Event = require('../models/event');
 var Ride = require('../models/ride');
 var RideRequest = require('../models/rideRequest');
+var Promise = require('bluebird');
 var mailerController = require('../controllers/mailerController');
 var mongoose = require('mongoose');
 var Transaction = require('lx-mongoose-transaction')(mongoose);
@@ -29,15 +30,7 @@ module.exports = {
       .catch(next);
   },
   getByUser: function (req, res, next) {
-    var userId = req.user._id;
-    return Ride.find({departure: {$gt: new Date().toUTCString()}, $or: [{driver: userId}, {passengers:{$elemMatch: {user: userId}}}]})
-      .populate('driver', 'name photo email _id')
-      .populate('place')
-      .populate({
-        path: 'passengers.user passengers.place',
-        select: 'name email photo _id location address google_places_id'
-      })
-      .sort('departure')
+    Ride.getUserRides(req.params.user_id)
       .then(rides => {
         return res.status(200).json(rides)
       })
