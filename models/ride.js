@@ -46,7 +46,13 @@ function appendEvent(ride){
   ]};
 
   var promise = Event.findOne(query)
-    .then(event => {ride._doc.event = event._id;});
+    .then(event => {
+      if (event) {
+        ride._doc.event = event._id;
+      } else {
+        ride._doc.event = 'event Missing';
+      }
+    });
 
   return promise;
 }
