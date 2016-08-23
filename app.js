@@ -97,14 +97,13 @@ app.use('/auth', require('./routes/auth'));
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   var err = new Error('Not Found');
-  err.status = 404;
-  next(err);
+  res.status(404).send('Not Found')
 });
-if (app.get('env') === 'development') {
-  app.use(function(err, req, res, next) {
-    res.send(err);
-  });
-}
+
+app.use(function(err, req, res, next){
+  console.log(err);
+  if(!res.headersSent) res.status(err.code || 500).send(err.message);
+});
 
 app.on('error', onError);
 app.on('listening', onListening);

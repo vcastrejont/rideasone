@@ -3,13 +3,14 @@ var Schema = mongoose.Schema;
 var ObjectId = Schema.ObjectId;
 var Transaction = require('lx-mongoose-transaction')(mongoose);
 var Promise = require('bluebird');
+var error = require('../lib/error');
 
 var RideSchema = new Schema({
   place: { type: ObjectId, ref: 'place' },
   driver: { type: ObjectId, ref: 'user', required: true },
   departure: Date,
   seats: Number,
-  comments: String,
+  comment: String,
   passengers: [{
     _id: false,
     user: { type: ObjectId, ref: 'user' },
@@ -37,12 +38,53 @@ RideSchema.methods.postMessage = function (userId, text) {
   });
 };
 
+function appendEvent(ride){
+  var Event = require('./event');
+  var query = {$or:[
+   {going_rides: ride._id}, 
+   {returning_rides: ride._id}
+  ]};
+
+  var promise = Event.findOne(query)
+    .then(event => {ride._doc.event = event._id;});
+
+  return promise;
+}
+
+RideSchema.statics.getUserRides = function (userId) {
+  var query = {
+    departure: {$gt: new Date().toUTCString()},
+    $or: [
+      {driver: userId},
+      {passengers: {$elemMatch: {$elemMatch: {user: userId}}}}
+    ]
+  };
+
+  return Ride.find(query)
+    .populate('driver', 'name photo email _id')
+    .populate('place')
+    .populate({
+      path: 'passengers.user passengers.place',
+      select: 'name email photo _id location address google_places_id'
+    })
+    .sort('departure')
+    .then(rides => {
+      var promises = [];
+
+      rides.forEach((ride, i) => {
+        promises.push(appendEvent(ride));
+      });
+      return Promise.all(promises).return(rides);
+    });
+
+}
 RideSchema.methods.deleteEventRide = function(event) {
   var Event = require('./event');
   var transaction = new Transaction();
  
   return Event.findOne({_id: event._id})
   .then(event => {
+    if(!event) throw error.http(404, "the event doesn't exist"); 
     var promises = [];
     event.going_rides.pull({_id: this._id});
     event.returning_rides.pull({_id: this._id});
@@ -55,7 +97,8 @@ RideSchema.methods.deleteEventRide = function(event) {
     transaction.update('event', event._id, updatedRides);
     transaction.remove('ride', this._id);
     return transaction.run();
-  });
+  })
+  .catch(err => {throw new Error(err.toHttp(err))});
 }
 
-module.exports = mongoose.model('ride', RideSchema);
+var Ride = module.exports = mongoose.model('ride', RideSchema);

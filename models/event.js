@@ -6,6 +6,8 @@ var Transaction = require('lx-mongoose-transaction')(mongoose);
 var Promise = require('bluebird');
 var Ride = require('./ride');
 var _ = require('lodash');
+var util = require('../lib/util');
+var error = require('../lib/error');
 
 var EventSchema = new Schema({
   place: { type: ObjectId, ref: 'place' },
@@ -30,18 +32,20 @@ EventSchema.statics.getCurrentEvents = function () {
   var twoHoursAgo = moment().subtract(2, 'hour').toDate();
   return Event.find({ starts_at: { $gte: twoHoursAgo} })
     .populate('place')
-    .populate('organizer', '_id name photo')
+    //ToDo: only passengers and organizers should see emails
+    .populate('organizer', '_id name photo email')
     .populate({
       path: 'going_rides', 
       populate: {
-        path: 'driver passengers',
+        path: 'driver passengers.user passengers.place place',
+        select: '_id name photo email location address google_places_id',
         populate: {
           path: 'user place',
-          select: '_id name photo'
+          select: '_id name photo email'
         }
       }
 	})
-    .sort('datetime');
+    .sort('starts_at');
 };
 
 /**
@@ -52,27 +56,34 @@ EventSchema.statics.getCurrentEvents = function () {
 EventSchema.statics.getPastEvents = function () {
   var twoHoursAgo = moment().subtract(1, 'hour').toDate();
   return Event.find({ starts_at: { $lt: twoHoursAgo } })
-    .populate('place')
-	.populate('organizer')
-	.populate({
-	  path: 'going_rides', 
+  .populate('place')
+  //ToDo: only passengers and organizers should see emails
+  .populate('organizer', '_id name photo email')
+  .populate({
+    path: 'going_rides', 
+    populate: {
+      path: 'driver passengers.user passengers.place place',
+      select: '_id name photo email location address google_places_id',
       populate: {
-        path: 'driver passengers',
-        populate: {
-          path: 'user place',
-          select: '_id name email'
-        }
+        path: 'user place',
+        select: '_id name photo email'
       }
+    }
 	})
-	.sort('-datetime').limit(50);
+	.sort('-starts_at').limit(50);
 };
 
 function createRide(ride, path, transaction) {
-  transaction.insert('ride', ride);
-  return transaction.run()
+  return util.findOrCreatePlace(ride.place, transaction)
+    .then(places => {
+      ride.place = places[0]._id;
+      transaction.insert('ride', ride);
+      return transaction.run()
+    })
     .then(createdRides => {
       this[path].push({_id: createdRides[0]._id});
-    });
+    })
+    .catch(err => {throw new Error(error.toHttp(err))});
 }
 
 EventSchema.methods.addRide = function (rideData) {
@@ -95,6 +106,7 @@ EventSchema.methods.addRide = function (rideData) {
         returning_rides: this.returning_rides
       });
       return transaction.run()
+      .catch(err => {throw new Error(error.toHttp(err))});
     });
 
 };

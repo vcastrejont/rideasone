@@ -48,7 +48,13 @@ describe('Ride removal', function(){
         driver: testUser._id,
         seats: 4,
         comments: 'asdf',
-        going: true,
+        place: {
+          google_places_id: 'asdfasdf',
+          seats: 4,
+          address: 'aaaaaaaaaaa',
+          location: {lat: 8, lon: 5}
+       },
+       going: true,
         returning: true
       })
       .return(event);
@@ -59,6 +65,12 @@ describe('Ride removal', function(){
         seats: 4,
         comments: 'ñlkj',
         going: true,
+        place: {
+          google_places_id: 'asdfasdf',
+          seats: 4,
+          address: 'aaaaaaaaaaa',
+          location: {lat: 8, lon: 5}
+        },
         returning: true
       })
       .return(event);

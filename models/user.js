@@ -3,6 +3,8 @@ var Schema = mongoose.Schema;
 var Transaction = require('lx-mongoose-transaction')(mongoose);
 var Place = require('./place');
 var Event = require('./event');
+var error = require('../lib/error');
+var util = require('../lib/util');
 
 var UserSchema = new Schema({
   name: String,
@@ -60,19 +62,6 @@ UserSchema.methods.getEvents = function () {
     });
 };
 
-/*ToDo: this probably goes somewhere else*/
-function findOrCreatePlace(data, transaction){
-  return Place.find({google_places_id: data.google_places_id})
-    .then(place =>{
-      if (!place.length){
-    transaction.insert('place', data);
-    return transaction.run();
-      } else {
-        return place
-    }
-  });
-};
-
 /**
  * Creates a new event and sets the user as the organizer.
  *
@@ -81,7 +70,7 @@ function findOrCreatePlace(data, transaction){
 UserSchema.methods.createEvent = function (data) {
   var transaction = new Transaction();
 
-  return findOrCreatePlace(data.place, transaction)
+  return util.findOrCreatePlace(data.place, transaction)
   .then(places => {
     var event = {
       place: places[0]._id,
@@ -94,20 +83,27 @@ UserSchema.methods.createEvent = function (data) {
     };
     transaction.insert('event', event);
     return transaction.run()
-    .then(ev => ev[0]._doc); 
-  });
+  })
+  .then(ev => ev[0]._doc)
+  .catch(err => {throw new Error(error.toHttp(err))});
 
 };
 
-UserSchema.methods.requestJoiningRide = function (rideId) {
+UserSchema.methods.requestJoiningRide = function (rideId, place) {
   var RideRequest = require('./rideRequest');
-  var request = new RideRequest({
-    ride: rideId,
-    passenger: this,
-    place: this.default_place
-  });
-  // TODO: Create driver notification
-  return request.save();
+  var transaction = new Transaction();
+
+  return util.findOrCreatePlace(place, transaction)
+    .then(places => {
+      var request = new RideRequest({
+        ride: rideId,
+        passenger: this,
+        place: places[0]._id
+      });
+      // TODO: Create driver notification
+      return request.save()
+    })
+    .catch(err => {throw new Error(error.toHttp(err))});
 };
 
 UserSchema.methods.isPassenger = function (rideId) {
@@ -115,9 +111,7 @@ UserSchema.methods.isPassenger = function (rideId) {
   return Ride.findOne({_id: rideId, 'passengers.user': this})
     .then(ride => {
       if (!ride) {
-        var error = new Error('User is not a passenger on this ride');
-        error.status = 403;
-        throw error;
+        throw new Error(error.http(403, 'user is not a passenger of this ride'));
       }
       return ride;
     });
@@ -128,9 +122,7 @@ UserSchema.methods.isDriver = function (rideId) {
   return Ride.findOne({ _id: rideId, driver: this })
     .then(ride => {
       if (!ride) {
-        var error = new Error('User is not the driver on this ride');
-        error.status = 403;
-        throw error;
+        throw new Error(error.http(403, 'user is not the driver of this ride'));
       }
       return ride;
     });
@@ -138,12 +130,10 @@ UserSchema.methods.isDriver = function (rideId) {
 
 UserSchema.methods.isOrganizer = function (eventId) {
   var Event = require('../models/event');
-  return Event.findOne({ _id: eventId, organizer: this })
+  return Event.findOne({ _id: eventId,} )
     .then((event) => {
       if (!event) {
-        var error = new Error('User is not the organizer of this event');
-        error.status = 403;
-        throw error;
+        throw new Error(error.http(403, 'user is not the organizer of this event'));
       }
       return event;
     });
