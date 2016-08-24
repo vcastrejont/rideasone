@@ -4,7 +4,7 @@ eventsCtrl.$inject = ['$scope', '$window', 'apiservice','mapFactory'];
 
 function eventsCtrl ($scope, $window, apiservice, mapFactory) {
   $scope.api = mapFactory.getApi();
-  $scope.api.defaultLocation();
+  $scope.api.currentLocation();
 
   apiservice.getEvents()
     .success(function(data) {

@@ -5,8 +5,8 @@ homeCtrl.$inject = ['$rootScope','$scope', '$window', 'apiservice','mapFactory']
 function homeCtrl ($rootScope, $scope, $window, apiservice, mapFactory ) {
 
 
-  $scope.api = mapFactory.getApi();
-  $scope.api.defaultLocation();
+  $scope.map = mapFactory.getApi();
+  $scope.map.defaultLocation();
   
   apiservice.getEvents()
     .success(function(data) {
