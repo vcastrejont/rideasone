@@ -130,10 +130,10 @@ UserSchema.methods.isDriver = function (rideId) {
 
 UserSchema.methods.isOrganizer = function (eventId) {
   var Event = require('../models/event');
-  return Event.findOne({ _id: eventId,} )
+  return Event.findOne({ _id: eventId, organizer: this._id} )
     .then((event) => {
       if (!event) {
-        throw new Error(error.http(403, 'user is not the organizer of this event'));
+        throw new Error(error.http(403, 'user is not the organizer of this event or event doesn\'t exist'));
       }
       return event;
     });

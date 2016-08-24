@@ -41,12 +41,11 @@ function isDriver (req, res, next) {
 function isOrganizer (req, res, next) {
   var eventId = req.body.event_id || req.params.event_id;
   if (!eventId) return next(error.http(400, 'an event_id is required')) 
+
   req.user.isOrganizer(eventId)
     .then((event) => {
       req.event = event;
       return next();
     })
-    .catch((err) => {
-      return res.status(err.status || 500).json(err);
-    });
+    .catch(next);
 }

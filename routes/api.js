@@ -367,7 +367,7 @@ router.put('/rides/:ride_id/leave', middleware.isAuthenticated, middleware.isPas
 // router.post('/settings', settingsController.update);
 
 // ----Users --------
-/**
+/*
   * @api {get} /api/users Users list
   * @apiName GetUsers
   * @apiGroup Users

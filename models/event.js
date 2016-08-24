@@ -111,6 +111,19 @@ EventSchema.methods.addRide = function (rideData) {
 
 };
 
+EventSchema.methods.removeEventAndRides = function () {
+  var transaction = new Transaction();
+  var rides = _.concat(this.going_rides, this.returning_rides);
+
+  transaction.remove('event', this._id);
+  rides.forEach(ride => {
+    /*ToDo: notify driver and passengers*/
+    console.log(ride);
+    transaction.remove('ride', ride);
+  });
+
+  return transaction.run();
+}
 
 var Event = mongoose.model('event', EventSchema);
 module.exports = Event;

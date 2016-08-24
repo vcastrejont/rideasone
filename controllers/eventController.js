@@ -21,7 +21,7 @@ module.exports = {
       .then(function (events) {
         res.json(events);
       })
-      .catch(err => {console.log(err); next()});
+      .catch(next);
   },
   /**
    * List all the events up to yesterday.
@@ -31,7 +31,7 @@ module.exports = {
       .then(function (events) {
         res.json(events);
       })
-      .catch(err => next);
+      .catch(next);
   },
   /**
    * eventController.getByUser()
@@ -47,7 +47,7 @@ module.exports = {
       .then(function (events) {
         res.json(events);
       })
-      .catch(err => next);
+      .catch(next);
   },
   /**
   * eventController.carbyuser()
@@ -105,7 +105,7 @@ module.exports = {
       else
         throw new HttpError(404, 'event not found', res); 
       })
-      .catch(err => next);
+      .catch(next);
   },
   /**
    * eventController.create()
@@ -118,17 +118,17 @@ module.exports = {
     .then(event => {
        res.json({ _id: event._id });
      })
-     .catch(err => next);
+     .catch(next);
   },
   /**
    * eventController.remove()
   */
   remove: function (req, res, next) {
-    req.event.remove()
-      .then(function (event) {
-        return res.json(event);
+    req.event.removeEventAndRides()
+      .then(() => {
+        return res.json('success');
       })
-      .catch(err => next);
+      .catch(next);
   },
   /**
    * eventController.drivers()
@@ -191,7 +191,7 @@ module.exports = {
         message: 'Successfully added!',
       });
     })
-    .catch(err => next);
+    .catch(next);
   },
   edit: function (req, res, next) {
     var updates = _.pick(req.body, ['name', 'place', 'description', 'starts_at', 'ends_at', 'tags']); 
@@ -203,7 +203,7 @@ module.exports = {
         message: 'Successfully edited',
       });
     })
-    .catch(err => next);
+    .catch(next);
   },
 
   /**
