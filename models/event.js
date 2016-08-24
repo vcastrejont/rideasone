@@ -48,6 +48,29 @@ EventSchema.statics.getCurrentEvents = function () {
     .sort('starts_at');
 };
 
+EventSchema.statics.getUserEvents = function (userId) {
+  var today = moment().startOf('day').toDate().toUTCString();
+
+  return Event.find({
+    starts_at: {$gt: today},
+    organizer: userId
+  })
+  .populate('organizer', '_id name photo email')
+  .populate('place')
+  .populate({
+    path: 'going_rides returning_rides', 
+    populate: {
+      path: 'driver passengers.user passengers.place',
+      populate: {
+        path: 'user place',
+        select: '_id name photo email'
+      }
+    }
+  })
+  .sort('starts_at');
+ 
+};
+
 /**
  * Gets the last 50 events that where scheduled before 2 hours ago.
  *
@@ -117,6 +140,19 @@ EventSchema.methods.addRide = function (rideData) {
 
 };
 
+EventSchema.methods.removeEventAndRides = function () {
+  var transaction = new Transaction();
+  var rides = _.concat(this.going_rides, this.returning_rides);
+
+  transaction.remove('event', this._id);
+  rides.forEach(ride => {
+    /*ToDo: notify driver and passengers*/
+    console.log(ride);
+    transaction.remove('ride', ride);
+  });
+
+  return transaction.run();
+}
 
 var Event = mongoose.model('event', EventSchema);
 module.exports = Event;

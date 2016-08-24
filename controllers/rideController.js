@@ -1,6 +1,7 @@
 var Event = require('../models/event');
 var Ride = require('../models/ride');
 var RideRequest = require('../models/rideRequest');
+var Promise = require('bluebird');
 var mailerController = require('../controllers/mailerController');
 var mongoose = require('mongoose');
 var Transaction = require('lx-mongoose-transaction')(mongoose);
@@ -16,7 +17,7 @@ module.exports = {
           message: 'Successfully deleted',
         });
       })
-      .catch(err => next);
+      .catch(next);
   },
   
   joinRide: function (req, res, next) {
@@ -26,7 +27,14 @@ module.exports = {
           message: 'Successfully added!'
         });
       })
-      .catch(err => next);
+      .catch(next);
+  },
+  getByUser: function (req, res, next) {
+    Ride.getUserRides(req.params.user_id)
+      .then(rides => {
+        return res.status(200).json(rides)
+      })
+      .catch(next);
   },
   addPassenger: function (req, res) {
     var event_id = req.body.event_id;
@@ -78,7 +86,7 @@ module.exports = {
         message: 'Successfully removed',
       });
     })
-    .catch(err => next);
+    .catch(next);
   },
   acceptRideRequest: function (req, res) {
     var passenger;
@@ -112,7 +120,7 @@ module.exports = {
         message: 'successfully accepted ride',
       });
     })
-    .catch(err => next);
+    .catch(next);
     
   }
 };

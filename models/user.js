@@ -4,6 +4,7 @@ var Transaction = require('lx-mongoose-transaction')(mongoose);
 var Place = require('./place');
 var Event = require('./event');
 var error = require('../lib/error');
+var util = require('../lib/util');
 
 var UserSchema = new Schema({
   name: String,
@@ -98,30 +99,36 @@ UserSchema.methods.createEvent = function (data) {
 UserSchema.methods.requestJoiningRide = function (rideId, place) {
   var RideRequest = require('./rideRequest');
   var Notification = require('./notification');
+  var transaction = new Transaction();
 
-  var request = new RideRequest({
-    ride: rideId,
-    passenger: this,
-    place: this.default_place
-  });
-
-  return request.save()
-  .populate('ride')
-	.populate('driver')
-	.then(request => {
+  return util.findOrCreatePlace(place, transaction)
+    .then(places => {
+      var request = {
+        ride: rideId,
+        passenger: this,
+        place: places[0]._id
+      };
+      transaction.insert('riderequest', request);
+      return transaction.run(); 
+    })
+    .then(requests => {
+      return requests[0].populate('ride').populate('driver');
+    })
+    .then(request => {
       var notificationData = {
-	    recipient: {
-		  tokens: request.ride.driver.tokens,
-		  id: request.ride.driver._id,
-	    },
-	    message: this.name +' is requesting to join your ride',
-		subject: request._id,
-		type: 'ride request'
-	  };
-	  
-      return Notification.addNotification(notificationData);
-	})
-	.return(request);
+	      recipient: {
+		      tokens: request.ride.driver.tokens,
+  		    id: request.ride.driver._id,
+	      },
+	      message: this.name +' is requesting to join your ride',
+		    subject: request._id,
+		    type: 'ride request'
+	    };
+
+      return Notification.addNotification(notificationData)
+        .return(request);
+    })
+    .catch(err => {throw new Error(error.toHttp(err))});
 };
 
 UserSchema.methods.isPassenger = function (rideId) {
@@ -148,10 +155,10 @@ UserSchema.methods.isDriver = function (rideId) {
 
 UserSchema.methods.isOrganizer = function (eventId) {
   var Event = require('../models/event');
-  return Event.findOne({ _id: eventId,} )
+  return Event.findOne({ _id: eventId, organizer: this._id})
     .then((event) => {
       if (!event) {
-        throw new Error(error.http(403, 'user is not the organizer of this event'));
+        throw new Error(error.http(403, 'user is not the organizer of this event or event doesn\'t exist'));
       }
       return event;
     });

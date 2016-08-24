@@ -7,7 +7,6 @@ module.exports = {
   PostGoogleAuth: function (req, res, next) {
     passport.authenticate('google-id-token', function (err, user, info) {
       if (err) return next(error.http(401, err.message));
-      if (!user) return next(error.http(401, 'error authenticating user', info));
       var token = jwt.sign({ id: user.id }, config.jwtSecret, {
         expiresIn: '36500 days', // 100 years
         issuer: config.issuer

@@ -1,6 +1,7 @@
 angular.module('carPoolingApp').factory('mapFactory', function($rootScope) {
   var api = {},
     currentEventLocation,
+    marker,
     mapFactory;
 
   mapFactory = {
@@ -23,14 +24,14 @@ angular.module('carPoolingApp').factory('mapFactory', function($rootScope) {
     },
 
     success: function() {
-      //console.log("factory success!");
       $rootScope.$broadcast('mapFactory:success');
     },
 
     setEventLocationData: function() {
       var place = mapFactory.autocomplete.getPlace();
-
+      
       currentEventLocation = {
+        place_name: place.name,
         address: place.formatted_address,
         google_places_id: place.google_places_id,
         place_id: place.place_id,
@@ -47,16 +48,18 @@ angular.module('carPoolingApp').factory('mapFactory', function($rootScope) {
 
     build: function(directionsService, directionsDisplay, map) {
       return {
-        defaultLocation: function() {
-          defaultPos = {
-            lat: 32.4650114,
-            lng:  -53.1544719
-          };
-          map.setCenter(defaultPos);
-          map.setZoom(4);
-        },
         
+        defaultLocation: function() {
+           defaultPos = {
+             lat: 32.4650114,
+             lng:  -53.1544719
+           };
+           map.setCenter(defaultPos);
+           map.setZoom(4);
+         },
+
         currentLocation: function(zoom) {
+          zoom = zoom || 13;
           if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(function(position) {
               defaultPos = {
@@ -72,7 +75,16 @@ angular.module('carPoolingApp').factory('mapFactory', function($rootScope) {
           }
         },
         
+        clearMarks: function(){
+          marker.setMap(null);
+          // for (var i = 0; i < markersArray.length; i++ ) {
+          //   markersArray[i].setMap(null);
+          // }
+          // markersArray.length = 0;
+        },
+        
         addMarker: function(pos) {
+          console.log(pos);
           var latLng = new google.maps.LatLng(pos.lat, pos.lng);
           var marker = new google.maps.Marker({
             position: latLng,
@@ -119,7 +131,7 @@ angular.module('carPoolingApp').factory('mapFactory', function($rootScope) {
           mapFactory.autocomplete.addListener('place_changed', mapFactory.setEventLocationData);
 
           var infowindow = new google.maps.InfoWindow();
-          var marker = new google.maps.Marker({
+          marker = new google.maps.Marker({
             map: map,
             anchorPoint: new google.maps.Point(0, -29)
           });
@@ -128,6 +140,7 @@ angular.module('carPoolingApp').factory('mapFactory', function($rootScope) {
             infowindow.close();
             marker.setVisible(false);
             var place = mapFactory.autocomplete.getPlace();
+            //console.log(place);
             if (!place.geometry) {
               window.alert("Autocomplete's returned place contains no geometry");
               return;
@@ -136,10 +149,12 @@ angular.module('carPoolingApp').factory('mapFactory', function($rootScope) {
 
             if (place.geometry.viewport) {
               map.fitBounds(place.geometry.viewport);
+              
             } else {
               map.setCenter(place.geometry.location);
-              map.setZoom(17);
+              //map.setZoom(15);
             }
+            map.setZoom(15);
             marker.setIcon( /** @type {google.maps.Icon} */ ({
               url: place.icon,
               size: new google.maps.Size(71, 71),
