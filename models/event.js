@@ -48,6 +48,29 @@ EventSchema.statics.getCurrentEvents = function () {
     .sort('starts_at');
 };
 
+EventSchema.statics.getUserEvents = function (userId) {
+  var today = moment().startOf('day').toDate().toUTCString();
+
+  return Event.find({
+    starts_at: {$gt: today},
+    organizer: userId
+  })
+  .populate('organizer', '_id name photo email')
+  .populate('place')
+  .populate({
+    path: 'going_rides returning_rides', 
+    populate: {
+      path: 'driver passengers.user passengers.place',
+      populate: {
+        path: 'user place',
+        select: '_id name photo email'
+      }
+    }
+  })
+  .sort('starts_at');
+ 
+};
+
 /**
  * Gets the last 50 events that where scheduled before 2 hours ago.
  *

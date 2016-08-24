@@ -26,43 +26,6 @@ UserSchema.virtual('profile').get(function () {
 });
 
 /**
- * Gets all the events in which the user is either the organizer or the driver of one of the rides
- *
- * @return Apromise with signature (events: [Event])
- */
-UserSchema.methods.getEvents = function () {
-  var Event = require('./event');
-  var Ride = require('./ride');
-  var moment = require('moment');
-
-  var today = moment().startOf('day').toDate();
-  return Ride
-    .find({ driver: this })
-    .then(rides => {
-      return Event
-        .find({ datetime: { $gte: today } })
-        .or([
-          { organizer: this },
-          { going_rides: { $in: rides } },
-          { returning_rides: { $in: rides } }
-        ])
-        .populate('organizer', '_id name photo')
-        .populate('place')
-        .populate({
-          path: 'going_rides', 
-          populate: {
-            path: 'driver passengers',
-            populate: {
-              path: 'user place',
-              select: '_id name photo'
-            }
-          }
-        })
-        .sort('datetime');
-    });
-};
-
-/**
  * Creates a new event and sets the user as the organizer.
  *
  * @returns A promise with signature (event: Event)

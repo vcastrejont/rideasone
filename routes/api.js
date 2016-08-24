@@ -232,7 +232,7 @@ router.get('/events/:event_id', middleware.isAuthenticated, eventsController.get
   * @apiSuccess {Date}      created_at                            Document creation  date
   * @apiSuccess {Date}      updated_at                            Last updated
 */
-router.get('/users/:user_id/events', middleware.isAuthenticated, eventsController.getByUser);
+router.get('/users/:user_id/events', middleware.isAuthenticated, middleware.isOwn, eventsController.getByUser);
 
 
 /**

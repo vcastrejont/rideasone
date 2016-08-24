@@ -37,14 +37,8 @@ module.exports = {
    * eventController.getByUser()
    */
   getByUser: function (req, res, next) {
-    // TODO: Once passport is implemented, get the user from req.user
-    var userId = req.params.user_id;
-
-    User.findById(userId)
-      .then(function (user) {
-        return user.getEvents();
-      })
-      .then(function (events) {
+    Event.getUserEvents(req.user._id)
+      .then(events => {
         res.json(events);
       })
       .catch(next);
