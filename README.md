@@ -22,6 +22,11 @@ $ bower install
 $ npm start
 ```
 
+*for front end changes run the watcher *
+```sh
+$ npm  run watch
+```
+
 *Open your browser at:*
 ```sh
 http://localhost:3000/
