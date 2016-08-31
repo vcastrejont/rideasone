@@ -80,26 +80,26 @@
   <form class="form-horizontal form-ride"  method="post">
     <div class="form-group location">
       <label class="control-label ">Select a departure location</label>
-        <input type="text" class="form-control " autofocus >
+        <input type="text" class="form-control " id="autocomplete" ng-model="newcar.departure" autofocus >
         <a href="#"><i class="fa fa-map-marker" aria-hidden="true"></i></a>
     </div>
     <div class="row">
       <div class="col-xs-6">
         <div class="form-group ">
           <label class="control-label">Departure time</label>
-          <input type="text" class="form-control timepicker" ng-model="event.starttime" >
+          <input type="text" class="form-control timepicker" ng-model="newcar.departuretime" ui-timepicker>
         </div>
       </div>
       <div class="col-xs-6">
         <div class="form-group right">
           <label class="control-label">Available seats</label>
-          <input type="text" class="form-control " >
+          <input type="number" class="form-control " ng-model="newcar.seats">
         </div>
       </div>
     </div>
     <div class="form-group">
       <label class="control-label">Comments</label>
-      <input type="text" class="form-control" ng-model="ride.comment"  >
+      <input type="text" class="form-control" ng-model="newcar.comments"  >
     </div>
     <div class="form-group tc">
       <label class="control-label">is this a round trip?</label>

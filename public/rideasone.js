@@ -224,9 +224,10 @@ angular.module('carPoolingApp').controller('eventsShowCtrl', eventsShowCtrl);
 eventsShowCtrl.$inject = ['$scope', 'apiservice', '$state','$window','mapFactory'];
 
 function eventsShowCtrl ($scope, apiservice,  $state, $window, mapFactory ) {
-  $scope.map = mapFactory.getApi();
   $scope.id = $state.params.id;
-
+  $scope.map = mapFactory.getApi();
+  $scope.map.placesAutocomplete('autocomplete');
+  
   $scope.messageDriver = function(car) {
       $scope.messageCar = car;
       $('#sendMessageModal').modal("show");
@@ -649,6 +650,7 @@ angular.module('carPoolingApp').factory('mapFactory', function($rootScope) {
         },
 
         placesAutocomplete: function(inputField) {
+          console.log(inputField);
           var searchInput = document.getElementById(inputField),
             address = '';
 

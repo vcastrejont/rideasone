@@ -122,6 +122,7 @@ angular.module('carPoolingApp').factory('mapFactory', function($rootScope) {
         },
 
         placesAutocomplete: function(inputField) {
+          console.log(inputField);
           var searchInput = document.getElementById(inputField),
             address = '';
 
