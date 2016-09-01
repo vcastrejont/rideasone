@@ -2,6 +2,7 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 var ObjectId = Schema.ObjectId;
 var fcm = require('../lib/fcm');
+var frd = require('../lib/frd');
 var fcmInstance = fcm.instance;
 var _ = require('lodash');
 var Promise = require('bluebird');
@@ -25,16 +26,21 @@ NotificationSchema.addNotification = function (data) {
     return this.insert({
       user: data.recipient.id,
       status: 0, 
-	  type: data.type,
-	  subject: data.subject,
+	    type: data.type,
+	    subject: data.subject,
       message: data.message
-    });
+    })
+  })
+  .catch(error.toHttp)
+  .then(notification => {
+    return frd.ref('notifications').child(notification.user)
+      .transaction(value => value === null ? 0 : value + 1);
   });
  
   if(tokens && tokens.length){	
     promise.then(() => {
 	  return fcm.send({
-        to: tokens,
+      to: tokens,
 	    message: data.message
 	  });
 	});

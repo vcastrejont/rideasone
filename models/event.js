@@ -147,7 +147,6 @@ EventSchema.methods.removeEventAndRides = function () {
   transaction.remove('event', this._id);
   rides.forEach(ride => {
     /*ToDo: notify driver and passengers*/
-    console.log(ride);
     transaction.remove('ride', ride);
   });
 

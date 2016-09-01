@@ -102,7 +102,31 @@ RideSchema.methods.deleteEventRide = function(event) {
 
     transaction.update('event', event._id, updatedRides);
     transaction.remove('ride', this._id);
-    return transaction.run();
+    return transaction.run()
+  })
+  .then(() => {
+    return this.populate('passengers');
+  })
+  .then(ride => {
+    return appendEvent(ride);
+  })
+  .then(ride => {
+    return ride.populate('event');
+  })
+  .then(ride => {
+    var promises = [];
+    ride.passengers.forEach(user => {
+      promises.push(Notification.send({
+        recipient: {
+          tokens: user.tokens,
+          id: user.id
+        },
+        type: 'Ride Deleted', 
+        subject: ride.id,
+        message: 'Your ride to '+ this.event.name +' has been canceled'
+      }));
+    });
+    return promises.all();
   })
   .catch(err => {throw new Error(err.toHttp(err))});
 }
