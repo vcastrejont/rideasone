@@ -5,6 +5,8 @@ var Transaction = require('lx-mongoose-transaction')(mongoose);
 var Promise = require('bluebird');
 var error = require('../lib/error');
 
+var Status = ['PENDING', 'TRANSIT', 'FINISHED', 'CANCELED'];
+
 var RideSchema = new Schema({
   place: { type: ObjectId, ref: 'place' },
   driver: { type: ObjectId, ref: 'user', required: true },
@@ -16,6 +18,7 @@ var RideSchema = new Schema({
     user: { type: ObjectId, ref: 'user' },
     place: { type: ObjectId, ref: 'place' }
   }],
+  status: { type: String, default: "PENDING", enum: Status },
   chat: [{ type: ObjectId, ref: 'message' }],
   created_at: { type: Date, default: Date.now },
   updated_at: { type: Date, default: Date.now }
@@ -84,7 +87,27 @@ RideSchema.statics.getUserRides = function (userId) {
     });
 
 }
-RideSchema.methods.deleteEventRide = function(event) {
+
+RideSchema.methods.notifyPassengers = function (notification) {
+
+  return this.populate('passengers')
+  .then(ride => {
+    var promises = [];
+
+    ride.passengers.forEach(user => {
+      promises.push(Notification.send(_.merge({
+        recipient: {
+          tokens: user.tokens,
+          id: user.id
+        }
+      }), notification));
+    });
+    return promises.all();
+  });
+
+}
+
+RideSchema.methods.cancelEventRide = function(event) {
   var Event = require('./event');
   var transaction = new Transaction();
  
@@ -101,32 +124,15 @@ RideSchema.methods.deleteEventRide = function(event) {
     };
 
     transaction.update('event', event._id, updatedRides);
-    transaction.remove('ride', this._id);
+    transaction.update('ride', {status: 'CANCELED'});
     return transaction.run()
   })
   .then(() => {
-    return this.populate('passengers');
-  })
-  .then(ride => {
-    return appendEvent(ride);
-  })
-  .then(ride => {
-    return ride.populate('event');
-  })
-  .then(ride => {
-    var promises = [];
-    ride.passengers.forEach(user => {
-      promises.push(Notification.send({
-        recipient: {
-          tokens: user.tokens,
-          id: user.id
-        },
-        type: 'Ride Deleted', 
-        subject: ride.id,
-        message: 'Your ride to '+ this.event.name +' has been canceled'
-      }));
+    this.notifyPassengers({
+      type: 'Ride Canceled',
+      subject: this.id,
+      message: 'Your ride to '+ event.name +' has been canceled'
     });
-    return promises.all();
   })
   .catch(err => {throw new Error(err.toHttp(err))});
 }

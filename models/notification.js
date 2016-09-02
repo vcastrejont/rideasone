@@ -11,7 +11,7 @@ var Status = ["PENDING", "SENT", "ERROR"];
 
 var NotificationSchema = new Schema({
   user: ObjectId,
-  status: { type: Number, default: "PENDING", enum: Status },
+  status: { type: String, default: "PENDING", enum: Status },
   type: String,
   subject: ObjectId,
   message: String,
