@@ -44,7 +44,7 @@ EventSchema.statics.getCurrentEvents = function () {
           select: '_id name photo email'
         }
       }
-	})
+	  })
     .sort('starts_at');
 };
 
@@ -117,7 +117,7 @@ EventSchema.methods.addRide = function (rideData) {
     seats: rideData.seats,
     comments: rideData.comments,
     place: rideData.place,
-    departure: rudeData.departure
+    departure: rideData.departure
   };
 
   var promises = [];

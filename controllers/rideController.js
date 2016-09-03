@@ -2,6 +2,7 @@ var Event = require('../models/event');
 var Ride = require('../models/ride');
 var RideRequest = require('../models/rideRequest');
 var Promise = require('bluebird');
+var Notification = require('../models/notification');
 var mailerController = require('../controllers/mailerController');
 var mongoose = require('mongoose');
 var Transaction = require('lx-mongoose-transaction')(mongoose);
@@ -22,7 +23,7 @@ module.exports = {
   
   joinRide: function (req, res, next) {
     req.user.requestJoiningRide(req.params.ride_id, req.body.place)
-      .then(ride => {
+      .then(rideRequest => {
         return res.status(200).json({
           message: 'Successfully added!'
         });
@@ -66,17 +67,19 @@ module.exports = {
   },
   leaveRide: function (req, res, next) {
     req.ride.update({'$pull': {'passengers': {'user_id': req.user._id}}})
-    .populate('driver')
-	.then(ride => {
+    .then(() => {
+      return Ride.populate(req.ride, {path:'driver'});
+    })
+	  .then(ride => {
       var notificationData = {
 	      recipient: {
-		    tokens: ride.driver.tokens,
-		    id: ride.driver._id,
-	    },
-	    message: this.name +' has cancelled a spot on your ride',
-		subject: ride._id,
-		type: 'ride cancellation'
-	  };
+		      tokens: ride.driver.tokens,
+		      id: ride.driver._id.toString(),
+  	    },
+	      message: this.name +' has cancelled a spot on your ride',
+	    	subject: ride._id,
+	  	  type: 'ride cancellation'
+	    };
 	  
       return Notification.addNotification(notificationData);
 	})
@@ -96,26 +99,11 @@ module.exports = {
   acceptRideRequest: function (req, res, next) {
     RideRequest.findOne({_id: req.params.request_id, ride: req.params.ride_id})
     .populate('ride')
-	.populate('passenger')
+  	.populate('passenger')
     .then(request => {
-      passenger = request.passenger;
-	  ride = request.ride;
       return request.accept();
     })
-	.then(results => {
-      var notificationData = {
-	    recipient: {
-		  tokens: passenger.tokens,
-		  id: passenger._id,
-	    },
-	    message: this.name +' has accepted to give you a ride',
-		subject: ride._id,
-		type: 'ride acceptance'
-	  };
-	  
-      return Notification.addNotification(notificationData);
-	})
-    .then(results => {
+	  .then(results => {
       return res.status(200).json({
         message: 'successfully accepted ride',
       });

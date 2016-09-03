@@ -97,11 +97,10 @@ describe('Ride removal', function(){
 
   it('pulls a single ride from the event and removes that ride', () => {
     return Ride.findOne({_id: testEvent.going_rides[1]})
-    .then(ride => ride.deleteEventRide(testEvent))
-    .then(results => {
-      var event = _.find(results, {_id: testEvent._id});
-      var ride = _.find(results, {_id: testEvent.going_rides[1]});
-      assert.notInclude(event.going_rides, ride._id);
+    .then(ride => ride.cancelEventRide(testEvent))
+    .then(event => {
+      var ride = testEvent.going_rides[1];
+      assert.notInclude(event.going_rides, ride);
       assert.include(event.going_rides, testEvent.going_rides[0]);
       assert.include(event.returning_rides, testEvent.returning_rides[0]);
       assert.include(event.returning_rides, testEvent.returning_rides[1]);

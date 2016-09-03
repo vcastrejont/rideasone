@@ -88,24 +88,23 @@ RideSchema.statics.getUserRides = function (userId) {
 
 }
 
-RideSchema.methods.notifyPassengers = function (notification) {
+RideSchema.methods.notifyPassengers = function (notification, transaction) {
 
-  return this.populate('passengers')
+  return Ride.populate(this, {path:'passengers'})
   .then(ride => {
     var promises = [];
-
     ride.passengers.forEach(user => {
-      promises.push(Notification.send(_.merge({
+      promises.push(Notification.addNotification(_.merge({
         recipient: {
           tokens: user.tokens,
           id: user.id
         }
-      }), notification));
+      }), notification), transaction);
     });
-    return promises.all();
+    return Promise.all(promises);
   });
 
-}
+};
 
 RideSchema.methods.cancelEventRide = function(event) {
   var Event = require('./event');
@@ -124,17 +123,19 @@ RideSchema.methods.cancelEventRide = function(event) {
     };
 
     transaction.update('event', event._id, updatedRides);
-    transaction.update('ride', {status: 'CANCELED'});
+    transaction.update('ride', this._id, {status: 'CANCELED'});
     return transaction.run()
+      .return(event)
   })
-  .then(() => {
-    this.notifyPassengers({
+  .then(event => {
+    return this.notifyPassengers({
       type: 'Ride Canceled',
       subject: this.id,
       message: 'Your ride to '+ event.name +' has been canceled'
-    });
+    }, transaction)
+    .return(event);
   })
-  .catch(err => {throw new Error(err.toHttp(err))});
+  .catch(err => {throw new Error(error.toHttp(err))});
 }
 
 var Ride = module.exports = mongoose.model('ride', RideSchema);

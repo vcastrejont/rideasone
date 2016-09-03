@@ -6,6 +6,7 @@ var frd = require('../lib/frd');
 var fcmInstance = fcm.instance;
 var _ = require('lodash');
 var Promise = require('bluebird');
+var error = require('../lib/error');
 
 var Status = ["PENDING", "SENT", "ERROR"];
 
@@ -18,39 +19,38 @@ var NotificationSchema = new Schema({
   created_at: {type: Date, default: Date.now}
 });
 
-NotificationSchema.addNotification = function (data) {
+NotificationSchema.statics.addNotification = function (data, transaction) {
   var tokens = _.get(data, 'recipient.tokens');
   var promise = Promise.resolve(); 
 
   promise.then(() => {
-    return this.insert({
+    transaction.insert('notification', {
       user: data.recipient.id,
-      status: 0, 
+      status: 'SENT', 
 	    type: data.type,
 	    subject: data.subject,
       message: data.message
-    })
+    });
+    return transaction.run();
   })
-  .catch(error.toHttp)
-  .then(notification => {
-    return frd.ref('notifications').child(notification.user)
+  .then(notifications => {
+    return frd.ref('notifications').child(data.recipient.id)
       .transaction(value => value === null ? 0 : value + 1);
   });
  
   if(tokens && tokens.length){	
     promise.then(() => {
-	  return fcm.send({
-      to: tokens,
-	    message: data.message
-	  });
-	});
+      return fcm.send({
+        to: tokens,
+        message: data.message
+      });
+    });
   }
- //ToDo: Send notification to socket 
   return promise; 
  
 }
 
-var Notification = mongoose.model('Notification', Notification);
+var Notification = mongoose.model('notification', NotificationSchema);
 
 module.exports = Notification;
 

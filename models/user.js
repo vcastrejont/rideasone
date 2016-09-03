@@ -112,20 +112,20 @@ UserSchema.methods.requestJoiningRide = function (rideId, place) {
       return transaction.run(); 
     })
     .then(requests => {
-      return requests[0].populate('ride').populate('driver');
+      return RideRequest.populate(requests[0], {path: 'ride', populate:{path: 'driver'}});
     })
     .then(request => {
       var notificationData = {
 	      recipient: {
 		      tokens: request.ride.driver.tokens,
-  		    id: request.ride.driver._id,
+  		    id: request.ride.driver._id.toString(),
 	      },
 	      message: this.name +' is requesting to join your ride',
 		    subject: request._id,
 		    type: 'ride request'
 	    };
 
-      return Notification.addNotification(notificationData)
+      return Notification.addNotification(notificationData, transaction)
         .return(request);
     })
     .catch(err => {throw new Error(error.toHttp(err))});
