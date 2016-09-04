@@ -10,11 +10,22 @@ module.exports = {
      * eventController.list()
      */
     list: function(req, res) {
-      userModel.find(function(err, users){
-        if(err) {
-          return res.json(500, {message: 'Error getting users'});
-        }
+      userModel.find()
+        .then(users => {
           return res.json(200, users);
-      });
+		})
+		.catch(err => {
+          return res.json(500, {message: 'Error getting users'});
+		});
     },
+	
+	updateFcmToken: function (req, res) {
+      req.user.updateFcmToken(req.body)
+        .then(user => {
+	      return res.json(200, {message: 'FCM token updated successfully'});	
+		})
+	    .catch(err => {
+		  return res.json(500, {message: 'Error updating token'})
+		});
+	}
 };

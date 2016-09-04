@@ -11,7 +11,8 @@ var UserSchema = new Schema({
   provider: String,
   provider_id: {type: String, unique: true},
   photo: String,
-  email: String,
+  email: {type:String, unique:true},
+  fcm_tokens: [String],
   created_at: {type: Date, default: Date.now},
   default_place: {type: Schema.Types.ObjectId, ref: 'place'}
 });
@@ -26,10 +27,53 @@ UserSchema.virtual('profile').get(function () {
 });
 
 /**
- * Creates a new event and sets the user as the organizer.
+ * Gets all the events in which the user is either the organizer or the driver of one of the rides
+ *
+ * @return Apromise with signature (events: [Event])
+ */
+UserSchema.methods.getEvents = function () {
+  var Event = require('./event');
+  var Ride = require('./ride');
+  var moment = require('moment');
+
+  var today = moment().startOf('day').toDate();
+  return Ride
+    .find({ driver: this })
+    .then(rides => {
+      return Event
+        .find({ datetime: { $gte: today } })
+        .or([
+          { organizer: this },
+          { going_rides: { $in: rides } },
+          { returning_rides: { $in: rides } }
+        ])
+        .populate('organizer', '_id name photo')
+        .populate('place')
+        .populate({
+          path: 'going_rides', 
+          populate: {
+            path: 'driver passengers',
+            populate: {
+              path: 'user place',
+              select: '_id name photo'
+            }
+          }
+        })
+        .sort('datetime');
+    });
+};
+
+/**
  *
  * @returns A promise with signature (event: Event)
  */
+
+UserSchema.methods.updateFcmToken = function (data) {
+  this.fcm_tokens.pull(data.old);
+  this.fcm_tokens.push(data.active);
+  return this.save();
+};
+
 UserSchema.methods.createEvent = function (data) {
   var transaction = new Transaction();
 
@@ -54,17 +98,35 @@ UserSchema.methods.createEvent = function (data) {
 
 UserSchema.methods.requestJoiningRide = function (rideId, place) {
   var RideRequest = require('./rideRequest');
+  var Notification = require('./notification');
   var transaction = new Transaction();
 
   return util.findOrCreatePlace(place, transaction)
     .then(places => {
-      var request = new RideRequest({
+      var request = {
         ride: rideId,
         passenger: this,
         place: places[0]._id
-      });
-      // TODO: Create driver notification
-      return request.save()
+      };
+      transaction.insert('riderequest', request);
+      return transaction.run(); 
+    })
+    .then(requests => {
+      return RideRequest.populate(requests[0], {path: 'ride', populate:{path: 'driver'}});
+    })
+    .then(request => {
+      var notificationData = {
+	      recipient: {
+		      tokens: request.ride.driver.tokens,
+  		    id: request.ride.driver._id.toString(),
+	      },
+	      message: this.name +' is requesting to join your ride',
+		    subject: request._id,
+		    type: 'ride request'
+	    };
+
+      return Notification.addNotification(notificationData, transaction)
+        .return(request);
     })
     .catch(err => {throw new Error(error.toHttp(err))});
 };
@@ -93,7 +155,7 @@ UserSchema.methods.isDriver = function (rideId) {
 
 UserSchema.methods.isOrganizer = function (eventId) {
   var Event = require('../models/event');
-  return Event.findOne({ _id: eventId, organizer: this._id} )
+  return Event.findOne({ _id: eventId, organizer: this._id})
     .then((event) => {
       if (!event) {
         throw new Error(error.http(403, 'user is not the organizer of this event or event doesn\'t exist'));
@@ -103,3 +165,4 @@ UserSchema.methods.isOrganizer = function (eventId) {
 };
 
 module.exports = mongoose.model('user', UserSchema);
+

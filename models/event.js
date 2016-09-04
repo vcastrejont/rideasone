@@ -44,7 +44,7 @@ EventSchema.statics.getCurrentEvents = function () {
           select: '_id name photo email'
         }
       }
-	})
+	  })
     .sort('starts_at');
 };
 
@@ -112,7 +112,13 @@ function createRide(ride, path, transaction) {
 EventSchema.methods.addRide = function (rideData) {
   var transaction = new Transaction();
 
-  var ride = _.omit(rideData, ['going', 'returning']);
+  var ride = {
+    driver: rideData.driver,
+    seats: rideData.seats,
+    comments: rideData.comments,
+    place: rideData.place,
+    departure: rideData.departure
+  };
 
   var promises = [];
   if(rideData.going === true){
@@ -136,16 +142,26 @@ EventSchema.methods.addRide = function (rideData) {
 
 EventSchema.methods.removeEventAndRides = function () {
   var transaction = new Transaction();
-  var rides = _.concat(this.going_rides, this.returning_rides);
 
+  this.populate('going_rides returning_rides')
+  var rides = _.concat(this.going_rides, this.returning_rides);
+  var promises = [];
   transaction.remove('event', this._id);
+
   rides.forEach(ride => {
     /*ToDo: notify driver and passengers*/
-    console.log(ride);
+    promises.push(ride.notifyPassengers({
+      subject: this._id,
+      type: 'Event Canceled',
+      message: 'The event '+ this.name +' has been canceled'
+    }));
+
     transaction.remove('ride', ride);
   });
 
-  return transaction.run();
+  return Promise.all(promises)
+    .then(() => transaction.run())
+    .return(results => results[0]);
 }
 
 var Event = mongoose.model('event', EventSchema);
