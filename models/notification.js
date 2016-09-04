@@ -35,7 +35,7 @@ NotificationSchema.statics.addNotification = function (data, transaction) {
   })
   .then(notifications => {
     return frd.ref('notifications').child(data.recipient.id)
-      .transaction(value => value === null ? 0 : value + 1);
+      .transaction(value => value === null ? 1 : value + 1);
   });
  
   if(tokens && tokens.length){	
