@@ -1,8 +1,9 @@
 var express = require('express');
 var router = express.Router();
-var eventsController = require('../controllers/eventController.js');
-var userController = require('../controllers/userController.js');
-var ridesController = require('../controllers/rideController.js');
+var eventsController = require('../controllers/eventController');
+var userController = require('../controllers/userController');
+var ridesController = require('../controllers/rideController');
+var notificationController = require('../controllers/notificationController');
 
 var middleware = require('../middleware');
 
@@ -19,7 +20,7 @@ router.get('/', function (req, res) {
   * @apiDescription Returns an array of all events with date greater than yesterday.
   *
   * @apiHeader  Authorization                                     JWT token.
-  * @apiSuccess {ObjectId}  id                                    Mongo generated ID.
+  * @apiSuccess {String}  id                                    Mongo generated ID.
   * @apiSuccess {String}    name                                  Event name
   * @apiSuccess {String}    description                           Event full description
   * @apiSuccess {Object}    place                                 Venue (place object)
@@ -69,7 +70,7 @@ router.get('/events', middleware.isAuthenticated, eventsController.getFuture);
   * @apiGroup Events
   *
   * @apiHeader  Authorization                                     JWT token.
-  * @apiSuccess {ObjectId}  id                                    Mongo generated ID.
+  * @apiSuccess {String}  id                                    Mongo generated ID.
   * @apiSuccess {String}    name                                  Event name
   * @apiSuccess {String}    description                           Event full description
   * @apiSuccess {Object}    place                                 Venue (place object)
@@ -139,7 +140,7 @@ router.post('/events', middleware.isAuthenticated, eventsController.create);
   * @apiDescription Display an event details
   *
   * @apiHeader  Authorization                                     JWT token.
-  * @apiSuccess {ObjectId}  id                                    Mongo generated ID.
+  * @apiSuccess {String}  id                                    Mongo generated ID.
   * @apiSuccess {String}    name                                  Event name
   * @apiSuccess {String}    description                           Event full description
   * @apiSuccess {Object}    place                                 Venue (place object)
@@ -190,7 +191,7 @@ router.get('/events/:event_id', middleware.isAuthenticated, eventsController.get
   * @apiGroup Events
   * @apiDescription List all events from that user
   *
-  * @apiSuccess {ObjectId}  id                                    Mongo generated ID.
+  * @apiSuccess {String}  id                                    Mongo generated ID.
   * @apiSuccess {String}    name                                  Event name
   * @apiSuccess {String}    description                           Event full description
   * @apiSuccess {Object}    place                                 Venue (place object)
@@ -374,7 +375,7 @@ router.put('/rides/:ride_id/leave', middleware.isAuthenticated, middleware.isPas
   * @apiVersion 0.2.0
   * @apiDescription List all the users
   * @apiHeader  Authorization                JWT token.
-  * @apiSuccess {ObjectId}  id                     Mongo generated ID.
+  * @apiSuccess {String}    id                     Mongo generated ID.
   * @apiSuccess {String}    name                   User full name
   * @apiSuccess {String}    provider               Provider name (google, facebook, etc)
   * @apiSuccess {String}    provider_id            Provider unique id
@@ -384,52 +385,28 @@ router.put('/rides/:ride_id/leave', middleware.isAuthenticated, middleware.isPas
 */
 router.get('/users', middleware.isAuthenticated, userController.list);
 
-/*
-* @api {post} /api/chats/add Add message
-* @apiName add
-* @apiGroup Chats
-* @apiDescription         Add a chat message to a car
-* @apiParam {String}      rideid                 Car ride ID
-* @apiParam {String}      message                Message content
-* @apiParam {String}      user                   Full User names
-* @apiSuccess {ObjectId}  id                     Mongo generated ID.
-* @apiSuccess {String}    name                   Event name
-* @apiSuccess {String}    description            Event full description
-* @apiSuccess {String}    address                Full place address
-*/
-// router.post('/chats/add', chatController.addMessage);
-
-
 /**
-* @api {put} /api/users/:user_id/fcm-token add or change an active FCM token
-* @apiName fcmToken
-* @apiGroup Notifications
-* @apiDescription         if old is not defined, adds the FCM token, if not, replaces the old one with the active one 
-* @apiParam {String}      old                    Previous FCM token, to be removed
-* @apiParam {String}      active                 The FCM token to use for the requesting device
+  * @api {put} /api/users/:user_id/fcm-token add or change an active FCM token
+  * @apiName fcmToken
+  * @apiGroup Notifications
+  * @apiDescription         Adds or replaces the given FCM token
+  * @apiParam {String}      old                    Previous FCM token, to be removed
+  * @apiParam {String}      active                 The FCM token to use for the requesting device
 */
 router.put('/users/:user_id/fcm-token', middleware.isAuthenticated, userController.updateFcmToken);
 
-//router.put('/users/:user_id/notifications', middleware.isAuthenticated, userController.getNotifications);
-
 /**
-* @api {get} /api/chats/:rideid Get messages
-* @apiName get
-* @apiGroup Chats
-* @apiDescription Get a chat log from a car
-* @apiParam {String} rideid The Car ID.
-*
-* @apiExample Example usage:
-* curl -i http://nscarpooling.herokuapp.com/api/chats/570fca7f1c9867110018ebc3
-* @apiSuccess {Object[]}  messages               Avaiable cars array
-* @apiSuccess {ObjectId}  messages.content       Car driver id
-* @apiSuccess {String}    messages.username      Car driver name
-* @apiSuccess {Date}      messages.created_at    Car avaiable seats for carpooling
-* @apiSuccess {Date}      created_at             Event full description
-* @apiSuccess {Date}      updated_at             Full place address
+  * @api {get} /api/users/:user_id/notifications get the user notifications
+  * @apiName getNotifications
+  * @apiGrooup Notifications
+  * @apiDescription gets user notifications
+  * @apiParam   {Number} page         batch number to scan 
+  * @apiSuccess {String} user         user id
+  * @apiSuccess {String} status 
+  * @apiSuccess {String} subject      id of the resource related to the notification
+  * @apiSuccess {String} message 
+  * @apiSuccess {String} created_at 
 */
-// router.get('/chats/:rideid', chatController.getMessages);
-
-// router.get('/fcm/registerUserToken', fcmController.registerUserToken);
+router.get('/users/:user_id/notifications', middleware.isAuthenticated, notificationController.get);
 
 module.exports = router;

@@ -8,11 +8,11 @@ var _ = require('lodash');
 var Promise = require('bluebird');
 var error = require('../lib/error');
 
-var Status = ["PENDING", "SENT", "ERROR"];
+var Status = ["PENDING", "SENT", "READ", "ERROR"];
 
 var NotificationSchema = new Schema({
   user: ObjectId,
-  status: { type: String, default: "PENDING", enum: Status },
+  status: {type: String, default: "PENDING", enum: Status},
   type: String,
   subject: ObjectId,
   message: String,
