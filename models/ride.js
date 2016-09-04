@@ -3,6 +3,7 @@ var Schema = mongoose.Schema;
 var ObjectId = Schema.ObjectId;
 var Transaction = require('lx-mongoose-transaction')(mongoose);
 var Promise = require('bluebird');
+var Notification = require('./notification');
 var error = require('../lib/error');
 
 var Status = ['PENDING', 'TRANSIT', 'FINISHED', 'CANCELED'];
@@ -86,6 +87,28 @@ RideSchema.statics.getUserRides = function (userId) {
       return Promise.all(promises).return(rides);
     });
 
+}
+
+RideSchema.methods.leave = function (user) {
+  var transaction = new Transaction();
+  
+  return this.update({'$pull': {'passengers': {'user_id': user._id}}})
+    .then(() => {
+      return Ride.populate(this, {path:'driver'});
+    })
+	  .then(ride => {
+      var notificationData = {
+	      recipient: {
+		      tokens: ride.driver.tokens,
+		      id: ride.driver._id.toString(),
+  	    },
+	      message: user.name +' has cancelled a spot on your ride',
+	    	subject: ride._id,
+	  	  type: 'ride cancellation'
+	    };
+	  
+      return Notification.addNotification(notificationData, transaction);
+    });
 }
 
 RideSchema.methods.notifyPassengers = function (notification, transaction) {

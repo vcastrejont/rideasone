@@ -66,23 +66,7 @@ module.exports = {
 
   },
   leaveRide: function (req, res, next) {
-    req.ride.update({'$pull': {'passengers': {'user_id': req.user._id}}})
-    .then(() => {
-      return Ride.populate(req.ride, {path:'driver'});
-    })
-	  .then(ride => {
-      var notificationData = {
-	      recipient: {
-		      tokens: ride.driver.tokens,
-		      id: ride.driver._id.toString(),
-  	    },
-	      message: this.name +' has cancelled a spot on your ride',
-	    	subject: ride._id,
-	  	  type: 'ride cancellation'
-	    };
-	  
-      return Notification.addNotification(notificationData);
-	})
+    req.ride.leave(req.user)
     .then(numAffected => {
       /*toDo: notify driver*/
       return res.status(200).json({
@@ -90,12 +74,8 @@ module.exports = {
       });
     })
     .catch(next);
-  },
-  acceptRideRequest: function (req, res) {
-    var passenger;
-    var ride;
-  },
-	
+    },
+
   acceptRideRequest: function (req, res, next) {
     RideRequest.findOne({_id: req.params.request_id, ride: req.params.ride_id})
     .populate('ride')
