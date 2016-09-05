@@ -42,7 +42,9 @@ NotificationSchema.statics.addNotification = function (data, transaction) {
     promise.then(() => {
       return fcm.send({
         to: tokens,
-        message: data.message
+        notification: {
+          body: data.message
+        }
       });
     });
   }
