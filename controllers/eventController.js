@@ -44,38 +44,6 @@ module.exports = {
       .catch(next);
   },
   /**
-  * eventController.carbyuser()
-  */
-  carbyuser: function (req, res) {
-    var eventId = req.body.event_id;
-    var userId = req.body.user_id;
-    var resultData = {};
-    Event.findOne({_id: eventId}, function (err, event) {
-      if (err) {
-        return res.json(500, {
-          message: 'Error getting event.'
-        });
-      }
-      if (!event) {
-        return res.json(404, {
-          message: 'No such event'
-        });
-      }
-      event.cars.forEach(function (car, index) {
-        if (car.driver_id === userId) {
-          resultData = car;
-        } else {
-          car.passanger.forEach(function (passanger, index) {
-            if (passanger.user_id === userId) {
-              resultData = car;
-            }
-          });
-        }
-      });
-      res.status(200).json(resultData);
-    });
-  },
-  /**
    * eventController.getById()
    */
   getById: function (req, res, next) {
