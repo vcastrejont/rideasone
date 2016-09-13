@@ -2,6 +2,7 @@ var Event = require('../models/event');
 var Ride = require('../models/ride');
 var RideRequest = require('../models/rideRequest');
 var Promise = require('bluebird');
+var Notification = require('../models/notification');
 var mailerController = require('../controllers/mailerController');
 var mongoose = require('mongoose');
 var Transaction = require('lx-mongoose-transaction')(mongoose);
@@ -22,7 +23,7 @@ module.exports = {
   
   joinRide: function (req, res, next) {
     req.user.requestJoiningRide(req.params.ride_id, req.body.place)
-      .then(ride => {
+      .then(rideRequest => {
         return res.status(200).json({
           message: 'Successfully added!'
         });
@@ -65,7 +66,7 @@ module.exports = {
 
   },
   leaveRide: function (req, res, next) {
-    req.ride.update({'$pull': {'passengers': {'user_id': req.user._id}}})
+    req.ride.leave(req.user)
     .then(numAffected => {
       /*toDo: notify driver*/
       return res.status(200).json({
@@ -73,14 +74,16 @@ module.exports = {
       });
     })
     .catch(next);
-  },
+    },
+
   acceptRideRequest: function (req, res, next) {
     RideRequest.findOne({_id: req.params.request_id, ride: req.params.ride_id})
     .populate('ride')
+  	.populate('passenger')
     .then(request => {
       return request.accept();
     })
-    .then(results => {
+	  .then(results => {
       return res.status(200).json({
         message: 'successfully accepted ride',
       });

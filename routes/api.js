@@ -1,8 +1,9 @@
 var express = require('express');
 var router = express.Router();
-var eventsController = require('../controllers/eventController.js');
-var userController = require('../controllers/userController.js');
-var ridesController = require('../controllers/rideController.js');
+var eventsController = require('../controllers/eventController');
+var userController = require('../controllers/userController');
+var ridesController = require('../controllers/rideController');
+var notificationController = require('../controllers/notificationController');
 
 var middleware = require('../middleware');
 
@@ -19,7 +20,7 @@ router.get('/', function (req, res) {
   * @apiDescription Returns an array of all events with date greater than yesterday.
   *
   * @apiHeader  Authorization                                     JWT token.
-  * @apiSuccess {ObjectId}  id                                    Mongo generated ID.
+  * @apiSuccess {String}  id                                    Mongo generated ID.
   * @apiSuccess {String}    name                                  Event name
   * @apiSuccess {String}    description                           Event full description
   * @apiSuccess {Object}    place                                 Venue (place object)
@@ -69,7 +70,7 @@ router.get('/events', middleware.isAuthenticated, eventsController.getFuture);
   * @apiGroup Events
   *
   * @apiHeader  Authorization                                     JWT token.
-  * @apiSuccess {ObjectId}  id                                    Mongo generated ID.
+  * @apiSuccess {String}  id                                    Mongo generated ID.
   * @apiSuccess {String}    name                                  Event name
   * @apiSuccess {String}    description                           Event full description
   * @apiSuccess {Object}    place                                 Venue (place object)
@@ -139,7 +140,7 @@ router.post('/events', middleware.isAuthenticated, eventsController.create);
   * @apiDescription Display an event details
   *
   * @apiHeader  Authorization                                     JWT token.
-  * @apiSuccess {ObjectId}  id                                    Mongo generated ID.
+  * @apiSuccess {String}  id                                    Mongo generated ID.
   * @apiSuccess {String}    name                                  Event name
   * @apiSuccess {String}    description                           Event full description
   * @apiSuccess {Object}    place                                 Venue (place object)
@@ -190,7 +191,7 @@ router.get('/events/:event_id', middleware.isAuthenticated, eventsController.get
   * @apiGroup Events
   * @apiDescription List all events from that user
   *
-  * @apiSuccess {ObjectId}  id                                    Mongo generated ID.
+  * @apiSuccess {String}  id                                    Mongo generated ID.
   * @apiSuccess {String}    name                                  Event name
   * @apiSuccess {String}    description                           Event full description
   * @apiSuccess {Object}    place                                 Venue (place object)
@@ -374,7 +375,7 @@ router.put('/rides/:ride_id/leave', middleware.isAuthenticated, middleware.isPas
   * @apiVersion 0.2.0
   * @apiDescription List all the users
   * @apiHeader  Authorization                JWT token.
-  * @apiSuccess {ObjectId}  id                     Mongo generated ID.
+  * @apiSuccess {String}    id                     Mongo generated ID.
   * @apiSuccess {String}    name                   User full name
   * @apiSuccess {String}    provider               Provider name (google, facebook, etc)
   * @apiSuccess {String}    provider_id            Provider unique id
@@ -384,6 +385,28 @@ router.put('/rides/:ride_id/leave', middleware.isAuthenticated, middleware.isPas
 */
 router.get('/users', middleware.isAuthenticated, userController.list);
 
-// router.get('/fcm/registerUserToken', fcmController.registerUserToken);
+/**
+  * @api {put} /api/users/:user_id/fcm-token add or change an active FCM token
+  * @apiName fcmToken
+  * @apiGroup Notifications
+  * @apiDescription         Adds or replaces the given FCM token
+  * @apiParam {String}      old                    Previous FCM token, to be removed
+  * @apiParam {String}      active                 The FCM token to use for the requesting device
+*/
+router.put('/users/:user_id/fcm-token', middleware.isAuthenticated, userController.updateFcmToken);
+
+/**
+  * @api {get} /api/users/:user_id/notifications get the user notifications
+  * @apiName getNotifications
+  * @apiGrooup Notifications
+  * @apiDescription gets user notifications
+  * @apiParam   {Number} page         batch number to scan 
+  * @apiSuccess {String} user         user id
+  * @apiSuccess {String} status 
+  * @apiSuccess {String} subject      id of the resource related to the notification
+  * @apiSuccess {String} message 
+  * @apiSuccess {String} created_at 
+*/
+router.get('/users/:user_id/notifications', middleware.isAuthenticated, notificationController.get);
 
 module.exports = router;

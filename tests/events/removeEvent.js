@@ -48,8 +48,7 @@ describe('Event removal', function(){
         .set('Authorization', token)
         .expect(200)
         .then(res => {
-          var event = res.body;
-          assert.equal(event._id, testEvent._id);
+          assert.equal(res.body, 'success');
         });   
   });
 
