@@ -54,6 +54,7 @@ angular.module('carPoolingApp').factory('mapFactory', function($rootScope) {
              lat: 32.4650114,
              lng:  -53.1544719
            };
+          
            map.setCenter(defaultPos);
            map.setZoom(4);
          },
@@ -84,7 +85,7 @@ angular.module('carPoolingApp').factory('mapFactory', function($rootScope) {
         },
         
         addMarker: function(pos) {
-          console.log(pos);
+          //console.log(pos);
           var latLng = new google.maps.LatLng(pos.lat, pos.lng);
           var marker = new google.maps.Marker({
             position: latLng,
@@ -122,12 +123,11 @@ angular.module('carPoolingApp').factory('mapFactory', function($rootScope) {
         },
 
         placesAutocomplete: function(inputField) {
-          console.log(inputField);
+          
           var searchInput = document.getElementById(inputField),
             address = '';
 
           mapFactory.autocomplete = new google.maps.places.Autocomplete(searchInput);
-
           mapFactory.autocomplete.bindTo('bounds', map);
           mapFactory.autocomplete.addListener('place_changed', mapFactory.setEventLocationData);
 
@@ -141,7 +141,7 @@ angular.module('carPoolingApp').factory('mapFactory', function($rootScope) {
             infowindow.close();
             marker.setVisible(false);
             var place = mapFactory.autocomplete.getPlace();
-            //console.log(place);
+            
             if (!place.geometry) {
               window.alert("Autocomplete's returned place contains no geometry");
               return;

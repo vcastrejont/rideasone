@@ -14,27 +14,17 @@ function eventsShowCtrl ($scope, apiservice,  $state, $window, mapFactory ) {
 
   $scope.view= {
     showRide: function (ride) {
-      //console.log(ride.location);
-      console.log($scope.view.event.location);
-      $scope.view.ride = ride;
-      var origin = ride.location[1]+","+ ride.location[0];
-      var destination = $scope.view.event.location[1]+","+$scope.view.event.location[0]; 
-      $scope.map.showRoute(origin, destination);
+      $scope.view.showride = ride;
+      console.log(ride);
+       
+      //$scope.map.showRoute(origin, destination);
     },
     init:function(){
       var self = this;
       apiservice.getEvent($scope.id).then(function(response) {
         self.event = response.data;
-        console.log(self.event);
         $scope.map.addMarker({lat:self.event.place.location.lat, lng:self.event.place.location.lon, center:true});
-        // var i;
-        // for(i = 0; i < self.event.cars.length; i++) {
-        //   if( self.event.cars[i].location ){
-        //     $scope.map.addMarker({lat:self.event.cars[i].location[1], lng:self.event.cars[i].location[0]});
-        //   }
-        // }
-        // self.event.date = moment(response.data.datetime).format('MMM. d, YYYY  H:mm a' );
-        // self.event.dateString = moment(response.data.datetime).calendar() ;
+
       }, function(response) {
         console.error('Error: ' + response.data);
       });
@@ -52,14 +42,27 @@ function eventsShowCtrl ($scope, apiservice,  $state, $window, mapFactory ) {
     },
     
     addCar:function(){
+    
       var self = this;
-      var eventData = {
-
-        seats      : $scope.view.seats,
-        comments   : $scope.view.comments,
-        driver_id  : $scope.view.user.id
+      
+      var placeData = mapFactory.getEventLocationData();
+      var carData = {
+        "place": {
+            "name": placeData.place_name,
+            "google_places_id": placeData.place_id,
+            "address": placeData.address,
+            "location": {
+              "lat": placeData.location.lat,
+              "lon": placeData.location.lon
+            }
+        },
+        departure  : new Date(),
+        seats      : $scope.newcar.seats,
+        comments   : $scope.newcar.comments,
+        going      : true
       };
-      apiservice.addCarToEvent($scope.view.event._id, eventData).then(function(response) {
+      console.log(carData);
+      apiservice.addCarToEvent($scope.view.event._id, carData).then(function(response) {
             self.alerts.push({msg: response.data.message});
             setTimeout(function () {
                $scope.$apply(function()  {  self.closeAlert(); });

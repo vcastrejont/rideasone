@@ -235,27 +235,17 @@ function eventsShowCtrl ($scope, apiservice,  $state, $window, mapFactory ) {
 
   $scope.view= {
     showRide: function (ride) {
-      //console.log(ride.location);
-      console.log($scope.view.event.location);
-      $scope.view.ride = ride;
-      var origin = ride.location[1]+","+ ride.location[0];
-      var destination = $scope.view.event.location[1]+","+$scope.view.event.location[0]; 
-      $scope.map.showRoute(origin, destination);
+      $scope.view.showride = ride;
+      console.log(ride);
+       
+      //$scope.map.showRoute(origin, destination);
     },
     init:function(){
       var self = this;
       apiservice.getEvent($scope.id).then(function(response) {
         self.event = response.data;
-        console.log(self.event);
         $scope.map.addMarker({lat:self.event.place.location.lat, lng:self.event.place.location.lon, center:true});
-        // var i;
-        // for(i = 0; i < self.event.cars.length; i++) {
-        //   if( self.event.cars[i].location ){
-        //     $scope.map.addMarker({lat:self.event.cars[i].location[1], lng:self.event.cars[i].location[0]});
-        //   }
-        // }
-        // self.event.date = moment(response.data.datetime).format('MMM. d, YYYY  H:mm a' );
-        // self.event.dateString = moment(response.data.datetime).calendar() ;
+
       }, function(response) {
         console.error('Error: ' + response.data);
       });
@@ -273,14 +263,27 @@ function eventsShowCtrl ($scope, apiservice,  $state, $window, mapFactory ) {
     },
     
     addCar:function(){
+    
       var self = this;
-      var eventData = {
-
-        seats      : $scope.view.seats,
-        comments   : $scope.view.comments,
-        driver_id  : $scope.view.user.id
+      
+      var placeData = mapFactory.getEventLocationData();
+      var carData = {
+        "place": {
+            "name": placeData.place_name,
+            "google_places_id": placeData.place_id,
+            "address": placeData.address,
+            "location": {
+              "lat": placeData.location.lat,
+              "lon": placeData.location.lon
+            }
+        },
+        departure  : new Date(),
+        seats      : $scope.newcar.seats,
+        comments   : $scope.newcar.comments,
+        going      : true
       };
-      apiservice.addCarToEvent($scope.view.event._id, eventData).then(function(response) {
+      console.log(carData);
+      apiservice.addCarToEvent($scope.view.event._id, carData).then(function(response) {
             self.alerts.push({msg: response.data.message});
             setTimeout(function () {
                $scope.$apply(function()  {  self.closeAlert(); });
@@ -582,6 +585,7 @@ angular.module('carPoolingApp').factory('mapFactory', function($rootScope) {
              lat: 32.4650114,
              lng:  -53.1544719
            };
+          
            map.setCenter(defaultPos);
            map.setZoom(4);
          },
@@ -612,7 +616,7 @@ angular.module('carPoolingApp').factory('mapFactory', function($rootScope) {
         },
         
         addMarker: function(pos) {
-          console.log(pos);
+          //console.log(pos);
           var latLng = new google.maps.LatLng(pos.lat, pos.lng);
           var marker = new google.maps.Marker({
             position: latLng,
@@ -650,12 +654,11 @@ angular.module('carPoolingApp').factory('mapFactory', function($rootScope) {
         },
 
         placesAutocomplete: function(inputField) {
-          console.log(inputField);
+          
           var searchInput = document.getElementById(inputField),
             address = '';
 
           mapFactory.autocomplete = new google.maps.places.Autocomplete(searchInput);
-
           mapFactory.autocomplete.bindTo('bounds', map);
           mapFactory.autocomplete.addListener('place_changed', mapFactory.setEventLocationData);
 
@@ -669,7 +672,7 @@ angular.module('carPoolingApp').factory('mapFactory', function($rootScope) {
             infowindow.close();
             marker.setVisible(false);
             var place = mapFactory.autocomplete.getPlace();
-            //console.log(place);
+            
             if (!place.geometry) {
               window.alert("Autocomplete's returned place contains no geometry");
               return;
@@ -776,7 +779,7 @@ function apiservice($http) {
 	service.addCarToEvent = function(eventId, carData) {
 		// This route should be:
 		// POST /api/events/:eventId/car
-		return $http.post('/api/events/'+eventId+'/car', carData);
+		return $http.post('/api/events/'+eventId+'/ride', carData);
 	};
 
 	service.deleteCarFromEvent = function(carData) {

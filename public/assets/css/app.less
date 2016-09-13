@@ -238,11 +238,14 @@ body {
     margin-bottom: 5px;
     text-align: left;
     td{
-      padding: 3px;
+      width: 50%;
+      text-align: left;
+      padding: 5px 20px;
+      &:first-child {
+        text-align: right;
+      }
     }
-    tr > td:last-child {
-      text-align: right;
-    }    
+  
   }
   .btn{
     color:@colorblue;
@@ -431,6 +434,8 @@ ul.nav li.dropdown:hover, ul.nav li:hover{
 }
 
 
+
+
 //----Mixins------
 
 .input-type{
@@ -440,4 +445,9 @@ ul.nav li.dropdown:hover, ul.nav li:hover{
 }
 .shadow{
   box-shadow:1px 1px 1px 0px rgba(50, 50, 50, 0.15);
+}
+
+
+[ng\:cloak], [ng-cloak], .ng-cloak {
+    display: none;
 }
