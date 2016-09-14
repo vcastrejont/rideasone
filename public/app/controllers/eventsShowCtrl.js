@@ -33,6 +33,7 @@ function eventsShowCtrl($scope, apiservice, $state, $window, mapFactory, Notific
       var self = this;
       $scope.map.clearMarks();
       apiservice.getEvent($scope.id).then(function(response) {
+        console.log(response.data);
         self.event = response.data;
         $scope.map.addMarker({
           lat: self.event.place.location.lat,
@@ -47,6 +48,8 @@ function eventsShowCtrl($scope, apiservice, $state, $window, mapFactory, Notific
     addCar: function() {
       var self = this;
       var placeData = mapFactory.getEventLocationData();
+      // var hour =  moment($scope.event.starts_at).format('HH:mm');
+      // var departure = moment(ends_date+" "+ends_time, "YYYY-MM-DD HH:mm").utc().format();
       var carData = {
         "place": {
           "name": placeData.place_name,
@@ -57,12 +60,12 @@ function eventsShowCtrl($scope, apiservice, $state, $window, mapFactory, Notific
             "lon": placeData.location.lon
           }
         },
-        departure: new Date(),
+        departure:  $scope.newcar.departure,
         seats: $scope.newcar.seats,
         comments: $scope.newcar.comments,
         going: true
       };
-      //console.log(carData);
+      console.log(carData);
       $scope.newcar = {};
       apiservice.addCarToEvent($scope.view.event._id, carData).then(function(response) {
         $scope.view.addcar = false;
