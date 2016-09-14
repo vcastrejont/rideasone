@@ -77,14 +77,9 @@ angular.module('carPoolingApp').factory('mapFactory', function($rootScope) {
         
         clearMarks: function(){
           marker.setMap(null);
-          // for (var i = 0; i < markersArray.length; i++ ) {
-          //   markersArray[i].setMap(null);
-          // }
-          // markersArray.length = 0;
         },
         
         addMarker: function(pos) {
-          console.log(pos);
           var latLng = new google.maps.LatLng(pos.lat, pos.lng);
           var marker = new google.maps.Marker({
             position: latLng,
