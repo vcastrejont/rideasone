@@ -35,7 +35,7 @@ EventSchema.statics.getCurrentEvents = function () {
     //ToDo: only passengers and organizers should see emails
     .populate('organizer', '_id name photo email')
     .populate({
-      path: 'going_rides', 
+      path: 'going_rides returning_rides', 
       populate: {
         path: 'driver passengers.user passengers.place place',
         select: '_id name photo email location address google_places_id',
