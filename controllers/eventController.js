@@ -52,9 +52,10 @@ module.exports = {
     .populate('organizer', '_id name photo')
     .populate('place')
     .populate({
-      path: 'going_rides', 
+      path: 'going_rides returning_rides', 
       populate: {
-        path: 'driver passengers',
+        path: 'driver passengers.user passengers.place place',
+        select: '_id name photo address google_place_id location',
         populate: {
           path: 'user place',
           select: '_id name photo'
