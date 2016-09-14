@@ -34,6 +34,7 @@
     "ngstorage": "^0.3.11",
     "angular": "^1.5.8",
     "jt.timepicker": "jquery-timepicker-jt#^1.11.2",
-    "angular-jquery-timepicker": "^0.11.0"
+    "angular-jquery-timepicker": "^0.11.0",
+    "angular-ui-notification": "^0.2.0"
   }
 }

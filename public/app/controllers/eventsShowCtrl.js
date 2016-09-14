@@ -1,11 +1,12 @@
 angular.module('carPoolingApp').controller('eventsShowCtrl', eventsShowCtrl);
 
-eventsShowCtrl.$inject = ['$scope', 'apiservice', '$state', '$window', 'mapFactory'];
+eventsShowCtrl.$inject = ['$scope', 'apiservice', '$state', '$window', 'mapFactory', 'Notification'];
 
-function eventsShowCtrl($scope, apiservice, $state, $window, mapFactory) {
+function eventsShowCtrl($scope, apiservice, $state, $window, mapFactory, Notification) {
   $scope.id = $state.params.id;
   $scope.map = mapFactory.getApi();
   $scope.map.placesAutocomplete('autocomplete');
+  
 
   $scope.messageDriver = function(car) {
     $scope.messageCar = car;
@@ -13,6 +14,15 @@ function eventsShowCtrl($scope, apiservice, $state, $window, mapFactory) {
   };
 
   $scope.view = {
+    addcar: false,
+    timePickerOptions: {
+      step: 30,
+      timeFormat: 'g:ia',
+      'minTime': '8:00am',
+      'maxTime': '7:30am'
+    },
+
+    
     showRide: function(ride) {
       $scope.view.showride = ride;
       console.log(ride);
@@ -21,6 +31,7 @@ function eventsShowCtrl($scope, apiservice, $state, $window, mapFactory) {
     },
     init: function() {
       var self = this;
+      $scope.map.clearMarks();
       apiservice.getEvent($scope.id).then(function(response) {
         self.event = response.data;
         $scope.map.addMarker({
@@ -52,18 +63,14 @@ function eventsShowCtrl($scope, apiservice, $state, $window, mapFactory) {
         going: true
       };
       //console.log(carData);
+      $scope.newcar = {};
       apiservice.addCarToEvent($scope.view.event._id, carData).then(function(response) {
-        // self.alerts.push({
-        //   msg: response.data.message
-        // });
-        setTimeout(function() {
-          $scope.$apply(function() {
-            self.closeAlert();
-          });
-          $scope.view.init();
-        }, 1000);
+        $scope.view.addcar = false;
+        Notification('Your car has been added');
+        $scope.view.init();
       }, function(response) {
         console.error('Error: ' + response);
+        Notification.error('There was an error...');
       });
     },
     

@@ -5,11 +5,8 @@ angular.module('carPoolingApp').factory('mapFactory', function($rootScope) {
     mapFactory;
 
   mapFactory = {
-
     api: {},
-
     autocomplete: null,
-
     setApi: function(_api) {
       api = _api;
       this.success();
