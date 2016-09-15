@@ -16,7 +16,6 @@ function eventsNewCtrl ($scope, apiservice, $state, mapFactory ) {
     $scope.event.endTime=  moment($scope.event.startTime).add(1, 'hours');
   };
 
-  
   $scope.timePickerOptions = {
     step: 30,
     timeFormat: 'g:ia',
@@ -24,7 +23,6 @@ function eventsNewCtrl ($scope, apiservice, $state, mapFactory ) {
     'maxTime': '7:30am'
   };
 
-  
   $scope.saveData = function() {
     var starts_date = moment($scope.event.startDate).format('YYYY-MM-DD');
     var starts_time = moment($scope.event.startTime).format('HH:mm');

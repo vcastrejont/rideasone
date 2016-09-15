@@ -39,7 +39,7 @@
     "lx-mongoose-transaction": "0.0.9",
     "method-override": "~1.0.0",
     "moment": "~2.13.0",
-    "mongoose": "^4.3.7",
+    "mongoose": "^4.5.3",
     "morgan": "~1.6.1",
     "nodemailer": "^2.3.0",
     "passport": "^0.3.2",

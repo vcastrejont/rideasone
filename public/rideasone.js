@@ -6,7 +6,8 @@ var app = angular.module('carPoolingApp', [
   'directive.g+signin',
   'ngStorage',
   'ui.timepicker',
-  'ui-notification'
+  'ui-notification',
+  'angularMoment'
 ]);
 
 app.run(['$rootScope', '$location', '$window',
@@ -173,7 +174,6 @@ function eventsNewCtrl ($scope, apiservice, $state, mapFactory ) {
     $scope.event.endTime=  moment($scope.event.startTime).add(1, 'hours');
   };
 
-  
   $scope.timePickerOptions = {
     step: 30,
     timeFormat: 'g:ia',
@@ -181,7 +181,6 @@ function eventsNewCtrl ($scope, apiservice, $state, mapFactory ) {
     'maxTime': '7:30am'
   };
 
-  
   $scope.saveData = function() {
     var starts_date = moment($scope.event.startDate).format('YYYY-MM-DD');
     var starts_time = moment($scope.event.startTime).format('HH:mm');
@@ -238,7 +237,9 @@ function eventsShowCtrl($scope, apiservice, $state, $window, mapFactory, Notific
   $scope.id = $state.params.id;
   $scope.map = mapFactory.getApi();
   $scope.map.placesAutocomplete('autocomplete');
-  
+  $scope.newcar = {
+  };
+
 
   $scope.messageDriver = function(car) {
     $scope.messageCar = car;
@@ -256,10 +257,11 @@ function eventsShowCtrl($scope, apiservice, $state, $window, mapFactory, Notific
 
     
     showRide: function(ride) {
-      $scope.view.showride = ride;
       console.log(ride);
-
-      //$scope.map.showRoute(origin, destination);
+      var origin =  new google.maps.LatLng(ride.place.location.lat, ride.place.location.lon);
+      var destination =  new google.maps.LatLng(this.event.place.location.lat, this.event.place.location.lon);
+      $scope.map.showRoute(origin, destination);
+      $scope.view.showride = ride;
     },
     init: function() {
       var self = this;
@@ -267,6 +269,12 @@ function eventsShowCtrl($scope, apiservice, $state, $window, mapFactory, Notific
       apiservice.getEvent($scope.id).then(function(response) {
         console.log(response.data);
         self.event = response.data;
+        
+        $scope.newcar = {
+          departure: moment(self.event.starts_at)
+        };
+        
+        
         $scope.map.addMarker({
           lat: self.event.place.location.lat,
           lng: self.event.place.location.lon,
@@ -280,8 +288,7 @@ function eventsShowCtrl($scope, apiservice, $state, $window, mapFactory, Notific
     addCar: function() {
       var self = this;
       var placeData = mapFactory.getEventLocationData();
-      // var hour =  moment($scope.event.starts_at).format('HH:mm');
-      // var departure = moment(ends_date+" "+ends_time, "YYYY-MM-DD HH:mm").utc().format();
+
       var carData = {
         "place": {
           "name": placeData.place_name,
@@ -294,7 +301,7 @@ function eventsShowCtrl($scope, apiservice, $state, $window, mapFactory, Notific
         },
         departure:  $scope.newcar.departure,
         seats: $scope.newcar.seats,
-        comments: $scope.newcar.comments,
+        comment: $scope.newcar.comment,
         going: true
       };
       console.log(carData);

@@ -6,7 +6,8 @@ var app = angular.module('carPoolingApp', [
   'directive.g+signin',
   'ngStorage',
   'ui.timepicker',
-  'ui-notification'
+  'ui-notification',
+  'angularMoment'
 ]);
 
 app.run(['$rootScope', '$location', '$window',
