@@ -5,8 +5,10 @@ var app = angular.module('carPoolingApp', [
   'apiservice',
   'directive.g+signin',
   'ngStorage',
-  'ui.timepicker'
-]);
+  'ui.timepicker',
+  'ui-notification',
+  'angularMoment'
+]); 
 
 app.run(['$rootScope', '$location', '$window',
   function($rootScope, $location, $window) {
@@ -38,7 +40,7 @@ app.run(function($rootScope, $state, authservice, sessionservice, $localStorage,
 });
 
 
-app.config(function($stateProvider, $urlRouterProvider, $httpProvider) {
+app.config(function($stateProvider, $urlRouterProvider, $httpProvider, NotificationProvider) {
   $urlRouterProvider.otherwise('/');
   var home = {
     name: 'home',
@@ -116,6 +118,16 @@ app.config(function($stateProvider, $urlRouterProvider, $httpProvider) {
          }
      };
   }]);
+  
+  NotificationProvider.setOptions({
+   delay: 2000,
+   startTop: 50,
+   startRight: 0,
+   verticalSpacing: 20,
+   horizontalSpacing: 20,
+   positionX: 'center',
+   positionY: 'top'
+ });
   
   
 });

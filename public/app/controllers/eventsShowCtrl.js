@@ -1,147 +1,217 @@
 angular.module('carPoolingApp').controller('eventsShowCtrl', eventsShowCtrl);
 
-eventsShowCtrl.$inject = ['$scope', 'apiservice', '$state','$window','mapFactory'];
+eventsShowCtrl.$inject = ['$scope', 'apiservice', '$state', '$window', 'mapFactory', 'Notification'];
 
-function eventsShowCtrl ($scope, apiservice,  $state, $window, mapFactory ) {
-  $scope.map = mapFactory.getApi();
+function eventsShowCtrl($scope, apiservice, $state, $window, mapFactory, Notification) {
   $scope.id = $state.params.id;
-
-  $scope.messageDriver = function(car) {
-      $scope.messageCar = car;
-      $('#sendMessageModal').modal("show");
+  $scope.map = mapFactory.getApi();
+  $scope.map.placesAutocomplete('autocomplete');
+  $scope.newcar = {
   };
 
-  $scope.view= {
-    showRide: function (ride) {
-      //console.log(ride.location);
-      console.log($scope.view.event.location);
-      $scope.view.ride = ride;
-      var origin = ride.location[1]+","+ ride.location[0];
-      var destination = $scope.view.event.location[1]+","+$scope.view.event.location[0]; 
-      $scope.map.showRoute(origin, destination);
+
+  $scope.messageDriver = function(car) {
+    $scope.messageCar = car;
+    $('#sendMessageModal').modal("show");
+  };
+
+  $scope.view = {
+    addcar: false,
+    timePickerOptions: {
+      step: 30,
+      timeFormat: 'g:ia',
+      'minTime': '8:00am',
+      'maxTime': '7:30am'
     },
-    init:function(){
+
+    
+    showRide: function(ride) {
+      console.log(ride);
+      var origin =  new google.maps.LatLng(ride.place.location.lat, ride.place.location.lon);
+      var destination =  new google.maps.LatLng(this.event.place.location.lat, this.event.place.location.lon);
+      $scope.map.showRoute(origin, destination);
+      $scope.view.showride = ride;
+    },
+    init: function() {
       var self = this;
+      $scope.map.clearMarks();
       apiservice.getEvent($scope.id).then(function(response) {
+        console.log(response.data);
         self.event = response.data;
-        console.log(self.event);
-        $scope.map.addMarker({lat:self.event.place.location.lat, lng:self.event.place.location.lon, center:true});
-        // var i;
-        // for(i = 0; i < self.event.cars.length; i++) {
-        //   if( self.event.cars[i].location ){
-        //     $scope.map.addMarker({lat:self.event.cars[i].location[1], lng:self.event.cars[i].location[0]});
-        //   }
-        // }
-        // self.event.date = moment(response.data.datetime).format('MMM. d, YYYY  H:mm a' );
-        // self.event.dateString = moment(response.data.datetime).calendar() ;
+        
+        $scope.newcar = {
+          departure: moment(self.event.starts_at)
+        };
+        
+        $scope.map.addMarker({
+          lat: self.event.place.location.lat,
+          lng: self.event.place.location.lon,
+          center: true,
+          zoom: true 
+        });
+        
+      //  $scope.map.setBounds(self.event.going_rides);
+          
+        _.each(self.event.going_rides, function(ride) {
+          var marker = $scope.map.addMarker({
+            lat: ride.place.location.lat,
+            lng: ride.place.location.lon,
+            icon: 'car'
+          });
+          
+          marker.addListener('click', function() {
+            $scope.view.showRide(ride);
+          });
+        });
+        
+      
+
       }, function(response) {
         console.error('Error: ' + response.data);
       });
     },
-    clearOptions:function(){
-      this.seats = "";
-      this.driver = "";
+
+    addCar: function() {
+      var self = this;
+      var placeData = mapFactory.getEventLocationData();
+
+      var carData = {
+        "place": {
+          "name": placeData.place_name,
+          "google_places_id": placeData.place_id,
+          "address": placeData.address,
+          "location": {
+            "lat": placeData.location.lat,
+            "lon": placeData.location.lon
+          }
+        },
+        departure:  $scope.newcar.departure,
+        seats: $scope.newcar.seats,
+        comment: $scope.newcar.comment,
+        going: true
+      };
+      console.log(carData);
+      $scope.newcar = {};
+      apiservice.addCarToEvent($scope.view.event._id, carData).then(function(response) {
+        $scope.view.addcar = false;
+        Notification('Your car has been added');
+        $scope.view.init();
+      }, function(response) {
+        console.error('Error: ' + response);
+        Notification.error('There was an error...');
+      });
     },
-    deleteEvent:function(){
+    
+    
+    deleteCar: function(carid) {
+      if (confirm("Are you sure?")) {
+        var carData = {
+          id: $scope.view.event._id,
+          carid: carid
+        };
+        var self = this;
+        apiservice.deleteCarFromEvent(carData).then(function(response) {
+          self.alerts.push({
+            msg: response.data.message
+          });
+          setTimeout(function() {
+            $scope.$apply(function() {
+              self.closeAlert();
+            });
+            $scope.view.init();
+          }, 1000);
+        }, function(response) {
+          console.log('Error: ' + response);
+        });
+      }
+    },
+    joinCar: function(ride_id) {
+      swal({  
+         title: "Join ride",   
+         text: "You are going to request to join {{dude }} car ?",   
+         type: "success",   
+         showCancelButton: true,   
+         confirmButtonColor: "#2EBFD9",   
+         confirmButtonText: "Yes",   
+         closeOnConfirm: false
+        }, 
+         function(){ 
+          var userData = {
+           place: {
+             address: "Villa de Sta. Fe, Residencial de Anza, Hermosillo, Son., Mexico",
+             name: "Villa de santa fe",
+             google_places_id: "ChIJZ2L_7BKEzoYRpRk4K28IsT8",
+             location: {
+               lat: 29.0829989,
+               lng: -110.98454200000003
+             }
+           }
+          };
+           
+          var self = this;
+          apiservice.joinCar(ride_id, userData).then(function(response) {
+           console.log("request sent");
+           swal("Sent!", "Request sent.", "success");
+          }, function(response) {
+           console.log('Error: ' + response);
+          });
+      });
+        
+    
+
+    },
+    leaveCar: function(carid) {
+      if (confirm("Are you sure ?")) {
+        var carData = {
+          event_id: $scope.view.event._id,
+          car_id: carid
+        };
+        var self = this;
+        apiservice.leaveCar(carData).then(function(response) {
+          self.alerts.push({
+            msg: response.data.message
+          });
+          setTimeout(function() {
+            $scope.$apply(function() {
+              self.closeAlert();
+            });
+            $scope.view.init();
+          }, 1000);
+        }, function(response) {
+          console.log('Error: ' + response);
+        });
+      }
+    },
+    deleteEvent: function() {
       apiservice.deleteEvent($scope.id).then(function(response) {
         $state.go('events');
       }, function(response) {
         console.error('Error: ' + response);
       });
     },
-    
-    addCar:function(){
-      var self = this;
-      var eventData = {
-
-        seats      : $scope.view.seats,
-        comments   : $scope.view.comments,
-        driver_id  : $scope.view.user.id
-      };
-      apiservice.addCarToEvent($scope.view.event._id, eventData).then(function(response) {
-            self.alerts.push({msg: response.data.message});
-            setTimeout(function () {
-               $scope.$apply(function()  {  self.closeAlert(); });
-               $scope.view.init();
-            }, 1000);
-        }, function(response) {
-            console.error('Error: ' + response);
-      });
-    },
-    deleteCar:function(carid){
-      if (confirm("Are you sure?")) {
-        var carData = {
-          id         : $scope.view.event._id,
-          carid      : carid
-        };
-        var self = this;
-        apiservice.deleteCarFromEvent(carData).then(function(response) {
-            self.alerts.push({msg: response.data.message});
-            setTimeout(function () {
-               $scope.$apply(function()  {  self.closeAlert(); });
-               $scope.view.init();
-            }, 1000);
-          }, function(response) {
-              console.log('Error: ' + response);
-        });
-      }
-    },
-    joinCar:function(carid){
+    addExtra: function(carid) {
       var carData = {
-        event_id : $scope.view.event._id,
-        car_id   : carid,
-        going    : $scope.view.user.going,
-        back     : $scope.view.user.back
-      };
-      var self = this;
-      apiservice.joinCar(carData).then(function(response) {
-          self.alerts.push({msg: response.data.message});
-          setTimeout(function () {
-             $scope.$apply(function()  {  self.closeAlert(); });
-             $scope.view.init();
-          }, 1000);
-        }, function(response) {
-            console.log('Error: ' + response);
-      });
-
-    },
-    leaveCar:function(carid){
-      if (confirm("Are you sure ?")) {
-        var carData = {
-          event_id  : $scope.view.event._id,
-          car_id    : carid
-        };
-        var self = this;
-        apiservice.leaveCar(carData).then(function(response) {
-            self.alerts.push({msg: response.data.message});
-            setTimeout(function () {
-               $scope.$apply(function()  {  self.closeAlert(); });
-               $scope.view.init();
-            }, 1000);
-          }, function(response) {
-              console.log('Error: ' + response);
-        });
-      }
-    },
-    addExtra:function(carid){
-      var carData = {
-        event_id    : this.event._id,
-        car_id      : carid,
-        extra_going : this.goingRide.extraPass,
-        extra_back  : this.backRide.extraPass,
+        event_id: this.event._id,
+        car_id: carid,
+        extra_going: this.goingRide.extraPass,
+        extra_back: this.backRide.extraPass,
       };
       var self = this;
       apiservice.addExtraCar(carData).then(function(response) {
-          self.alerts.push({msg: response.data.message});
-          setTimeout(function () {
-             $scope.$apply(function()  {  self.closeAlert(); });
-             $scope.view.init();
-          }, 1000);
-        }, function(response) {
-            console.log('Error: ' + response);
+        self.alerts.push({
+          msg: response.data.message
+        });
+        setTimeout(function() {
+          $scope.$apply(function() {
+            self.closeAlert();
+          });
+          $scope.view.init();
+        }, 1000);
+      }, function(response) {
+        console.log('Error: ' + response);
       });
     },
-    closeAlert : function(index) {
+    closeAlert: function(index) {
       this.alerts.splice(index, 1);
     }
 

@@ -5,11 +5,8 @@ angular.module('carPoolingApp').factory('mapFactory', function($rootScope) {
     mapFactory;
 
   mapFactory = {
-
     api: {},
-
     autocomplete: null,
-
     setApi: function(_api) {
       api = _api;
       this.success();
@@ -77,27 +74,49 @@ angular.module('carPoolingApp').factory('mapFactory', function($rootScope) {
         
         clearMarks: function(){
           marker.setMap(null);
-          // for (var i = 0; i < markersArray.length; i++ ) {
-          //   markersArray[i].setMap(null);
-          // }
-          // markersArray.length = 0;
         },
         
-        addMarker: function(pos) {
-          console.log(pos);
-          var latLng = new google.maps.LatLng(pos.lat, pos.lng);
+        addMarker: function(place) {
+          var latLng = new google.maps.LatLng(place.lat, place.lng);
+          var icon = {
+            path:'M0-48c-9.8 0-17.7 7.8-17.7 17.4 0 15.5 17.7 30.6 17.7 30.6s17.7-15.4 17.7-30.6c0-9.6-7.9-17.4-17.7-17.4z',
+            fillColor: '#337AB7',
+            fillOpacity: 0.9,
+            scale: 1,
+            strokeColor: 'black',
+            strokeWeight: 0
+         };
+          
+          if(place.icon == 'car'){
+            icon = 'assets/icons/car.png';
+          }
           var marker = new google.maps.Marker({
             position: latLng,
             map: map,
-            title: "Hello World!"
+            animation: google.maps.Animation.DROP,
+            icon: icon
           });
-
-          if (typeof pos.zoom !== 'undefined') {
-            map.setZoom(map.zoom);
-          }
-          if (pos.center === true) {
+          if (place.center === true) {
             map.setCenter(latLng);
           }
+          if (place.zoom === true) {
+            map.setZoom(13);
+          }
+          
+          return marker;
+        },
+        
+        setBounds:function(rides){
+          var bounds = new google.maps.LatLngBounds();
+          _.each(rides, function(ride) {
+            var placeLocation = new google.maps.LatLng(ride.place.location.lat, ride.place.location.lon);
+            bounds.extend(placeLocation);
+          });
+          map.fitBounds(bounds);
+          var listener = google.maps.event.addListener(map, "idle", function() { 
+            if (map.getZoom() > 13) map.setZoom(13); 
+            google.maps.event.removeListener(listener); 
+          });
         },
 
         showRoute: function(origin, destination) {
@@ -109,7 +128,7 @@ angular.module('carPoolingApp').factory('mapFactory', function($rootScope) {
             if (status == google.maps.DirectionsStatus.OK) {
               directionsDisplay.setOptions({
                 preserveViewport: true,
-                draggable: true,
+                draggable: false,
                 hideRouteList: true,
                 suppressMarkers: true
               });
@@ -122,6 +141,7 @@ angular.module('carPoolingApp').factory('mapFactory', function($rootScope) {
         },
 
         placesAutocomplete: function(inputField) {
+          console.log(inputField);
           var searchInput = document.getElementById(inputField),
             address = '';
 

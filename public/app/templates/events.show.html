@@ -1,5 +1,5 @@
-<div class="panel left xs top" id="eventpanel" >
-  
+<div class="panel left xs top" id="eventpanel">
+
   <h2 class="title">
     <a ui-sref="events" href="#/events">
       <i class="fa fa-chevron-left" aria-hidden="true"></i>
@@ -7,139 +7,143 @@
     <span> {{view.event.name}} at {{view.event.place.name}}</span> 
   </h2>
   <p class="address"> {{view.event.place.address}}</p>
-  
+
   <p class="time">
-    {{view.event.starts_at | date:'h a'}} to  {{view.event.ends_at | date:'h a'}} 
+  
+    <time>{{ view.event.starts_at | amCalendar }}</time>
+    
   </p>
-  <p><strong>Description:</strong> {{view.event.description}}</p>
+  <p>{{view.event.description}}</p>
   <ul class="links">
     <li><a href="#"><i class="fa fa-pencil"></i> Edit </a></li>
     <li><a href="#"><i class="fa fa-share" aria-hidden="true"></i> Share</a></li>
   </ul>
-  
 
   <div id="availrides">
     <h2>Available rides
       <a href="#dashboard" class="btn  btn-info btn-xs">	Going	</a>
   		<a class="btn btn-info btn-xs">	Return</a>
     </h2>
-    
-    </ul>
+
     <header>
       <div class="dr">Driver</div>
       <div class="st">Seats</div>
       <div class="dp">Departure</div>
     </header>
     <div class="list">
-      <div class="row" ng-repeat="ride in view.event.cars" ng-click="view.showRide(ride)" >
-        <div class="dr"><img src="{{ride.driver_photo}}" class="profile xs">{{ride.driver_name}}</div>
-        <div class="st">{{ride.seats|| "-"}}</div>
-        <div class="dp">2:00pm</div>
+      <div class="row" ng-repeat="ride in view.event.going_rides" ng-click="view.showRide(ride)">
+        <div class="dr"><img ng-attr-src="{{ride.driver.photo}}" class="profile xs">{{ride.driver.name}}</div>
+        <div class="st">{{ride.seats || "-"}}</div>
+        <div class="dp">{{ride.departure | date:'h a'}}</div>
       </div>
     </div>
 
     <footer class="tc">
-      <a  class="btn btn-ride sm" ng-click="addcar=true" ><i class="fa fa-plus" aria-hidden="true"></i> Add my car</a>
+      <a class="btn btn-ride sm" ng-click="view.addcar=true"><i class="fa fa-plus" aria-hidden="true"></i> Add my car</a>
     </footer>
   </div>
-
 </div>
 
-<div id="ridedetails" class="panel top right xs tc" ng-show="view.ride">
+<div id="ridedetails" class="panel top right xs tc" ng-show="view.showride">
   <a class="close left" ng-click="view.showRide()"><i class="fa fa-times" aria-hidden="true"></i></a>
-  <img src="{{view.ride.driver_photo}}" class="profile xl" />
-  <h2>{{view.ride.driver_name}}</h2>
-  <p class="email">{{view.ride.driver_email}}</p>
-  <table class="">
+  <img src="{{view.showride.driver.photo}}" class="profile xl" />
+  <h2>{{view.showride.driver.name}}</h2>
+  <p class="email">{{view.showride.driver.email}}</p>
+  <p><strong>Departure from:</strong><br>
+    {{view.showride.place.address}}</p>
+  
+  <table class="cols2">
     <tr>
-      <td>Departure</td>
-      <td>7:00pm</td>
+      <td>Departure time</td>
+      <td>{{view.showride.departure | date:'h:mma'}}</td>
+    </tr>
+    
+    <tr>
+      <td>Available seats</td>
+      <td>{{view.showride.seats }}</td>
     </tr>
     <tr>
-      <td>Seatc available</td>
-      <td>4</td>
-    </tr>
-    <tr>
-      <td>Round trip</td>
+      <td>Is round trip?</td>
       <td>yes</td>
     </tr>
   </table>
   <p>
-    This is not a cat friendly ride and I like to sing on the car
+    {{view.showride.comment}}
   </p>
-  <a href="#" class="btn blue">Join this ride</a>
+  <a  ng-click="view.joinCar(view.showride._id)" class="btn blue">Join this ride</a>
   <p>
-    Estimated pick up time:<br />
-    <strong>6:52pm</strong>
+    Estimated pick up time:
+    <br />
+    <strong>-</strong>
   </p>
 </div>
 
-<div id="addride" class="panel right xs top " ng-show="addcar">
-    <a  class="close left" ng-click="addcar = !addcar" ><i class="fa fa-times" aria-hidden="true"></i></a>
+<div id="addride" class="panel right xs top " ng-show="view.addcar">
+  <a class="close left" ng-click="view.addcar = false"><i class="fa fa-times" aria-hidden="true"></i></a>
   <h2 class="tc">Add my car</h2>
-  <form class="form-horizontal form-ride"  method="post">
+  <form class="form-horizontal form-ride" method="post" ng-submit="view.addCar()">
     <div class="form-group location">
       <label class="control-label ">Select a departure location</label>
-        <input type="text" class="form-control " autofocus >
-        <a href="#"><i class="fa fa-map-marker" aria-hidden="true"></i></a>
+      <input type="text" class="form-control " id="autocomplete" ng-model="newcar.place" autofocus>
+      <a href="#"><i class="fa fa-map-marker" aria-hidden="true"></i></a>
     </div>
     <div class="row">
       <div class="col-xs-6">
         <div class="form-group ">
           <label class="control-label">Departure time</label>
-          <input type="text" class="form-control timepicker" ng-model="event.starttime" >
+          <input type="text" class="form-control timepicker" ng-model="newcar.departure"  ui-timepicker="view.timePickerOptions">
         </div>
       </div>
       <div class="col-xs-6">
         <div class="form-group right">
           <label class="control-label">Available seats</label>
-          <input type="text" class="form-control " >
+          <input type="number" class="form-control " ng-model="newcar.seats">
         </div>
       </div>
     </div>
     <div class="form-group">
       <label class="control-label">Comments</label>
-      <input type="text" class="form-control" ng-model="ride.comment"  >
+      <input type="text" class="form-control" ng-model="newcar.comment">
     </div>
     <div class="form-group tc">
       <label class="control-label">is this a round trip?</label>
       <div class="onoffswitch ">
-          <input type="checkbox" class="onoffswitch-checkbox" id="rts" ng-model="roundtrip" >
-          <label class="onoffswitch-label" for="rts"></label>
+        <input type="checkbox" class="onoffswitch-checkbox" id="rts" ng-model="roundtrip">
+        <label class="onoffswitch-label" for="rts"></label>
       </div>
     </div>
     <div class="roundtrip" ng-show="roundtrip">
       <div class="form-group">
         <label class="control-label">Select a departure location</label>
-          <input type="text" class="form-control " autofocus >
+        <input type="text" class="form-control " autofocus>
       </div>
       <div class="row">
         <div class="col-xs-6">
           <div class="form-group ">
             <label class="control-label">Departure time</label>
-            <input type="text" class="form-control timepicker" ng-model="event.starttime" >
+            <input type="text" class="form-control timepicker" ng-model="event.starttime">
           </div>
         </div>
         <div class="col-xs-6">
           <div class="form-group right">
             <label class="control-label">Available seats</label>
-            <input type="text" class="form-control " >
+            <input type="text" class="form-control ">
           </div>
         </div>
       </div>
     </div>
-  
+
     <footer class="tc">
       <button type="submit" class="btn btn-ride sm tc">Add ride</button>
     </footer>
-    
+
   </form>
 </div>
 
 
 
 <script>
-  $(document).ready(function(){
+  $(document).ready(function() {
     $('#availrides .list').slimScroll({
       position: 'right',
       height: '150px',
