@@ -43,12 +43,29 @@ function eventsShowCtrl($scope, apiservice, $state, $window, mapFactory, Notific
           departure: moment(self.event.starts_at)
         };
         
-        
         $scope.map.addMarker({
           lat: self.event.place.location.lat,
           lng: self.event.place.location.lon,
-          center: true
+          center: true,
+          zoom: true 
         });
+        
+      //  $scope.map.setBounds(self.event.going_rides);
+          
+        _.each(self.event.going_rides, function(ride) {
+          var marker = $scope.map.addMarker({
+            lat: ride.place.location.lat,
+            lng: ride.place.location.lon,
+            icon: 'car'
+          });
+          
+          marker.addListener('click', function() {
+            $scope.view.showRide(ride);
+          });
+        });
+        
+      
+
       }, function(response) {
         console.error('Error: ' + response.data);
       });
@@ -108,27 +125,39 @@ function eventsShowCtrl($scope, apiservice, $state, $window, mapFactory, Notific
         });
       }
     },
-    joinCar: function(carid) {
-      var carData = {
-        event_id: $scope.view.event._id,
-        car_id: carid,
-        going: $scope.view.user.going,
-        back: $scope.view.user.back
-      };
-      var self = this;
-      apiservice.joinCar(carData).then(function(response) {
-        self.alerts.push({
-          msg: response.data.message
-        });
-        setTimeout(function() {
-          $scope.$apply(function() {
-            self.closeAlert();
+    joinCar: function(ride_id) {
+      swal({  
+         title: "Join ride",   
+         text: "You are going to request to join {{dude }} car ?",   
+         type: "success",   
+         showCancelButton: true,   
+         confirmButtonColor: "#2EBFD9",   
+         confirmButtonText: "Yes",   
+         closeOnConfirm: false
+        }, 
+         function(){ 
+          var userData = {
+           place: {
+             address: "Villa de Sta. Fe, Residencial de Anza, Hermosillo, Son., Mexico",
+             name: "Villa de santa fe",
+             google_places_id: "ChIJZ2L_7BKEzoYRpRk4K28IsT8",
+             location: {
+               lat: 29.0829989,
+               lng: -110.98454200000003
+             }
+           }
+          };
+           
+          var self = this;
+          apiservice.joinCar(ride_id, userData).then(function(response) {
+           console.log("request sent");
+           swal("Sent!", "Request sent.", "success");
+          }, function(response) {
+           console.log('Error: ' + response);
           });
-          $scope.view.init();
-        }, 1000);
-      }, function(response) {
-        console.log('Error: ' + response);
       });
+        
+    
 
     },
     leaveCar: function(carid) {

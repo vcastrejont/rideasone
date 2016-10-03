@@ -8,7 +8,7 @@ var app = angular.module('carPoolingApp', [
   'ui.timepicker',
   'ui-notification',
   'angularMoment'
-]);
+]); 
 
 app.run(['$rootScope', '$location', '$window',
   function($rootScope, $location, $window) {
@@ -213,7 +213,6 @@ function eventsNewCtrl ($scope, apiservice, $state, mapFactory ) {
       "ends_at": ends_at
     };
     console.log(newEvent);
-    // console.log(newEvent);
     apiservice.createEvent(newEvent)
       .success(function(res, status) {
           $scope.map.currentLocation();
@@ -274,12 +273,29 @@ function eventsShowCtrl($scope, apiservice, $state, $window, mapFactory, Notific
           departure: moment(self.event.starts_at)
         };
         
-        
         $scope.map.addMarker({
           lat: self.event.place.location.lat,
           lng: self.event.place.location.lon,
-          center: true
+          center: true,
+          zoom: true 
         });
+        
+      //  $scope.map.setBounds(self.event.going_rides);
+          
+        _.each(self.event.going_rides, function(ride) {
+          var marker = $scope.map.addMarker({
+            lat: ride.place.location.lat,
+            lng: ride.place.location.lon,
+            icon: 'car'
+          });
+          
+          marker.addListener('click', function() {
+            $scope.view.showRide(ride);
+          });
+        });
+        
+      
+
       }, function(response) {
         console.error('Error: ' + response.data);
       });
@@ -339,27 +355,39 @@ function eventsShowCtrl($scope, apiservice, $state, $window, mapFactory, Notific
         });
       }
     },
-    joinCar: function(carid) {
-      var carData = {
-        event_id: $scope.view.event._id,
-        car_id: carid,
-        going: $scope.view.user.going,
-        back: $scope.view.user.back
-      };
-      var self = this;
-      apiservice.joinCar(carData).then(function(response) {
-        self.alerts.push({
-          msg: response.data.message
-        });
-        setTimeout(function() {
-          $scope.$apply(function() {
-            self.closeAlert();
+    joinCar: function(ride_id) {
+      swal({  
+         title: "Join ride",   
+         text: "You are going to request to join {{dude }} car ?",   
+         type: "success",   
+         showCancelButton: true,   
+         confirmButtonColor: "#2EBFD9",   
+         confirmButtonText: "Yes",   
+         closeOnConfirm: false
+        }, 
+         function(){ 
+          var userData = {
+           place: {
+             address: "Villa de Sta. Fe, Residencial de Anza, Hermosillo, Son., Mexico",
+             name: "Villa de santa fe",
+             google_places_id: "ChIJZ2L_7BKEzoYRpRk4K28IsT8",
+             location: {
+               lat: 29.0829989,
+               lng: -110.98454200000003
+             }
+           }
+          };
+           
+          var self = this;
+          apiservice.joinCar(ride_id, userData).then(function(response) {
+           console.log("request sent");
+           swal("Sent!", "Request sent.", "success");
+          }, function(response) {
+           console.log('Error: ' + response);
           });
-          $scope.view.init();
-        }, 1000);
-      }, function(response) {
-        console.log('Error: ' + response);
       });
+        
+    
 
     },
     leaveCar: function(carid) {
@@ -654,20 +682,47 @@ angular.module('carPoolingApp').factory('mapFactory', function($rootScope) {
           marker.setMap(null);
         },
         
-        addMarker: function(pos) {
-          var latLng = new google.maps.LatLng(pos.lat, pos.lng);
+        addMarker: function(place) {
+          var latLng = new google.maps.LatLng(place.lat, place.lng);
+          var icon = {
+            path:'M0-48c-9.8 0-17.7 7.8-17.7 17.4 0 15.5 17.7 30.6 17.7 30.6s17.7-15.4 17.7-30.6c0-9.6-7.9-17.4-17.7-17.4z',
+            fillColor: '#337AB7',
+            fillOpacity: 0.9,
+            scale: 1,
+            strokeColor: 'black',
+            strokeWeight: 0
+         };
+          
+          if(place.icon == 'car'){
+            icon = 'assets/icons/car.png';
+          }
           var marker = new google.maps.Marker({
             position: latLng,
             map: map,
-            title: "Hello World!"
+            animation: google.maps.Animation.DROP,
+            icon: icon
           });
-
-          if (typeof pos.zoom !== 'undefined') {
-            map.setZoom(map.zoom);
-          }
-          if (pos.center === true) {
+          if (place.center === true) {
             map.setCenter(latLng);
           }
+          if (place.zoom === true) {
+            map.setZoom(13);
+          }
+          
+          return marker;
+        },
+        
+        setBounds:function(rides){
+          var bounds = new google.maps.LatLngBounds();
+          _.each(rides, function(ride) {
+            var placeLocation = new google.maps.LatLng(ride.place.location.lat, ride.place.location.lon);
+            bounds.extend(placeLocation);
+          });
+          map.fitBounds(bounds);
+          var listener = google.maps.event.addListener(map, "idle", function() { 
+            if (map.getZoom() > 13) map.setZoom(13); 
+            google.maps.event.removeListener(listener); 
+          });
         },
 
         showRoute: function(origin, destination) {
@@ -679,7 +734,7 @@ angular.module('carPoolingApp').factory('mapFactory', function($rootScope) {
             if (status == google.maps.DirectionsStatus.OK) {
               directionsDisplay.setOptions({
                 preserveViewport: true,
-                draggable: true,
+                draggable: false,
                 hideRouteList: true,
                 suppressMarkers: true
               });
@@ -825,8 +880,9 @@ function apiservice($http) {
 		return $http.post('/api/events/deletecar', carData);
 	};
 
-	service.joinCar = function(carData) {
-		return $http.post('/api/events/joincar', carData);
+	service.joinCar = function(ride_id, userData) {
+		// api/rides/:ride_id/join
+		return $http.put('/api/rides/'+ride_id+'/join', userData);
 	};
 
 	service.leaveCar = function(carData) {

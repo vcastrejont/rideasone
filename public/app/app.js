@@ -8,7 +8,7 @@ var app = angular.module('carPoolingApp', [
   'ui.timepicker',
   'ui-notification',
   'angularMoment'
-]);
+]); 
 
 app.run(['$rootScope', '$location', '$window',
   function($rootScope, $location, $window) {

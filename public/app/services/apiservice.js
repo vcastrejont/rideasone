@@ -38,8 +38,9 @@ function apiservice($http) {
 		return $http.post('/api/events/deletecar', carData);
 	};
 
-	service.joinCar = function(carData) {
-		return $http.post('/api/events/joincar', carData);
+	service.joinCar = function(ride_id, userData) {
+		// api/rides/:ride_id/join
+		return $http.put('/api/rides/'+ride_id+'/join', userData);
 	};
 
 	service.leaveCar = function(carData) {

@@ -55,7 +55,6 @@ function eventsNewCtrl ($scope, apiservice, $state, mapFactory ) {
       "ends_at": ends_at
     };
     console.log(newEvent);
-    // console.log(newEvent);
     apiservice.createEvent(newEvent)
       .success(function(res, status) {
           $scope.map.currentLocation();
