@@ -6,8 +6,8 @@ function eventsShowCtrl($scope, apiservice, $state, $window, mapFactory, Notific
   $scope.id = $state.params.id;
   $scope.map = mapFactory.getApi();
   $scope.map.placesAutocomplete('autocomplete');
-  $scope.newcar = {
-  };
+  $scope.newcar = {};
+  $scope.idSelectedRide = null;
 
 
   $scope.messageDriver = function(car) {
@@ -24,13 +24,21 @@ function eventsShowCtrl($scope, apiservice, $state, $window, mapFactory, Notific
       'maxTime': '7:30am'
     },
 
-    
     showRide: function(ride) {
-      console.log(ride);
+      //console.log(ride);
       var origin =  new google.maps.LatLng(ride.place.location.lat, ride.place.location.lon);
       var destination =  new google.maps.LatLng(this.event.place.location.lat, this.event.place.location.lon);
+      
+      $scope.view.showride = null;
+      $scope.idSelectedRide = null;
       $scope.map.showRoute(origin, destination);
+      console.log($scope.view.showride);
       $scope.view.showride = ride;
+      $scope.idSelectedRide = ride._id; 
+    },
+    closeRide: function() {
+      $scope.view.showride = null;
+      $scope.idSelectedRide = null;
     },
     init: function() {
       var self = this;
@@ -60,6 +68,8 @@ function eventsShowCtrl($scope, apiservice, $state, $window, mapFactory, Notific
           });
           
           marker.addListener('click', function() {
+            $scope.view.showride = null;
+            $scope.idSelectedRide = null;
             $scope.view.showRide(ride);
           });
         });
@@ -102,7 +112,6 @@ function eventsShowCtrl($scope, apiservice, $state, $window, mapFactory, Notific
       });
     },
     
-    
     deleteCar: function(carid) {
       if (confirm("Are you sure?")) {
         var carData = {
@@ -125,11 +134,11 @@ function eventsShowCtrl($scope, apiservice, $state, $window, mapFactory, Notific
         });
       }
     },
-    joinCar: function(ride_id) {
+    joinCar: function(ride) {
+      console.log(ride);
       swal({  
-         title: "Join ride",   
-         text: "You are going to request to join {{dude }} car ?",   
-         type: "success",   
+         title: "Request ride",   
+         text: "Do you want to join " + ride.driver.name + " car ?",   
          showCancelButton: true,   
          confirmButtonColor: "#2EBFD9",   
          confirmButtonText: "Yes",   
@@ -149,9 +158,9 @@ function eventsShowCtrl($scope, apiservice, $state, $window, mapFactory, Notific
           };
            
           var self = this;
-          apiservice.joinCar(ride_id, userData).then(function(response) {
+          apiservice.joinCar(ride._id, userData).then(function(response) {
            console.log("request sent");
-           swal("Sent!", "Request sent.", "success");
+           swal("Request sent",  ride.driver.name + " will recive your request" );
           }, function(response) {
            console.log('Error: ' + response);
           });

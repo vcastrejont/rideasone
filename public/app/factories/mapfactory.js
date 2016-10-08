@@ -80,13 +80,12 @@ angular.module('carPoolingApp').factory('mapFactory', function($rootScope) {
           var latLng = new google.maps.LatLng(place.lat, place.lng);
           var icon = {
             path:'M0-48c-9.8 0-17.7 7.8-17.7 17.4 0 15.5 17.7 30.6 17.7 30.6s17.7-15.4 17.7-30.6c0-9.6-7.9-17.4-17.7-17.4z',
-            fillColor: '#337AB7',
+            fillColor: '#DD2C00',
             fillOpacity: 0.9,
             scale: 1,
             strokeColor: 'black',
             strokeWeight: 0
          };
-          
           if(place.icon == 'car'){
             icon = 'assets/icons/car.png';
           }
@@ -102,7 +101,6 @@ angular.module('carPoolingApp').factory('mapFactory', function($rootScope) {
           if (place.zoom === true) {
             map.setZoom(13);
           }
-          
           return marker;
         },
         
@@ -130,12 +128,13 @@ angular.module('carPoolingApp').factory('mapFactory', function($rootScope) {
                 preserveViewport: true,
                 draggable: false,
                 hideRouteList: true,
-                suppressMarkers: true
+                suppressMarkers: true,
+                polylineOptions:{ strokeColor:"#757575", strokeWeight:3 }
               });
               directionsDisplay.setDirections(response);
-              //polylineOptions:{strokeColor:"#2EBFD9",strokeWeight:2}
+               map.panTo(origin, destination); 
             } else {
-              window.alert('Directions request failed due to ' + status);
+              console.error('Directions request failed due to ' + status);
             }
           });
         },

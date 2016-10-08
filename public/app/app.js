@@ -7,7 +7,8 @@ var app = angular.module('carPoolingApp', [
   'ngStorage',
   'ui.timepicker',
   'ui-notification',
-  'angularMoment'
+  'angularMoment',
+  'firebase'
 ]); 
 
 app.run(['$rootScope', '$location', '$window',

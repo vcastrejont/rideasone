@@ -9,9 +9,7 @@
   <p class="address"> {{view.event.place.address}}</p>
 
   <p class="time">
-  
     <time>{{ view.event.starts_at | amCalendar }}</time>
-    
   </p>
   <p>{{view.event.description}}</p>
   <ul class="links">
@@ -31,7 +29,7 @@
       <div class="dp">Departure</div>
     </header>
     <div class="list">
-      <div class="row" ng-repeat="ride in view.event.going_rides" ng-click="view.showRide(ride)">
+      <div class="row" ng-repeat="ride in view.event.going_rides" ng-click="view.showRide(ride)"  ng-class="{selected: ride._id === idSelectedRide}">
         <div class="dr"><img ng-attr-src="{{ride.driver.photo}}" class="profile xs">{{ride.driver.name}}</div>
         <div class="st">{{ride.seats || "-"}}</div>
         <div class="dp">{{ride.departure | date:'h a'}}</div>
@@ -45,7 +43,7 @@
 </div>
 
 <div id="ridedetails" class="panel top right xs tc" ng-show="view.showride">
-  <a class="close left" ng-click="view.showRide()"><i class="fa fa-times" aria-hidden="true"></i></a>
+  <a class="close left" ng-click="view.closeRide()"><i class="fa fa-times" aria-hidden="true"></i></a>
   <img src="{{view.showride.driver.photo}}" class="profile xl" />
   <h2>{{view.showride.driver.name}}</h2>
   <p class="email">{{view.showride.driver.email}}</p>
@@ -70,7 +68,7 @@
   <p>
     {{view.showride.comment}}
   </p>
-  <a  ng-click="view.joinCar(view.showride._id)" class="btn blue">Join this ride</a>
+  <a  ng-click="view.joinCar(view.showride)" class="btn blue">Join this ride</a>
   <p>
     Estimated pick up time:
     <br />

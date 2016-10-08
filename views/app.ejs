@@ -23,6 +23,9 @@
         <script src="/components/angular/angular.js"></script>
         <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js">
         </script>
+    
+        <!-- AngularFire -->
+        <script src="https://cdn.firebase.com/libs/angularfire/2.0.2/angularfire.min.js"></script>
         <script src="/components/angular-ui-router/release/angular-ui-router.min.js"></script>
         <script src="/components/angularjs-geolocation/dist/angularjs-geolocation.min.js"></script>
         <script src="/components/angular-bootstrap/ui-bootstrap-tpls.min.js"></script>
@@ -40,7 +43,19 @@
         <script src="assets/js/material.min.js"></script>
         <script src="assets/js/jquery.easing.min.js"></script>
         <script src="assets/js/material-kit.js"></script>
-        
+        <script src="https://www.gstatic.com/firebasejs/3.4.1/firebase.js"></script>
+        <script>
+          // Initialize Firebase
+          var config = {
+            apiKey: "AIzaSyBPA6TkgY1Y589UXOmUWz8rUNcYntqmnns",
+            authDomain: "vocal-etching-118719.firebaseapp.com",
+            databaseURL: "https://vocal-etching-118719.firebaseio.com",
+            storageBucket: "vocal-etching-118719.appspot.com",
+            messagingSenderId: "764821343773"
+          };
+          firebase.initializeApp(config);
+        </script>
+
         <!-- App script -->
         <script src="/rideasone.js"></script>
 
@@ -63,9 +78,10 @@
                   </a>
               </div>
 
-              <div class="collapse navbar-collapse" id="navigation-main">
+              <div class="collapse navbar-collapse" id="navigation-main" ng-controller="headerCtrl">
                   <ul class="nav navbar-nav navbar-right">
                     <li><a href="#home" >Home</a></li>
+                    <li><a href="#home" >{{data}}</a></li>
                     <li><a ui-sref="events"  ui-sref-active="active">Events</a></li>
                     <li><a href=""><i class="fa fa-search" aria-hidden="true"></i></a></li>
                     <li role="separator" class="dividerv"></li>
