@@ -3,7 +3,7 @@ angular.module('carPoolingApp').factory('mapFactory', function($rootScope) {
     currentEventLocation,
     marker,
     mapFactory;
-
+  var markersArray = [];
   mapFactory = {
     api: {},
     autocomplete: null,
@@ -73,7 +73,11 @@ angular.module('carPoolingApp').factory('mapFactory', function($rootScope) {
         },
         
         clearMarks: function(){
-          marker.setMap(null);
+          for (var i = 0; i < markersArray.length; i++ ) {
+             markersArray[i].setMap(null);
+          }
+          markersArray.length = 0;
+          console.log(markersArray);
         },
         
         addMarker: function(place) {
@@ -101,6 +105,7 @@ angular.module('carPoolingApp').factory('mapFactory', function($rootScope) {
           if (place.zoom === true) {
             map.setZoom(13);
           }
+           markersArray.push(marker);
           return marker;
         },
         
