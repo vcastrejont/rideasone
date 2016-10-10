@@ -779,11 +779,14 @@ angular.module('carPoolingApp').factory('mapFactory', function($rootScope) {
         },
 
         placesAutocomplete: function(inputField) {
-          console.log(inputField);
-          var searchInput = document.getElementById(inputField),
+          //console.log(inputField);
+          var input = document.getElementsByClassName(inputField),
             address = '';
-
-          mapFactory.autocomplete = new google.maps.places.Autocomplete(searchInput);
+            
+          for (i = 0; i < input.length; i++) {
+            mapFactory.autocomplete =  new google.maps.places.Autocomplete(input[i]);
+          }
+          //mapFactory.autocomplete = new google.maps.places.Autocomplete(searchInput);
 
           mapFactory.autocomplete.bindTo('bounds', map);
           mapFactory.autocomplete.addListener('place_changed', mapFactory.setEventLocationData);

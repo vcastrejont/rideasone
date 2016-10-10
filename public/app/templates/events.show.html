@@ -82,7 +82,7 @@
   <form class="form-horizontal form-ride" method="post" ng-submit="view.addCar()">
     <div class="form-group location">
       <label class="control-label ">Select a departure location</label>
-      <input type="text" class="form-control " id="autocomplete" ng-model="newcar.place" autofocus>
+      <input type="text" class="form-control autocomplete"  ng-model="newcar.place" autofocus>
       <a href="#"><i class="fa fa-map-marker" aria-hidden="true"></i></a>
     </div>
     <div class="row">
@@ -112,20 +112,20 @@
     </div>
     <div class="roundtrip" ng-show="roundtrip">
       <div class="form-group">
-        <label class="control-label">Select a departure location</label>
-        <input type="text" class="form-control " autofocus>
+        <label class="control-label">Select a destination location</label>
+        <input type="text" class="form-control autocomplete" >
       </div>
       <div class="row">
         <div class="col-xs-6">
           <div class="form-group ">
             <label class="control-label">Departure time</label>
-            <input type="text" class="form-control timepicker" ng-model="event.starttime">
+            <input type="text" class="form-control timepicker" ng-model="newcar.return_departure"  ui-timepicker="view.timePickerOptions">
           </div>
         </div>
         <div class="col-xs-6">
           <div class="form-group right">
             <label class="control-label">Available seats</label>
-            <input type="text" class="form-control ">
+            <input type="text" class="form-control"  ng-model="newcar.return_seats">
           </div>
         </div>
       </div>
