@@ -9,9 +9,7 @@
   <p class="address"> {{view.event.place.address}}</p>
 
   <p class="time">
-  
     <time>{{ view.event.starts_at | amCalendar }}</time>
-    
   </p>
   <p>{{view.event.description}}</p>
   <ul class="links">
@@ -31,7 +29,7 @@
       <div class="dp">Departure</div>
     </header>
     <div class="list">
-      <div class="row" ng-repeat="ride in view.event.going_rides" ng-click="view.showRide(ride)">
+      <div class="row" ng-repeat="ride in view.event.going_rides" ng-click="view.showRide(ride)"  ng-class="{selected: ride._id === idSelectedRide}">
         <div class="dr"><img ng-attr-src="{{ride.driver.photo}}" class="profile xs">{{ride.driver.name}}</div>
         <div class="st">{{ride.seats || "-"}}</div>
         <div class="dp">{{ride.departure | date:'h a'}}</div>
@@ -45,7 +43,7 @@
 </div>
 
 <div id="ridedetails" class="panel top right xs tc" ng-show="view.showride">
-  <a class="close left" ng-click="view.showRide()"><i class="fa fa-times" aria-hidden="true"></i></a>
+  <a class="close left" ng-click="view.closeRide()"><i class="fa fa-times" aria-hidden="true"></i></a>
   <img src="{{view.showride.driver.photo}}" class="profile xl" />
   <h2>{{view.showride.driver.name}}</h2>
   <p class="email">{{view.showride.driver.email}}</p>
@@ -70,7 +68,7 @@
   <p>
     {{view.showride.comment}}
   </p>
-  <a  ng-click="view.joinCar(view.showride._id)" class="btn blue">Join this ride</a>
+  <a  ng-click="view.joinCar(view.showride)" class="btn blue">Join this ride</a>
   <p>
     Estimated pick up time:
     <br />
@@ -84,7 +82,7 @@
   <form class="form-horizontal form-ride" method="post" ng-submit="view.addCar()">
     <div class="form-group location">
       <label class="control-label ">Select a departure location</label>
-      <input type="text" class="form-control " id="autocomplete" ng-model="newcar.place" autofocus>
+      <input type="text" class="form-control autocomplete"  ng-model="newcar.place" autofocus>
       <a href="#"><i class="fa fa-map-marker" aria-hidden="true"></i></a>
     </div>
     <div class="row">
@@ -114,20 +112,20 @@
     </div>
     <div class="roundtrip" ng-show="roundtrip">
       <div class="form-group">
-        <label class="control-label">Select a departure location</label>
-        <input type="text" class="form-control " autofocus>
+        <label class="control-label">Select a destination location</label>
+        <input type="text" class="form-control autocomplete" >
       </div>
       <div class="row">
         <div class="col-xs-6">
           <div class="form-group ">
             <label class="control-label">Departure time</label>
-            <input type="text" class="form-control timepicker" ng-model="event.starttime">
+            <input type="text" class="form-control timepicker" ng-model="newcar.return_departure"  ui-timepicker="view.timePickerOptions">
           </div>
         </div>
         <div class="col-xs-6">
           <div class="form-group right">
             <label class="control-label">Available seats</label>
-            <input type="text" class="form-control ">
+            <input type="text" class="form-control"  ng-model="newcar.return_seats">
           </div>
         </div>
       </div>

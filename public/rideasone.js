@@ -7,7 +7,8 @@ var app = angular.module('carPoolingApp', [
   'ngStorage',
   'ui.timepicker',
   'ui-notification',
-  'angularMoment'
+  'angularMoment',
+  'firebase'
 ]); 
 
 app.run(['$rootScope', '$location', '$window',
@@ -236,8 +237,8 @@ function eventsShowCtrl($scope, apiservice, $state, $window, mapFactory, Notific
   $scope.id = $state.params.id;
   $scope.map = mapFactory.getApi();
   $scope.map.placesAutocomplete('autocomplete');
-  $scope.newcar = {
-  };
+  $scope.newcar = {};
+  $scope.idSelectedRide = null;
 
 
   $scope.messageDriver = function(car) {
@@ -254,13 +255,21 @@ function eventsShowCtrl($scope, apiservice, $state, $window, mapFactory, Notific
       'maxTime': '7:30am'
     },
 
-    
     showRide: function(ride) {
-      console.log(ride);
+      //console.log(ride);
       var origin =  new google.maps.LatLng(ride.place.location.lat, ride.place.location.lon);
       var destination =  new google.maps.LatLng(this.event.place.location.lat, this.event.place.location.lon);
+      
+      $scope.view.showride = null;
+      $scope.idSelectedRide = null;
       $scope.map.showRoute(origin, destination);
+      console.log($scope.view.showride);
       $scope.view.showride = ride;
+      $scope.idSelectedRide = ride._id; 
+    },
+    closeRide: function() {
+      $scope.view.showride = null;
+      $scope.idSelectedRide = null;
     },
     init: function() {
       var self = this;
@@ -290,6 +299,8 @@ function eventsShowCtrl($scope, apiservice, $state, $window, mapFactory, Notific
           });
           
           marker.addListener('click', function() {
+            $scope.view.showride = null;
+            $scope.idSelectedRide = null;
             $scope.view.showRide(ride);
           });
         });
@@ -332,7 +343,6 @@ function eventsShowCtrl($scope, apiservice, $state, $window, mapFactory, Notific
       });
     },
     
-    
     deleteCar: function(carid) {
       if (confirm("Are you sure?")) {
         var carData = {
@@ -355,11 +365,11 @@ function eventsShowCtrl($scope, apiservice, $state, $window, mapFactory, Notific
         });
       }
     },
-    joinCar: function(ride_id) {
+    joinCar: function(ride) {
+      console.log(ride);
       swal({  
-         title: "Join ride",   
-         text: "You are going to request to join {{dude }} car ?",   
-         type: "success",   
+         title: "Request ride",   
+         text: "Do you want to join " + ride.driver.name + " car ?",   
          showCancelButton: true,   
          confirmButtonColor: "#2EBFD9",   
          confirmButtonText: "Yes",   
@@ -379,9 +389,9 @@ function eventsShowCtrl($scope, apiservice, $state, $window, mapFactory, Notific
           };
            
           var self = this;
-          apiservice.joinCar(ride_id, userData).then(function(response) {
+          apiservice.joinCar(ride._id, userData).then(function(response) {
            console.log("request sent");
-           swal("Sent!", "Request sent.", "success");
+           swal("Request sent",  ride.driver.name + " will recive your request" );
           }, function(response) {
            console.log('Error: ' + response);
           });
@@ -453,9 +463,27 @@ function eventsShowCtrl($scope, apiservice, $state, $window, mapFactory, Notific
 
 };
 
-angular.module('carPoolingApp').controller('headerCtrl', function headerCtrl($scope) {
-  $scope.firstName= "Victor";
-  $scope.lastName= "Castrejon";
+angular.module('carPoolingApp').controller('headerCtrl', function headerCtrl($scope, $firebaseObject) {
+  $scope.test= "Menu1";
+
+     
+    // var ref = firebase.database().ref('/notifications/');
+    // 
+    // var obj = $firebaseObject(ref);
+    // obj.$loaded().then(function() {
+    //   angular.forEach(obj, function(value, key) {
+    //   console.log(value, key);
+    //   });
+    // });
+    
+    var recentPostsRef = firebase.database().ref('notifications').limitToLast(100);
+    recentPostsRef.on('child_added', function(data) {
+      var post = data.val();
+    //  $(".notifications").append("<li>"+post.title+"</li>" );  
+      console.log(data.val()); 
+    });
+    
+    
 });
 
 angular.module('carPoolingApp').controller('homeCtrl', homeCtrl);
@@ -609,7 +637,7 @@ angular.module('carPoolingApp').factory('mapFactory', function($rootScope) {
     currentEventLocation,
     marker,
     mapFactory;
-
+  var markersArray = [];
   mapFactory = {
     api: {},
     autocomplete: null,
@@ -679,20 +707,23 @@ angular.module('carPoolingApp').factory('mapFactory', function($rootScope) {
         },
         
         clearMarks: function(){
-          marker.setMap(null);
+          for (var i = 0; i < markersArray.length; i++ ) {
+             markersArray[i].setMap(null);
+          }
+          markersArray.length = 0;
+          console.log(markersArray);
         },
         
         addMarker: function(place) {
           var latLng = new google.maps.LatLng(place.lat, place.lng);
           var icon = {
             path:'M0-48c-9.8 0-17.7 7.8-17.7 17.4 0 15.5 17.7 30.6 17.7 30.6s17.7-15.4 17.7-30.6c0-9.6-7.9-17.4-17.7-17.4z',
-            fillColor: '#337AB7',
+            fillColor: '#DD2C00',
             fillOpacity: 0.9,
             scale: 1,
             strokeColor: 'black',
             strokeWeight: 0
          };
-          
           if(place.icon == 'car'){
             icon = 'assets/icons/car.png';
           }
@@ -708,7 +739,7 @@ angular.module('carPoolingApp').factory('mapFactory', function($rootScope) {
           if (place.zoom === true) {
             map.setZoom(13);
           }
-          
+           markersArray.push(marker);
           return marker;
         },
         
@@ -736,22 +767,26 @@ angular.module('carPoolingApp').factory('mapFactory', function($rootScope) {
                 preserveViewport: true,
                 draggable: false,
                 hideRouteList: true,
-                suppressMarkers: true
+                suppressMarkers: true,
+                polylineOptions:{ strokeColor:"#757575", strokeWeight:3 }
               });
               directionsDisplay.setDirections(response);
-              //polylineOptions:{strokeColor:"#2EBFD9",strokeWeight:2}
+               map.panTo(origin, destination); 
             } else {
-              window.alert('Directions request failed due to ' + status);
+              console.error('Directions request failed due to ' + status);
             }
           });
         },
 
         placesAutocomplete: function(inputField) {
-          console.log(inputField);
-          var searchInput = document.getElementById(inputField),
+          //console.log(inputField);
+          var input = document.getElementsByClassName(inputField),
             address = '';
-
-          mapFactory.autocomplete = new google.maps.places.Autocomplete(searchInput);
+            
+          for (i = 0; i < input.length; i++) {
+            mapFactory.autocomplete =  new google.maps.places.Autocomplete(input[i]);
+          }
+          //mapFactory.autocomplete = new google.maps.places.Autocomplete(searchInput);
 
           mapFactory.autocomplete.bindTo('bounds', map);
           mapFactory.autocomplete.addListener('place_changed', mapFactory.setEventLocationData);
