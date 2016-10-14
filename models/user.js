@@ -115,6 +115,7 @@ UserSchema.methods.requestJoiningRide = function (rideId, place) {
       return RideRequest.populate(requests[0], {path: 'ride', populate:{path: 'driver'}});
     })
     .then(request => {
+      /*ToDo: error when ride doesn't exist */
       var notificationData = {
 	      recipient: {
 		      tokens: request.ride.driver.tokens,
@@ -124,7 +125,6 @@ UserSchema.methods.requestJoiningRide = function (rideId, place) {
 		    subject: request._id,
 		    type: 'ride request'
 	    };
-
       return Notification.addNotification(notificationData, transaction)
         .return(request);
     })

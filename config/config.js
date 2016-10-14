@@ -28,24 +28,25 @@ var defaults = {
     secret: '5sAsJshpCHf_s4Tzk17_7nTK'
   },
   firebase: {
-    apiKey: "AIzaSyCI7KqudvtYvEZAKNX-b3iHdu67_FbfvRc",
-    authDomain: "rideasone-d96cf.firebaseapp.com",
-    storageBucket: "rideasone-d96cf.appspot.com",
-    databaseURL: "https://rideasone-d96cf.firebaseio.com",
+    apiKey: "AIzaSyBPA6TkgY1Y589UXOmUWz8rUNcYntqmnns",
+    authDomain: "vocal-etching-118719.firebaseapp.com",
+    storageBucket: "vocal-etching-118719.appspot.com",
+    databaseURL: "https://vocal-etching-118719.firebaseio.com",
+    messagingSenderId: "764821343773",
     serviceAccount: {
       "type": "service_account",
-      "project_id": "rideasone-d96cf",
-      "private_key_id": "e50029c5e6c283fede788f4f589963923e46b802",
-      "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvwIBADANBgkqhkiG9w0BAQEFAASCBKkwggSlAgEAAoIBAQC40rSHPQ6Qi7rL\nCt7poOkwlj/Cp+V8e+5fDv9QAt5UXOCEXoiparBRPHeO6QL6/GSsd1TB9xYgYtOz\nHzjmPHdDk2XeIiaotqA2PyyXaJyPSyMc6yst+9yvjluG+mfuw0h/hlOcLhflpmf8\n6rciLoGC/mneZ47f1pp9UrvB8Kfqo72id8O9MCIFY1bLJoPjIajKBkAOOL/+b+4t\novLQhJpvfY9np3VTuMBo4DDaAn3bLem7uNqy3RdAlQPM+l+WsOg6J2ScZPhgUpM7\nLlJU/dQ/Bq5/RcENIa/fFGMQWLd9vpFuXb6jLhR6QtEpde3YXMcR5pATQWiKWU+C\nwYT2Qv0ZAgMBAAECggEBAImdMZfkqVyM/cdCz9lK23Y22UC5vJBkwob65rUPfbV4\n9h75OG5UpvXFvQumiXaRyO/1ZiGKNWply1T6sWYUrYSeUmIEMZ67ZC0f+ra9yJyV\nCI72t07k0lvQ9mtZNVu9AdUaElUeqOJwdcsGhNcpo3sCrZdQqjwWUS9xE6YC5zQ3\n9KpkwpsSpPpnrMKYllBrkjuQCmJ4UM4n3puuvhFg+nz4qmWrir8QbEvg64WuHJh4\nbS1+l2SxlrdPfgmksXialYYfb2kE7M2qeRx4u2iDTzRoyHu6h9dVy12HisjeAaeF\n0LWdkRMDRydD9Sekj12bF+25tI1jdBu8BKda/LOQHZECgYEA4/i5ZdABqrARiqVR\noUB3lan2dxT+RhiKnlJXPx0vXewXGrsr4IFocfskdxIhA0ZFpkJxBR3iqhnYN9FB\nUwy3V7fFXX9b9y7AAgf0RKxEb3gyUQrIPv/NCGzoaI8PAcmFxfnBPO8Di007xHe9\ni33riO5ur8tkrQeZX02RZJADyv0CgYEAz4vn9tbMv+zOWjl/c3UXTDQVxsnXQhS7\nAfPZ+Go4qTBndgqQR986oIfM98sSiOqivhFkDei+qhuT4oqVjWvgggKh4HT0c21U\nsGuxVQcFdHQw62TqBe6vJHzwAd5bZw4ZAwwoV1UM3hlSd5PgQA13o+vm9Uvtk1Lc\nj0bNLAcDW00CgYEAuiKtDcomcj1MNU4CNo0ylsqtaFGFw6nqFJbakbe8ow1PWA4X\nJznCE76g6W+t8MSBvdxl922NUqHDft+mXK73S/HKfiqs5kgPkhj4gtG9Ft6nBrCt\nC3NE72os4KJd+HGYfisMcjodRLIM6L9zzd9EXwt+6J5DV1vrCHuHCPrlfekCgYEA\nsAOa6gApDOur5WC18hjvdTUG8tvirqweHP3NcZvECdh/JeC3k/yBH/uLnOqgAXXc\nJw1gqVslt+ZDePDG/HTspdXNqyoE1o92L1hlwBKAUc7oXfnrbrSJ3IwIj80f/zo5\nhBgfblE25HTdN4Q1vpytRlueN5H5HeQ8IVaOUjRwaFECgYAQf+RI72jFBJxvIlCj\nJvnPepzOBTkUdluBHYXaRhplYpTJTJL6AX7oMGbPlspwAUBqDkZVjWArD1dNRtHr\nTnm0owLzg/djE1nJXceil4ztnCx6qKNTIE1LxUkKoTCd0aFs9YMkwV1maH2c08PC\n7E3xsCO3UBwz2YnotUt6GRhwVA==\n-----END PRIVATE KEY-----\n",
-      "client_email": "rideasone-service@rideasone-d96cf.iam.gserviceaccount.com",
-      "client_id": "105944406864658159685",
-      "auth_uri": "https://accounts.google.com/o/oauth2/auth",
-      "token_uri": "https://accounts.google.com/o/oauth2/token",
-      "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
-      "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/rideasone-service%40rideasone-d96cf.iam.gserviceaccount.com"
+      "project_id": "vocal-etching-118719",
+      "private_key_id": "f83f84c26c6f52906227b534a0cc0fe8c61190c3",
+      "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDU0h0hc8cPKadn\nkhD/Gn64oga2zacJrncerV3igrr0DOt/U4rH/DWYyWM8CJTckmuGETliOPyDneSy\nzi0tnM6QFEeYtsCkx1yR6kX+NUyE8Jz2jB9UsyWTBGFrU4SBw5PMS5sY7OM971kM\nBFyiOG8bEPgk47kwbQZXhnLWXuGPl4CmnjGcrrp9Lomv87UOMp0o+EKlGQE2Cp6l\nZFoJqZEz9cRF7N9DRmlDvyznwxWq3RVPO83dmqmYvhWIE4wPhqutO06nW3viGzLe\n/n5KrWbDf6HRE4B1PdnUiv3G6naFQtdsFsxxrUxvFAxUKMtCdDsxepjfVvzvo0vP\nUuEKXWkLAgMBAAECggEBAK3obOmTJI0darDVyZHM4tSZgocLEn501N56qQeZ8I/R\npvdLG1NEo7+Qgcji8lI0TC0oEg5TpvUep2390Sk+xAU0rTT70fxU9S4/lKagg0D3\nJizKYCfkpMW4hKshelxXp4UAG2OI4EESP1/0iIX/O7uQaFYsyH3r+Yy4T0siCYw9\nsdvMUWi1nJsBY3ay1TngA8NslGsR5pgMA/nBfXuslNxpAjQJJ6KQJF9Sqf/UG0sp\naO0fGtLVNFYi78CMfGDJKkq/wpn3GrK1yKzbswwQtAt30uMkaq0BXo+zSPAOn/Ek\nj/ANsK2jXSllloKdoUccKWG5PYPqV0LFpCWj4eEircECgYEA7QKt8iuH4lQougXT\nnXCY+ru5YNNihNFwoQ9pkKVO+pjUBmdUfoazBE7cqOvFoz1pAk1eR1WZofnj3N1R\nsxTFXtCVaNyIHQi1n+apurISFSzmedOVvrnCXTCgl/D8tWtjZiEf6ckkn5RMEWEY\nsDqh93ipNiJg54RBPpkZqi4jZ3sCgYEA5d9HgA5eTFhp8e3Dmtk0HSW0BHVWmxeA\n0Vw/JcJrM6kDogZGLcL97AKNIm1d6BAQSp4rO6nqLyzbb6HppK2EuFmyycgQaSgA\nHK9m+iYt0Bdb5CUJW/bVWPmHtjuKCfPn6G6gas/TvXA3hbzJoGK5h4GLx51Jx5x7\nLAw0iC+jh7ECgYArrA65TOQhBDjs7h3sKM9HhEfIW6sPpjgGtXxSNuOysW6AL5IW\nLmPWK2HljmxAhBRRZEg3BMLmYdFm5TEkunMT4YNmaxx5nR06dZpY2G8Uj814LVCu\ncDQsT8WHudQW6c7LBteGkJW7AexyV13hOyyVGRq06ujIQEp1amicPxwu+QKBgEAO\ny6cE2gRecw+nGWZSdvJUamj/peXMU+qD0VkdZ7BavhdttirUdtxJDbl1TsD3kQKq\nNxQGUqtYzcG7Fhf8/so8vNT8Oo6DRhy4SHMXJpchm0rlg0ksbOHBj68ZwmrpnEuq\nYGvDhJb66Y4MQQe/20HGuQQkccX9dlmdARqeY+zRAoGBAOhLGFG5Gr9J8GoGcyxA\nf313WeYfQ+Lvdia4wD5XL9xxT5JkjbUPdgTYRIVAHw2zyebrLQB+fhpvaQqOsgIq\npdk5+bCu9I5CM9tpNn2JEy/75M5CsJAeB8hcPa1DANHGmZt05jNj8wlv18FEiiQL\nwkmP3qJ4kwmKHHVlU/7oOGA+\n-----END PRIVATE KEY-----\n",
+        "client_email": "rideasone-server@vocal-etching-118719.iam.gserviceaccount.com",
+        "client_id": "104923650109992333949",
+        "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+        "token_uri": "https://accounts.google.com/o/oauth2/token",
+        "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+        "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/rideasone-server%40vocal-etching-118719.iam.gserviceaccount.com"
     },
     databaseAuthVariableOverride: {
-      uid: "rideAsOne-service"
+      uid: "rideasone-server"
     }
   }
 };

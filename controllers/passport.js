@@ -32,7 +32,7 @@ module.exports = function (passport) {
     secretOrKey: config.jwtSecret,
     issuer: config.issuer
   }, function (payload, done) {
-    User.findById(payload.id)
+    return User.findById(payload.id)
       .then((user) => {
         if (!user) return done(new Error('User not found'));
         return done(null, user);
