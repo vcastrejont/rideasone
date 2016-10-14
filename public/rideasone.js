@@ -383,7 +383,7 @@ function eventsShowCtrl($scope, apiservice, $state, $window, mapFactory, Notific
              google_places_id: "ChIJZ2L_7BKEzoYRpRk4K28IsT8",
              location: {
                lat: 29.0829989,
-               lng: -110.98454200000003
+               lon: -110.98454200000003
              }
            }
           };
