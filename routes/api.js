@@ -407,6 +407,6 @@ router.put('/users/:user_id/fcm-token', middleware.isAuthenticated, userControll
   * @apiSuccess {String} message 
   * @apiSuccess {String} created_at 
 */
-router.get('/users/:user_id/notifications', middleware.isAuthenticated, notificationController.get);
+router.get('/users/user/notifications', middleware.isAuthenticated, notificationController.get);
 
 module.exports = router;
