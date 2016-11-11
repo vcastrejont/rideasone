@@ -42,6 +42,11 @@ function apiservice($http) {
 		// api/rides/:ride_id/join
 		return $http.put('/api/rides/'+ride_id+'/join', userData);
 	};
+	
+	service.getNotifications = function() {
+		
+		return $http.get('/api/rides/'+ride_id+'/join', userData);
+	};
 
 	service.leaveCar = function(carData) {
 		return $http.post('/api/events/leavecar', carData);

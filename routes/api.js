@@ -334,7 +334,20 @@ router.put('/rides/:ride_id/join', middleware.isAuthenticated, ridesController.j
   * @apiSuccess numAffected
 */
 router.put('/rides/:ride_id/ride-requests/:request_id/accept', middleware.isAuthenticated, middleware.isDriver, ridesController.acceptRideRequest);
+
+
+/**
+  * @api {put} /api/rides/:ride_id/add-passenger Add a passanger
+  * @apiName AddPassanger
+  * @apiGroup Rides
+  * @apiVersion 0.2.0
+  * @apiDescription Register to a ride to or from the event
+  * @apiHeader   Authorization                JWT token.
+  * @apiSuccess numAffected
+*/
 router.put('/rides/:ride_id/add-passenger', middleware.isAuthenticated, middleware.isPassenger, ridesController.addPassenger);  
+
+
 
 /**
   * @api {put} api/rides/:ride_id/leave Cancel ride request
@@ -386,9 +399,9 @@ router.put('/rides/:ride_id/leave', middleware.isAuthenticated, middleware.isPas
 router.get('/users', middleware.isAuthenticated, userController.list);
 
 /**
-  * @api {put} /api/users/:user_id/fcm-token add or change an active FCM token
+  * @api {put} /api/users/:user_id/fcm-token Add or change an active FCM token
   * @apiName fcmToken
-  * @apiGroup Notifications
+  * @apiGroup Authentication
   * @apiDescription         Adds or replaces the given FCM token
   * @apiParam {String}      old                    Previous FCM token, to be removed
   * @apiParam {String}      active                 The FCM token to use for the requesting device
@@ -396,9 +409,9 @@ router.get('/users', middleware.isAuthenticated, userController.list);
 router.put('/users/:user_id/fcm-token', middleware.isAuthenticated, userController.updateFcmToken);
 
 /**
-  * @api {get} /api/users/:user_id/notifications get the user notifications
+  * @api {get} /api/users/:user_id/notifications Get the user notifications
   * @apiName getNotifications
-  * @apiGrooup Notifications
+  * @apiGroup Notifications
   * @apiDescription gets user notifications
   * @apiParam   {Number} page         batch number to scan 
   * @apiSuccess {String} user         user id

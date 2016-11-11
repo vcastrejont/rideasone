@@ -1,22 +1,14 @@
-angular.module('carPoolingApp').controller('headerCtrl', function headerCtrl($scope, $firebaseObject) {
-  $scope.test= "Menu1";
+angular.module('carPoolingApp').controller('headerCtrl', function headerCtrl($scope, sessionservice, $firebaseObject) {
 
-     
-    // var ref = firebase.database().ref('/notifications/');
-    // 
-    // var obj = $firebaseObject(ref);
-    // obj.$loaded().then(function() {
-    //   angular.forEach(obj, function(value, key) {
-    //   console.log(value, key);
-    //   });
-    // });
+  var user = sessionservice.user();
+  
+  var recentPostsRef = firebase.database().ref('notifications');   
+  var ref = firebase.database().ref('notifications/' + user.id );
+  ref.on('value', function(snapshot) {
+    $scope.notifications = snapshot.val();
+    $scope.$apply()
+  });
     
-    var recentPostsRef = firebase.database().ref('notifications').limitToLast(100);
-    recentPostsRef.on('child_added', function(data) {
-      var post = data.val();
-    //  $(".notifications").append("<li>"+post.title+"</li>" );  
-      console.log(data.val()); 
-    });
-    
+  
     
 });

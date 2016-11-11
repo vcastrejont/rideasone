@@ -51,6 +51,44 @@ body {
   }
   .dropdown-menu{
     z-index: 99;
+    &.notifications{
+      padding: 0;
+      li{
+        border-bottom: 1px solid #eee;
+        padding: 0 ;
+        
+        &:last-child{
+          border-bottom: 0;
+        }
+        a{
+          padding: 15px 30px;
+          color: #222;
+          font-weight: 300;
+          margin: 0;
+          overflow: hidden;
+          p{
+          
+            margin: 0;
+            display: inline-block;
+            strong{
+              display: block;
+              color:#333;
+              font-weight: bold;
+            }
+          }
+          
+          img{
+            margin: -17px 5px 0 0;
+            width: 30px;
+            display: inline-block;
+          }
+          &:hover{
+            background-color: #E3F2FD;
+            color: #000;
+          }
+        }
+      }
+    }
   }
   .navbar-nav > li > .dropdown-menu {
     
