@@ -564,10 +564,40 @@ myRoutesCtrl.controller('myRoutesCtrl', function($scope, $http, $rootScope, geol
 
 angular.module('carPoolingApp').controller('notificationsCtrl', notificationsCtrl);
 
-notificationsCtrl.$inject = ['$scope', 'apiservice','$state' ];
+notificationsCtrl.$inject = ['$scope','sessionservice', 'apiservice','$state' ];
 
-function notificationsCtrl ($scope, apiservice, $state ) {
 
+function notificationsCtrl ($scope, sessionservice, apiservice, $state ) {
+  var user = sessionservice.user();
+
+  $scope.view = {
+    shown : {},
+    
+    init: function() {
+      var self = this;
+      apiservice.getNotifications(user.id)
+        .success(function(notifications) {
+            self.notifications = notifications;
+            console.log(notifications);
+        })
+        .error(function(notifications) {
+            console.error('Error: ' + notifications.error);
+        });
+    },
+    show: function(message) {
+      this.shown = message;
+    }
+    
+  }
+  $scope.view.init();
+  
+  
+  
+  
+  
+  
+  
+    
 }
 
 angular.module('carPoolingApp').controller('profileCtrl', profileCtrl);
@@ -927,9 +957,8 @@ function apiservice($http) {
 		return $http.put('/api/rides/'+ride_id+'/join', userData);
 	};
 	
-	service.getNotifications = function() {
-		
-		return $http.get('/api/rides/'+ride_id+'/join', userData);
+	service.getNotifications = function(userid) {
+		return $http.get('/api/users/'+userid+'/notifications');
 	};
 
 	service.leaveCar = function(carData) {

@@ -1,51 +1,39 @@
 
 <div id="notifications" class="panel center ">
-  <h3>Latest notifications</h3>
+  <h2>Notifications</h2>
   <div class="row">
-    <div  id="list">
-      <a class="row" href="#">
+    <div id="list">
+      <a class="row" ng-repeat="message in view.notifications" ng-click="view.show(message)" ng-class="{selected: message._id === view.shown._id, sent: message.status === 'SENT'}">
         <div class="pic">
           <img src="https://randomuser.me/api/portraits/women/11.jpg" alt="" class="profile sm" >
         </div>
         <div class="subject">
-          <strong>Lupita</strong> wants to join your ride to <strong>teambuilding week</strong> at Nearsoft
+          {{message.message}} {{message.status }}
         </div>
         <div class="date">
-          Oct 16
+        {{ message.created_at | amDateFormat:'MMM DD '}}
         </div>
       </a>
-      <a class="row" href="#">
-        <div class="pic">
-          <img src="https://randomuser.me/api/portraits/women/16.jpg" alt="" class="profile sm" >
-        </div>
-        <div class="subject">
-          Lupita wants to join your ride to teambuilding week
-        </div>
-        <div class="date">
-          Oct 16
-        </div>
-      </a>
-      <a class="row" href="#">
-        <div class="pic">
-          <img src="https://randomuser.me/api/portraits/women/21.jpg" alt="" class="profile sm" >
-        </div>
-        <div class="subject">
-          Lupita wants to join your ride to teambuilding week
-        </div>
-        <div class="date">
-          Oct 16
-        </div>
-      </a>
+      
     </div>
     <div  id="message">
       <img src="https://randomuser.me/api/portraits/women/21.jpg" alt="" class="profile xl " >
       <p>Would like to accept <strong>Maria Castro</strong>  join your car to Beer and hacks at Holycow
 tomorrow at 6:00pm ?</p>
-    <ul>
-      <li><a href="#"><i class="fa fa-check" aria-hidden="true"></i> Yes join my car</a></li>
-      <li><a href="#"><i class="fa fa-times" aria-hidden="true"></i> No sorry</a></li>
-    </ul>
-      
+      <a href="#">
+        <i class="fa fa-check" aria-hidden="true"></i> 
+        <div>
+          <h4>Yes join my car</h4>
+          <p>I will pick you up and lets have fun</p>
+        </div>
+      </a>
+      <a href="#">
+        <i class="fa fa-times" aria-hidden="true"></i>
+        <div>
+          <h4>No sorry<h44>
+          <p>I can’t drive you</p>
+        </div>
+      </a>
     </div>
   </div>
   
