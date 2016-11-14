@@ -16,10 +16,9 @@
       </a>
       
     </div>
-    <div  id="message">
+    <div  id="message" ng-show="view.shown">
       <img src="https://randomuser.me/api/portraits/women/21.jpg" alt="" class="profile xl " >
-      <p>Would like to accept <strong>Maria Castro</strong>  join your car to Beer and hacks at Holycow
-tomorrow at 6:00pm ?</p>
+      <p>{{view.shown.message}}</p>
       <a href="#">
         <i class="fa fa-check" aria-hidden="true"></i> 
         <div>

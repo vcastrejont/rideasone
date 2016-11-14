@@ -22,7 +22,14 @@ function notificationsCtrl ($scope, sessionservice, apiservice, $state ) {
     },
     show: function(message) {
       this.shown = message;
+    },
+    accept: function(message) {
+      this.shown = message;
+    },
+    reject: function(message) {
+      this.shown = message;
     }
+    
     
   }
   $scope.view.init();
