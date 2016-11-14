@@ -69,8 +69,9 @@ UserSchema.methods.getEvents = function () {
  */
 
 UserSchema.methods.updateFcmToken = function (data) {
-  this.fcm_tokens.pull(data.old);
-  this.fcm_tokens.push(data.active);
+  var tokens = this.fcm_tokens;
+  tokens.pull(data.old);
+  if(tokens.indexof(data.active) == -1) tokens.push(data.active);
   return this.save();
 };
 
