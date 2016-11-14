@@ -73,6 +73,12 @@ app.config(function($stateProvider, $urlRouterProvider, $httpProvider, Notificat
     templateUrl: "app/templates/events.new.html",
     controller: eventsNewCtrl
   },
+  notifications = {
+    name: 'notifications',
+    url: '^/notifications/id/:id',
+    templateUrl: "app/templates/notifications.html",
+    controller: notificationsCtrl
+  },
   login = {
     name: 'login',
     url: '^/login',
@@ -100,6 +106,7 @@ app.config(function($stateProvider, $urlRouterProvider, $httpProvider, Notificat
   .state(eventsNew)
   .state(login)
   .state(logout)
+  .state(notifications)
   .state(profile);
   
   $httpProvider.interceptors.push(['$q', '$location', '$localStorage', function ($q, $location, $localStorage) {

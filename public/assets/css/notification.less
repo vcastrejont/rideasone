@@ -1,11 +1,107 @@
 // main: app.less 
-/**
- * angular-ui-notification - Angular.js service providing simple notifications using Bootstrap 3 styles with css transitions for animating
- * @author Alex_Crack
- * @version v0.2.0
- * @link https://github.com/alexcrack/angular-ui-notification
- * @license MIT
- */
+#notifications{
+  width: 70%;
+  min-width: 400px;
+  padding: 20px;
+  h2{
+    margin: 0;
+    padding-bottom: 20px;
+    border-bottom: 2px solid #ccc
+  }
+  #list{
+    padding: 0px 10px 0 30px;
+    float: left;
+    width: 50%;
+    height: 500px;
+    overflow-y : scroll;
+    overflow-x:  hidden;
+    a.row{
+      border-bottom: 1px solid #ccc;
+      color:#333;
+      display: block;
+      padding: 15px;
+      overflow: hidden;
+      border-left: 5px solid #fff;
+      &:hover{
+        
+        border-left: 5px solid @colorblue;
+      }
+      &.selected{
+        border-left: 5px solid @colorblue;
+        background-color: @colorlightblue;
+      }
+      &.sent{
+        font-weight: bold;
+      }
+      .pic{
+        float: left;
+        width: 45px;
+        text-align: center;
+      }
+      .subject{
+        float: left;
+        width: 200px;
+      }
+      .date{
+        float: right;
+        width: 70px;
+        text-align: center;
+        font-weight: bold;
+      }
+      
+    }
+    
+  }
+  #message{
+    text-align: center;
+    padding: 40px ;
+    float: left;
+    width: 50%;
+    background-color: @colorlightblue;
+    img{
+      margin-bottom: 20px;
+    }
+      a{
+        overflow: hidden;
+        display: block;
+        padding: 10px;
+        border: 1px solid @colorlightblue;
+        &:hover{
+          border: 1px solid @colorblue;
+          i{
+            color:#333;
+            font-size: 26px;
+          }
+        }
+        i{
+          color:#ccc;
+          font-size: 22px;
+          float: left;
+          width: 100px;
+          font-weight: lighter;
+          margin-top: 10px;
+        }
+        div{
+          float: left;
+          text-align: left;
+          h4{
+            color:@colorblue;
+            font-size: 18px;
+            margin: 0;
+          }
+          p{
+            color:#333;
+            font-size: 12px;
+          }
+        }
+      }
+  }
+}
+
+
+
+
+
 .ui-notification
 {
     position: fixed;

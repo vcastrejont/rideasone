@@ -6,6 +6,10 @@
       <label class="control-label">Event name</label>
       <input type="text" class="form-control" ng-model="event.name" placeholder="Add a name" autofocus required>
     </div>
+    <div class="form-group">
+      <label class="control-label">Location</label>
+      <input type="text"  class="form-control autocomplete" ng-model="event.address" placeholder="Type an address or venue" required>
+    </div>
     <div class="row">
       <div class="col-xs-6">
         <div class="form-group left">
@@ -33,12 +37,8 @@
           <input type="text"  ui-timepicker="timePickerOptions" ng-model="event.endTime" class="form-control timepicker" ui-timepicker/>
         </div>
       </div>
-      
     </div>
-    <div class="form-group">
-      <label class="control-label">Location</label>
-      <input type="text" id="autocomplete" class="form-control" ng-model="event.address" placeholder="Type an address or venue" required>
-    </div>
+    
     <div class="form-group">
       <label class="control-label">Description</label>
       <input type="text" class="form-control" ng-model="event.description" placeholder="Tell about your event" >

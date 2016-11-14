@@ -73,6 +73,12 @@ app.config(function($stateProvider, $urlRouterProvider, $httpProvider, Notificat
     templateUrl: "app/templates/events.new.html",
     controller: eventsNewCtrl
   },
+  notifications = {
+    name: 'notifications',
+    url: '^/notifications/id/:id',
+    templateUrl: "app/templates/notifications.html",
+    controller: notificationsCtrl
+  },
   login = {
     name: 'login',
     url: '^/login',
@@ -100,6 +106,7 @@ app.config(function($stateProvider, $urlRouterProvider, $httpProvider, Notificat
   .state(eventsNew)
   .state(login)
   .state(logout)
+  .state(notifications)
   .state(profile);
   
   $httpProvider.interceptors.push(['$q', '$location', '$localStorage', function ($q, $location, $localStorage) {
@@ -463,26 +470,18 @@ function eventsShowCtrl($scope, apiservice, $state, $window, mapFactory, Notific
 
 };
 
-angular.module('carPoolingApp').controller('headerCtrl', function headerCtrl($scope, $firebaseObject) {
-  $scope.test= "Menu1";
+angular.module('carPoolingApp').controller('headerCtrl', function headerCtrl($scope, sessionservice, $firebaseObject) {
 
-     
-    // var ref = firebase.database().ref('/notifications/');
-    // 
-    // var obj = $firebaseObject(ref);
-    // obj.$loaded().then(function() {
-    //   angular.forEach(obj, function(value, key) {
-    //   console.log(value, key);
-    //   });
-    // });
+  var user = sessionservice.user();
+  
+  var recentPostsRef = firebase.database().ref('notifications');   
+  var ref = firebase.database().ref('notifications/' + user.id );
+  ref.on('value', function(snapshot) {
+    $scope.notifications = snapshot.val();
+    $scope.$apply()
+  });
     
-    var recentPostsRef = firebase.database().ref('notifications').limitToLast(100);
-    recentPostsRef.on('child_added', function(data) {
-      var post = data.val();
-    //  $(".notifications").append("<li>"+post.title+"</li>" );  
-      console.log(data.val()); 
-    });
-    
+  
     
 });
 
@@ -562,6 +561,44 @@ myRoutesCtrl.controller('myRoutesCtrl', function($scope, $http, $rootScope, geol
     // gservice.refresh($scope.latitude, $scope.longitude);
   });
 });
+
+angular.module('carPoolingApp').controller('notificationsCtrl', notificationsCtrl);
+
+notificationsCtrl.$inject = ['$scope','sessionservice', 'apiservice','$state' ];
+
+
+function notificationsCtrl ($scope, sessionservice, apiservice, $state ) {
+  var user = sessionservice.user();
+
+  $scope.view = {
+    shown : {},
+    
+    init: function() {
+      var self = this;
+      apiservice.getNotifications(user.id)
+        .success(function(notifications) {
+            self.notifications = notifications;
+            console.log(notifications);
+        })
+        .error(function(notifications) {
+            console.error('Error: ' + notifications.error);
+        });
+    },
+    show: function(message) {
+      this.shown = message;
+    }
+    
+  }
+  $scope.view.init();
+  
+  
+  
+  
+  
+  
+  
+    
+}
 
 angular.module('carPoolingApp').controller('profileCtrl', profileCtrl);
 
@@ -919,6 +956,10 @@ function apiservice($http) {
 		// api/rides/:ride_id/join
 		return $http.put('/api/rides/'+ride_id+'/join', userData);
 	};
+	
+	service.getNotifications = function(userid) {
+		return $http.get('/api/users/'+userid+'/notifications');
+	};
 
 	service.leaveCar = function(carData) {
 		return $http.post('/api/events/leavecar', carData);
@@ -1157,10 +1198,12 @@ function sessionservice($http, $localStorage) {
   return {
     set: function(token) {
       return $http.get('/auth/me', {headers: {'Authorization': 'JWT '+ token}}).then(function(user){
+        console.log("------user----------");
         console.log(user.data);
         $localStorage.name = user.data.name;
         $localStorage.email = user.data.email;
         $localStorage.photo = user.data.photo;
+        $localStorage.id = user.data._id;
         $localStorage.token =token;
         return user.data;
       });  
@@ -1182,7 +1225,8 @@ function sessionservice($http, $localStorage) {
       return {
         name: $localStorage.name,
         photo: $localStorage.photo,
-        email: $localStorage.email
+        email: $localStorage.email,
+        id: $localStorage.id
       }
     }
   };
