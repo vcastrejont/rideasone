@@ -396,7 +396,7 @@ router.get('/users', middleware.isAuthenticated, userController.list);
 router.put('/users/:user_id/fcm-token', middleware.isAuthenticated, userController.updateFcmToken);
 
 /**
-  * @api {get} /api/users/:user_id/notifications get the user notifications
+  * @api {get} /user/notifications get the user notifications
   * @apiName getNotifications
   * @apiGrooup Notifications
   * @apiDescription gets user notifications
@@ -407,6 +407,6 @@ router.put('/users/:user_id/fcm-token', middleware.isAuthenticated, userControll
   * @apiSuccess {String} message 
   * @apiSuccess {String} created_at 
 */
-router.get('/users/user/notifications', middleware.isAuthenticated, notificationController.get);
+router.get('/user/notifications', middleware.isAuthenticated, notificationController.get);
 
 module.exports = router;
