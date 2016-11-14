@@ -71,7 +71,7 @@ UserSchema.methods.getEvents = function () {
 UserSchema.methods.updateFcmToken = function (data) {
   var tokens = this.fcm_tokens;
   tokens.pull(data.old);
-  if(tokens.indexof(data.active) == -1) tokens.push(data.active);
+  if(tokens.indexOf(data.active) == -1) tokens.push(data.active);
   return this.save();
 };
 
@@ -119,7 +119,7 @@ UserSchema.methods.requestJoiningRide = function (rideId, place) {
       /*ToDo: error when ride doesn't exist */
       var notificationData = {
 	      recipient: {
-		      tokens: request.ride.driver.tokens,
+		      tokens: request.ride.driver.fcm_tokens,
   		    id: request.ride.driver._id.toString(),
 	      },
 	      message: this.name +' is requesting to join your ride',
