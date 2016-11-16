@@ -102,6 +102,7 @@ RideSchema.methods.leave = function (user) {
 		      tokens: ride.driver.tokens,
 		      id: ride.driver._id.toString(),
   	    },
+        sender: user.id,
 	      message: user.name +' has cancelled a spot on your ride',
 	    	subject: ride._id,
 	  	  type: 'ride cancellation'
@@ -153,6 +154,7 @@ RideSchema.methods.cancelEventRide = function(event) {
   .then(event => {
     return this.notifyPassengers({
       type: 'Ride Canceled',
+      sender: this.driver,
       subject: this.id,
       message: 'Your ride to '+ event.name +' has been canceled'
     }, transaction)

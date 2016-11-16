@@ -5,9 +5,12 @@ module.exports.get = function (req, res, next) {
     .sort('created_at')
     .skip(req.page * 10)
     .limit(10)
+    .populate('subject sender recipient')
     .then(notifications => {
       res.json(notifications);
     })
+    .catch(next);
+};
 
 module.exports.markRead = function(req, res, next){
   Notification.update(
@@ -24,4 +27,3 @@ module.exports.markRead = function(req, res, next){
     })
     .catch(next);
 };
-

@@ -124,6 +124,7 @@ UserSchema.methods.requestJoiningRide = function (rideId, place) {
 		      tokens: request.ride.driver.fcm_tokens,
   		    id: request.ride.driver._id.toString(),
 	      },
+        sender: this._id,
 	      message: this.name +' is requesting to join your ride',
 		    subject: request._id,
 		    type: 'ride request'
