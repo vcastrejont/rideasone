@@ -102,6 +102,8 @@ UserSchema.methods.requestJoiningRide = function (rideId, place) {
   var Notification = require('./notification');
   var transaction = new Transaction();
 
+  /*ToDo: check if ride exists*/
+
   return util.findOrCreatePlace(place, transaction)
     .then(places => {
       var request = {

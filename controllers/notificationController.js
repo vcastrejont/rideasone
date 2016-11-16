@@ -8,8 +8,19 @@ module.exports.get = function (req, res, next) {
     .then(notifications => {
       res.json(notifications);
     })
+
+module.exports.markRead = function(req, res, next){
+  Notification.update(
+      {
+        user: req.user._id, 
+        _id: req.params.notification_id
+      },{
+        $set: {
+          status: 'READ'
+        }
+     })
     .then(() => {
-      return Notification.update({status: 'SENT'}, {status: 'READ'});
+      res.send(200);
     })
     .catch(next);
 };

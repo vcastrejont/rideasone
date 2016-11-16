@@ -422,4 +422,14 @@ router.put('/users/:user_id/fcm-token', middleware.isAuthenticated, userControll
 */
 router.get('/user/notifications', middleware.isAuthenticated, notificationController.get);
 
+/**
+  * @api {put} /user/notifications/notification mark a notification as read 
+  * @apiName mark ReadNotification 
+  * @apiGroup Notifications
+  * @apiDescription marks a single notification as read 
+  * @apiSuccess {Number} 200 
+*/
+router.put('/user/notifications/:notification_id/read', middleware.isAuthenticated, notificationController.markRead);
+
+
 module.exports = router;
