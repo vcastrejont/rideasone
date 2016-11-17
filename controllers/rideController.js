@@ -2,10 +2,6 @@ var Event = require('../models/event');
 var Ride = require('../models/ride');
 var RideRequest = require('../models/rideRequest');
 var Promise = require('bluebird');
-var Notification = require('../models/notification');
-var mailerController = require('../controllers/mailerController');
-var mongoose = require('mongoose');
-var Transaction = require('lx-mongoose-transaction')(mongoose);
 var error = require('../lib/error');
 var _ = require('lodash');
 
@@ -68,7 +64,6 @@ module.exports = {
   leaveRide: function (req, res, next) {
     req.ride.leave(req.user)
     .then(numAffected => {
-      /*toDo: notify driver*/
       return res.status(200).json({
         message: 'Successfully removed',
       });

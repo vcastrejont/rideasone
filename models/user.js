@@ -50,9 +50,9 @@ UserSchema.methods.getEvents = function () {
         .populate('organizer', '_id name photo')
         .populate('place')
         .populate({
-          path: 'going_rides', 
+          path: 'ride', 
           populate: {
-            path: 'driver passengers',
+            path: 'passengers ',
             populate: {
               path: 'user place',
               select: '_id name photo'
@@ -102,6 +102,8 @@ UserSchema.methods.requestJoiningRide = function (rideId, place) {
   var Notification = require('./notification');
   var transaction = new Transaction();
 
+  /*ToDo: check if ride exists*/
+
   return util.findOrCreatePlace(place, transaction)
     .then(places => {
       var request = {
@@ -122,6 +124,7 @@ UserSchema.methods.requestJoiningRide = function (rideId, place) {
 		      tokens: request.ride.driver.fcm_tokens,
   		    id: request.ride.driver._id.toString(),
 	      },
+        sender: this._id,
 	      message: this.name +' is requesting to join your ride',
 		    subject: request._id,
 		    type: 'ride request'
@@ -153,6 +156,19 @@ UserSchema.methods.isDriver = function (rideId) {
       return ride;
     });
 };
+
+UserSchema.methods.ownsRideRequest = function (requestId) {
+  var RideRequest = require('../models/rideRequest');
+  return RideRequest.findOne({_id: requestId})
+    .populate('ride')
+    .then(request => {
+      var userId = this._id.toString();
+      if(!request || !(request.passenger.toString() === userId || request.ride.driver.toString() === userId)){
+        throw new Error(error.http(403, 'user is not the passenger or driver of this ride request'));
+      }
+      return request;
+    });
+}
 
 UserSchema.methods.isOrganizer = function (eventId) {
   var Event = require('../models/event');

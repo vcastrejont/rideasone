@@ -1,16 +1,29 @@
 var Notification = require('../models/notification');
 
 module.exports.get = function (req, res, next) {
-  Notification.find({user: req.user._id})
+  Notification.find({recipient: req.user._id})
     .sort('created_at')
     .skip(req.page * 10)
     .limit(10)
+    .populate('sender recipient', 'name photo _id')
     .then(notifications => {
       res.json(notifications);
-    })
-    .then(() => {
-      return Notification.update({status: 'SENT'}, {status: 'READ'});
     })
     .catch(next);
 };
 
+module.exports.markRead = function(req, res, next){
+  Notification.update(
+      {
+        user: req.user._id, 
+        _id: req.params.notification_id
+      },{
+        $set: {
+          status: 'READ'
+        }
+     })
+    .then(() => {
+      res.send(200);
+    })
+    .catch(next);
+};
