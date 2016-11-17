@@ -1,7 +1,7 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 var ObjectId = Schema.ObjectId;
-var fcm = require('../lib/fcm');
+var fcm = require('../lib/fcm').instance;
 var frd = require('../lib/frd');
 var fcmInstance = fcm.instance;
 var _ = require('lodash');
@@ -11,7 +11,8 @@ var error = require('../lib/error');
 var Status = ["PENDING", "SENT", "READ", "ERROR"];
 
 var NotificationSchema = new Schema({
-  user: ObjectId,
+  recipient: {type: ObjectId, ref: "user"},
+  sender: {type: ObjectId, ref: "user"},
   status: {type: String, default: "PENDING", enum: Status},
   type: String,
   subject: ObjectId,
@@ -25,7 +26,8 @@ NotificationSchema.statics.addNotification = function (data, transaction) {
 
   promise.then(() => {
     transaction.insert('notification', {
-      user: data.recipient.id,
+      recipient: data.recipient.id,
+      sender: data.sender.id,
       status: 'SENT', 
 	    type: data.type,
 	    subject: data.subject,
