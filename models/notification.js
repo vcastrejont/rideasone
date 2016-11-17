@@ -11,8 +11,8 @@ var error = require('../lib/error');
 var Status = ["PENDING", "SENT", "READ", "ERROR"];
 
 var NotificationSchema = new Schema({
-  recipient: ObjectId,
-  sender: ObjectId,
+  recipient: {type: ObjectId, ref: "user"},
+  sender: {type: ObjectId, ref: "user"},
   status: {type: String, default: "PENDING", enum: Status},
   type: String,
   subject: ObjectId,

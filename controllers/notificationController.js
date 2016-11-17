@@ -1,11 +1,11 @@
 var Notification = require('../models/notification');
 
 module.exports.get = function (req, res, next) {
-  Notification.find({user: req.user._id})
+  Notification.find({recipient: req.user._id})
     .sort('created_at')
     .skip(req.page * 10)
     .limit(10)
-    .populate('subject sender recipient')
+    .populate('sender recipient', 'name photo _id')
     .then(notifications => {
       res.json(notifications);
     })
