@@ -14,7 +14,6 @@ function notificationsCtrl ($scope, sessionservice, apiservice, $state ) {
       apiservice.getNotifications(user.id)
         .success(function(notifications) {
             self.notifications = notifications;
-            console.log(notifications);
         })
         .error(function(notifications) {
             console.error('Error: ' + notifications.error);
@@ -24,10 +23,24 @@ function notificationsCtrl ($scope, sessionservice, apiservice, $state ) {
       this.shown = message;
     },
     accept: function(message) {
-      this.shown = message;
+      apiservice.getNotifications(user.id)
+        .success(function(notifications) {
+            self.notifications = notifications;
+            console.log(notifications);
+        })
+        .error(function(notifications) {
+            console.error('Error: ' + notifications.error);
+        });
     },
     reject: function(message) {
-      this.shown = message;
+      apiservice.getNotifications(user.id)
+        .success(function(notifications) {
+            self.notifications = notifications;
+            console.log(notifications);
+        })
+        .error(function(notifications) {
+            console.error('Error: ' + notifications.error);
+        });
     }
     
     

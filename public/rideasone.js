@@ -519,9 +519,9 @@ loginCtrl.$inject = ['$scope','authservice','sessionservice','$state'];
     
 
     $scope.$on('event:google-plus-signin-success', function (e, authResult  ) {
-      // console.log(authResult.id_token);
+    //  console.log(authResult.id_token);
       authservice.login(authResult.id_token).then(function(response){
-        // console.log(response.data.token);
+         console.log(response.data.token);
         sessionservice.set(response.data.token).then(function(user){
           
            $state.go('home');
@@ -578,7 +578,6 @@ function notificationsCtrl ($scope, sessionservice, apiservice, $state ) {
       apiservice.getNotifications(user.id)
         .success(function(notifications) {
             self.notifications = notifications;
-            console.log(notifications);
         })
         .error(function(notifications) {
             console.error('Error: ' + notifications.error);
@@ -588,10 +587,24 @@ function notificationsCtrl ($scope, sessionservice, apiservice, $state ) {
       this.shown = message;
     },
     accept: function(message) {
-      this.shown = message;
+      apiservice.getNotifications(user.id)
+        .success(function(notifications) {
+            self.notifications = notifications;
+            console.log(notifications);
+        })
+        .error(function(notifications) {
+            console.error('Error: ' + notifications.error);
+        });
     },
     reject: function(message) {
-      this.shown = message;
+      apiservice.getNotifications(user.id)
+        .success(function(notifications) {
+            self.notifications = notifications;
+            console.log(notifications);
+        })
+        .error(function(notifications) {
+            console.error('Error: ' + notifications.error);
+        });
     }
     
     
@@ -965,9 +978,18 @@ function apiservice($http) {
 	};
 	
 	service.getNotifications = function(userid) {
-		return $http.get('/api/users/'+userid+'/notifications');
+		return $http.get('/api/user/notifications');
 	};
 
+	service.acceptRide = function(ride_id) {
+		return $http.put('/api/rides/'+ride_id+'/ride-request/'+request_id+'/accept');
+	};
+	
+	service.rejectRide = function(ride_id) {
+		return $http.put('/api/users/'+ride_id+'/reject');
+	};
+	
+	
 	service.leaveCar = function(carData) {
 		return $http.post('/api/events/leavecar', carData);
 	};

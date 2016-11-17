@@ -44,9 +44,18 @@ function apiservice($http) {
 	};
 	
 	service.getNotifications = function(userid) {
-		return $http.get('/api/users/'+userid+'/notifications');
+		return $http.get('/api/user/notifications');
 	};
 
+	service.acceptRide = function(ride_id) {
+		return $http.put('/api/rides/'+ride_id+'/ride-request/'+request_id+'/accept');
+	};
+	
+	service.rejectRide = function(ride_id) {
+		return $http.put('/api/users/'+ride_id+'/reject');
+	};
+	
+	
 	service.leaveCar = function(carData) {
 		return $http.post('/api/events/leavecar', carData);
 	};
