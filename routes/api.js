@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var eventsController = require('../controllers/eventController');
+var rideRequestController = require('../controllers/rideRequestController');
 var userController = require('../controllers/userController');
 var ridesController = require('../controllers/rideController');
 var notificationController = require('../controllers/notificationController');
@@ -335,6 +336,48 @@ router.put('/rides/:ride_id/join', middleware.isAuthenticated, ridesController.j
 */
 router.put('/rides/:ride_id/ride-requests/:request_id/accept', middleware.isAuthenticated, middleware.isDriver, ridesController.acceptRideRequest);
 
+/**
+  * @api {get} /api/ride-requests/:request_id get a single ride request
+  * @apiName get a single ride request
+  * @apiGroup Rides
+  * @apiVersion 0.2.0
+  * @apiDescription get the details of a single ride request
+  * @apiHeader   Authorization                JWT token.
+  * @apiSuccess {Object}    ride
+  * @apiSuccess {String}    ride.seats               Number of available seats
+  * @apiSuccess {Date}      ride.departure           Departure datetime
+  * @apiSuccess {String}    ride.comment             Driver comments
+  * @apiSuccess {Object}    ride.place               the departure or destination place, other than the venue
+  * @apiSuccess {String}    ride.place.name                            
+  * @apiSuccess {String}    ride.place.google_places_id               
+  * @apiSuccess {String}    ride.place.address                      
+  * @apiSuccess {Object}    ride.place.location                    
+  * @apiSuccess {Object}    ride.place.location.lat                    
+  * @apiSuccess {Object}    ride.place.location.lon
+  * @apiSuccess {String}    ride.driver              Ride driver (User object)
+  * @apiSuccess {String}    ride.driver.name
+  * @apiSuccess {String}    ride.driver.photo
+  * @apiSuccess {Date}      ride.created_at          Document creation  date
+  * @apiSuccess {Date}      ride.updated_at          Last updated
+  * @apiSuccess {Object[]}  ride.passengers          
+  * @apiSuccess {Object}    ride.passengers.user          
+  * @apiSuccess {String}    ride.passengers.user.name          
+  * @apiSuccess {String}    ride.passengers.user.photo
+  * @apiSuccess {Object[]}  ride.passengers.place          
+  * @apiSuccess {String}    ride.passengers.place.name                            
+  * @apiSuccess {String}    ride.passengers.place.google_places_id               
+  * @apiSuccess {String}    ride.passengers.place.address                      
+  * @apiSuccess {Object}    ride.passengers.place.location                    
+  * @apiSuccess {Object}    ride.passengers.place.location.lat                    
+  * @apiSuccess {Object}    ride.passengers.place.location.lon
+  * @apiSuccess {String}    ride.driver              Ride driver (User object)
+  * @apiSuccess {Object}    passenger          
+  * @apiSuccess {String}    passenger.name
+  * @apiSuccess {String}    passenger.photo
+  * @apiSuccess {Date}      created_at          Document creation  date
+*/
+
+router.get('/ride-requests/:request_id', middleware.isAuthenticated, middleware.ownsRideRequest, rideRequestController.get);
 
 /**
   * @api {put} /api/rides/:ride_id/add-passenger Add a passanger

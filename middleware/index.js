@@ -6,6 +6,7 @@ module.exports = {
   isPassenger: isPassenger,
   isOrganizer: isOrganizer,
 	isDriver: isDriver,
+  ownsRideRequest: ownsRideRequest,
   isOwn: isOwn
 };
 
@@ -24,7 +25,7 @@ function isPassenger (req, res, next) {
       req.ride = ride;
       return next();
     })
-    .catch(err => next);
+    .catch(next);
 }
 
 function isDriver (req, res, next) {
@@ -35,7 +36,18 @@ function isDriver (req, res, next) {
       req.ride = ride;
       return next();
     })
-    .catch(err => next);
+    .catch(next);
+}
+
+function ownsRideRequest(req, res, next) {
+  var requestId = req.body.request_id || req.params.request_id; 
+  if(!requestId) return next(error.http(400), 'a request_id is required');
+  req.user.ownsRideRequest(requestId)
+    .then(request => {
+      req.rideRequest = request;
+      return next();
+    })
+    .catch(next);
 }
 
 function isOrganizer (req, res, next) {
