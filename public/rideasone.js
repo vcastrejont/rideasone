@@ -566,12 +566,11 @@ angular.module('carPoolingApp').controller('notificationsCtrl', notificationsCtr
 
 notificationsCtrl.$inject = ['$scope','sessionservice', 'apiservice','$state' ];
 
-
 function notificationsCtrl ($scope, sessionservice, apiservice, $state ) {
   var user = sessionservice.user();
 
   $scope.view = {
-    shown : {},
+    current : null,
     
     init: function() {
       var self = this;
@@ -584,16 +583,26 @@ function notificationsCtrl ($scope, sessionservice, apiservice, $state ) {
         });
     },
     show: function(message) {
-      this.shown = message;
-    },
-    accept: function(message) {
-      apiservice.getNotifications(user.id)
-        .success(function(notifications) {
-            self.notifications = notifications;
-            console.log(notifications);
+      var self = this;
+      this.current = message;
+      apiservice.getRequest(message.subject)
+        .success(function(request) {
+            self.request = request;
         })
         .error(function(notifications) {
             console.error('Error: ' + notifications.error);
+        });
+    },
+    accept: function(message) {
+      var ride_id = this.request.ride._id;
+      var request_id = this.request._id;
+      
+      apiservice.acceptRide(ride_id, request_id)
+        .success(function(response) {
+            console.log(response);
+        })
+        .error(function(response) {
+            console.error('Error: ' + response.error);
         });
     },
     reject: function(message) {
@@ -973,16 +982,21 @@ function apiservice($http) {
 	};
 
 	service.joinCar = function(ride_id, userData) {
-		// api/rides/:ride_id/join
 		return $http.put('/api/rides/'+ride_id+'/join', userData);
 	};
 	
 	service.getNotifications = function(userid) {
 		return $http.get('/api/user/notifications');
 	};
+	
+	service.getRequest = function(request_id) {
+		return $http.get('/api/ride-requests/'+request_id);
+	};
 
-	service.acceptRide = function(ride_id) {
-		return $http.put('/api/rides/'+ride_id+'/ride-request/'+request_id+'/accept');
+
+	service.acceptRide = function(ride_id, request_id) {
+		// /rides/:ride_id/ride-requests/:request_id/accept
+		return $http.put('/api/rides/'+ride_id+'/ride-requests/'+request_id+'/accept');
 	};
 	
 	service.rejectRide = function(ride_id) {

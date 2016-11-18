@@ -39,16 +39,21 @@ function apiservice($http) {
 	};
 
 	service.joinCar = function(ride_id, userData) {
-		// api/rides/:ride_id/join
 		return $http.put('/api/rides/'+ride_id+'/join', userData);
 	};
 	
 	service.getNotifications = function(userid) {
 		return $http.get('/api/user/notifications');
 	};
+	
+	service.getRequest = function(request_id) {
+		return $http.get('/api/ride-requests/'+request_id);
+	};
 
-	service.acceptRide = function(ride_id) {
-		return $http.put('/api/rides/'+ride_id+'/ride-request/'+request_id+'/accept');
+
+	service.acceptRide = function(ride_id, request_id) {
+		// /rides/:ride_id/ride-requests/:request_id/accept
+		return $http.put('/api/rides/'+ride_id+'/ride-requests/'+request_id+'/accept');
 	};
 	
 	service.rejectRide = function(ride_id) {

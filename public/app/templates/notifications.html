@@ -3,9 +3,9 @@
   <h2>Notifications</h2>
   <div class="row">
     <div id="list">
-      <a class="row" ng-repeat="message in view.notifications" ng-click="view.show(message)" ng-class="{selected: message._id === view.shown._id, sent: message.status === 'SENT'}">
+      <a class="row" ng-repeat="message in view.notifications" ng-click="view.show(message)" ng-class="{selected: message._id === view.current._id, sent: message.status === 'SENT'}">
         <div class="pic">
-          <img src="https://randomuser.me/api/portraits/women/11.jpg" alt="" class="profile sm" >
+          <img src="{{message.recipient.photo}}" alt="{{message.recipient.name}}" class="profile sm" >
         </div>
         <div class="subject">
           {{message.message}} {{message.status }}
@@ -16,10 +16,12 @@
       </a>
       
     </div>
-    <div  id="message" ng-show="view.shown">
-      <img src="https://randomuser.me/api/portraits/women/21.jpg" alt="" class="profile xl " >
-      <p>{{view.shown.message}}</p>
-      <a href="#">
+    <div  id="message" ng-show="view.current">
+      <img src="{{view.current.recipient.photo}}" alt="" class="profile xl " >
+      <p>{{view.current.message}}</p>
+      <p><strong>{{view.request.ride.place.name}}</strong> 
+        {{view.request.ride.departure | amDateFormat:'MMM DD  h:mm a'}}</p>
+      <a ng-click="view.accept(message)" >
         <i class="fa fa-check" aria-hidden="true"></i> 
         <div>
           <h4>Yes join my car</h4>
