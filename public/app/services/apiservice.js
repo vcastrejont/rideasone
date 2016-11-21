@@ -4,6 +4,11 @@ angular.module('apiservice', [])
 function apiservice($http) {
 	var service = {};
 
+	service.getUserRides = function(user_id) {
+		return $http.get('/api/users/'+user_id+'/rides');
+	};
+	
+	
 	service.getEvent = function(eventId) {
 		return $http.get('/api/events/' + eventId);
 	};
@@ -39,14 +44,33 @@ function apiservice($http) {
 	};
 
 	service.joinCar = function(ride_id, userData) {
-		// api/rides/:ride_id/join
 		return $http.put('/api/rides/'+ride_id+'/join', userData);
 	};
 	
 	service.getNotifications = function(userid) {
-		return $http.get('/api/users/'+userid+'/notifications');
+		return $http.get('/api/user/notifications');
+	};
+	
+	service.readNotification = function(notification_id) {
+		//"/user/notifications/:notification_id/read"
+		return $http.put('/api/user/notifications/'+notification_id+'/read');
+	};
+	
+	service.getRequest = function(request_id) {
+		return $http.get('/api/ride-requests/'+request_id);
 	};
 
+
+	service.acceptRide = function(ride_id, request_id) {
+		// /rides/:ride_id/ride-requests/:request_id/accept
+		return $http.put('/api/rides/'+ride_id+'/ride-requests/'+request_id+'/accept');
+	};
+	
+	service.rejectRide = function(ride_id) {
+		return $http.put('/api/users/'+ride_id+'/reject');
+	};
+	
+	
 	service.leaveCar = function(carData) {
 		return $http.post('/api/events/leavecar', carData);
 	};

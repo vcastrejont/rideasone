@@ -6,9 +6,9 @@ loginCtrl.$inject = ['$scope','authservice','sessionservice','$state'];
     
 
     $scope.$on('event:google-plus-signin-success', function (e, authResult  ) {
-      // console.log(authResult.id_token);
+    //  console.log(authResult.id_token);
       authservice.login(authResult.id_token).then(function(response){
-        // console.log(response.data.token);
+         console.log(response.data.token);
         sessionservice.set(response.data.token).then(function(user){
           
            $state.go('home');

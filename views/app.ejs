@@ -81,11 +81,11 @@
               <div class="collapse navbar-collapse" id="navigation-main" ng-controller="headerCtrl">
                   <ul class="nav navbar-nav navbar-right">
                     <li><a href="#home" >Home</a></li>
-                    <li><a href="#home" >{{data}}</a></li>
                     <li><a ui-sref="events"  ui-sref-active="active">Events</a></li>
                     <li><a href=""><i class="fa fa-search" aria-hidden="true"></i></a></li>
                     <li role="separator" class="dividerv"></li>
-                    <li class="dropdown">
+                    <li><a ui-sref="notifications" ui-sref-active="active"><i class="fa fa-envelope-o" aria-hidden="true"></i><span class="badgedanger">{{notifications}}</a></li>
+                    <!-- <li class="dropdown">
                       <a ui-sref="notifications()" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class="fa fa-envelope-o" aria-hidden="true"></i> <span class="badgedanger">{{notifications}}</span>
                       </a>
                       <ul class="dropdown-menu notifications">
@@ -136,7 +136,7 @@
                         </li>
                         
                       </ul>
-                    </li>
+                    </li> -->
                     <li class="dropdown">
                       <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{user.name}}
                         <img ng-attr-src="{{user.photo}}" a class="profile">

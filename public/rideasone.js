@@ -75,7 +75,7 @@ app.config(function($stateProvider, $urlRouterProvider, $httpProvider, Notificat
   },
   notifications = {
     name: 'notifications',
-    url: '^/notifications/id/:id',
+    url: '^/notifications/:id',
     templateUrl: "app/templates/notifications.html",
     controller: notificationsCtrl
   },
@@ -270,9 +270,11 @@ function eventsShowCtrl($scope, apiservice, $state, $window, mapFactory, Notific
       $scope.view.showride = null;
       $scope.idSelectedRide = null;
       $scope.map.showRoute(origin, destination);
-      console.log($scope.view.showride);
       $scope.view.showride = ride;
       $scope.idSelectedRide = ride._id; 
+    },
+    back: function(){
+        window.history.back();
     },
     closeRide: function() {
       $scope.view.showride = null;
@@ -282,7 +284,6 @@ function eventsShowCtrl($scope, apiservice, $state, $window, mapFactory, Notific
       var self = this;
       $scope.map.clearMarks();
       apiservice.getEvent($scope.id).then(function(response) {
-        console.log(response.data);
         self.event = response.data;
         
         $scope.newcar = {
@@ -338,7 +339,6 @@ function eventsShowCtrl($scope, apiservice, $state, $window, mapFactory, Notific
         comment: $scope.newcar.comment,
         going: true
       };
-      console.log(carData);
       $scope.newcar = {};
       apiservice.addCarToEvent($scope.view.event._id, carData).then(function(response) {
         $scope.view.addcar = false;
@@ -373,7 +373,6 @@ function eventsShowCtrl($scope, apiservice, $state, $window, mapFactory, Notific
       }
     },
     joinCar: function(ride) {
-      console.log(ride);
       swal({  
          title: "Request ride",   
          text: "Do you want to join " + ride.driver.name + " car ?",   
@@ -470,7 +469,7 @@ function eventsShowCtrl($scope, apiservice, $state, $window, mapFactory, Notific
 
 };
 
-angular.module('carPoolingApp').controller('headerCtrl', function headerCtrl($scope, sessionservice, $firebaseObject) {
+angular.module('carPoolingApp').controller('headerCtrl', function headerCtrl($scope, sessionservice, $firebaseObject, $window) {
 
   var user = sessionservice.user();
   
@@ -478,6 +477,13 @@ angular.module('carPoolingApp').controller('headerCtrl', function headerCtrl($sc
   var ref = firebase.database().ref('notifications/' + user.id );
   ref.on('value', function(snapshot) {
     $scope.notifications = snapshot.val();
+    if ( snapshot.val()>0){
+        
+          $window.document.title = '('+$scope.notifications+') RideAsOne';
+    }else{
+      $window.document.title = 'RideAsOne';
+    }
+  
     $scope.$apply()
   });
     
@@ -495,20 +501,14 @@ function homeCtrl ($rootScope, $scope, $window, apiservice, mapFactory ) {
   $scope.map = mapFactory.getApi();
   $scope.map.defaultLocation();
   
-  apiservice.getEvents()
-    .success(function(data) {
-        $scope.nextEvents=data;
+  apiservice.getUserRides($rootScope.user.id)
+    .success(function(response) {
+        $scope.rides=response;
     })
-    .error(function(data) {
-        console.error('Error: ' + data);
+    .error(function(response) {
+        console.error('Error: ' + response);
     });
-  apiservice.getPastEvents()
-    .success(function(data) {
-        $scope.pastEvents=data;
-    })
-    .error(function(data) {
-        console.error('Error: ' + data);
-    });
+
 }
 
 angular.module('carPoolingApp').controller('loginCtrl', loginCtrl);
@@ -519,9 +519,9 @@ loginCtrl.$inject = ['$scope','authservice','sessionservice','$state'];
     
 
     $scope.$on('event:google-plus-signin-success', function (e, authResult  ) {
-      // console.log(authResult.id_token);
+    //  console.log(authResult.id_token);
       authservice.login(authResult.id_token).then(function(response){
-        // console.log(response.data.token);
+         console.log(response.data.token);
         sessionservice.set(response.data.token).then(function(user){
           
            $state.go('home');
@@ -566,15 +566,53 @@ angular.module('carPoolingApp').controller('notificationsCtrl', notificationsCtr
 
 notificationsCtrl.$inject = ['$scope','sessionservice', 'apiservice','$state' ];
 
-
 function notificationsCtrl ($scope, sessionservice, apiservice, $state ) {
   var user = sessionservice.user();
 
   $scope.view = {
-    shown : {},
+    current : null,
     
     init: function() {
       var self = this;
+      apiservice.getNotifications(user.id)
+        .success(function(notifications) {
+            self.notifications = notifications;
+        })
+        .error(function(notifications) {
+            console.error('Error: ' + notifications.error);
+        });
+    },
+    show: function(notification) {
+      var self = this;
+      this.current = notification;
+      apiservice.getRequest(notification.subject)
+        .success(function(response) {
+            self.request = response;
+        })
+        .error(function(response) {
+            console.error(response);
+        });
+      apiservice.readNotification(notification._id)
+        .success(function(response) {
+            console.log(response)
+        })
+        .error(function(response) {
+            console.error(response);
+        });  
+    },
+    accept: function(message) {
+      var ride_id = this.request.ride._id;
+      var request_id = this.request._id;
+      
+      apiservice.acceptRide(ride_id, request_id)
+        .success(function(response) {
+            console.log(response);
+        })
+        .error(function(response) {
+            console.error('Error: ' + response.error);
+        });
+    },
+    reject: function(message) {
       apiservice.getNotifications(user.id)
         .success(function(notifications) {
             self.notifications = notifications;
@@ -583,15 +621,6 @@ function notificationsCtrl ($scope, sessionservice, apiservice, $state ) {
         .error(function(notifications) {
             console.error('Error: ' + notifications.error);
         });
-    },
-    show: function(message) {
-      this.shown = message;
-    },
-    accept: function(message) {
-      this.shown = message;
-    },
-    reject: function(message) {
-      this.shown = message;
     }
     
     
@@ -762,14 +791,21 @@ angular.module('carPoolingApp').factory('mapFactory', function($rootScope) {
           var latLng = new google.maps.LatLng(place.lat, place.lng);
           var icon = {
             path:'M0-48c-9.8 0-17.7 7.8-17.7 17.4 0 15.5 17.7 30.6 17.7 30.6s17.7-15.4 17.7-30.6c0-9.6-7.9-17.4-17.7-17.4z',
-            fillColor: '#DD2C00',
-            fillOpacity: 0.9,
-            scale: 1,
-            strokeColor: 'black',
-            strokeWeight: 0
+            fillColor: '#03A9F4',
+            fillOpacity: 1,
+            scale: .8,
+            strokeColor: '#fff',
+            strokeWeight: 1
          };
           if(place.icon == 'car'){
-            icon = 'assets/icons/car.png';
+            var icon = {
+              path:'M0-48c-9.8 0-17.7 7.8-17.7 17.4 0 15.5 17.7 30.6 17.7 30.6s17.7-15.4 17.7-30.6c0-9.6-7.9-17.4-17.7-17.4z',
+              fillColor: '#546E7A',
+              fillOpacity: .7,
+              scale: .7,
+              strokeColor: '#fff',
+              strokeWeight: 1
+           };
           }
           var marker = new google.maps.Marker({
             position: latLng,
@@ -925,6 +961,11 @@ angular.module('apiservice', [])
 function apiservice($http) {
 	var service = {};
 
+	service.getUserRides = function(user_id) {
+		return $http.get('/api/users/'+user_id+'/rides');
+	};
+	
+	
 	service.getEvent = function(eventId) {
 		return $http.get('/api/events/' + eventId);
 	};
@@ -960,14 +1001,33 @@ function apiservice($http) {
 	};
 
 	service.joinCar = function(ride_id, userData) {
-		// api/rides/:ride_id/join
 		return $http.put('/api/rides/'+ride_id+'/join', userData);
 	};
 	
 	service.getNotifications = function(userid) {
-		return $http.get('/api/users/'+userid+'/notifications');
+		return $http.get('/api/user/notifications');
+	};
+	
+	service.readNotification = function(notification_id) {
+		//"/user/notifications/:notification_id/read"
+		return $http.put('/api/user/notifications/'+notification_id+'/read');
+	};
+	
+	service.getRequest = function(request_id) {
+		return $http.get('/api/ride-requests/'+request_id);
 	};
 
+
+	service.acceptRide = function(ride_id, request_id) {
+		// /rides/:ride_id/ride-requests/:request_id/accept
+		return $http.put('/api/rides/'+ride_id+'/ride-requests/'+request_id+'/accept');
+	};
+	
+	service.rejectRide = function(ride_id) {
+		return $http.put('/api/users/'+ride_id+'/reject');
+	};
+	
+	
 	service.leaveCar = function(carData) {
 		return $http.post('/api/events/leavecar', carData);
 	};

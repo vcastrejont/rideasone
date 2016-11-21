@@ -32,9 +32,11 @@ function eventsShowCtrl($scope, apiservice, $state, $window, mapFactory, Notific
       $scope.view.showride = null;
       $scope.idSelectedRide = null;
       $scope.map.showRoute(origin, destination);
-      console.log($scope.view.showride);
       $scope.view.showride = ride;
       $scope.idSelectedRide = ride._id; 
+    },
+    back: function(){
+        window.history.back();
     },
     closeRide: function() {
       $scope.view.showride = null;
@@ -44,7 +46,6 @@ function eventsShowCtrl($scope, apiservice, $state, $window, mapFactory, Notific
       var self = this;
       $scope.map.clearMarks();
       apiservice.getEvent($scope.id).then(function(response) {
-        console.log(response.data);
         self.event = response.data;
         
         $scope.newcar = {
@@ -100,7 +101,6 @@ function eventsShowCtrl($scope, apiservice, $state, $window, mapFactory, Notific
         comment: $scope.newcar.comment,
         going: true
       };
-      console.log(carData);
       $scope.newcar = {};
       apiservice.addCarToEvent($scope.view.event._id, carData).then(function(response) {
         $scope.view.addcar = false;
@@ -135,7 +135,6 @@ function eventsShowCtrl($scope, apiservice, $state, $window, mapFactory, Notific
       }
     },
     joinCar: function(ride) {
-      console.log(ride);
       swal({  
          title: "Request ride",   
          text: "Do you want to join " + ride.driver.name + " car ?",   

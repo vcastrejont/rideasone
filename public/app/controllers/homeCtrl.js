@@ -8,18 +8,12 @@ function homeCtrl ($rootScope, $scope, $window, apiservice, mapFactory ) {
   $scope.map = mapFactory.getApi();
   $scope.map.defaultLocation();
   
-  apiservice.getEvents()
-    .success(function(data) {
-        $scope.nextEvents=data;
+  apiservice.getUserRides($rootScope.user.id)
+    .success(function(response) {
+        $scope.rides=response;
     })
-    .error(function(data) {
-        console.error('Error: ' + data);
+    .error(function(response) {
+        console.error('Error: ' + response);
     });
-  apiservice.getPastEvents()
-    .success(function(data) {
-        $scope.pastEvents=data;
-    })
-    .error(function(data) {
-        console.error('Error: ' + data);
-    });
+
 }

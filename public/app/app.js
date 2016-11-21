@@ -75,7 +75,7 @@ app.config(function($stateProvider, $urlRouterProvider, $httpProvider, Notificat
   },
   notifications = {
     name: 'notifications',
-    url: '^/notifications/id/:id',
+    url: '^/notifications/:id',
     templateUrl: "app/templates/notifications.html",
     controller: notificationsCtrl
   },
