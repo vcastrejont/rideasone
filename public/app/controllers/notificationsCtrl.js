@@ -6,7 +6,7 @@ function notificationsCtrl ($scope, sessionservice, apiservice, $state ) {
   var user = sessionservice.user();
 
   $scope.view = {
-    current : null,
+    
     
     init: function() {
       var self = this;
@@ -26,7 +26,7 @@ function notificationsCtrl ($scope, sessionservice, apiservice, $state ) {
             self.request = response;
         })
         .error(function(response) {
-            console.error(response);
+            console.log(response);
         });
       apiservice.readNotification(notification._id)
         .success(function(response) {

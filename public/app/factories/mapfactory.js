@@ -152,7 +152,7 @@ angular.module('carPoolingApp').factory('mapFactory', function($rootScope) {
         },
 
         placesAutocomplete: function(inputField) {
-          //console.log(inputField);
+        
           var input = document.getElementsByClassName(inputField),
             address = '';
             
@@ -162,19 +162,20 @@ angular.module('carPoolingApp').factory('mapFactory', function($rootScope) {
           //mapFactory.autocomplete = new google.maps.places.Autocomplete(searchInput);
 
           mapFactory.autocomplete.bindTo('bounds', map);
-          mapFactory.autocomplete.addListener('place_changed', mapFactory.setEventLocationData);
+          //mapFactory.autocomplete.addListener('place_changed', mapFactory.setEventLocationData);
 
           var infowindow = new google.maps.InfoWindow();
           marker = new google.maps.Marker({
             map: map,
             anchorPoint: new google.maps.Point(0, -29)
           });
+          console.log("place");
 
           mapFactory.autocomplete.addListener('place_changed', function() {
             infowindow.close();
             marker.setVisible(false);
             var place = mapFactory.autocomplete.getPlace();
-            //console.log(place);
+            console.log(place);
             if (!place.geometry) {
               window.alert("Autocomplete's returned place contains no geometry");
               return;

@@ -85,6 +85,7 @@ function eventsShowCtrl($scope, apiservice, $state, $window, mapFactory, Notific
     addCar: function() {
       var self = this;
       var placeData = mapFactory.getEventLocationData();
+      console.log(placeData);
 
       var carData = {
         "place": {
