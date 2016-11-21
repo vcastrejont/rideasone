@@ -4,6 +4,11 @@ angular.module('apiservice', [])
 function apiservice($http) {
 	var service = {};
 
+	service.getUserRides = function(user_id) {
+		return $http.get('/api/users/'+user_id+'/rides');
+	};
+	
+	
 	service.getEvent = function(eventId) {
 		return $http.get('/api/events/' + eventId);
 	};
@@ -44,6 +49,11 @@ function apiservice($http) {
 	
 	service.getNotifications = function(userid) {
 		return $http.get('/api/user/notifications');
+	};
+	
+	service.readNotification = function(notification_id) {
+		//"/user/notifications/:notification_id/read"
+		return $http.put('/api/user/notifications/'+notification_id+'/read');
 	};
 	
 	service.getRequest = function(request_id) {

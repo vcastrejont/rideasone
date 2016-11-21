@@ -18,16 +18,23 @@ function notificationsCtrl ($scope, sessionservice, apiservice, $state ) {
             console.error('Error: ' + notifications.error);
         });
     },
-    show: function(message) {
+    show: function(notification) {
       var self = this;
-      this.current = message;
-      apiservice.getRequest(message.subject)
-        .success(function(request) {
-            self.request = request;
+      this.current = notification;
+      apiservice.getRequest(notification.subject)
+        .success(function(response) {
+            self.request = response;
         })
-        .error(function(notifications) {
-            console.error('Error: ' + notifications.error);
+        .error(function(response) {
+            console.error(response);
         });
+      apiservice.readNotification(notification._id)
+        .success(function(response) {
+            console.log(response)
+        })
+        .error(function(response) {
+            console.error(response);
+        });  
     },
     accept: function(message) {
       var ride_id = this.request.ride._id;

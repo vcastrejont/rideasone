@@ -466,10 +466,11 @@ router.put('/users/:user_id/fcm-token', middleware.isAuthenticated, userControll
 router.get('/user/notifications', middleware.isAuthenticated, notificationController.get);
 
 /**
-  * @api {put} /user/notifications/notification mark a notification as read 
+  * @api {put} /user/notifications/:notification_id/read mark a notification as read 
   * @apiName mark ReadNotification 
   * @apiGroup Notifications
   * @apiDescription marks a single notification as read 
+  * @apiParam   {Number} notification_id         Notificacion id 
   * @apiSuccess {Number} 200 
 */
 router.put('/user/notifications/:notification_id/read', middleware.isAuthenticated, notificationController.markRead);

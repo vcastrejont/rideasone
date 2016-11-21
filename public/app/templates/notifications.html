@@ -14,6 +14,10 @@
         {{ message.created_at | amDateFormat:'MMM DD '}}
         </div>
       </a>
+      <div class="empty" ng-hide="!view.notifications">
+        There are no new notifications to show
+      </div>
+      
       
     </div>
     <div  id="message" ng-show="view.current">
@@ -35,6 +39,9 @@
           <p>I can’t drive you</p>
         </div>
       </a>
+    </div>
+    <div id="message"  ng-hide="view.current">
+      
     </div>
   </div>
   

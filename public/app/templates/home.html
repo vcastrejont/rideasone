@@ -1,6 +1,25 @@
 
-<div id="home" class="panel center small text-center">
-  <h3>Welcome back {{user.name}}!</h3>
-
+<div id="home" class="panel center small ">
+  <h2>Welcome  {{user.name}}!</h2>
+  <h3>Your upcoming rides</h3>
+  <div class="rides">
+    <div  class="row ride" ng-repeat="ride in rides" ui-sref="eventshow({ id: ride.event})">
+      <div class="col-xs-6 ">
+        <p class="date">{{ride.departure|amCalendar}}</p>
+        <p >{{ride.place.name}}</p>
+      </div>
+      <div class="col-xs-1 driver ">
+        <label for="">Driver</label>
+        <img src="{{ride.driver.photo}}" class="profile xs" alt="{{ride.driver.name}} ">
+      </div>
+      <div class="col-xs-5 passangers" >
+        <label for="">Passengers</label>
+        <span ng-repeat="passenger in ride.passengers">
+          <img src="{{passenger.user.photo}}" class="profile xs" alt="{{passenger.user.name}}">
+        </span>
+      </div>
+    </div>
+  
+  </div>
    
 </div>

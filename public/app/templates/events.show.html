@@ -1,7 +1,7 @@
 <div class="panel left xs top" id="eventpanel">
 
   <h2 class="title">
-    <a ui-sref="events" href="#/events">
+    <a ng-click="view.back()" >
       <i class="fa fa-chevron-left" aria-hidden="true"></i>
     </a>
     <span> {{view.event.name}} at {{view.event.place.name}}</span> 
@@ -62,12 +62,25 @@
     </tr>
     <tr>
       <td>Is round trip?</td>
-      <td>yes</td>
+      <td></td>
     </tr>
   </table>
   <p>
     {{view.showride.comment}}
   </p>
+  
+  <div>
+  <p>
+    <strong>Passangers</strong>
+  </p>
+  <p>
+    <span ng-repeat="passenger in view.showride.passengers">
+      <img ng-src="{{passenger.user.photo}}" class="profile xs" alt="{{passenger.user.name}}"  >
+    </span>
+  </p>
+  
+  </div>
+  
   <a  ng-click="view.joinCar(view.showride)" class="btn blue">Join this ride</a>
   <p>
     Estimated pick up time:
