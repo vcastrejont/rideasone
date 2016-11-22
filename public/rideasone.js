@@ -96,6 +96,11 @@ app.config(function($stateProvider, $urlRouterProvider, $httpProvider, Notificat
     url: '^/profile',
     templateUrl: "app/templates/profile.html",
     controller: profileCtrl
+  },
+  mobile = {
+    name: 'mobile',
+    url: '^/mobile',
+    templateUrl: "app/templates/mobile.html"
   };
 
   $stateProvider
@@ -107,7 +112,8 @@ app.config(function($stateProvider, $urlRouterProvider, $httpProvider, Notificat
   .state(login)
   .state(logout)
   .state(notifications)
-  .state(profile);
+  .state(profile)
+  .state(mobile);
   
   $httpProvider.interceptors.push(['$q', '$location', '$localStorage', function ($q, $location, $localStorage) {
      return {
