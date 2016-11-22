@@ -6,7 +6,7 @@ function eventsNewCtrl ($scope, apiservice, $state, mapFactory ) {
 
   $scope.map = mapFactory.getApi();
   $scope.map.currentLocation();
-  $scope.map.placesAutocomplete('autocomplete');
+  $scope.map.placesAutocomplete('searchInput');
   
   $scope.setDate = function() {
     $scope.event.endDate =  $scope.event.endDate || $scope.event.startDate;
@@ -54,7 +54,7 @@ function eventsNewCtrl ($scope, apiservice, $state, mapFactory ) {
       "starts_at": starts_at,
       "ends_at": ends_at
     };
-    console.log(newEvent);
+    
     apiservice.createEvent(newEvent)
       .success(function(res, status) {
           $scope.map.currentLocation();
