@@ -5,7 +5,8 @@ eventsShowCtrl.$inject = ['$scope', 'apiservice', '$state', '$window', 'mapFacto
 function eventsShowCtrl($scope, apiservice, $state, $window, mapFactory, Notification) {
   $scope.id = $state.params.id;
   $scope.map = mapFactory.getApi();
-  $scope.map.placesAutocomplete('searchInput');
+  var autocomplete1 = $scope.map.placesAutocomplete('autocomplete1');
+  var autocomplete2 = $scope.map.placesAutocomplete('autocomplete2');
   $scope.newcar = {};
   $scope.idSelectedRide = null;
 
