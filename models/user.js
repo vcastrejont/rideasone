@@ -123,11 +123,13 @@ UserSchema.methods.requestJoiningRide = function (rideId, place) {
 	      recipient: {
 		      tokens: request.ride.driver.fcm_tokens,
   		    id: request.ride.driver._id.toString(),
+          email: request.ride.driver.email,
+          name: request.ride.driver.name
 	      },
-        sender: this._id,
+        sender: this,
 	      message: this.name +' is requesting to join your ride',
-		    subject: request._id,
-		    type: 'ride request'
+		    subject: request,
+		    type: 'ride-request'
 	    };
       return Notification.addNotification(notificationData, transaction)
         .return(request);

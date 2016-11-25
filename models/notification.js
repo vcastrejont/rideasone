@@ -7,6 +7,7 @@ var fcmInstance = fcm.instance;
 var _ = require('lodash');
 var Promise = require('bluebird');
 var error = require('../lib/error');
+var mail = require('../lib/mailer');
 
 var Status = ["PENDING", "SENT", "READ", "ERROR"];
 
@@ -23,19 +24,30 @@ var NotificationSchema = new Schema({
 NotificationSchema.statics.addNotification = function (data, transaction) {
   var tokens = _.get(data, 'recipient.tokens');
   var promise = Promise.resolve(); 
+  var notification = {
+    recipient: data.recipient.id,
+    sender: data.sender._id,
+    status: 'SENT', 
+	  type: data.type,
+	  subject: data.subject._id,
+    message: data.message
+  };
 
-  promise.then(() => {
-    transaction.insert('notification', {
-      recipient: data.recipient.id,
-      sender: data.sender.id,
-      status: 'SENT', 
-	    type: data.type,
-	    subject: data.subject,
-      message: data.message
-    });
+  promise = promise.then(() => {
+    transaction.insert('notification', notification);
     return transaction.run();
   })
   .then(notifications => {
+     data.notification = notifications[0];
+     return mail.send(data.type, {
+      to: {
+        address: data.recipient.email,
+        locals: data 
+      },
+      subject: data.message
+    });
+  })
+  .then(notification => {
     return frd.ref('notifications').child(data.recipient.id)
       .transaction(value => value === null ? 1 : value + 1);
   });
@@ -50,8 +62,9 @@ NotificationSchema.statics.addNotification = function (data, transaction) {
       });
     });
   }
+
   return promise; 
- 
+  
 }
 
 var Notification = mongoose.model('notification', NotificationSchema);
