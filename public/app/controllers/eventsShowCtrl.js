@@ -5,8 +5,7 @@ eventsShowCtrl.$inject = ['$scope', 'apiservice', '$state', '$window', 'mapFacto
 function eventsShowCtrl($scope, apiservice, $state, $window, mapFactory, Notification) {
   $scope.id = $state.params.id;
   $scope.map = mapFactory.getApi();
-  var autocomplete1 = $scope.map.placesAutocomplete('autocomplete1');
-  var autocomplete2 = $scope.map.placesAutocomplete('autocomplete2');
+  $scope.map.placesAutocomplete('autocomplete1');
   $scope.newcar = {};
   $scope.idSelectedRide = null;
 
@@ -193,12 +192,25 @@ function eventsShowCtrl($scope, apiservice, $state, $window, mapFactory, Notific
         });
       }
     },
-    deleteEvent: function() {
-      apiservice.deleteEvent($scope.id).then(function(response) {
-        $state.go('events');
-      }, function(response) {
-        console.error('Error: ' + response);
+    deleteEvent: function(event) {
+      console.log(event);
+      swal({  
+       title: "Request ride",   
+       text: "Do you want to delete " + event.name + " ?",   
+       type: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#DD6B55",
+        confirmButtonText: "Yes, delete it!",
+        closeOnConfirm: false
+      }, 
+       function(){ 
+         apiservice.deleteEvent(event._id).then(function(response) {
+           $state.go('events');
+         }, function(response) {
+           console.error('Error: ' + response);
+         });
       });
+    
     },
     addExtra: function(carid) {
       var carData = {

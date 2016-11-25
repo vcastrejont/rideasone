@@ -6,15 +6,24 @@
     </a>
     <span> {{view.event.name}} at {{view.event.place.name}}</span> 
   </h2>
-  <p class="address"> {{view.event.place.address}}</p>
-
   <p class="time">
     <time>{{ view.event.starts_at | amCalendar }}</time>
   </p>
-  <p>{{view.event.description}}</p>
+  <p class="address"> {{view.event.place.address}}</p>
+<div class="row">
+  <div class="organizer"><img ng-src="{{view.event.organizer.photo}}" alt="{{view.event.organizer.name}}" class="profile sm"></div>
+  <div class="description">
+    <strong>{{view.event.organizer.name}}</strong>
+    <br>
+    {{view.event.description}}</div>
+</div>
+  
+
   <ul class="links">
-    <li><a href="#"><i class="fa fa-pencil"></i> Edit </a></li>
-    <li><a href="#"><i class="fa fa-share" aria-hidden="true"></i> Share</a></li>
+    <li><a ><i class="fa fa-envelope-o" aria-hidden="true"></i> Invite</a></li>
+    <li><a ><i class="fa fa-pencil"></i> Edit </a></li>
+    <li><a ng-click="view.deleteEvent(view.event)"><i class="fa fa-trash-o"></i> Remove </a></li>
+    
   </ul>
 
   <div id="availrides">
