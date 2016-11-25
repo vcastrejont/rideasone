@@ -15,12 +15,10 @@ module.exports.get = function (req, res, next) {
 module.exports.markRead = function(req, res, next){
   Notification.update(
       {
-        user: req.user._id, 
+        recipient: req.user._id, 
         _id: req.params.notification_id
       },{
-        $set: {
-          status: 'READ'
-        }
+        status: 'READ'
      })
     .then(() => {
       res.send(200);

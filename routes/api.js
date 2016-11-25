@@ -337,6 +337,17 @@ router.put('/rides/:ride_id/join', middleware.isAuthenticated, ridesController.j
 router.put('/rides/:ride_id/ride-requests/:request_id/accept', middleware.isAuthenticated, middleware.isDriver, ridesController.acceptRideRequest);
 
 /**
+  * @api {put} /api/rides/:ride_id/ride-request/:request_id/reject Reject ride request
+  * @apiName RejectEventRideRequest
+  * @apiGroup Rides
+  * @apiVersion 0.2.0
+  * @apiDescription Deny a ride to or from the event
+  * @apiHeader   Authorization                JWT token.
+  * @apiSuccess numAffected
+*/
+router.put('/rides/:ride_id/ride-requests/:request_id/reject', middleware.isAuthenticated, middleware.isDriver, ridesController.rejectRideRequest);
+
+/**
   * @api {get} /api/ride-requests/:request_id get a single ride request
   * @apiName get a single ride request
   * @apiGroup Rides

@@ -72,7 +72,7 @@ module.exports = {
     },
 
   acceptRideRequest: function (req, res, next) {
-    RideRequest.findOne({_id: req.params.request_id, ride: req.params.ride_id})
+    return RideRequest.findOne({_id: req.params.request_id, ride: req.params.ride_id})
     .populate('ride')
   	.populate('passenger')
     .then(request => {
@@ -81,6 +81,21 @@ module.exports = {
 	  .then(results => {
       return res.status(200).json({
         message: 'successfully accepted ride',
+      });
+    })
+    .catch(next);
+    
+  },
+  rejectRideRequest: function (req, res, next) {
+    return RideRequest.findOne({_id: req.params.request_id, ride: req.params.ride_id})
+    .populate('ride')
+  	.populate('passenger')
+    .then(request => {
+      return request.reject();
+    })
+	  .then(results => {
+      return res.status(200).json({
+        message: 'successfully rejected ride',
       });
     })
     .catch(next);
