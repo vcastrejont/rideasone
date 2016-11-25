@@ -5,7 +5,7 @@ var _ = require('lodash');
 
 module.exports.get = function (req, res, next) {
   return req.rideRequest
-    .populate('passenger')
+    .populate('passenger', 'name photo _id')
     .populate('place')
     .populate({
       path: 'ride',

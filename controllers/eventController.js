@@ -7,6 +7,7 @@ var mongoose = require('mongoose');
 var _ = require('lodash');
 var error = require('../lib/error');
 
+
 /**
  * eventController.js
  *
