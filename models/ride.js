@@ -66,7 +66,7 @@ RideSchema.statics.getUserRides = function (userId) {
     departure: {$gt: new Date().toUTCString()},
     $or: [
       {driver: userId},
-      {passengers: {$elemMatch: {$elemMatch: {user: userId}}}}
+      {passengers: {$elemMatch: {user: userId}}}
     ]
   };
 
