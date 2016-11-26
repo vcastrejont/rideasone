@@ -45,6 +45,7 @@ function eventsShowCtrl($scope, apiservice, $state, $window, mapFactory, Notific
     init: function() {
       var self = this;
       $scope.map.clearMarks();
+      $scope.map.clearRoutes();
       apiservice.getEvent($scope.id).then(function(response) {
         self.event = response.data;
         

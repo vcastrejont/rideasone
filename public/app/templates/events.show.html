@@ -58,7 +58,7 @@
 
 <div id="ridedetails" class="panel top right xs tc" ng-show="view.showride">
   <a class="close left" ng-click="view.closeRide()"><i class="fa fa-times" aria-hidden="true"></i></a>
-  <img src="{{view.showride.driver.photo}}" class="profile xl" />
+  <img ng-src="{{view.showride.driver.photo}}" class="profile xl" />
   <h2>{{view.showride.driver.name}}</h2>
   <p class="email">{{view.showride.driver.email}}</p>
   <p><strong>Departure from:</strong><br>
@@ -171,7 +171,7 @@
   $(document).ready(function() {
     $('#availrides .list').slimScroll({
       position: 'right',
-      height: '150px',
+      height: '120px',
       railVisible: false,
       alwaysVisible: true,
       color: '#59BFDF',
