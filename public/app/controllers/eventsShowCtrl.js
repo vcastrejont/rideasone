@@ -201,7 +201,7 @@ function eventsShowCtrl($scope, apiservice, $state, $window, mapFactory, Notific
         showCancelButton: true,
         confirmButtonColor: "#DD6B55",
         confirmButtonText: "Yes, delete it!",
-        closeOnConfirm: false
+        closeOnConfirm: true
       }, 
        function(){ 
          apiservice.deleteEvent(event._id).then(function(response) {
