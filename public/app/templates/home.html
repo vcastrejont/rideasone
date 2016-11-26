@@ -1,8 +1,11 @@
 
 <main id="home" class="panel center small ">
   <h2>Welcome {{user.name}}!</h2>
-  <h3>Your upcoming rides</h3>
-  <section class="rides">
+  <h3 ng-show="rides.length > 0">Your upcoming rides</h3>
+  <h5 ng-hide="rides.length > 0">
+    You can start by searching for <a ui-sref="events">events</a> or create a <a ui-sref="events">new one.</a>
+  </h5>
+  <section class="rides" ng-show="rides.length > 0">
     <article class="row"  ng-repeat="ride in rides" ui-sref="eventshow({ id: ride.event})">
       <header class="col-sm-2">
         <ul>
@@ -51,6 +54,7 @@
         
     </article>
   </section>
+
 </main>
 
 

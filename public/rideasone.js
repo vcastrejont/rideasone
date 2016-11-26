@@ -178,7 +178,7 @@ function eventsNewCtrl ($scope, apiservice, $state, mapFactory ) {
 
   $scope.map = mapFactory.getApi();
   $scope.map.currentLocation();
-  $scope.map.placesAutocomplete('searchInput');
+  $scope.map.placesAutocomplete('autocomplete1');
   
   $scope.setDate = function() {
     $scope.event.endDate =  $scope.event.endDate || $scope.event.startDate;
@@ -203,12 +203,9 @@ function eventsNewCtrl ($scope, apiservice, $state, mapFactory ) {
     var ends_time = moment($scope.event.endTime).format('HH:mm');
     var ends_at = moment(ends_date+" "+ends_time, "YYYY-MM-DD HH:mm").utc().format();
     
-    //console.log(starts_at);
-    //$scope.event.starts_at = moment( );
-      
-               
-  //  console.log($scope.event);
-    var eventData = $.extend($scope.event, mapFactory.getEventLocationData());
+
+    var eventData = $.extend($scope.event, mapFactory.getLocation());
+    $scope.map.infoWindowClose();
     $scope.map.clearMarks();
      
     var newEvent={

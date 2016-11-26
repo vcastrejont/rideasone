@@ -11,12 +11,17 @@
   </p>
   <p class="address"> {{view.event.place.address}}</p>
 <div class="row">
-  <div class="organizer"><img ng-src="{{view.event.organizer.photo}}" alt="{{view.event.organizer.name}}" class="profile sm"></div>
-  <div class="description">
+  <div class="organizer1 col-sm-5">
+    <img ng-src="{{view.event.organizer.photo}}" alt="{{view.event.organizer.name}}" class="profile sm">
+  </div>
+  <div class="organizer2 col-sm-7">
     <strong>{{view.event.organizer.name}}</strong>
-    <br>
+    <br><span>Event creator</span>
+  </div>
+</div>  
+  <div class="description">
     {{view.event.description}}</div>
-</div>
+
   
 
   <ul class="links">
