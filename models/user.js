@@ -111,7 +111,7 @@ UserSchema.methods.requestJoiningRide = function (rideId, place) {
         passenger: this,
         place: places[0]._id
       };
-      transaction.insert('riderequest', request);
+      transaction.insert('rideRequest', request);
       return transaction.run(); 
     })
     .then(requests => {
@@ -131,6 +131,7 @@ UserSchema.methods.requestJoiningRide = function (rideId, place) {
 		    subject: request,
 		    type: 'ride-request'
 	    };
+      console.log(request.ride.driver, notificationData.recipient);
       return Notification.addNotification(notificationData, transaction)
         .return(request);
     })
