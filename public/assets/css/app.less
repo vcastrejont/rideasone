@@ -154,12 +154,66 @@ body {
 
 #home{
   h2{
-    font-weight: bold;
+    margin:0 0 10px 0;
+    font-weight: 400;
     
   }
   h3{
-    border-bottom: 1px solid #D8D8D8;
     font-size: 18px;
+    text-align: center;
+    margin: 0 0 10px 0;
+  }
+  .rides{
+    article{
+      overflow: hidden;
+      header{
+        border-right: 1px dotted #333;
+        padding: 20px 0 20px 00px;
+        
+        ul{
+          list-style: none;
+          padding:0;
+          margin: 0;
+          font-size: 14px;
+          border-radius: 5px 0 0  5px;
+          background-color: @colorlightblue;
+          padding: 10px 10px 10px 30px;
+          text-align: right;
+          font-weight: 400;
+          line-height: 24px;
+          .date{
+            font-size: 14px;
+          }
+        }
+      }
+      summary{ 
+        text-align: left;
+        padding: 20px 20px 0 20px;
+        h4{
+          font-weight: 400;
+          margin: 0;
+        }
+        h5{
+          margin: 0;
+        }
+        figure{
+          text-align: center;
+          display: inline-block;
+          label{
+            font-size: 11px;
+            display: block;
+            color:#333;
+          }
+      
+        }
+      }
+      &:hover{
+        cursor: pointer;
+        background-color: @colorlightblue;
+      }
+    }
+    
+    
   }
   .ride{
     cursor: pointer;
@@ -167,17 +221,8 @@ body {
       background-color: @colorlightblue;
     }
   }
-  .date{
-    font-size: 17px;
-    font-weight: 400;
-    line-height: 24px;
-    margin: 3px 0 0 0;
-  }
-  label{
-    font-size: 13px;
-    display: block;
-    color:#000;
-  }
+
+
   .driver, .passangers{
     text-align: center;
   }
@@ -461,6 +506,12 @@ body {
   }
 
 }
+#mobile{
+  font-size: 1.5rem;
+  .feedback{
+    margin: 30px 0 0 0 ;
+  }
+}
 
 //----General----
 a{
@@ -501,6 +552,34 @@ ul.nav li.dropdown:hover  ul.dropdown-menu {
 }
 ul.nav li.dropdown:hover, ul.nav li:hover{
   color:@colorblue;
+}
+
+// chat
+
+.bubble{
+    background-color: #fff;
+    border-radius: 5px;
+    box-shadow: 0px 0px 6px #B2B2B2;
+    min-height: 80px;
+    margin: 20px;
+    padding: 10px 0;
+}
+
+.bubble::after {
+    background-color: #fff;
+    box-shadow: -2px 2px 2px 0 rgba( 178, 178, 178, .4 );
+    content: "\00a0";
+    display: block;
+    height: 20px;
+    left: -10px;
+    position: relative;
+    top: -5px;
+    transform:             rotate( 45deg );
+        -moz-transform:    rotate( 45deg );
+        -ms-transform:     rotate( 45deg );
+        -o-transform:      rotate( 45deg );
+        -webkit-transform: rotate( 45deg );
+    width:  20px;
 }
 
 //----Mixins------

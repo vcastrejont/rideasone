@@ -96,6 +96,11 @@ app.config(function($stateProvider, $urlRouterProvider, $httpProvider, Notificat
     url: '^/profile',
     templateUrl: "app/templates/profile.html",
     controller: profileCtrl
+  },
+  mobile = {
+    name: 'mobile',
+    url: '^/mobile',
+    templateUrl: "app/templates/mobile.html"
   };
 
   $stateProvider
@@ -107,7 +112,8 @@ app.config(function($stateProvider, $urlRouterProvider, $httpProvider, Notificat
   .state(login)
   .state(logout)
   .state(notifications)
-  .state(profile);
+  .state(profile)
+  .state(mobile);
   
   $httpProvider.interceptors.push(['$q', '$location', '$localStorage', function ($q, $location, $localStorage) {
      return {
@@ -172,7 +178,7 @@ function eventsNewCtrl ($scope, apiservice, $state, mapFactory ) {
 
   $scope.map = mapFactory.getApi();
   $scope.map.currentLocation();
-  $scope.map.placesAutocomplete('autocomplete');
+  $scope.map.placesAutocomplete('autocomplete1');
   
   $scope.setDate = function() {
     $scope.event.endDate =  $scope.event.endDate || $scope.event.startDate;
@@ -197,12 +203,9 @@ function eventsNewCtrl ($scope, apiservice, $state, mapFactory ) {
     var ends_time = moment($scope.event.endTime).format('HH:mm');
     var ends_at = moment(ends_date+" "+ends_time, "YYYY-MM-DD HH:mm").utc().format();
     
-    //console.log(starts_at);
-    //$scope.event.starts_at = moment( );
-      
-               
-  //  console.log($scope.event);
-    var eventData = $.extend($scope.event, mapFactory.getEventLocationData());
+
+    var eventData = $.extend($scope.event, mapFactory.getLocation());
+    $scope.map.infoWindowClose();
     $scope.map.clearMarks();
      
     var newEvent={
@@ -220,7 +223,7 @@ function eventsNewCtrl ($scope, apiservice, $state, mapFactory ) {
       "starts_at": starts_at,
       "ends_at": ends_at
     };
-    console.log(newEvent);
+    
     apiservice.createEvent(newEvent)
       .success(function(res, status) {
           $scope.map.currentLocation();
@@ -243,7 +246,7 @@ eventsShowCtrl.$inject = ['$scope', 'apiservice', '$state', '$window', 'mapFacto
 function eventsShowCtrl($scope, apiservice, $state, $window, mapFactory, Notification) {
   $scope.id = $state.params.id;
   $scope.map = mapFactory.getApi();
-  $scope.map.placesAutocomplete('autocomplete');
+  $scope.map.placesAutocomplete('autocomplete1');
   $scope.newcar = {};
   $scope.idSelectedRide = null;
 
@@ -283,6 +286,7 @@ function eventsShowCtrl($scope, apiservice, $state, $window, mapFactory, Notific
     init: function() {
       var self = this;
       $scope.map.clearMarks();
+      $scope.map.clearRoutes();
       apiservice.getEvent($scope.id).then(function(response) {
         self.event = response.data;
         
@@ -322,7 +326,9 @@ function eventsShowCtrl($scope, apiservice, $state, $window, mapFactory, Notific
 
     addCar: function() {
       var self = this;
-      var placeData = mapFactory.getEventLocationData();
+      var placeData = mapFactory.getLocation();
+      $scope.map.infoWindowClose();
+      //console.log(placeData);
 
       var carData = {
         "place": {
@@ -428,12 +434,25 @@ function eventsShowCtrl($scope, apiservice, $state, $window, mapFactory, Notific
         });
       }
     },
-    deleteEvent: function() {
-      apiservice.deleteEvent($scope.id).then(function(response) {
-        $state.go('events');
-      }, function(response) {
-        console.error('Error: ' + response);
+    deleteEvent: function(event) {
+      console.log(event);
+      swal({  
+       title: "Request ride",   
+       text: "Do you want to delete " + event.name + " ?",   
+       type: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#DD6B55",
+        confirmButtonText: "Yes, delete it!",
+        closeOnConfirm: true
+      }, 
+       function(){ 
+         apiservice.deleteEvent(event._id).then(function(response) {
+           $state.go('events');
+         }, function(response) {
+           console.error('Error: ' + response);
+         });
       });
+    
     },
     addExtra: function(carid) {
       var carData = {
@@ -570,7 +589,7 @@ function notificationsCtrl ($scope, sessionservice, apiservice, $state ) {
   var user = sessionservice.user();
 
   $scope.view = {
-    current : null,
+    
     
     init: function() {
       var self = this;
@@ -590,7 +609,7 @@ function notificationsCtrl ($scope, sessionservice, apiservice, $state ) {
             self.request = response;
         })
         .error(function(response) {
-            console.error(response);
+            console.log(response);
         });
       apiservice.readNotification(notification._id)
         .success(function(response) {
@@ -707,11 +726,12 @@ function mapcanvas(mapFactory) {
 
 angular.module('carPoolingApp').factory('mapFactory', function($rootScope) {
   var api = {},
-    currentEventLocation,
-    marker,
-    mapFactory;
+  currentEventLocation,
+  marker,
+  infomarker;
   var markersArray = [];
-  mapFactory = {
+  var infoWindows = [];
+  var mapFactory = {
     api: {},
     autocomplete: null,
     setApi: function(_api) {
@@ -730,11 +750,11 @@ angular.module('carPoolingApp').factory('mapFactory', function($rootScope) {
     success: function() {
       $rootScope.$broadcast('mapFactory:success');
     },
+    
+  
 
-    setEventLocationData: function() {
-      var place = mapFactory.autocomplete.getPlace();
-      
-      currentEventLocation = {
+    setLocationData: function(place) {
+      currentLocation = {
         place_name: place.name,
         address: place.formatted_address,
         google_places_id: place.google_places_id,
@@ -746,8 +766,8 @@ angular.module('carPoolingApp').factory('mapFactory', function($rootScope) {
       };
     },
 
-    getEventLocationData: function() {
-      return currentEventLocation;
+    getLocation: function() {
+      return currentLocation;
     },
 
     build: function(directionsService, directionsDisplay, map) {
@@ -779,33 +799,42 @@ angular.module('carPoolingApp').factory('mapFactory', function($rootScope) {
           }
         },
         
+        infoWindowClose: function() {
+          for (var i=0;i<infoWindows.length;i++) {
+            infoWindows[i].close();
+          };
+          infomarker.setMap(null);
+          infoWindows.length = 0;
+          
+        },
+        clearRoutes:function(){
+          
+          directionsDisplay.setDirections({routes: []});
+        },
+        
         clearMarks: function(){
           for (var i = 0; i < markersArray.length; i++ ) {
-             markersArray[i].setMap(null);
+            markersArray[i].setMap(null);
           }
           markersArray.length = 0;
-          console.log(markersArray);
         },
         
         addMarker: function(place) {
           var latLng = new google.maps.LatLng(place.lat, place.lng);
-          var icon = {
-            path:'M0-48c-9.8 0-17.7 7.8-17.7 17.4 0 15.5 17.7 30.6 17.7 30.6s17.7-15.4 17.7-30.6c0-9.6-7.9-17.4-17.7-17.4z',
-            fillColor: '#03A9F4',
-            fillOpacity: 1,
-            scale: .8,
-            strokeColor: '#fff',
-            strokeWeight: 1
-         };
+        //   var icon = {
+        //     path:'M0-48c-9.8 0-17.7 7.8-17.7 17.4 0 15.5 17.7 30.6 17.7 30.6s17.7-15.4 17.7-30.6c0-9.6-7.9-17.4-17.7-17.4z',
+        //     fillColor: '#03A9F4',
+        //     fillOpacity: 1,
+        //     scale: .8,
+        //     strokeColor: '#fff',
+        //     strokeWeight: 1
+        //  };
+        
           if(place.icon == 'car'){
-            var icon = {
-              path:'M0-48c-9.8 0-17.7 7.8-17.7 17.4 0 15.5 17.7 30.6 17.7 30.6s17.7-15.4 17.7-30.6c0-9.6-7.9-17.4-17.7-17.4z',
-              fillColor: '#546E7A',
-              fillOpacity: .7,
-              scale: .7,
-              strokeColor: '#fff',
-              strokeWeight: 1
-           };
+            var icon = 'assets/icons/car.png';
+          }
+          else {
+              var icon = 'assets/icons/des.png';
           }
           var marker = new google.maps.Marker({
             position: latLng,
@@ -859,17 +888,15 @@ angular.module('carPoolingApp').factory('mapFactory', function($rootScope) {
         },
 
         placesAutocomplete: function(inputField) {
-          //console.log(inputField);
-          var input = document.getElementsByClassName(inputField),
-            address = '';
-            
-          for (i = 0; i < input.length; i++) {
-            mapFactory.autocomplete =  new google.maps.places.Autocomplete(input[i]);
-          }
-          //mapFactory.autocomplete = new google.maps.places.Autocomplete(searchInput);
+        
+          //var input = document.getElementsByClassName(inputField);
+          var address = '';
+        
+          mapFactory.autocomplete = new google.maps.places.Autocomplete(document.getElementById(inputField));
 
           mapFactory.autocomplete.bindTo('bounds', map);
-          mapFactory.autocomplete.addListener('place_changed', mapFactory.setEventLocationData);
+    
+          // mapFactory.autocomplete.addListener('place_changed', mapFactory.setEventLocationData);
 
           var infowindow = new google.maps.InfoWindow();
           marker = new google.maps.Marker({
@@ -880,8 +907,12 @@ angular.module('carPoolingApp').factory('mapFactory', function($rootScope) {
           mapFactory.autocomplete.addListener('place_changed', function() {
             infowindow.close();
             marker.setVisible(false);
+            
             var place = mapFactory.autocomplete.getPlace();
-            //console.log(place);
+            mapFactory.setLocationData(place);
+            
+            // console.log("place:");
+            // console.log(place);
             if (!place.geometry) {
               window.alert("Autocomplete's returned place contains no geometry");
               return;
@@ -905,7 +936,7 @@ angular.module('carPoolingApp').factory('mapFactory', function($rootScope) {
             }));
             marker.setPosition(place.geometry.location);
             marker.setVisible(true);
-
+            
 
             if (place.address_components) {
               address = [
@@ -916,6 +947,9 @@ angular.module('carPoolingApp').factory('mapFactory', function($rootScope) {
             }
             infowindow.setContent('<div><strong>' + place.name + '</strong><br>' + address);
             infowindow.open(map, marker);
+            infoWindows.push(infowindow);
+            infomarker = marker;
+            
           });
           return address;
         }

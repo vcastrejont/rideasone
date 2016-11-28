@@ -5,7 +5,7 @@ eventsShowCtrl.$inject = ['$scope', 'apiservice', '$state', '$window', 'mapFacto
 function eventsShowCtrl($scope, apiservice, $state, $window, mapFactory, Notification) {
   $scope.id = $state.params.id;
   $scope.map = mapFactory.getApi();
-  $scope.map.placesAutocomplete('autocomplete');
+  $scope.map.placesAutocomplete('autocomplete1');
   $scope.newcar = {};
   $scope.idSelectedRide = null;
 
@@ -45,6 +45,7 @@ function eventsShowCtrl($scope, apiservice, $state, $window, mapFactory, Notific
     init: function() {
       var self = this;
       $scope.map.clearMarks();
+      $scope.map.clearRoutes();
       apiservice.getEvent($scope.id).then(function(response) {
         self.event = response.data;
         
@@ -84,7 +85,9 @@ function eventsShowCtrl($scope, apiservice, $state, $window, mapFactory, Notific
 
     addCar: function() {
       var self = this;
-      var placeData = mapFactory.getEventLocationData();
+      var placeData = mapFactory.getLocation();
+      $scope.map.infoWindowClose();
+      //console.log(placeData);
 
       var carData = {
         "place": {
@@ -190,12 +193,25 @@ function eventsShowCtrl($scope, apiservice, $state, $window, mapFactory, Notific
         });
       }
     },
-    deleteEvent: function() {
-      apiservice.deleteEvent($scope.id).then(function(response) {
-        $state.go('events');
-      }, function(response) {
-        console.error('Error: ' + response);
+    deleteEvent: function(event) {
+      console.log(event);
+      swal({  
+       title: "Request ride",   
+       text: "Do you want to delete " + event.name + " ?",   
+       type: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#DD6B55",
+        confirmButtonText: "Yes, delete it!",
+        closeOnConfirm: true
+      }, 
+       function(){ 
+         apiservice.deleteEvent(event._id).then(function(response) {
+           $state.go('events');
+         }, function(response) {
+           console.error('Error: ' + response);
+         });
       });
+    
     },
     addExtra: function(carid) {
       var carData = {

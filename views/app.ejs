@@ -14,6 +14,7 @@
         <link rel="stylesheet" href="/assets/css/material-kit.css" >
         <link rel="stylesheet" href="/components/jquery-timepicker-jt/jquery.timepicker.css" >
         <link rel="stylesheet" href="/components/sweetalert/dist/sweetalert.css" >
+        <link rel="stylesheet" href="https://cdn.firebase.com/libs/firebaseui/1.0.0/firebaseui.css" />
         <link rel="stylesheet" href="/assets/css/app.css">
 
         <!-- Vendor scripts -->
@@ -26,6 +27,8 @@
     
         <!-- AngularFire -->
         <script src="https://cdn.firebase.com/libs/angularfire/2.0.2/angularfire.min.js"></script>
+        <script src="https://cdn.firebase.com/libs/firebaseui/1.0.0/firebaseui.js"></script>
+        
         <script src="/components/angular-ui-router/release/angular-ui-router.min.js"></script>
         <script src="/components/angularjs-geolocation/dist/angularjs-geolocation.min.js"></script>
         <script src="/components/angular-bootstrap/ui-bootstrap-tpls.min.js"></script>
@@ -82,61 +85,11 @@
                   <ul class="nav navbar-nav navbar-right">
                     <li><a href="#home" >Home</a></li>
                     <li><a ui-sref="events"  ui-sref-active="active">Events</a></li>
+                    <li><a ui-sref="mobile"  ui-sref-active="active">Mobile</a></li>
                     <li><a href=""><i class="fa fa-search" aria-hidden="true"></i></a></li>
                     <li role="separator" class="dividerv"></li>
                     <li><a ui-sref="notifications" ui-sref-active="active"><i class="fa fa-envelope-o" aria-hidden="true"></i><span class="badgedanger">{{notifications}}</a></li>
-                    <!-- <li class="dropdown">
-                      <a ui-sref="notifications()" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class="fa fa-envelope-o" aria-hidden="true"></i> <span class="badgedanger">{{notifications}}</span>
-                      </a>
-                      <ul class="dropdown-menu notifications">
-                        <li>
-                          <a ui-sref="notifications({ id: 1})">
-                            <img src="https://randomuser.me/api/portraits/women/11.jpg" alt="" class="profile sm" >
-                            <p>
-                              <strong>Can I join your ride? </strong>
-                              Laura Leon
-                            </p>
-                          </a>
-                        </li>
-                        <li>
-                          <a ui-sref="notifications({ id: 2})">
-                            <img src="https://randomuser.me/api/portraits/women/21.jpg" alt="" class="profile sm" >
-                            <p>
-                              <strong>Can I join your ride? </strong>
-                              Laura Leon
-                            </p>
-                          </a>
-                        </li>
-                        <li>
-                          <a href="#">
-                            <img src="https://randomuser.me/api/portraits/men/21.jpg" alt="" class="profile sm" >
-                            <p>
-                              <strong>Can I join your ride? </strong>
-                              Laura Leon
-                            </p>
-                          </a>
-                        </li>
-                        <li>
-                          <a href="#">
-                            <img src="https://randomuser.me/api/portraits/women/12.jpg" alt="" class="profile sm" >
-                            <p>
-                              <strong>Can I join your ride? </strong>
-                              Laura Leon
-                            </p>
-                          </a>
-                        </li>
-                        <li>
-                          <a href="#">
-                            <img src="https://randomuser.me/api/portraits/men/11.jpg" alt="" class="profile sm" >
-                            <p>
-                              <strong>Can I join your ride? </strong>
-                              Laura Leon
-                            </p>
-                          </a>
-                        </li>
-                        
-                      </ul>
-                    </li> -->
+                    
                     <li class="dropdown">
                       <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{user.name}}
                         <img ng-attr-src="{{user.photo}}" a class="profile">

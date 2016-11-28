@@ -1,10 +1,11 @@
 angular.module('carPoolingApp').factory('mapFactory', function($rootScope) {
   var api = {},
-    currentEventLocation,
-    marker,
-    mapFactory;
+  currentEventLocation,
+  marker,
+  infomarker;
   var markersArray = [];
-  mapFactory = {
+  var infoWindows = [];
+  var mapFactory = {
     api: {},
     autocomplete: null,
     setApi: function(_api) {
@@ -23,11 +24,11 @@ angular.module('carPoolingApp').factory('mapFactory', function($rootScope) {
     success: function() {
       $rootScope.$broadcast('mapFactory:success');
     },
+    
+  
 
-    setEventLocationData: function() {
-      var place = mapFactory.autocomplete.getPlace();
-      
-      currentEventLocation = {
+    setLocationData: function(place) {
+      currentLocation = {
         place_name: place.name,
         address: place.formatted_address,
         google_places_id: place.google_places_id,
@@ -39,8 +40,8 @@ angular.module('carPoolingApp').factory('mapFactory', function($rootScope) {
       };
     },
 
-    getEventLocationData: function() {
-      return currentEventLocation;
+    getLocation: function() {
+      return currentLocation;
     },
 
     build: function(directionsService, directionsDisplay, map) {
@@ -72,33 +73,42 @@ angular.module('carPoolingApp').factory('mapFactory', function($rootScope) {
           }
         },
         
+        infoWindowClose: function() {
+          for (var i=0;i<infoWindows.length;i++) {
+            infoWindows[i].close();
+          };
+          infomarker.setMap(null);
+          infoWindows.length = 0;
+          
+        },
+        clearRoutes:function(){
+          
+          directionsDisplay.setDirections({routes: []});
+        },
+        
         clearMarks: function(){
           for (var i = 0; i < markersArray.length; i++ ) {
-             markersArray[i].setMap(null);
+            markersArray[i].setMap(null);
           }
           markersArray.length = 0;
-          console.log(markersArray);
         },
         
         addMarker: function(place) {
           var latLng = new google.maps.LatLng(place.lat, place.lng);
-          var icon = {
-            path:'M0-48c-9.8 0-17.7 7.8-17.7 17.4 0 15.5 17.7 30.6 17.7 30.6s17.7-15.4 17.7-30.6c0-9.6-7.9-17.4-17.7-17.4z',
-            fillColor: '#03A9F4',
-            fillOpacity: 1,
-            scale: .8,
-            strokeColor: '#fff',
-            strokeWeight: 1
-         };
+        //   var icon = {
+        //     path:'M0-48c-9.8 0-17.7 7.8-17.7 17.4 0 15.5 17.7 30.6 17.7 30.6s17.7-15.4 17.7-30.6c0-9.6-7.9-17.4-17.7-17.4z',
+        //     fillColor: '#03A9F4',
+        //     fillOpacity: 1,
+        //     scale: .8,
+        //     strokeColor: '#fff',
+        //     strokeWeight: 1
+        //  };
+        
           if(place.icon == 'car'){
-            var icon = {
-              path:'M0-48c-9.8 0-17.7 7.8-17.7 17.4 0 15.5 17.7 30.6 17.7 30.6s17.7-15.4 17.7-30.6c0-9.6-7.9-17.4-17.7-17.4z',
-              fillColor: '#546E7A',
-              fillOpacity: .7,
-              scale: .7,
-              strokeColor: '#fff',
-              strokeWeight: 1
-           };
+            var icon = 'assets/icons/car.png';
+          }
+          else {
+              var icon = 'assets/icons/des.png';
           }
           var marker = new google.maps.Marker({
             position: latLng,
@@ -152,17 +162,15 @@ angular.module('carPoolingApp').factory('mapFactory', function($rootScope) {
         },
 
         placesAutocomplete: function(inputField) {
-          //console.log(inputField);
-          var input = document.getElementsByClassName(inputField),
-            address = '';
-            
-          for (i = 0; i < input.length; i++) {
-            mapFactory.autocomplete =  new google.maps.places.Autocomplete(input[i]);
-          }
-          //mapFactory.autocomplete = new google.maps.places.Autocomplete(searchInput);
+        
+          //var input = document.getElementsByClassName(inputField);
+          var address = '';
+        
+          mapFactory.autocomplete = new google.maps.places.Autocomplete(document.getElementById(inputField));
 
           mapFactory.autocomplete.bindTo('bounds', map);
-          mapFactory.autocomplete.addListener('place_changed', mapFactory.setEventLocationData);
+    
+          // mapFactory.autocomplete.addListener('place_changed', mapFactory.setEventLocationData);
 
           var infowindow = new google.maps.InfoWindow();
           marker = new google.maps.Marker({
@@ -173,8 +181,12 @@ angular.module('carPoolingApp').factory('mapFactory', function($rootScope) {
           mapFactory.autocomplete.addListener('place_changed', function() {
             infowindow.close();
             marker.setVisible(false);
+            
             var place = mapFactory.autocomplete.getPlace();
-            //console.log(place);
+            mapFactory.setLocationData(place);
+            
+            // console.log("place:");
+            // console.log(place);
             if (!place.geometry) {
               window.alert("Autocomplete's returned place contains no geometry");
               return;
@@ -198,7 +210,7 @@ angular.module('carPoolingApp').factory('mapFactory', function($rootScope) {
             }));
             marker.setPosition(place.geometry.location);
             marker.setVisible(true);
-
+            
 
             if (place.address_components) {
               address = [
@@ -209,6 +221,9 @@ angular.module('carPoolingApp').factory('mapFactory', function($rootScope) {
             }
             infowindow.setContent('<div><strong>' + place.name + '</strong><br>' + address);
             infowindow.open(map, marker);
+            infoWindows.push(infowindow);
+            infomarker = marker;
+            
           });
           return address;
         }
